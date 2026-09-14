@@ -15,3 +15,13 @@ env/
 output/
 outputs/
 runs/
+.pytest_cache/
+*.egg-info/
+build/
+dist/
+generated/
+*.whl
+.coverage
+htmlcov/
+*.safetensors
+*.npz

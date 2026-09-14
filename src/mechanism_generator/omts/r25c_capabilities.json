@@ -1,0 +1,39 @@
+{
+  "implementation": "r2.5c-fourbar",
+  "adapter_version": "0.1.0a1",
+  "status": "draft_run_preparation_only",
+  "omts_versions": ["0.1", "0.1.0"],
+  "supports": [
+    "planar_2d", "cyclic_motion", "exactly_three_targets", "unordered_targets",
+    "ordered_targets", "target_positions", "four_bar", "one_dof", "one_actuator",
+    "hybrid_ground_link_portfolio", "open_and_crossed_branches", "accuracy_profile",
+    "balanced_profile", "transmission_profile", "shared_path_qualification",
+    "target_transmission_angle", "global_transmission_angle", "full_cycle_assembly",
+    "grashof", "crank_shortest", "optional_follower_not_longest", "compactness_metrics",
+    "swept_envelope_metrics", "candidate_lineage"
+  ],
+  "unsupported": [
+    "spatial_3d", "fixed_ground_link", "variable_ground_link", "target_orientation",
+    "fixed_phase_targets", "fixed_time_targets", "dwell", "oscillation",
+    "target_velocity", "target_acceleration", "target_jerk", "payload_loads",
+    "force_torque_analysis", "collision_constraints", "structural_analysis",
+    "synchronized_tasks", "topology_search_beyond_four_bar", "custom_pareto_objectives"
+  ],
+  "notes": [
+    "This manifest describes the adapter subset, not everything the research engine can do.",
+    "Only normalized lengths, degrees, and a positive full cyclic input in a right-handed XY frame.",
+    "Fixed-only and optimized-only ground requests are rejected; hybrid with one fixed seed is supported.",
+    "Identical per-target position tolerances are combined with the global point ceiling using the stricter value.",
+    "Only soft worst-target transmission goals and report-only compactness requests are supported.",
+    "Custom bounds, objective weights, timing, budgets and unsupported output options are rejected.",
+    "No validation level above kinematic_candidate is accepted, and a prepared plan is not a validated mechanism.",
+    "Fixed representative reservation is disabled so rejected reference designs cannot bypass selected eligibility."
+  ],
+  "expected_artifacts": {
+    "V5.3-R2.5c_HybridGroundLinkPortfolio.py": "bf2332acb8a6cdc7af4112dcaf5a65eb93dbff10ef272b88d407484b1324d3d1",
+    "V5.3-R2.5b_RobustTransmissionAndCompactness.py": "841a9295d014ff48d48d07aebf599b8619df4a1e0de3e690f7413b9119449fbb",
+    "R2_4_best_composite.pth": "b383499ae463a31a26a671b58951e54daa43c3f7301452e698b5789d0582f665",
+    "R2_4_best_path.pth": "1d0c7e993ccf162aa67d2a28b7a43ff946b6d3a153a7968f1a1299e30fd014cd",
+    "R2_3a_warmstart_best_feasible_transmission.pth": "b035b26099e1dcd30e9f0b748b88eb9179a0a7922ed3bb95933b26948a53f60d"
+  }
+}

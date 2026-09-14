@@ -1,0 +1,419 @@
+spec: open-mechanism-task
+version: 0.1.0
+task_set_id: tabletop_synchronized_line
+name: Synchronized feed-transfer-clamp demonstration
+description: >-
+  Forward-looking OMTS example for a one-motor tabletop manufacturing line.
+  It demonstrates ordered poses, dwell, oscillation, payloads, keep-out zones,
+  and cross-task phase synchronization. The current adapter must reject
+  this illustrative file. It is a future task contract, not a runnable demo.
+capabilities_required:
+  - planar_2d
+  - cyclic_motion
+  - ordered_targets
+  - target_orientation
+  - dwell
+  - oscillation
+  - synchronized_tasks
+  - payload_loads
+  - collision_constraints
+unsupported_feature_policy: error
+
+units:
+  length: mm
+  angle: deg
+  time: s
+  mass: kg
+  force: N
+  torque: N_m
+
+coordinate_system:
+  frame_id: line_frame
+  dimension: 2
+  handedness: right
+  axes:
+    x: conveyor_direction
+    y: up
+  origin_description: Lower-left corner of the tabletop machine base.
+  gravity: [0.0, -9806.65]  # mm/s^2
+
+payloads:
+  - id: workpiece
+    name: Demonstration workpiece
+    mass: 0.25
+    center_of_mass: [0.0, 0.0]
+    interface_description: Two-pin nest with passive retention.
+
+load_cases:
+  - id: transfer_loaded
+    name: Loaded transfer stroke
+    payload_ref: workpiece
+    force: [0.0, -2.45]
+    duty_fraction: 0.35
+    mode: hard
+
+outputs:
+  top_k: 5
+  pareto_objectives:
+    - path_error
+    - target_transmission
+    - global_transmission
+    - compactness
+    - assembly_margin
+    - energy
+  formats:
+    - json
+    - csv
+    - png
+    - dxf
+  include_lineage: true
+  include_histories: true
+  requested_validation_level: dynamically_evaluated
+
+tasks:
+  - id: feeder
+    name: Part feeder gate
+    motion:
+      mode: cyclic
+      order_policy: fixed_timing
+      cycle:
+        period: 1.2
+        phase_start: 0
+        phase_end: 360
+        direction: positive
+        independent_variable: phase
+      targets:
+        - id: feeder_closed
+          position: [80.0, 45.0]
+          orientation:
+            type: planar_angle
+            value: 0
+          occurrence:
+            phase: 0
+            order_index: 0
+          tolerance:
+            position: 0.5
+            orientation: 2
+        - id: feeder_open
+          position: [80.0, 85.0]
+          orientation:
+            type: planar_angle
+            value: 0
+          occurrence:
+            phase_range: [35, 65]
+            order_index: 1
+          tolerance:
+            position: 0.5
+            orientation: 2
+          dwell:
+            phase_span: 20
+            max_position_drift: 0.25
+            mode: hard
+        - id: feeder_return
+          position: [80.0, 45.0]
+          occurrence:
+            phase: 110
+            order_index: 2
+          tolerance:
+            position: 0.5
+    mechanism_search:
+      allowed_topologies: [four_bar, slider_crank, cam_follower]
+      max_dof: 1
+      max_actuators: 1
+      ground_link:
+        mode: portfolio
+        fixed_values: [90.0]
+        trust_fraction: 0.2
+        release: true
+      assembly_branches: [open, crossed]
+      profiles: [accuracy, balanced, transmission, compactness]
+      profile_matrix: cross
+    requirements:
+      path:
+        max_mean_error: 0.75
+        max_point_error: 1.0
+        mode: hard
+      transmission:
+        min_at_targets: 30
+        min_global: 12
+        objective: worst_target
+        mode: soft
+      assembly:
+        full_cycle_required: true
+        mode: hard
+      compactness:
+        max_sweep_radius_ratio: 2.0
+        mode: soft
+    actuation:
+      input_type: shared_master
+      master_id: line_shaft
+      phase_offset: 0
+      nominal_speed: 300
+    search:
+      implementation_profile: future-multi-topology
+      seed: 4201
+      top_k: 5
+
+  - id: transfer
+    name: Pick-transfer-place arm
+    motion:
+      mode: cyclic
+      order_policy: fixed_timing
+      cycle:
+        period: 1.2
+        phase_start: 0
+        phase_end: 360
+        direction: positive
+        independent_variable: phase
+      targets:
+        - id: pick
+          position: [120.0, 70.0]
+          orientation:
+            type: planar_angle
+            value: 0
+          occurrence:
+            phase: 70
+            order_index: 0
+          tolerance:
+            position: 0.5
+            orientation: 2
+          velocity:
+            magnitude: 0
+            mode: hard
+          payload_ref: workpiece
+          load_case_ref: transfer_loaded
+        - id: process_dwell
+          position: [260.0, 145.0]
+          orientation:
+            type: planar_angle
+            value: 90
+          occurrence:
+            phase_range: [150, 185]
+            order_index: 1
+          tolerance:
+            position: 0.75
+            orientation: 3
+          dwell:
+            phase_span: 25
+            max_position_drift: 0.35
+            max_orientation_drift: 1.5
+            mode: hard
+          payload_ref: workpiece
+          load_case_ref: transfer_loaded
+        - id: place
+          position: [410.0, 80.0]
+          orientation:
+            type: planar_angle
+            value: 0
+          occurrence:
+            phase: 245
+            order_index: 2
+          tolerance:
+            position: 0.5
+            orientation: 2
+          velocity:
+            magnitude: 0
+            mode: hard
+          payload_ref: workpiece
+          load_case_ref: transfer_loaded
+      primitives:
+        - id: settle_shake
+          type: oscillation
+          target_ref: process_dwell
+          window:
+            phase_range: [158, 178]
+          axis: [1.0, 0.0]
+          amplitude: 2.0
+          frequency: 6.0
+          cycles: 3
+          waveform: sine
+          mode: soft
+          weight: 0.5
+      path_constraints:
+        - id: avoid_press
+          type: keep_out_box
+          min: [285.0, 0.0]
+          max: [345.0, 120.0]
+          mode: hard
+    mechanism_search:
+      allowed_topologies: [four_bar, watt_six_bar, stephenson_six_bar, five_bar_parallel]
+      max_dof: 2
+      max_actuators: 2
+      ground_link:
+        mode: portfolio
+        fixed_values: [180.0]
+        variable_bounds: [120.0, 320.0]
+        trust_fraction: 0.25
+        release: true
+      assembly_branches: [open, crossed]
+      profiles: [accuracy, balanced, transmission, compactness, energy]
+      profile_matrix: cross
+    requirements:
+      path:
+        max_mean_error: 1.0
+        max_point_error: 1.5
+        mode: hard
+      transmission:
+        min_at_targets: 35
+        min_global: 15
+        objective: worst_target
+        mode: soft
+      assembly:
+        full_cycle_required: true
+        min_margin: 2.0
+        mode: hard
+      compactness:
+        max_sweep_radius_ratio: 2.25
+        mode: hard
+      dynamics:
+        max_speed: 900
+        max_acceleration: 6000
+        max_jerk: 60000
+        cycle_time: 1.2
+        mode: hard
+      collision_free:
+        required: true
+        minimum_clearance: 10
+        mode: hard
+      robustness:
+        parameter_tolerance_fraction: 0.002
+        monte_carlo_samples: 200
+        minimum_pass_fraction: 0.99
+        mode: hard
+    workspace:
+      envelope_min: [90.0, 20.0]
+      envelope_max: [450.0, 260.0]
+      minimum_clearance: 10
+      obstacles:
+        - id: press_body
+          type: keep_out_box
+          min: [285.0, 0.0]
+          max: [345.0, 120.0]
+          mode: hard
+    actuation:
+      input_type: shared_master
+      master_id: line_shaft
+      phase_offset: 40
+      nominal_speed: 300
+    search:
+      implementation_profile: future-multi-topology
+      seed: 4202
+      top_k: 5
+
+  - id: clamp
+    name: Process clamp
+    motion:
+      mode: cyclic
+      order_policy: fixed_timing
+      cycle:
+        period: 1.2
+        phase_start: 0
+        phase_end: 360
+        direction: positive
+        independent_variable: phase
+      targets:
+        - id: clamp_open
+          position: [300.0, 110.0]
+          occurrence:
+            phase: 130
+            order_index: 0
+          tolerance:
+            position: 0.25
+        - id: clamp_closed
+          position: [300.0, 90.0]
+          occurrence:
+            phase_range: [150, 205]
+            order_index: 1
+          tolerance:
+            position: 0.25
+          dwell:
+            phase_span: 45
+            max_position_drift: 0.1
+            mode: hard
+        - id: clamp_release
+          position: [300.0, 110.0]
+          occurrence:
+            phase: 220
+            order_index: 2
+          tolerance:
+            position: 0.25
+    mechanism_search:
+      allowed_topologies: [slider_crank, cam_follower, four_bar]
+      max_dof: 1
+      max_actuators: 1
+      ground_link:
+        mode: optimize
+        bounds: [40.0, 160.0]
+        initial_value: 90.0
+      assembly_branches: [open]
+      profiles: [accuracy, compactness, energy]
+      profile_matrix: cross
+    requirements:
+      path:
+        max_mean_error: 0.3
+        max_point_error: 0.5
+        mode: hard
+      dynamics:
+        cycle_time: 1.2
+        max_acceleration: 4000
+        max_jerk: 50000
+        mode: hard
+      collision_free:
+        required: true
+        minimum_clearance: 8
+        mode: hard
+    actuation:
+      input_type: shared_master
+      master_id: line_shaft
+      phase_offset: 100
+      nominal_speed: 300
+    search:
+      implementation_profile: future-multi-topology
+      seed: 4203
+      top_k: 5
+
+synchronization:
+  master_cycle_id: line_shaft
+  period: 1.2
+  shared_input: true
+  events:
+    - id: part_release
+      name: Feeder releases part before transfer pickup
+      participants: [feeder, transfer]
+      phase_range: [55, 75]
+      tolerance: 3
+      mode: hard
+    - id: process_handoff
+      name: Transfer reaches process station before clamp closes
+      participants: [transfer, clamp]
+      phase_range: [145, 155]
+      tolerance: 2
+      mode: hard
+    - id: clamp_release_before_departure
+      participants: [clamp, transfer]
+      phase_range: [205, 220]
+      tolerance: 2
+      mode: hard
+  phase_relations:
+    - from_task: feeder
+      to_task: transfer
+      offset: 40
+      tolerance: 2
+      mode: hard
+    - from_task: transfer
+      to_task: clamp
+      offset: 60
+      tolerance: 2
+      mode: hard
+
+metadata:
+  author: Mechanismo-AI contributors
+  organization: Community example
+  license: Apache-2.0
+  tags:
+    - synchronized-manufacturing
+    - shared-shaft
+    - tabletop-demonstrator
+  notes: >-
+    This file is an illustrative task contract, not a completed machine design
+    or safety certification.

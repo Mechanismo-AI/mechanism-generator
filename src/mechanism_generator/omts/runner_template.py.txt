@@ -1,0 +1,36 @@
+#!/usr/bin/env python3
+"""Run a prepared plan with a separately supplied, hash-matched research engine.
+
+This helper is portable and invokes Python directly without a shell. The chosen
+Python environment must already contain the research engine's dependencies.
+"""
+import argparse
+import hashlib
+import json
+from pathlib import Path
+import subprocess
+import sys
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--engine-directory", type=Path, required=True)
+    parser.add_argument("--python", default=sys.executable)
+    args = parser.parse_args()
+    base = Path(__file__).resolve().parent
+    engine = args.engine_directory.resolve()
+    plan = json.loads((base / "run_plan.json").read_text(encoding="utf-8"))
+    for name, expected in plan["expected_artifacts"].items():
+        artifact = engine / name
+        if not artifact.is_file() or hashlib.sha256(artifact.read_bytes()).hexdigest() != expected:
+            parser.error(f"Missing or mismatched research artifact: {name}")
+    script = engine / "V5.3-R2.5c_HybridGroundLinkPortfolio.py"
+    for run in plan["runs"]:
+        command = [args.python, str(script), *run["arguments"],
+                   "--targets_file", str(base / run["targets_file"]),
+                   "--output_root", str(base / run["output_root"])]
+        subprocess.run(command, cwd=engine, check=True)
+
+
+if __name__ == "__main__":
+    main()
