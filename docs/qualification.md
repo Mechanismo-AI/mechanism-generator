@@ -13,8 +13,8 @@ third. Even accepting `requested_validation_level: kinematic_candidate` expresse
 the request, not an achieved result.
 
 OMTS's vocabulary includes kinematic, mechanically screened, dynamically evaluated,
-structurally evaluated, and prototype validated outputs. The foundation does not
-perform these evaluations. The adapter rejects requests above `kinematic_candidate`.
+structurally evaluated, and prototype validated outputs. The public engine performs
+kinematic checks only. The adapter rejects requests above `kinematic_candidate`.
 
 In the historical R2.5c outputs, read `selection_eligible`, `engineering_acceptable`,
 and `qualification_level`. Physical assembly alone is not path accuracy or adequate
@@ -24,7 +24,8 @@ kinematic thresholds; it is not proof of dynamic, structural, or prototype valid
 The historical engine can reserve an unqualified fixed-reference mechanism in its
 selected exports. This adapter sets `--portfolio_guarantee_fixed_count 0` and
 `--strict_qualification` so those references cannot bypass qualified selection.
-It does not modify the engine. Raw `all_candidates` and stage reports can still
+The public alpha also fixes the engine so fixed reservation considers only eligible
+candidates, and rejects unqualified fallback. Raw `all_candidates` and stage reports can still
 contain rejected mechanisms. Count eligible candidates, not output files.
 
 Fewer than `top_k` results, including none, is a valid outcome. An exported plan or

@@ -2,6 +2,7 @@ import copy
 import csv
 import hashlib
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -196,9 +197,13 @@ def test_plan_is_deterministic_portable_and_never_overwritten(task_document, tmp
 def test_generated_runner_uses_argument_arrays_and_anchored_paths(task_document, tmp_path):
     output = tmp_path / "plan with spaces $()"
     write_plan(task_document, output)
-    engine = tmp_path / "engine with spaces"
-    engine.mkdir()
-    stub = engine / "V5.3-R2.5c_HybridGroundLinkPortfolio.py"
+    package_root = tmp_path / "package with spaces"
+    package = package_root / "mechanism_generator"
+    engine = package / "engine"
+    engine.mkdir(parents=True)
+    (package / "__init__.py").write_text("")
+    (engine / "__init__.py").write_text("")
+    stub = engine / "__main__.py"
     stub.write_text(
         'import json, pathlib, sys\n'
         'a = sys.argv[1:]\n'
@@ -207,18 +212,24 @@ def test_generated_runner_uses_argument_arrays_and_anchored_paths(task_document,
     # A subprocess integration double tests launch behavior, not optimizer quality.
     plan_path = output / "run_plan.json"
     plan = json.loads(plan_path.read_text())
-    plan["expected_artifacts"] = {stub.name: hashlib.sha256(stub.read_bytes()).hexdigest()}
+    plan["expected_engine_artifacts"] = {stub.name: hashlib.sha256(stub.read_bytes()).hexdigest()}
+    models = tmp_path / "models with spaces"
+    models.mkdir()
+    model = models / "balanced.safetensors"
+    model.write_bytes(b"test double")
+    plan["expected_artifacts"] = {model.name: hashlib.sha256(model.read_bytes()).hexdigest()}
     plan_path.write_text(json.dumps(plan))
-    result = subprocess.run([sys.executable, str(output / "run_r25c.py"), "--engine-directory", str(engine)],
-                            cwd=tmp_path, capture_output=True, text=True)
+    env = dict(os.environ, PYTHONPATH=str(package_root))
+    result = subprocess.run([sys.executable, str(output / "run_r25c.py"), "--models-directory", str(models)],
+                            cwd=tmp_path, capture_output=True, text=True, env=env)
     assert result.returncode == 0, result.stderr
-    arguments = json.loads((engine / "invocation.json").read_text())
+    arguments = json.loads((output / "invocation.json").read_text())
     assert arguments[arguments.index("--targets_file") + 1] == str(output / "tasks/task-001/targets.csv")
     assert arguments[arguments.index("--output_root") + 1] == str(output / "results/task-001")
     stub.write_text('raise RuntimeError("must never run after hash mismatch")')
-    result = subprocess.run([sys.executable, str(output / "run_r25c.py"), "--engine-directory", str(engine)], capture_output=True, text=True)
+    result = subprocess.run([sys.executable, str(output / "run_r25c.py"), "--models-directory", str(models)], capture_output=True, text=True, env=env)
     assert result.returncode != 0
-    assert "mismatched research artifact" in result.stderr
+    assert "mismatched engine artifact" in result.stderr
 
 
 def test_cli_distinguishes_validation_from_adaptation(tmp_path, future_document, capsys):

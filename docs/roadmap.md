@@ -1,16 +1,16 @@
 # Roadmap
 
-1. **Foundation and OMTS draft:** installable task validation, strict run preparation,
-   examples, tests, and explicit licensing.
-2. **Reproducible four-bar alpha:** package the existing R2.5c/R2.5b solver pair,
-   preserve numerical behavior, test installation/inference, and publish clear
-   qualification outputs and benchmark provenance.
-3. **Open model artifacts:** publish cleaned inference exports, model cards,
-   checksums, license terms, and training/reproduction instructions. Update the
-   adapter's artifact identities and verify inference parity after export.
-4. **Broader synthesis:** build multi-solution datasets; improve proposal models;
-   introduce ordered poses, dwell, dynamics, additional topologies, and eventually
-   synchronized manufacturing tasks.
+1. **Published: foundation and OMTS draft.** Installable task validation, strict run
+   preparation, examples, tests, and Apache-2.0 licensing.
+2. **Public research alpha: four-bar engine and model weights.** Packaged R2.5c/R2.5b
+   solver, cleaned inference exports, model card, checksums, and current parity and
+   execution checks. See the engine guide and model card for the exact scope.
+3. **Training reproduction and broader evaluation.** Review and publish training
+   source, teacher/development artifacts, dataset provenance/licenses, and controlled
+   benchmarks. Historical small benchmarks are development evidence.
+4. **Broader synthesis.** Build multi-solution datasets; improve proposal models;
+   introduce orientation/pose requirements, dwell, dynamics, additional topologies,
+   and eventually synchronized manufacturing tasks.
 
-These stages describe planned work, not capabilities present in the foundation.
-No additional training is required to package the existing four-bar baseline.
+Stages 3 and 4 remain planned work. No additional training was needed to publish
+the current four-bar baseline. Basic cyclic target ordering already exists.

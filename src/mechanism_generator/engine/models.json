@@ -1,0 +1,63 @@
+{
+  "version": "0.1.0a2",
+  "license": "Apache-2.0",
+  "format": "safetensors",
+  "download_base": "https://github.com/Mechanismo-AI/mechanism-generator/releases/download/v0.1.0a2",
+  "export_verification": {
+    "device": "cpu",
+    "torch": "2.13.0+cpu",
+    "numpy": "2.5.1",
+    "seed": 9142026,
+    "dtype": "float32"
+  },
+  "models": {
+    "balanced": {
+      "file": "balanced.safetensors",
+      "sha256": "72a20f1f6828686c18100b3f5c7f913161b6042cfd9ea3baac15042d1b9fa8a0",
+      "bytes": 7386808,
+      "source_file": "R2_4_best_composite.pth",
+      "source_sha256": "b383499ae463a31a26a671b58951e54daa43c3f7301452e698b5789d0582f665",
+      "variant": "V5.3-R2.4_StreamingTargetTraining",
+      "state_epoch": 98,
+      "parameters": 1846280,
+      "tensor_count": 18,
+      "export_checks": {
+        "exact_tensor_equality": true,
+        "inference_cases": 128,
+        "max_absolute_difference": 0.0
+      }
+    },
+    "path": {
+      "file": "path.safetensors",
+      "sha256": "8193a5d5208c227424cd570405b4c148cc2987c3a266a348a0f6b8184445f61e",
+      "bytes": 7386808,
+      "source_file": "R2_4_best_path.pth",
+      "source_sha256": "1d0c7e993ccf162aa67d2a28b7a43ff946b6d3a153a7968f1a1299e30fd014cd",
+      "variant": "V5.3-R2.4_StreamingTargetTraining",
+      "state_epoch": 96,
+      "parameters": 1846280,
+      "tensor_count": 18,
+      "export_checks": {
+        "exact_tensor_equality": true,
+        "inference_cases": 128,
+        "max_absolute_difference": 0.0
+      }
+    },
+    "transmission": {
+      "file": "transmission.safetensors",
+      "sha256": "30a23c4aee3a7d5e29673757a791acde6bddd93cf207aaea0cceb5627621e55f",
+      "bytes": 7386824,
+      "source_file": "R2_3a_warmstart_best_feasible_transmission.pth",
+      "source_sha256": "b035b26099e1dcd30e9f0b748b88eb9179a0a7922ed3bb95933b26948a53f60d",
+      "variant": "V5.3-R2.3a_WindowedFeasibilityController",
+      "state_epoch": 70,
+      "parameters": 1846280,
+      "tensor_count": 18,
+      "export_checks": {
+        "exact_tensor_equality": true,
+        "inference_cases": 128,
+        "max_absolute_difference": 0.0
+      }
+    }
+  }
+}

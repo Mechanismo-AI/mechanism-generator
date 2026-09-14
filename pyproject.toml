@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mechanism-generator"
-version = "0.1.0a1"
-description = "Open Mechanism Task Specification validation and research run preparation"
+version = "0.1.0a2"
+description = "Open motion-task validation and four-bar mechanism research synthesis"
 readme = "README.md"
 requires-python = ">=3.10"
 license = "Apache-2.0"
@@ -15,6 +15,7 @@ dependencies = ["PyYAML>=6.0.2,<7", "jsonschema>=4.23,<5"]
 
 [project.optional-dependencies]
 test = ["pytest>=8,<10", "build>=1.2,<2"]
+engine = ["torch>=2.6,<3", "numpy>=1.26,<3", "pandas>=2.2,<4", "matplotlib>=3.8,<4", "safetensors>=0.4.5,<1"]
 
 [project.urls]
 Repository = "https://github.com/Mechanismo-AI/mechanism-generator"
@@ -22,12 +23,15 @@ Issues = "https://github.com/Mechanismo-AI/mechanism-generator/issues"
 
 [project.scripts]
 omts = "mechanism_generator.omts.cli:main"
+mechanism-generate = "mechanism_generator.engine.cli:main"
+mechanism-models = "mechanism_generator.engine.models:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.setuptools.package-data]
 "mechanism_generator.omts" = ["schema.json", "r25c_capabilities.json", "runner_template.py.txt"]
+"mechanism_generator.engine" = ["models.json"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

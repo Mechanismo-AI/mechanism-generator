@@ -4,10 +4,32 @@ Open tools for describing motion requirements and developing inspectable mechani
 designs. The long-term aim is to help designers create purpose-built, synchronized
 automation using open solvers, training code, and model weights.
 
-**Current status: repository foundation and OMTS v0.1 draft.** This package validates
-motion task documents and prepares a restricted subset for an external four-bar
-research engine. It does not include that engine, model weights, or a complete
-mechanism-design application yet.
+**Current status: runnable four-bar research alpha and OMTS v0.1 draft.**
+The package includes the R2.5c/R2.5b solver, task validation, and a strict OMTS
+adapter. Three Apache-2.0 proposal models are available as verified GitHub release
+downloads. This is a planar kinematic research tool; training reproduction,
+orientation, timing/dwell, dynamics, collisions, and synchronization remain future work.
+
+## Generate a mechanism
+
+After creating and activating a virtual environment, install from this checkout:
+
+```sh
+python -m pip install torch==2.13.0 --index-url https://download.pytorch.org/whl/cpu
+python -m pip install ".[engine]"
+mechanism-models download --directory models
+mechanism-generate --models-directory models --targets -6 2 -2 6 0.5 3.5 --branches both --device cpu --headless --output_root runs/demo
+```
+
+Python 3.12 is the tested engine environment. On Windows, choose a short checkout
+and output location. Add `--quick` for a smaller search budget. Read the
+[engine guide](docs/engine.md) for installation, OMTS execution, and output details,
+and the [model card](MODEL_CARD.md) for provenance, licensing, and limitations.
+
+![One selected design from the three-point example](examples/results/three_point.png)
+
+This illustrated candidate passed practical selection criteria, but did not meet
+all preferred engineering thresholds. It is not a hardware-validated design.
 
 ## Try the OMTS tools
 
@@ -41,8 +63,7 @@ checks the narrower implementation profile and writes a run plan, per-task targe
 CSVs, and a portable Python runner. It refuses existing output directories.
 
 **A valid document or prepared plan is not a solved mechanism.** No optimizer runs
-during either command. The generated runner requires separately supplied research
-artifacts; see the [adapter guide](docs/r25c-adapter.md).
+during either command. The generated runner uses the installed engine and downloaded weights; see the [adapter guide](docs/r25c-adapter.md).
 
 ## Two examples, with different purposes
 
@@ -64,14 +85,15 @@ including unsupported soft constraints. They are never silently discarded.
 - [Qualification terminology](docs/qualification.md) and [development roadmap](docs/roadmap.md)
 - Focused regression tests and continuous integration for Windows and Linux
 
-The first runnable engine release will package the existing research pipeline:
-neural proposals → local refinement → physical/kinematic checks → diverse designs.
+The public engine runs the research pipeline:
+neural proposals â†’ local refinement â†’ physical/kinematic checks â†’ diverse designs.
 Orientation synthesis, prescribed timing/dwell, dynamics, collision checks, and
 multi-mechanism synchronization are future capabilities.
 
 ## Contribute and license
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). Code, specification, schema, and examples
-are licensed under [Apache-2.0](LICENSE), copyright 2026 Mechanismo-AI contributors.
-No model weights or datasets are distributed in this foundation release; future
-artifacts will state their licenses explicitly.
+See [CONTRIBUTING.md](CONTRIBUTING.md). Code, specification, schema, examples, and
+the three public model-weight exports are licensed under [Apache-2.0](LICENSE),
+copyright 2026 Mechanismo-AI contributors. Training datasets are not included.
+See [releases](https://github.com/Mechanismo-AI/mechanism-generator/releases) for
+versioned model assets and checksums.
