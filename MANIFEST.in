@@ -1,0 +1,6 @@
+include LICENSE NOTICE README.md CONTRIBUTING.md CHANGELOG.md
+graft docs
+graft specs
+graft examples
+recursive-include tests *.py
+global-exclude __pycache__ *.py[cod]

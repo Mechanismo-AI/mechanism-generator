@@ -1,0 +1,1667 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:mechanismo-ai:omts:0.1.0",
+  "title": "Open Mechanism Task Specification v0.1",
+  "description": "Draft OMTS task contract. Schema validity is distinct from semantic validity, adapter support, and physical feasibility.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "spec",
+    "version",
+    "task_set_id",
+    "units",
+    "coordinate_system",
+    "tasks"
+  ],
+  "properties": {
+    "spec": {
+      "const": "open-mechanism-task"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^0\\.1(?:\\.0)?$"
+    },
+    "task_set_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "description": {
+      "type": "string"
+    },
+    "capabilities_required": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true,
+      "default": []
+    },
+    "unsupported_feature_policy": {
+      "type": "string",
+      "enum": [
+        "error",
+        "warn",
+        "ignore"
+      ],
+      "default": "error"
+    },
+    "units": {
+      "$ref": "#/$defs/units"
+    },
+    "coordinate_system": {
+      "$ref": "#/$defs/coordinateSystem"
+    },
+    "payloads": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/payload"
+      },
+      "default": []
+    },
+    "load_cases": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/loadCase"
+      },
+      "default": []
+    },
+    "tasks": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/task"
+      }
+    },
+    "synchronization": {
+      "$ref": "#/$defs/synchronization"
+    },
+    "outputs": {
+      "$ref": "#/$defs/outputRequest"
+    },
+    "metadata": {
+      "$ref": "#/$defs/metadata"
+    },
+    "extensions": {
+      "type": "object",
+      "additionalProperties": true,
+      "default": {}
+    }
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[A-Za-z][A-Za-z0-9_.-]*$",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "numberOrNull": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "numericRange": {
+      "type": "array",
+      "prefixItems": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "number"
+        }
+      ],
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "vector": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "minItems": 2,
+      "maxItems": 3
+    },
+    "vector3": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "minItems": 3,
+      "maxItems": 3
+    },
+    "constraintMode": {
+      "type": "string",
+      "enum": [
+        "hard",
+        "soft",
+        "report_only"
+      ]
+    },
+    "units": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "length",
+        "angle",
+        "time"
+      ],
+      "properties": {
+        "length": {
+          "type": "string",
+          "enum": [
+            "normalized",
+            "mm",
+            "cm",
+            "m",
+            "in",
+            "ft"
+          ]
+        },
+        "angle": {
+          "type": "string",
+          "enum": [
+            "deg",
+            "rad"
+          ]
+        },
+        "time": {
+          "type": "string",
+          "enum": [
+            "s",
+            "ms"
+          ]
+        },
+        "mass": {
+          "type": "string",
+          "enum": [
+            "kg",
+            "g",
+            "lb"
+          ]
+        },
+        "force": {
+          "type": "string",
+          "enum": [
+            "N",
+            "kN",
+            "lbf"
+          ]
+        },
+        "torque": {
+          "type": "string",
+          "enum": [
+            "N_m",
+            "N_mm",
+            "lbf_in",
+            "lbf_ft"
+          ]
+        },
+        "velocity": {
+          "type": "string",
+          "description": "Optional explicit linear-velocity unit. If omitted, length/time is implied."
+        },
+        "acceleration": {
+          "type": "string",
+          "description": "Optional explicit linear-acceleration unit. If omitted, length/time^2 is implied."
+        }
+      }
+    },
+    "coordinateSystem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "frame_id",
+        "dimension",
+        "handedness"
+      ],
+      "properties": {
+        "frame_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "dimension": {
+          "type": "integer",
+          "enum": [
+            2,
+            3
+          ]
+        },
+        "handedness": {
+          "type": "string",
+          "enum": [
+            "right",
+            "left"
+          ]
+        },
+        "axes": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "x": {
+              "type": "string"
+            },
+            "y": {
+              "type": "string"
+            },
+            "z": {
+              "type": "string"
+            }
+          }
+        },
+        "origin_description": {
+          "type": "string"
+        },
+        "gravity": {
+          "$ref": "#/$defs/vector"
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "author": {
+          "type": "string"
+        },
+        "organization": {
+          "type": "string"
+        },
+        "created_utc": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "modified_utc": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "license": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "mass"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "name": {
+          "type": "string"
+        },
+        "mass": {
+          "type": "number",
+          "minimum": 0
+        },
+        "center_of_mass": {
+          "$ref": "#/$defs/vector"
+        },
+        "inertia": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 1,
+          "maxItems": 9
+        },
+        "interface_description": {
+          "type": "string"
+        },
+        "extensions": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "loadCase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "name": {
+          "type": "string"
+        },
+        "payload_ref": {
+          "$ref": "#/$defs/identifier"
+        },
+        "force": {
+          "$ref": "#/$defs/vector"
+        },
+        "moment": {
+          "$ref": "#/$defs/vector"
+        },
+        "application_point": {
+          "$ref": "#/$defs/vector"
+        },
+        "duty_fraction": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "mode": {
+          "$ref": "#/$defs/constraintMode"
+        },
+        "notes": {
+          "type": "string"
+        },
+        "extensions": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "orientation": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "value"
+          ],
+          "properties": {
+            "type": {
+              "const": "planar_angle"
+            },
+            "value": {
+              "type": "number"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "value"
+          ],
+          "properties": {
+            "type": {
+              "const": "quaternion_wxyz"
+            },
+            "value": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 4,
+              "maxItems": 4
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "value"
+          ],
+          "properties": {
+            "type": {
+              "const": "euler_xyz"
+            },
+            "value": {
+              "$ref": "#/$defs/vector3"
+            }
+          }
+        }
+      ]
+    },
+    "occurrence": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "phase": {
+          "type": "number"
+        },
+        "phase_range": {
+          "$ref": "#/$defs/numericRange"
+        },
+        "time": {
+          "type": "number",
+          "minimum": 0
+        },
+        "time_range": {
+          "$ref": "#/$defs/numericRange"
+        },
+        "free": {
+          "const": true
+        },
+        "order_index": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "oneOf": [
+        {
+          "required": [
+            "phase"
+          ]
+        },
+        {
+          "required": [
+            "phase_range"
+          ]
+        },
+        {
+          "required": [
+            "time"
+          ]
+        },
+        {
+          "required": [
+            "time_range"
+          ]
+        },
+        {
+          "required": [
+            "free"
+          ]
+        }
+      ]
+    },
+    "tolerance": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "position": {
+          "type": "number",
+          "minimum": 0
+        },
+        "orientation": {
+          "type": "number",
+          "minimum": 0
+        },
+        "phase": {
+          "type": "number",
+          "minimum": 0
+        },
+        "time": {
+          "type": "number",
+          "minimum": 0
+        },
+        "velocity": {
+          "type": "number",
+          "minimum": 0
+        },
+        "acceleration": {
+          "type": "number",
+          "minimum": 0
+        },
+        "jerk": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "kinematicQuantity": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "vector": {
+          "$ref": "#/$defs/vector"
+        },
+        "magnitude": {
+          "type": "number",
+          "minimum": 0
+        },
+        "direction_angle": {
+          "type": "number"
+        },
+        "min_magnitude": {
+          "type": "number",
+          "minimum": 0
+        },
+        "max_magnitude": {
+          "type": "number",
+          "minimum": 0
+        },
+        "mode": {
+          "$ref": "#/$defs/constraintMode"
+        },
+        "weight": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "dwell": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "duration": {
+          "type": "number",
+          "minimum": 0
+        },
+        "phase_span": {
+          "type": "number",
+          "minimum": 0
+        },
+        "max_position_drift": {
+          "type": "number",
+          "minimum": 0
+        },
+        "max_orientation_drift": {
+          "type": "number",
+          "minimum": 0
+        },
+        "mode": {
+          "$ref": "#/$defs/constraintMode"
+        },
+        "weight": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "anyOf": [
+        {
+          "required": [
+            "duration"
+          ]
+        },
+        {
+          "required": [
+            "phase_span"
+          ]
+        }
+      ]
+    },
+    "targetState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "position"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "name": {
+          "type": "string"
+        },
+        "position": {
+          "$ref": "#/$defs/vector"
+        },
+        "orientation": {
+          "$ref": "#/$defs/orientation"
+        },
+        "occurrence": {
+          "$ref": "#/$defs/occurrence"
+        },
+        "tolerance": {
+          "$ref": "#/$defs/tolerance"
+        },
+        "velocity": {
+          "$ref": "#/$defs/kinematicQuantity"
+        },
+        "acceleration": {
+          "$ref": "#/$defs/kinematicQuantity"
+        },
+        "jerk": {
+          "$ref": "#/$defs/kinematicQuantity"
+        },
+        "dwell": {
+          "$ref": "#/$defs/dwell"
+        },
+        "payload_ref": {
+          "$ref": "#/$defs/identifier"
+        },
+        "load_case_ref": {
+          "$ref": "#/$defs/identifier"
+        },
+        "mode": {
+          "$ref": "#/$defs/constraintMode",
+          "default": "hard",
+          "description": "Target constraint classification; hard when omitted."
+        },
+        "weight": {
+          "type": "number",
+          "minimum": 0
+        },
+        "notes": {
+          "type": "string"
+        },
+        "extensions": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "motionPrimitive": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "type"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "dwell",
+            "oscillation",
+            "linear_move",
+            "rotary_move",
+            "custom"
+          ]
+        },
+        "target_ref": {
+          "$ref": "#/$defs/identifier"
+        },
+        "window": {
+          "$ref": "#/$defs/occurrence"
+        },
+        "axis": {
+          "$ref": "#/$defs/vector"
+        },
+        "amplitude": {
+          "type": "number",
+          "minimum": 0
+        },
+        "frequency": {
+          "type": "number",
+          "minimum": 0
+        },
+        "cycles": {
+          "type": "number",
+          "minimum": 0
+        },
+        "duration": {
+          "type": "number",
+          "minimum": 0
+        },
+        "waveform": {
+          "type": "string",
+          "enum": [
+            "sine",
+            "triangle",
+            "trapezoid",
+            "cycloidal",
+            "custom"
+          ]
+        },
+        "mode": {
+          "$ref": "#/$defs/constraintMode"
+        },
+        "weight": {
+          "type": "number",
+          "minimum": 0
+        },
+        "extensions": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "pathConstraint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "type"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "keep_in_box",
+            "keep_out_box",
+            "keep_in_polygon",
+            "keep_out_polygon",
+            "corridor",
+            "max_curvature",
+            "max_path_length",
+            "custom"
+          ]
+        },
+        "min": {
+          "$ref": "#/$defs/vector"
+        },
+        "max": {
+          "$ref": "#/$defs/vector"
+        },
+        "points": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/vector"
+          },
+          "minItems": 2
+        },
+        "radius": {
+          "type": "number",
+          "minimum": 0
+        },
+        "value": {
+          "type": "number"
+        },
+        "mode": {
+          "$ref": "#/$defs/constraintMode"
+        },
+        "weight": {
+          "type": "number",
+          "minimum": 0
+        },
+        "extensions": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "cycle": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "period": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "phase_start": {
+          "type": "number",
+          "default": 0
+        },
+        "phase_end": {
+          "type": "number"
+        },
+        "direction": {
+          "type": "string",
+          "enum": [
+            "positive",
+            "negative",
+            "bidirectional"
+          ]
+        },
+        "independent_variable": {
+          "type": "string",
+          "enum": [
+            "phase",
+            "time"
+          ]
+        },
+        "input_speed": {
+          "type": "number"
+        },
+        "speed_profile_ref": {
+          "$ref": "#/$defs/identifier"
+        }
+      }
+    },
+    "motion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "order_policy",
+        "targets"
+      ],
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": [
+            "cyclic",
+            "one_shot"
+          ]
+        },
+        "order_policy": {
+          "type": "string",
+          "enum": [
+            "unordered",
+            "ordered",
+            "fixed_timing"
+          ]
+        },
+        "cycle": {
+          "$ref": "#/$defs/cycle"
+        },
+        "targets": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/targetState"
+          }
+        },
+        "primitives": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/motionPrimitive"
+          },
+          "default": []
+        },
+        "path_constraints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/pathConstraint"
+          },
+          "default": []
+        },
+        "extensions": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "groundLink": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "mode",
+            "value"
+          ],
+          "properties": {
+            "mode": {
+              "const": "fixed"
+            },
+            "value": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "mode"
+          ],
+          "properties": {
+            "mode": {
+              "const": "optimize"
+            },
+            "bounds": {
+              "$ref": "#/$defs/numericRange"
+            },
+            "initial_value": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "mode",
+            "fixed_values"
+          ],
+          "properties": {
+            "mode": {
+              "const": "portfolio"
+            },
+            "fixed_values": {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "variable_bounds": {
+              "$ref": "#/$defs/numericRange"
+            },
+            "trust_fraction": {
+              "type": "number",
+              "minimum": 0
+            },
+            "release": {
+              "type": "boolean"
+            }
+          }
+        }
+      ]
+    },
+    "mechanismBounds": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "l1": {
+          "$ref": "#/$defs/numericRange"
+        },
+        "l2": {
+          "$ref": "#/$defs/numericRange"
+        },
+        "l3": {
+          "$ref": "#/$defs/numericRange"
+        },
+        "l4": {
+          "$ref": "#/$defs/numericRange"
+        },
+        "bar_length": {
+          "$ref": "#/$defs/numericRange"
+        },
+        "base_x": {
+          "$ref": "#/$defs/numericRange"
+        },
+        "base_y": {
+          "$ref": "#/$defs/numericRange"
+        },
+        "base_angle": {
+          "$ref": "#/$defs/numericRange"
+        }
+      }
+    },
+    "portfolioOptions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "fixed_seed_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "bridge_profile_matrix": {
+          "type": "string",
+          "enum": [
+            "paired",
+            "cross"
+          ]
+        },
+        "bridge_perturbations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "trust_fraction": {
+          "type": "number",
+          "minimum": 0
+        },
+        "release_seed_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "skip_release": {
+          "type": "boolean"
+        },
+        "guarantee_fixed_count": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "mechanismSearch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "allowed_topologies",
+        "max_dof",
+        "max_actuators"
+      ],
+      "properties": {
+        "allowed_topologies": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "enum": [
+              "four_bar",
+              "slider_crank",
+              "offset_slider_crank",
+              "watt_six_bar",
+              "stephenson_six_bar",
+              "cam_follower",
+              "cam_linkage",
+              "five_bar_parallel",
+              "custom"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "max_dof": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_actuators": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ground_link": {
+          "$ref": "#/$defs/groundLink"
+        },
+        "assembly_branches": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "open",
+              "crossed"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "profiles": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "accuracy",
+              "balanced",
+              "transmission",
+              "compactness",
+              "energy",
+              "custom"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "profile_matrix": {
+          "type": "string",
+          "enum": [
+            "paired",
+            "cross"
+          ]
+        },
+        "bounds": {
+          "$ref": "#/$defs/mechanismBounds"
+        },
+        "portfolio": {
+          "$ref": "#/$defs/portfolioOptions"
+        },
+        "extensions": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "pathRequirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "max_mean_error": {
+          "type": "number",
+          "minimum": 0
+        },
+        "max_point_error": {
+          "type": "number",
+          "minimum": 0
+        },
+        "shared_mean_allowance": {
+          "type": "number",
+          "minimum": 0
+        },
+        "shared_point_allowance": {
+          "type": "number",
+          "minimum": 0
+        },
+        "mode": {
+          "$ref": "#/$defs/constraintMode"
+        },
+        "weight": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "transmissionRequirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "min_at_targets": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Acute transmission angle in units.angle; semantic validation limits it to 90 degrees or pi/2 radians."
+        },
+        "min_global": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Acute transmission angle in units.angle; semantic validation limits it to 90 degrees or pi/2 radians."
+        },
+        "selection_min_at_targets": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Acute transmission angle in units.angle; semantic validation limits it to 90 degrees or pi/2 radians."
+        },
+        "selection_min_global": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Acute transmission angle in units.angle; semantic validation limits it to 90 degrees or pi/2 radians."
+        },
+        "objective": {
+          "type": "string",
+          "enum": [
+            "mean",
+            "worst_target",
+            "soft_min",
+            "cvar",
+            "custom"
+          ]
+        },
+        "mode": {
+          "$ref": "#/$defs/constraintMode"
+        },
+        "weight": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "assemblyRequirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "full_cycle_required": {
+          "type": "boolean"
+        },
+        "min_margin": {
+          "type": "number",
+          "minimum": 0
+        },
+        "mode": {
+          "$ref": "#/$defs/constraintMode"
+        },
+        "weight": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "classificationRequirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "grashof_required": {
+          "type": "boolean"
+        },
+        "input_link_shortest": {
+          "type": "boolean"
+        },
+        "follower_not_longest": {
+          "type": "boolean"
+        },
+        "min_crank_margin": {
+          "type": "number",
+          "minimum": 0
+        },
+        "min_grashof_margin": {
+          "type": "number"
+        },
+        "mode": {
+          "$ref": "#/$defs/constraintMode"
+        }
+      }
+    },
+    "compactnessRequirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "max_link_ratio": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "max_total_link_ratio": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "max_sweep_radius_ratio": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "max_sweep_area_ratio": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "mode": {
+          "$ref": "#/$defs/constraintMode"
+        },
+        "weight": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "dynamicRequirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "max_speed": {
+          "type": "number",
+          "minimum": 0
+        },
+        "max_acceleration": {
+          "type": "number",
+          "minimum": 0
+        },
+        "max_jerk": {
+          "type": "number",
+          "minimum": 0
+        },
+        "cycle_time": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "mode": {
+          "$ref": "#/$defs/constraintMode"
+        },
+        "weight": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "robustnessRequirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "parameter_tolerance_fraction": {
+          "type": "number",
+          "minimum": 0
+        },
+        "target_perturbation": {
+          "type": "number",
+          "minimum": 0
+        },
+        "monte_carlo_samples": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "minimum_pass_fraction": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "mode": {
+          "$ref": "#/$defs/constraintMode"
+        },
+        "weight": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "requirements": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/pathRequirement"
+        },
+        "transmission": {
+          "$ref": "#/$defs/transmissionRequirement"
+        },
+        "assembly": {
+          "$ref": "#/$defs/assemblyRequirement"
+        },
+        "classification": {
+          "$ref": "#/$defs/classificationRequirement"
+        },
+        "compactness": {
+          "$ref": "#/$defs/compactnessRequirement"
+        },
+        "dynamics": {
+          "$ref": "#/$defs/dynamicRequirement"
+        },
+        "robustness": {
+          "$ref": "#/$defs/robustnessRequirement"
+        },
+        "collision_free": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "required": {
+              "type": "boolean"
+            },
+            "minimum_clearance": {
+              "type": "number",
+              "minimum": 0
+            },
+            "mode": {
+              "$ref": "#/$defs/constraintMode"
+            }
+          }
+        },
+        "extensions": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "workspace": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "envelope_min": {
+          "$ref": "#/$defs/vector"
+        },
+        "envelope_max": {
+          "$ref": "#/$defs/vector"
+        },
+        "obstacles": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/pathConstraint"
+          }
+        },
+        "minimum_clearance": {
+          "type": "number",
+          "minimum": 0
+        },
+        "extensions": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "actuation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "input_type": {
+          "type": "string",
+          "enum": [
+            "rotary",
+            "linear",
+            "shared_master",
+            "manual",
+            "custom"
+          ]
+        },
+        "master_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "phase_offset": {
+          "type": "number"
+        },
+        "nominal_speed": {
+          "type": "number"
+        },
+        "max_torque": {
+          "type": "number",
+          "minimum": 0
+        },
+        "max_force": {
+          "type": "number",
+          "minimum": 0
+        },
+        "reversible": {
+          "type": "boolean"
+        },
+        "extensions": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "search": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "implementation_profile": {
+          "type": "string"
+        },
+        "seed": {
+          "type": "integer"
+        },
+        "top_k": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "perturbations_per_model": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "parameter_noise": {
+          "type": "number",
+          "minimum": 0
+        },
+        "phase_noise": {
+          "type": "number",
+          "minimum": 0
+        },
+        "time_budget_seconds": {
+          "type": "number",
+          "minimum": 0
+        },
+        "candidate_budget": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "extensions": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "task": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "motion",
+        "mechanism_search"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "motion": {
+          "$ref": "#/$defs/motion"
+        },
+        "mechanism_search": {
+          "$ref": "#/$defs/mechanismSearch"
+        },
+        "requirements": {
+          "$ref": "#/$defs/requirements"
+        },
+        "workspace": {
+          "$ref": "#/$defs/workspace"
+        },
+        "actuation": {
+          "$ref": "#/$defs/actuation"
+        },
+        "search": {
+          "$ref": "#/$defs/search"
+        },
+        "extensions": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "synchronizationEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "participants"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "name": {
+          "type": "string"
+        },
+        "participants": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/identifier"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "phase": {
+          "type": "number"
+        },
+        "phase_range": {
+          "$ref": "#/$defs/numericRange"
+        },
+        "time": {
+          "type": "number",
+          "minimum": 0
+        },
+        "time_range": {
+          "$ref": "#/$defs/numericRange"
+        },
+        "tolerance": {
+          "type": "number",
+          "minimum": 0
+        },
+        "mode": {
+          "$ref": "#/$defs/constraintMode"
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "phaseRelation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "from_task",
+        "to_task",
+        "offset"
+      ],
+      "properties": {
+        "from_task": {
+          "$ref": "#/$defs/identifier"
+        },
+        "to_task": {
+          "$ref": "#/$defs/identifier"
+        },
+        "offset": {
+          "type": "number"
+        },
+        "tolerance": {
+          "type": "number",
+          "minimum": 0
+        },
+        "mode": {
+          "$ref": "#/$defs/constraintMode"
+        }
+      }
+    },
+    "synchronization": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "master_cycle_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "period": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "shared_input": {
+          "type": "boolean"
+        },
+        "events": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/synchronizationEvent"
+          }
+        },
+        "phase_relations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/phaseRelation"
+          }
+        },
+        "extensions": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "outputRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "top_k": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Maximum requested candidates per task. This is not a minimum-success guarantee."
+        },
+        "pareto_objectives": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "path_error",
+              "target_transmission",
+              "global_transmission",
+              "compactness",
+              "assembly_margin",
+              "grashof_margin",
+              "energy",
+              "runtime",
+              "custom"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "formats": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "json",
+              "yaml",
+              "csv",
+              "npz",
+              "png",
+              "svg",
+              "dxf",
+              "step",
+              "stl",
+              "html"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "include_lineage": {
+          "type": "boolean"
+        },
+        "include_histories": {
+          "type": "boolean"
+        },
+        "requested_validation_level": {
+          "type": "string",
+          "enum": [
+            "kinematic_candidate",
+            "mechanically_screened",
+            "dynamically_evaluated",
+            "structurally_evaluated",
+            "prototype_validated"
+          ]
+        }
+      }
+    }
+  }
+}

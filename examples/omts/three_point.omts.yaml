@@ -1,0 +1,76 @@
+spec: open-mechanism-task
+version: 0.1.0
+task_set_id: three_point_demo
+name: Three-point planar four-bar research task
+description: >-
+  A task accepted by the draft R2.5c adapter. Adaptation prepares files only;
+  the separately supplied research engine determines whether solutions exist.
+capabilities_required:
+  - planar_2d
+  - cyclic_motion
+  - target_positions
+  - four_bar
+  - hybrid_ground_link_portfolio
+unsupported_feature_policy: error
+units: {length: normalized, angle: deg, time: s}
+coordinate_system:
+  frame_id: world
+  dimension: 2
+  handedness: right
+  axes: {x: right, y: up}
+outputs:
+  top_k: 5
+  formats: [json, csv, npz]
+  include_lineage: true
+  include_histories: true
+  requested_validation_level: kinematic_candidate
+tasks:
+  - id: transfer
+    motion:
+      mode: cyclic
+      order_policy: unordered
+      cycle: {phase_start: 0, phase_end: 360, direction: positive, independent_variable: phase}
+      targets:
+        - id: T1
+          position: [-6.0, 2.0]
+          occurrence: {free: true}
+          tolerance: {position: 0.075}
+          mode: hard
+        - id: T2
+          position: [-2.0, 6.0]
+          occurrence: {free: true}
+          tolerance: {position: 0.075}
+          mode: hard
+        - id: T3
+          position: [0.5, 3.5]
+          occurrence: {free: true}
+          tolerance: {position: 0.075}
+          mode: hard
+    mechanism_search:
+      allowed_topologies: [four_bar]
+      max_dof: 1
+      max_actuators: 1
+      ground_link: {mode: portfolio, fixed_values: [6.0], trust_fraction: 0.25, release: true}
+      assembly_branches: [open, crossed]
+      profiles: [accuracy, balanced, transmission]
+      profile_matrix: cross
+      portfolio:
+        fixed_seed_count: 3
+        bridge_profile_matrix: paired
+        bridge_perturbations: 0
+        trust_fraction: 0.25
+        release_seed_count: 3
+        skip_release: false
+        guarantee_fixed_count: 0
+    requirements:
+      path: {max_mean_error: 0.05, max_point_error: 0.075, shared_mean_allowance: 0.02, shared_point_allowance: 0.05, mode: hard}
+      transmission: {selection_min_at_targets: 15, selection_min_global: 10, min_at_targets: 35, min_global: 15, objective: worst_target, mode: soft}
+      assembly: {full_cycle_required: true, min_margin: 0, mode: hard}
+      classification: {grashof_required: true, input_link_shortest: true, follower_not_longest: false, mode: hard}
+      compactness: {mode: report_only}
+    search:
+      implementation_profile: r2.5c-fourbar
+      seed: 101
+      perturbations_per_model: 0
+      parameter_noise: 0.18
+      phase_noise: 4
