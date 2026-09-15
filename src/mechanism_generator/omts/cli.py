@@ -28,7 +28,7 @@ def main(argv=None) -> int:
                 print("VALID OMTS: schema and semantic checks passed. Solver support and feasibility are not evaluated.")
             else:
                 path = write_plan(data, args.output_dir)
-                print(f"PREPARED: {path} (not evaluated; requires the external research engine and weights)")
+                print(f"PREPARED: {path} (not evaluated; run with the installed engine and downloaded weights)")
     except (DocumentError, OSError, RecursionError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 1

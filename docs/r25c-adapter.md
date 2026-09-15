@@ -23,7 +23,7 @@ your own input annotations and generated results before sharing them.
 | Task feature | Behavior |
 |---|---|
 | Units/frame | `normalized`, `deg`, `s`; right-handed planar XY, x right/y up |
-| Motion | Exactly three hard position targets; free phases, unordered or ordered |
+| Motion | Exactly three hard position targets, optionally with all three planar orientations; free phases, unordered or ordered |
 | Ordering | Listed order, or sorted by unique `order_index` supplied on every target |
 | Cycle | Positive 0â€“360 degree phase cycle, without period/speed/time constraints |
 | Topology | Four-bar, one degree of freedom, one actuator |
@@ -31,7 +31,8 @@ your own input annotations and generated results before sharing them.
 | Profiles | All three accuracy/balanced/transmission profiles; paired or cross matrix |
 | Branches | Open (`negative`), crossed (`positive`), or both |
 | Path | Hard positive mean/point ceilings and shared path allowances |
-| Target tolerance | Identical position tolerances on all three targets; combined with the global point ceiling using the smaller value |
+| Position tolerance | Identical position tolerances on all three targets; combined with the global point ceiling using the smaller value |
+| Orientation tolerance | Individual positive tolerances below 180 degrees; omitted values default to 5 degrees |
 | Transmission | Soft `worst_target` goals plus separately mapped practical selection floors; degrees only |
 | Assembly/class | Full-cycle assembly, Grashof, crank-shortest; optional follower-not-longest |
 | Compactness | Report-only request; no custom thresholds or weights in this adapter |
@@ -50,7 +51,58 @@ fraction 0.25, three fixed/release seeds, paired bridges, no perturbations, seed
 path ceilings are 0.05 mean/0.075 per point, with shared allowances 0.02/0.05.
 Transmission goals are 35/15 degrees (target/global), with selection floors 15/10.
 
-The frozen research engine retains its normal optimizer schedules, profile-weighted
+## Three planar poses
+
+Each pose combines the existing output-point position with the direction of the
+coupler. Add `orientation: {type: planar_angle, value: ...}` to **all three** targets.
+Set `tolerance.orientation` independently for each target; an omitted angular
+tolerance defaults to 5 degrees. Tolerances must be finite, greater than zero,
+and below 180 degrees. Angles may be any finite number of degrees: the engine
+compares the shortest circular difference, so 179 and -179 degrees differ by
+2 degrees. An angular tolerance without a target orientation is rejected.
+
+The tool frame has its origin at output point **P**. Its positive x-axis points
+from coupler joint **A** (attached to the input crank) toward **B** (attached to the
+output rocker). The angle is measured counterclockwise from world +x in the
+right-handed XY frame. This first pose capability has no adjustable mounting
+angle between that frame and a workpiece. A target orientation is a directed
+angle: reversing A to B by 180 degrees is a different pose.
+
+For example, one target can be written as:
+
+```yaml
+- id: T1
+  position: [-6.0, 2.0]
+  orientation: {type: planar_angle, value: 30}
+  occurrence: {free: true}
+  tolerance: {position: 0.075, orientation: 3}
+  mode: hard
+```
+
+The adapter writes `--target_orientations_deg` and
+`--orientation_tolerances_deg`, each followed by three values. It also records
+these arrays in the plan. Positions, orientations, tolerances and target IDs are
+reordered together when `order_index` is used. Independent tasks retain their
+own settings; position-only tasks receive no orientation flags.
+
+Position and orientation are checked at the **same three optimized target
+phases**. A selected pose candidate must satisfy every requested angular
+tolerance as well as the existing eligibility checks. These are target-only
+constraints: they do not prescribe orientation between targets, motion speed,
+timing or dwell. The released proposal networks still take positions as input;
+the engine refines their proposals against the requested poses. Search can return
+no eligible solution, and that does not establish that a task is impossible.
+
+Pose candidates report `orientation_acceptable`, `pose_acceptable`,
+`max_orientation_error_deg` and `mean_orientation_error_deg`, plus requested,
+matched and error angles for each target. `path_acceptable` retains its positional
+meaning; `pose_acceptable` requires both position and orientation acceptance.
+Candidates that meet the path limits but miss an angular tolerance are marked
+`path_acceptable_but_orientation_failed` and cannot be selected. The existing
+`selection_eligible` and `engineering_acceptable` fields include the orientation
+gate for pose tasks. This qualification still describes a kinematic candidate.
+
+The research engine retains its normal optimizer schedules, profile-weighted
 objectives, compactness optimization/ranking, and search bounds relative to
 `D = max(maximum pairwise target separation, 0.25)`. Variable ground is searched
 over 0.5Dâ€“2.5D, moving links over 0.05Dâ€“3D. A report-only compactness request adds
@@ -60,10 +112,10 @@ These are heuristic search limits, not a claim to enumerate every valid mechanis
 ## Rejections are intentional
 
 The wider schema accepts many features this adapter cannot implement. It rejects
-fixed-only/optimized-only ground modes, custom bounds, unequal per-target tolerances,
+fixed-only/optimized-only ground modes, custom bounds, unequal per-target position tolerances,
 hard transmission goals, custom weights, compactness constraints, custom Pareto
 objectives, time/candidate budgets, non-normalized lengths, radians, reversed cycles,
-orientation, timing/dwell, loads/dynamics, collisions, synchronization, extensions,
+partial or spatial orientation requests, timing/dwell, loads/dynamics, collisions, synchronization, extensions,
 and unsupported output options. Only `unsupported_feature_policy: error` is accepted.
 
 Zero path ceilings are rejected because zero disables those checks in the research
@@ -88,8 +140,9 @@ own location anchors the plan, target and output paths; the model directory is
 resolved from the invoking directory. Invocation uses argument arrays without a
 command shell. No download happens during execution.
 
-Regenerate foundation-era plans: the public engine and cleaned safetensors weights
-have new identities. `r2.5c-fourbar` remains the accepted input profile name; new
-plans identify the public implementation. The draft supported subset is unchanged.
+Regenerate plans after an engine update: the helper requires exact engine source
+identities. `r2.5c-fourbar` remains the accepted input profile name; new plans
+identify the public implementation. Three planar pose targets extend the prior
+position-only subset without changing the existing model weights.
 The model exports passed exact tensor and prediction parity checks, and current
 numerical engine checks are documented in the engine guide.

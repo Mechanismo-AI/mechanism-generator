@@ -1,6 +1,6 @@
 {
   "implementation": "r2.5c-public-alpha",
-  "adapter_version": "0.1.0a3",
+  "adapter_version": "0.1.0a4",
   "status": "draft_with_packaged_engine",
   "omts_versions": [
     "0.1",
@@ -30,13 +30,13 @@
     "optional_follower_not_longest",
     "compactness_metrics",
     "swept_envelope_metrics",
-    "candidate_lineage"
+    "candidate_lineage",
+    "target_orientation"
   ],
   "unsupported": [
     "spatial_3d",
     "fixed_ground_link",
     "variable_ground_link",
-    "target_orientation",
     "fixed_phase_targets",
     "fixed_time_targets",
     "dwell",
@@ -60,7 +60,9 @@
     "Only soft worst-target transmission goals and report-only compactness requests are supported.",
     "Custom bounds, objective weights, timing, budgets and unsupported output options are rejected.",
     "No validation level above kinematic_candidate is accepted, and a prepared plan is not a validated mechanism.",
-    "Fixed representative reservation is disabled so rejected reference designs cannot bypass selected eligibility."
+    "Fixed representative reservation is disabled so rejected reference designs cannot bypass selected eligibility.",
+    "Three planar target orientations: tool frame at P with directed +x parallel to coupler A-to-B in world XY; default 5 degree tolerance per target, individually configurable.",
+    "Orientation is constrained only at the same three selected target phases; no mounting-angle variable, intermediate orientation path, timing or dwell."
   ],
   "expected_artifacts": {
     "balanced.safetensors": "72a20f1f6828686c18100b3f5c7f913161b6042cfd9ea3baac15042d1b9fa8a0",
@@ -72,8 +74,9 @@
     "__main__.py": "935a1c1166b0c1ea35a82256345000bf2c73ded718d77773bc27a71ecce28f7d",
     "cli.py": "9fb118ddee893f47bb768a574ec35efbe985c8ee5c2de6eb85e44d1f2a04e5fb",
     "models.py": "80b145876288d53ea1e96c59543923ec03b1c9266a06b0253753e3c65b333e5f",
+    "orientation.py": "cb7443226549e536f1c46f7f58bb01fb5016627227c293efb81e2ce1dce5786a",
     "provenance.py": "1d84d20d1f730fc692c2e5826c269a5efeb808c4b063e8871b79331883190670",
-    "r25b.py": "7fa6eaa135afcb9cd6ea1566c37df9caea70e40547f3f3fe38db287529a81237",
-    "r25c.py": "d3a664fd71a7012e6aa95243b145859a3d2baad88822db96eec3d7d26b3553b8"
+    "r25b.py": "03ddbc935722f4e7536354f42fc5397ef6e311f0d2030360498b7f5192843cdd",
+    "r25c.py": "8f7e773dddf80f547a07a210c3b1e0daab07d43fda340ac9e038d5393a11967a"
   }
 }

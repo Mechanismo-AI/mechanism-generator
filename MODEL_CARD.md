@@ -80,9 +80,11 @@ Use these models for research, education, and initial four-bar design exploratio
 with the accompanying geometry solver and qualification reports. Inspect the
 resulting geometry, constraints, and application requirements before fabrication.
 
-The engine addresses planar cyclic position tasks, with optional cyclic target
-ordering. It does not establish end-effector orientation, velocity profiles,
-timing/dwell, loads, torque, collision clearance, structural strength, fatigue,
+The models propose geometry from three planar positions. The accompanying engine
+also supports optional directed coupler orientations at those same three target
+phases, with optional cyclic ordering; see the [three-pose guide](docs/three-pose.md).
+It does not establish intermediate orientations, velocity profiles, timing/dwell,
+loads, torque, collision clearance, structural strength, fatigue,
 manufacturability, or hardware safety. Out-of-domain targets and different task
 scales can degrade proposals. Local optimization can miss valid solutions.
 Selection eligibility and the historical `engineering_acceptable` label are

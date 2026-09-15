@@ -1,0 +1,191 @@
+{
+  "verification_kind": "Measured point-only numerical parity: installed v0.1.0a3 wheel versus pose-enabled development source",
+  "scope": "One fixed-seed case at quick budgets, real released weights; not a general numerical equivalence proof",
+  "case_id": "wide_sweep",
+  "baseline": {
+    "distribution": "mechanism-generator",
+    "version": "0.1.0a3",
+    "installation": "Released wheel installed in a separate runtime; not the source checkout",
+    "engine_sha256": {
+      "script_sha256": "d3a664fd71a7012e6aa95243b145859a3d2baad88822db96eec3d7d26b3553b8",
+      "engine_sha256": "7fa6eaa135afcb9cd6ea1566c37df9caea70e40547f3f3fe38db287529a81237"
+    }
+  },
+  "comparison": {
+    "installation": "Development source checkout",
+    "source_sha256": {
+      "r25b.py": "03ddbc935722f4e7536354f42fc5397ef6e311f0d2030360498b7f5192843cdd",
+      "r25c.py": "8f7e773dddf80f547a07a210c3b1e0daab07d43fda340ac9e038d5393a11967a",
+      "orientation.py": "cb7443226549e536f1c46f7f58bb01fb5016627227c293efb81e2ce1dce5786a"
+    },
+    "source_files_checked_stable_during_measurement": [
+      "r25b.py",
+      "r25c.py",
+      "orientation.py"
+    ]
+  },
+  "models": [
+    {
+      "role": "balanced",
+      "sha256": "72a20f1f6828686c18100b3f5c7f913161b6042cfd9ea3baac15042d1b9fa8a0"
+    },
+    {
+      "role": "path",
+      "sha256": "8193a5d5208c227424cd570405b4c148cc2987c3a266a348a0f6b8184445f61e"
+    },
+    {
+      "role": "transmission",
+      "sha256": "30a23c4aee3a7d5e29673757a791acde6bddd93cf207aaea0cceb5627621e55f"
+    }
+  ],
+  "shared_arguments": {
+    "adam_accuracy_steps": 10,
+    "adam_lr": 0.025,
+    "adam_tradeoff_steps": 10,
+    "allow_unqualified_fallback": false,
+    "assembly_margin_ratio": 0.01,
+    "assembly_weight": 10000.0,
+    "bar_length_max_ratio": 1.5,
+    "base_search_radius_ratio": 3.0,
+    "branches": "both",
+    "class_margin": 0.05,
+    "class_margin_ratio": 0.01,
+    "class_weight": 2000.0,
+    "compactness_bar_ratio": 1.0,
+    "compactness_max_link_ratio": 2.0,
+    "compactness_softness": 0.15,
+    "compactness_sweep_area_ratio": 12.0,
+    "compactness_sweep_radius_ratio": 2.75,
+    "compactness_total_link_ratio": 5.0,
+    "compactness_weight": 0.05,
+    "dedup_curve_threshold": 0.025,
+    "dedup_parameter_threshold": 0.025,
+    "demo": false,
+    "device": "cpu",
+    "drift_weight": 1e-05,
+    "dtype": "float64",
+    "enforce_follower_not_longest": false,
+    "engineering_max_link_ratio": 0.0,
+    "engineering_max_sweep_radius_ratio": 0.0,
+    "fixed_ground_link_value": 6.0,
+    "global_min_focus": 0.5,
+    "global_min_temperature": 0.01,
+    "global_top_fraction": 0.05,
+    "global_transmission_floor_deg": 15.0,
+    "grad_clip": 100.0,
+    "grashof_margin_ratio": 0.01,
+    "grashof_weight": 2000.0,
+    "ground_link_max_ratio": 2.5,
+    "ground_link_min_ratio": 0.5,
+    "ground_link_mode": "optimize",
+    "headless": true,
+    "history_interval": 10,
+    "lbfgs_lr": 0.6,
+    "lbfgs_steps": 3,
+    "max_mean_error": 0.05,
+    "max_point_error": 0.075,
+    "minimum_global_transmission": 10.0,
+    "minimum_target_scale": 0.25,
+    "minimum_target_transmission": 15.0,
+    "model_roles": [
+      "balanced",
+      "path",
+      "transmission"
+    ],
+    "moving_link_max_ratio": 3.0,
+    "moving_link_min_ratio": 0.05,
+    "no_contribution_bundle": true,
+    "no_plots": true,
+    "optimization_global_steps": 91,
+    "parameter_noise": 0.18,
+    "perturbations_per_model": 0,
+    "phase_mode": "ordered",
+    "phase_noise_deg": 4.0,
+    "portfolio_bridge_accuracy_steps": 5,
+    "portfolio_bridge_lbfgs_steps": 2,
+    "portfolio_bridge_parameter_noise": 0.08,
+    "portfolio_bridge_perturbations": 0,
+    "portfolio_bridge_phase_noise_deg": 2.0,
+    "portfolio_bridge_profile_matrix": "paired",
+    "portfolio_bridge_tradeoff_steps": 5,
+    "portfolio_fixed_seed_count": 2,
+    "portfolio_guarantee_fixed_count": 0,
+    "portfolio_l1_trust_fraction": 0.25,
+    "portfolio_release_accuracy_steps": 5,
+    "portfolio_release_lbfgs_steps": 2,
+    "portfolio_release_seed_count": 2,
+    "portfolio_release_tradeoff_steps": 5,
+    "portfolio_skip_release": false,
+    "portfolio_stage_top_k": 3,
+    "profile_matrix": "paired",
+    "quick": false,
+    "ranking_compactness_weight": 0.03,
+    "robustness_weight": 750.0,
+    "seed": 101,
+    "seed_phase_steps": 181,
+    "shared_mean_allowance": 0.02,
+    "shared_point_allowance": 0.05,
+    "show_plots": false,
+    "strict_qualification": true,
+    "target_transmission_deg": 35.0,
+    "target_validity_weight": 10000.0,
+    "targets": [
+      0.8148059316542522,
+      2.404569516136281,
+      -1.6111108370430023,
+      3.508856156125667,
+      -1.1760708002672133,
+      1.1781947141794002
+    ],
+    "top_k": 5,
+    "verification_steps": 721,
+    "worst_target_focus": 0.9,
+    "worst_target_temperature": 0.02
+  },
+  "arguments_not_shared": {
+    "released_a3": {},
+    "current_source": {
+      "orientation_tolerances_deg": null,
+      "target_orientations_deg": null
+    }
+  },
+  "budgets": {
+    "adam_accuracy_steps": 10,
+    "adam_tradeoff_steps": 10,
+    "lbfgs_steps": 3,
+    "portfolio_bridge_accuracy_steps": 5,
+    "portfolio_bridge_tradeoff_steps": 5,
+    "portfolio_bridge_lbfgs_steps": 2,
+    "portfolio_release_accuracy_steps": 5,
+    "portfolio_release_tradeoff_steps": 5,
+    "portfolio_release_lbfgs_steps": 2,
+    "seed_phase_steps": 181,
+    "optimization_global_steps": 91,
+    "verification_steps": 721,
+    "portfolio_fixed_seed_count": 2,
+    "portfolio_release_seed_count": 2
+  },
+  "counts": {
+    "released_a3": {
+      "all": 16,
+      "selected": 2
+    },
+    "current_source": {
+      "all": 16,
+      "selected": 2
+    }
+  },
+  "compared_common_fields": 2232,
+  "compared_common_numeric_fields": 1660,
+  "excluded_fields": [
+    "history_path",
+    "fields containing runtime"
+  ],
+  "candidate_ids_and_order_identical": true,
+  "added_fields": [],
+  "removed_fields": [],
+  "differences": [],
+  "common_fields_exactly_equal": true,
+  "interpretation": "The measured point-only outputs retained identical values for this case. This is not a proof of equivalence for every input or a pose-quality result.",
+  "runtime_comparison": "Omitted: concurrent workloads make these wall times unsuitable for a speed comparison."
+}

@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.1.0a4 — three planar poses
+
+- Accept three directed orientations alongside three target positions, with
+  individual angular tolerances, through the engine CLI and OMTS adapter.
+- Refine position and orientation at the same phases; require both for selected
+  pose designs, and report angular errors and requested/achieved arrows.
+- Preserve pose requirements and qualification counts in optional contributions;
+  generate bundle schema 0.2 while retaining legacy 0.1 review and validation.
+- Add independent analytical geometry, gradient, qualification, and comparison
+  checks for this first orientation capability.
+
+The tool frame is located at P with its positive x axis parallel to A → B. Timing,
+intermediate orientations, loads, and collision checks remain future work. The
+three proposal models are unchanged position-trained exports from v0.1.0a2.
+Regenerate OMTS run plans after upgrading so their engine fingerprints match.
+
 ## 0.1.0a3 — local contribution review
 
 - Prepare an offline contribution bundle after each completed target and run.

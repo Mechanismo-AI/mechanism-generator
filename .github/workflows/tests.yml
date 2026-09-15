@@ -26,8 +26,10 @@ jobs:
       - run: python -m pytest
       - run: python -m build
       - run: omts validate examples/omts/three_point.omts.yaml
+      - run: omts validate examples/omts/three_pose.omts.yaml
       - run: omts validate examples/omts/synchronized_line.omts.yaml
       - run: omts adapt examples/omts/three_point.omts.yaml --output-dir generated/ci
+      - run: omts adapt examples/omts/three_pose.omts.yaml --output-dir generated/ci-pose
       - run: mechanism-contribute --help
       - uses: actions/setup-node@v6
         with:

@@ -1,12 +1,12 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/Mechanismo-AI/mechanism-generator/blob/main/src/mechanism_generator/contributions/schema.json",
-  "title": "Mechanism Generator community contribution 0.2",
+  "title": "Mechanism Generator community contribution 0.1",
   "type": "object",
   "additionalProperties": false,
   "properties": {
     "schema_version": {
-      "const": "0.2"
+      "const": "0.1"
     },
     "kind": {
       "enum": [
@@ -64,17 +64,6 @@
               "selected_count": {
                 "type": "integer",
                 "minimum": 0
-              },
-              "orientation_required": {
-                "type": "boolean"
-              },
-              "orientation_acceptable_count": {
-                "type": "integer",
-                "minimum": 0
-              },
-              "pose_acceptable_count": {
-                "type": "integer",
-                "minimum": 0
               }
             },
             "required": [
@@ -83,25 +72,7 @@
               "path_acceptable_count",
               "selection_eligible_count",
               "engineering_acceptable_count",
-              "selected_count",
-              "orientation_required"
-            ],
-            "allOf": [
-              {
-                "if": {
-                  "properties": {
-                    "orientation_required": {
-                      "const": true
-                    }
-                  }
-                },
-                "then": {
-                  "required": [
-                    "orientation_acceptable_count",
-                    "pose_acceptable_count"
-                  ]
-                }
-              }
+              "selected_count"
             ]
           }
         }
@@ -131,27 +102,6 @@
             },
             "minItems": 6,
             "maxItems": 6
-          },
-          "orientation_frame": {
-            "const": "coupler_A_to_B"
-          },
-          "target_orientations_deg": {
-            "type": "array",
-            "items": {
-              "type": "number"
-            },
-            "minItems": 3,
-            "maxItems": 3
-          },
-          "orientation_tolerances_deg": {
-            "type": "array",
-            "items": {
-              "type": "number",
-              "exclusiveMinimum": 0,
-              "exclusiveMaximum": 180
-            },
-            "minItems": 3,
-            "maxItems": 3
           }
         },
         "required": [
@@ -564,118 +514,12 @@
                     "path_acceptable_but_selection_floor_failed",
                     "selection_acceptable",
                     "engineering_acceptable",
-                    "not_evaluated",
-                    "path_acceptable_but_orientation_failed"
+                    "not_evaluated"
                   ]
-                },
-                "orientation_required": {
-                  "type": "boolean"
-                },
-                "orientation_acceptable": {
-                  "type": "boolean"
-                },
-                "pose_acceptable": {
-                  "type": "boolean"
-                },
-                "orientation_frame": {
-                  "const": "coupler_A_to_B"
-                },
-                "max_orientation_error_deg": {
-                  "type": "number",
-                  "minimum": 0,
-                  "maximum": 180
-                },
-                "mean_orientation_error_deg": {
-                  "type": "number",
-                  "minimum": 0,
-                  "maximum": 180
-                },
-                "initial_max_orientation_error_deg": {
-                  "type": "number",
-                  "minimum": 0,
-                  "maximum": 180
-                },
-                "target_orientation_1_deg": {
-                  "type": "number"
-                },
-                "orientation_tolerance_1_deg": {
-                  "type": "number",
-                  "exclusiveMinimum": 0,
-                  "exclusiveMaximum": 180
-                },
-                "matched_orientation_1_deg": {
-                  "type": "number"
-                },
-                "orientation_error_1_deg": {
-                  "type": "number",
-                  "minimum": 0,
-                  "maximum": 180
-                },
-                "target_orientation_2_deg": {
-                  "type": "number"
-                },
-                "orientation_tolerance_2_deg": {
-                  "type": "number",
-                  "exclusiveMinimum": 0,
-                  "exclusiveMaximum": 180
-                },
-                "matched_orientation_2_deg": {
-                  "type": "number"
-                },
-                "orientation_error_2_deg": {
-                  "type": "number",
-                  "minimum": 0,
-                  "maximum": 180
-                },
-                "target_orientation_3_deg": {
-                  "type": "number"
-                },
-                "orientation_tolerance_3_deg": {
-                  "type": "number",
-                  "exclusiveMinimum": 0,
-                  "exclusiveMaximum": 180
-                },
-                "matched_orientation_3_deg": {
-                  "type": "number"
-                },
-                "orientation_error_3_deg": {
-                  "type": "number",
-                  "minimum": 0,
-                  "maximum": 180
                 }
               },
               "required": [
                 "candidate_id"
-              ],
-              "allOf": [
-                {
-                  "if": {
-                    "required": [
-                      "orientation_required"
-                    ],
-                    "properties": {
-                      "orientation_required": {
-                        "const": true
-                      }
-                    }
-                  },
-                  "then": {
-                    "required": [
-                      "orientation_frame",
-                      "orientation_acceptable",
-                      "pose_acceptable",
-                      "path_acceptable",
-                      "selection_eligible",
-                      "engineering_acceptable",
-                      "target_orientation_1_deg",
-                      "orientation_tolerance_1_deg",
-                      "target_orientation_2_deg",
-                      "orientation_tolerance_2_deg",
-                      "target_orientation_3_deg",
-                      "orientation_tolerance_3_deg"
-                    ]
-                  }
-                }
               ]
             }
           }
@@ -695,10 +539,6 @@
           "pattern": "^[0-9a-f]{64}$"
         },
         "parent_engine_sha256": {
-          "type": "string",
-          "pattern": "^[0-9a-f]{64}$"
-        },
-        "orientation_sha256": {
           "type": "string",
           "pattern": "^[0-9a-f]{64}$"
         },
