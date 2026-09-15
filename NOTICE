@@ -1,7 +1,7 @@
 Mechanism Generator
 Copyright 2026 Mechanismo-AI contributors
 
-Code, OMTS specification/schema, examples, and the three public model-weight
-exports are provided under the Apache License, Version 2.0. Model provenance and
+Code, training recipes, OMTS specification/schema, synthetic examples, and public
+model-weight exports are provided under the Apache License, Version 2.0. Model provenance and
 reproduction limits are documented in MODEL_CARD.md. Third-party dependencies
-retain their own licenses. Training datasets are not included.
+retain their own licenses. The training data generator uses no external dataset.

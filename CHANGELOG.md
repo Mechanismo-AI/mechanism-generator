@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.1.0a5 — pose recovery and reproducible training
+
+- Add deterministic three-pose geometric seeds alongside neural proposals and
+  refinement, preserving exact seeds and applying the existing final qualification.
+- Add a frozen corpus of eight development and eight reserved evaluation tasks,
+  independent candidate verification and comparison tools that retain failures
+  and record additional initializer work.
+- Package the R2, R2.2, R2.3a and R2.4 training sequence, historical settings,
+  synthetic data regeneration, clean teacher/warm-start dependencies, and a
+  two-run numerical repeatability check.
+- Export new training weights as deterministic safetensors files; use restricted
+  loading for local training state and portable random-generator serialization.
+- Preserve geometric provenance in contribution schema 0.3, retaining validation
+  and review of schemas 0.1 and 0.2.
+
+The three inference models remain unchanged. Small training checks do not claim
+full historical weight reproduction. Regenerate OMTS plans after upgrading.
+
 ## 0.1.0a4 — three planar poses
 
 - Accept three directed orientations alongside three target positions, with

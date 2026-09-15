@@ -58,7 +58,7 @@ subset, while the local files can contain sections you chose to omit.
 | Section | Contents | Can omit from the reviewed download? |
 | --- | --- | --- |
 | Outcome | Run completion status, whether each task requires orientation, and counts of candidates and qualification results | No |
-| Task | Target positions and, for pose tasks, requested angles, angular tolerances and tool frame | Yes |
+| Task | Target positions and, for pose tasks, requested angles, angular tolerances, tool frame and geometric initialization diagnostics | Yes |
 | Candidates | Candidate geometry and measured results, including requested and matched pose angles, tolerances, errors and rejected candidates | Yes |
 | Settings | Selected solver settings and random seed | Yes |
 | Provenance | Available engine and model identifiers and hashes | Yes |
@@ -76,6 +76,13 @@ a failed pose search from appearing to be a successful position-only search when
 the detailed geometry is withheld. Pose acceptance means that the candidate meets
 both position and orientation requirements; the usual selection and engineering
 gates still apply.
+
+Geometric pose candidates retain their distinct `pose_geometry` source, exact-seed
+or refined-child origin, sample index, and remapped parent reference. The optional
+Task section reports the initializer's sample and candidate counts and recorded
+work; Settings includes its configured budgets, and Provenance includes its source
+fingerprint. These fields distinguish target-derived geometry from neural proposals
+without exposing local paths or arbitrary checkpoint metadata.
 
 Candidate failures and runs with no eligible designs are useful contributions.
 They help expose limits that successful examples alone would miss. A reported
@@ -96,11 +103,12 @@ The command below validates either a local bundle or a reviewed submission:
 mechanism-contribute validate path/to/reviewed-contribution.json
 ```
 
-Validation runs locally and does not submit the file. New bundles use the version 0.2
+Validation runs locally and does not submit the file. New bundles use the version 0.3
 [contribution schema](../src/mechanism_generator/contributions/schema.json)
-with explicit pose requirements and qualification counts. Existing version 0.1
-bundles remain supported using the unchanged
-[legacy schema](../src/mechanism_generator/contributions/schema-v0.1.json).
+with explicit pose requirements, qualification counts, and geometric initialization
+provenance. Existing versions remain supported using the unchanged
+[0.1 schema](../src/mechanism_generator/contributions/schema-v0.1.json) and
+[0.2 schema](../src/mechanism_generator/contributions/schema-v0.2.json).
 Reviewing a bundle preserves its schema version. Validation checks count and
 qualification consistency, including the pose gate when candidate details are
 included. Valid structure does not establish correct results, ownership,

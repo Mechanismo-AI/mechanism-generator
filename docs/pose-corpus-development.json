@@ -1,0 +1,1545 @@
+{
+  "baseline": {
+    "engine_identities": [
+      {
+        "engine_sha256": "03ddbc935722f4e7536354f42fc5397ef6e311f0d2030360498b7f5192843cdd",
+        "orientation_sha256": "cb7443226549e536f1c46f7f58bb01fb5016627227c293efb81e2ce1dce5786a",
+        "script_sha256": "8f7e773dddf80f547a07a210c3b1e0daab07d43fda340ac9e038d5393a11967a",
+        "variant": "V5.3-R2.5c_HybridGroundLinkPortfolio-public-alpha"
+      }
+    ],
+    "initializer_diagnostic_totals": null,
+    "initializer_settings": {
+      "pose_dyad_samples": null,
+      "pose_dyad_seed_count": null
+    },
+    "label": "v0.1.0a4",
+    "summary": {
+      "all_candidates": 143,
+      "attempted_cases": 8,
+      "completed_cases": 8,
+      "failed_cases": 0,
+      "requested_cases": 8,
+      "selected_candidates": 0,
+      "selected_pose_success_cases": 0,
+      "selected_pose_success_fraction": 0.0,
+      "total_wall_runtime_seconds": 475.8257139000052
+    }
+  },
+  "baseline_report_sha256": "44e632a1a617497c23cd7832e1389e13a8620d513c3735ce1b267c669a1e3a2c",
+  "candidate": {
+    "engine_identities": [
+      {
+        "engine_sha256": "03ddbc935722f4e7536354f42fc5397ef6e311f0d2030360498b7f5192843cdd",
+        "orientation_sha256": "cb7443226549e536f1c46f7f58bb01fb5016627227c293efb81e2ce1dce5786a",
+        "pose_initialization_sha256": "5be10d2c13da2a09498ab7a8097f60d63de55a292a31755e722f6879db81188c",
+        "script_sha256": "e9855b4b0b75e2997bc839be6b165d1f36056bc446143427b1a19e4ce27eba77",
+        "variant": "V5.3-R2.5c_HybridGroundLinkPortfolio-public-alpha"
+      }
+    ],
+    "initializer_diagnostic_totals": {
+      "attempted_samples": 32768,
+      "branch_and_order_consistent": 3263,
+      "evaluated_seed_count": 48,
+      "finite_dyads": 32768,
+      "full_cycle_robust_crank_shortest": 3351,
+      "generation_runtime_seconds": 0.08597600000939565,
+      "refined_candidate_count": 48,
+      "refinement_runtime_seconds": 203.9716527000055,
+      "requested_samples": 32768,
+      "requested_seed_count": 48,
+      "returned_seeds": 48,
+      "transmission_selection_floors": 3020,
+      "verification_runtime_seconds": 0.7610624000080861,
+      "within_search_bounds": 20025
+    },
+    "initializer_settings": {
+      "pose_dyad_samples": 4096,
+      "pose_dyad_seed_count": 6
+    },
+    "label": "source-frozen",
+    "summary": {
+      "all_candidates": 239,
+      "attempted_cases": 8,
+      "completed_cases": 8,
+      "failed_cases": 0,
+      "requested_cases": 8,
+      "selected_candidates": 40,
+      "selected_pose_success_cases": 8,
+      "selected_pose_success_fraction": 1.0,
+      "total_wall_runtime_seconds": 891.9822920000079
+    }
+  },
+  "candidate_report_sha256": "fabeee009ba2144d6e841524046faef25897b776487511a26ff5947cb14ca376",
+  "case_hashes": [
+    {
+      "id": "development-001",
+      "sha256": "d8841b7078c9c0aa735e46961c8bfec6c8c9afbcf4ea8f8ba5e552d50489f150"
+    },
+    {
+      "id": "development-002",
+      "sha256": "74b82a37635d6c2bdb27217a2d5c9bf0432f7cc38c26987e382e48838b4e40fd"
+    },
+    {
+      "id": "development-003",
+      "sha256": "731960101e5f72fcc3bfa6366f517e2442e88a50653bb6b20b220564aedca7b4"
+    },
+    {
+      "id": "development-004",
+      "sha256": "7df50c1acb265b726454476c1dd7ad0e5851d69067cae9d213bcf9e99da386c3"
+    },
+    {
+      "id": "development-005",
+      "sha256": "9289b0ae93e1c1eba7deec51a21d9e34dd85df3c2b1ec1113ec1a00d93157cc5"
+    },
+    {
+      "id": "development-006",
+      "sha256": "b550d89672b3f5e380337f11367951c8f6b5501f7ae0dcf7951692a7802e9cb2"
+    },
+    {
+      "id": "development-007",
+      "sha256": "20f3596a62f1fe87ad9add371e53278ad4970657c181c00aba1bd5ae8870bb77"
+    },
+    {
+      "id": "development-008",
+      "sha256": "b1ccdb62da4620e289c4c029a4ae7c9f19067941efa5165ffaf8f6ef05a9812f"
+    }
+  ],
+  "case_results": [
+    {
+      "baseline": {
+        "all_candidates_diagnostic": {
+          "best_by_joint_error": {
+            "candidate_id": "bridge_trust_002",
+            "crank_is_strictly_shortest": true,
+            "engine_selection_eligible": false,
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 33.523690357345174,
+            "grashof": true,
+            "joint_normalized_error": 5.398271950629976,
+            "maximum_orientation_error_deg": 10.796543901259952,
+            "maximum_position_error": 0.08976159986902608,
+            "mean_orientation_error_deg": 7.45685866034079,
+            "mean_position_error": 0.06433429539160491,
+            "orientation_errors_deg": [
+              10.343829244298917,
+              10.796543901259952,
+              1.2302028354635013
+            ],
+            "pose_within_tolerances": false,
+            "target_assembly": true,
+            "target_minimum_transmission_deg": 37.68451913432824
+          },
+          "candidate_count": 18,
+          "engine_eligible_count": 0,
+          "pose_match_and_engine_eligible_count": 0,
+          "pose_match_count": 0
+        },
+        "case_id": "development-001",
+        "effective_initializer_arguments": {},
+        "engine_identity": {
+          "engine_sha256": "03ddbc935722f4e7536354f42fc5397ef6e311f0d2030360498b7f5192843cdd",
+          "orientation_sha256": "cb7443226549e536f1c46f7f58bb01fb5016627227c293efb81e2ce1dce5786a",
+          "script_sha256": "8f7e773dddf80f547a07a210c3b1e0daab07d43fda340ac9e038d5393a11967a",
+          "variant": "V5.3-R2.5c_HybridGroundLinkPortfolio-public-alpha"
+        },
+        "initializer_diagnostics": null,
+        "model_identity": [
+          {
+            "role": "balanced",
+            "sha256": "72a20f1f6828686c18100b3f5c7f913161b6042cfd9ea3baac15042d1b9fa8a0"
+          },
+          {
+            "role": "path",
+            "sha256": "8193a5d5208c227424cd570405b4c148cc2987c3a266a348a0f6b8184445f61e"
+          },
+          {
+            "role": "transmission",
+            "sha256": "30a23c4aee3a7d5e29673757a791acde6bddd93cf207aaea0cceb5627621e55f"
+          }
+        ],
+        "selected": {
+          "best_by_joint_error": null,
+          "candidate_count": 0,
+          "engine_eligible_count": 0,
+          "pose_match_and_engine_eligible_count": 0,
+          "pose_match_count": 0
+        },
+        "status": "completed",
+        "wall_runtime_seconds": 59.7885402000029
+      },
+      "candidate": {
+        "all_candidates_diagnostic": {
+          "best_by_joint_error": {
+            "candidate_id": "pose_seed_005",
+            "crank_is_strictly_shortest": true,
+            "engine_selection_eligible": true,
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 44.74342109290314,
+            "grashof": true,
+            "joint_normalized_error": 2.3684757858670007e-14,
+            "maximum_orientation_error_deg": 2.842170943040401e-14,
+            "maximum_position_error": 1.7763568394002505e-15,
+            "mean_orientation_error_deg": 1.8947806286936004e-14,
+            "mean_position_error": 8.014646076245868e-16,
+            "orientation_errors_deg": [
+              2.842170943040401e-14,
+              2.842170943040401e-14,
+              0.0
+            ],
+            "pose_within_tolerances": true,
+            "target_assembly": true,
+            "target_minimum_transmission_deg": 68.8901985065305
+          },
+          "candidate_count": 30,
+          "engine_eligible_count": 12,
+          "pose_match_and_engine_eligible_count": 12,
+          "pose_match_count": 12
+        },
+        "case_id": "development-001",
+        "effective_initializer_arguments": {
+          "pose_dyad_samples": 4096,
+          "pose_dyad_seed_count": 6
+        },
+        "engine_identity": {
+          "engine_sha256": "03ddbc935722f4e7536354f42fc5397ef6e311f0d2030360498b7f5192843cdd",
+          "orientation_sha256": "cb7443226549e536f1c46f7f58bb01fb5016627227c293efb81e2ce1dce5786a",
+          "pose_initialization_sha256": "5be10d2c13da2a09498ab7a8097f60d63de55a292a31755e722f6879db81188c",
+          "script_sha256": "e9855b4b0b75e2997bc839be6b165d1f36056bc446143427b1a19e4ce27eba77",
+          "variant": "V5.3-R2.5c_HybridGroundLinkPortfolio-public-alpha"
+        },
+        "initializer_diagnostics": {
+          "attempted_samples": 4096,
+          "branch_and_order_consistent": 344,
+          "enabled": true,
+          "evaluated_seed_count": 6,
+          "finite_dyads": 4096,
+          "full_cycle_robust_crank_shortest": 344,
+          "generation_runtime_seconds": 0.006213799999386538,
+          "method": "three_pose_dyad_v1",
+          "refined_candidate_count": 6,
+          "refinement_runtime_seconds": 25.102184600000328,
+          "requested_samples": 4096,
+          "requested_seed_count": 6,
+          "returned_seeds": 6,
+          "source_sha256": "5be10d2c13da2a09498ab7a8097f60d63de55a292a31755e722f6879db81188c",
+          "transmission_selection_floors": 314,
+          "verification_runtime_seconds": 0.05747710000287043,
+          "within_search_bounds": 2334
+        },
+        "model_identity": [
+          {
+            "role": "balanced",
+            "sha256": "72a20f1f6828686c18100b3f5c7f913161b6042cfd9ea3baac15042d1b9fa8a0"
+          },
+          {
+            "role": "path",
+            "sha256": "8193a5d5208c227424cd570405b4c148cc2987c3a266a348a0f6b8184445f61e"
+          },
+          {
+            "role": "transmission",
+            "sha256": "30a23c4aee3a7d5e29673757a791acde6bddd93cf207aaea0cceb5627621e55f"
+          }
+        ],
+        "selected": {
+          "best_by_joint_error": {
+            "candidate_id": "pose_seed_005",
+            "crank_is_strictly_shortest": true,
+            "engine_selection_eligible": true,
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 44.74342109290314,
+            "grashof": true,
+            "joint_normalized_error": 2.3684757858670007e-14,
+            "maximum_orientation_error_deg": 2.842170943040401e-14,
+            "maximum_position_error": 1.7763568394002505e-15,
+            "mean_orientation_error_deg": 1.8947806286936004e-14,
+            "mean_position_error": 8.014646076245868e-16,
+            "orientation_errors_deg": [
+              2.842170943040401e-14,
+              2.842170943040401e-14,
+              0.0
+            ],
+            "pose_within_tolerances": true,
+            "target_assembly": true,
+            "target_minimum_transmission_deg": 68.8901985065305
+          },
+          "candidate_count": 5,
+          "engine_eligible_count": 5,
+          "pose_match_and_engine_eligible_count": 5,
+          "pose_match_count": 5
+        },
+        "status": "completed",
+        "wall_runtime_seconds": 98.77557069999602
+      },
+      "case_id": "development-001",
+      "case_sha256": "d8841b7078c9c0aa735e46961c8bfec6c8c9afbcf4ea8f8ba5e552d50489f150"
+    },
+    {
+      "baseline": {
+        "all_candidates_diagnostic": {
+          "best_by_joint_error": {
+            "candidate_id": "fixed_003",
+            "crank_is_strictly_shortest": true,
+            "engine_selection_eligible": false,
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 19.145686564937098,
+            "grashof": true,
+            "joint_normalized_error": 6.139871345801183,
+            "maximum_orientation_error_deg": 12.279742691602365,
+            "maximum_position_error": 0.2321645230055235,
+            "mean_orientation_error_deg": 9.205745121408512,
+            "mean_position_error": 0.21486855319235262,
+            "orientation_errors_deg": [
+              3.4605381967487574,
+              12.279742691602365,
+              11.876954475874413
+            ],
+            "pose_within_tolerances": false,
+            "target_assembly": true,
+            "target_minimum_transmission_deg": 19.77373538874414
+          },
+          "candidate_count": 18,
+          "engine_eligible_count": 0,
+          "pose_match_and_engine_eligible_count": 0,
+          "pose_match_count": 0
+        },
+        "case_id": "development-002",
+        "effective_initializer_arguments": {},
+        "engine_identity": {
+          "engine_sha256": "03ddbc935722f4e7536354f42fc5397ef6e311f0d2030360498b7f5192843cdd",
+          "orientation_sha256": "cb7443226549e536f1c46f7f58bb01fb5016627227c293efb81e2ce1dce5786a",
+          "script_sha256": "8f7e773dddf80f547a07a210c3b1e0daab07d43fda340ac9e038d5393a11967a",
+          "variant": "V5.3-R2.5c_HybridGroundLinkPortfolio-public-alpha"
+        },
+        "initializer_diagnostics": null,
+        "model_identity": [
+          {
+            "role": "balanced",
+            "sha256": "72a20f1f6828686c18100b3f5c7f913161b6042cfd9ea3baac15042d1b9fa8a0"
+          },
+          {
+            "role": "path",
+            "sha256": "8193a5d5208c227424cd570405b4c148cc2987c3a266a348a0f6b8184445f61e"
+          },
+          {
+            "role": "transmission",
+            "sha256": "30a23c4aee3a7d5e29673757a791acde6bddd93cf207aaea0cceb5627621e55f"
+          }
+        ],
+        "selected": {
+          "best_by_joint_error": null,
+          "candidate_count": 0,
+          "engine_eligible_count": 0,
+          "pose_match_and_engine_eligible_count": 0,
+          "pose_match_count": 0
+        },
+        "status": "completed",
+        "wall_runtime_seconds": 61.02165399999649
+      },
+      "candidate": {
+        "all_candidates_diagnostic": {
+          "best_by_joint_error": {
+            "candidate_id": "pose_seed_001",
+            "crank_is_strictly_shortest": true,
+            "engine_selection_eligible": true,
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 44.87048417363672,
+            "grashof": true,
+            "joint_normalized_error": 3.188658112150302e-14,
+            "maximum_orientation_error_deg": 2.842170943040401e-14,
+            "maximum_position_error": 2.3914935841127266e-15,
+            "mean_orientation_error_deg": 1.8947806286936004e-14,
+            "mean_position_error": 1.4242285550372539e-15,
+            "orientation_errors_deg": [
+              2.842170943040401e-14,
+              2.842170943040401e-14,
+              0.0
+            ],
+            "pose_within_tolerances": true,
+            "target_assembly": true,
+            "target_minimum_transmission_deg": 45.8383633055082
+          },
+          "candidate_count": 30,
+          "engine_eligible_count": 12,
+          "pose_match_and_engine_eligible_count": 12,
+          "pose_match_count": 12
+        },
+        "case_id": "development-002",
+        "effective_initializer_arguments": {
+          "pose_dyad_samples": 4096,
+          "pose_dyad_seed_count": 6
+        },
+        "engine_identity": {
+          "engine_sha256": "03ddbc935722f4e7536354f42fc5397ef6e311f0d2030360498b7f5192843cdd",
+          "orientation_sha256": "cb7443226549e536f1c46f7f58bb01fb5016627227c293efb81e2ce1dce5786a",
+          "pose_initialization_sha256": "5be10d2c13da2a09498ab7a8097f60d63de55a292a31755e722f6879db81188c",
+          "script_sha256": "e9855b4b0b75e2997bc839be6b165d1f36056bc446143427b1a19e4ce27eba77",
+          "variant": "V5.3-R2.5c_HybridGroundLinkPortfolio-public-alpha"
+        },
+        "initializer_diagnostics": {
+          "attempted_samples": 4096,
+          "branch_and_order_consistent": 36,
+          "enabled": true,
+          "evaluated_seed_count": 6,
+          "finite_dyads": 4096,
+          "full_cycle_robust_crank_shortest": 36,
+          "generation_runtime_seconds": 0.011259400002018083,
+          "method": "three_pose_dyad_v1",
+          "refined_candidate_count": 6,
+          "refinement_runtime_seconds": 30.26243170000089,
+          "requested_samples": 4096,
+          "requested_seed_count": 6,
+          "returned_seeds": 6,
+          "source_sha256": "5be10d2c13da2a09498ab7a8097f60d63de55a292a31755e722f6879db81188c",
+          "transmission_selection_floors": 35,
+          "verification_runtime_seconds": 0.10175359999993816,
+          "within_search_bounds": 1916
+        },
+        "model_identity": [
+          {
+            "role": "balanced",
+            "sha256": "72a20f1f6828686c18100b3f5c7f913161b6042cfd9ea3baac15042d1b9fa8a0"
+          },
+          {
+            "role": "path",
+            "sha256": "8193a5d5208c227424cd570405b4c148cc2987c3a266a348a0f6b8184445f61e"
+          },
+          {
+            "role": "transmission",
+            "sha256": "30a23c4aee3a7d5e29673757a791acde6bddd93cf207aaea0cceb5627621e55f"
+          }
+        ],
+        "selected": {
+          "best_by_joint_error": {
+            "candidate_id": "pose_seed_001",
+            "crank_is_strictly_shortest": true,
+            "engine_selection_eligible": true,
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 44.87048417363672,
+            "grashof": true,
+            "joint_normalized_error": 3.188658112150302e-14,
+            "maximum_orientation_error_deg": 2.842170943040401e-14,
+            "maximum_position_error": 2.3914935841127266e-15,
+            "mean_orientation_error_deg": 1.8947806286936004e-14,
+            "mean_position_error": 1.4242285550372539e-15,
+            "orientation_errors_deg": [
+              2.842170943040401e-14,
+              2.842170943040401e-14,
+              0.0
+            ],
+            "pose_within_tolerances": true,
+            "target_assembly": true,
+            "target_minimum_transmission_deg": 45.8383633055082
+          },
+          "candidate_count": 5,
+          "engine_eligible_count": 5,
+          "pose_match_and_engine_eligible_count": 5,
+          "pose_match_count": 5
+        },
+        "status": "completed",
+        "wall_runtime_seconds": 122.64239890000317
+      },
+      "case_id": "development-002",
+      "case_sha256": "74b82a37635d6c2bdb27217a2d5c9bf0432f7cc38c26987e382e48838b4e40fd"
+    },
+    {
+      "baseline": {
+        "all_candidates_diagnostic": {
+          "best_by_joint_error": {
+            "candidate_id": "bridge_release_002",
+            "crank_is_strictly_shortest": true,
+            "engine_selection_eligible": false,
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 34.89161230143084,
+            "grashof": true,
+            "joint_normalized_error": 4.834714176106189,
+            "maximum_orientation_error_deg": 9.669428352212378,
+            "maximum_position_error": 0.08952386444058859,
+            "mean_orientation_error_deg": 6.909846974698496,
+            "mean_position_error": 0.05988200259375115,
+            "orientation_errors_deg": [
+              3.2751009819266415,
+              9.669428352212378,
+              7.7850115899564685
+            ],
+            "pose_within_tolerances": false,
+            "target_assembly": true,
+            "target_minimum_transmission_deg": 36.168457415910254
+          },
+          "candidate_count": 18,
+          "engine_eligible_count": 0,
+          "pose_match_and_engine_eligible_count": 0,
+          "pose_match_count": 0
+        },
+        "case_id": "development-003",
+        "effective_initializer_arguments": {},
+        "engine_identity": {
+          "engine_sha256": "03ddbc935722f4e7536354f42fc5397ef6e311f0d2030360498b7f5192843cdd",
+          "orientation_sha256": "cb7443226549e536f1c46f7f58bb01fb5016627227c293efb81e2ce1dce5786a",
+          "script_sha256": "8f7e773dddf80f547a07a210c3b1e0daab07d43fda340ac9e038d5393a11967a",
+          "variant": "V5.3-R2.5c_HybridGroundLinkPortfolio-public-alpha"
+        },
+        "initializer_diagnostics": null,
+        "model_identity": [
+          {
+            "role": "balanced",
+            "sha256": "72a20f1f6828686c18100b3f5c7f913161b6042cfd9ea3baac15042d1b9fa8a0"
+          },
+          {
+            "role": "path",
+            "sha256": "8193a5d5208c227424cd570405b4c148cc2987c3a266a348a0f6b8184445f61e"
+          },
+          {
+            "role": "transmission",
+            "sha256": "30a23c4aee3a7d5e29673757a791acde6bddd93cf207aaea0cceb5627621e55f"
+          }
+        ],
+        "selected": {
+          "best_by_joint_error": null,
+          "candidate_count": 0,
+          "engine_eligible_count": 0,
+          "pose_match_and_engine_eligible_count": 0,
+          "pose_match_count": 0
+        },
+        "status": "completed",
+        "wall_runtime_seconds": 58.90895630000159
+      },
+      "candidate": {
+        "all_candidates_diagnostic": {
+          "best_by_joint_error": {
+            "candidate_id": "pose_seed_003",
+            "crank_is_strictly_shortest": true,
+            "engine_selection_eligible": true,
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 50.60991172674247,
+            "grashof": true,
+            "joint_normalized_error": 1.4210854715202004e-14,
+            "maximum_orientation_error_deg": 2.842170943040401e-14,
+            "maximum_position_error": 8.881784197001252e-16,
+            "mean_orientation_error_deg": 1.8947806286936004e-14,
+            "mean_position_error": 6.661338147750939e-16,
+            "orientation_errors_deg": [
+              2.842170943040401e-14,
+              0.0,
+              2.842170943040401e-14
+            ],
+            "pose_within_tolerances": true,
+            "target_assembly": true,
+            "target_minimum_transmission_deg": 51.173427246735535
+          },
+          "candidate_count": 30,
+          "engine_eligible_count": 12,
+          "pose_match_and_engine_eligible_count": 12,
+          "pose_match_count": 12
+        },
+        "case_id": "development-003",
+        "effective_initializer_arguments": {
+          "pose_dyad_samples": 4096,
+          "pose_dyad_seed_count": 6
+        },
+        "engine_identity": {
+          "engine_sha256": "03ddbc935722f4e7536354f42fc5397ef6e311f0d2030360498b7f5192843cdd",
+          "orientation_sha256": "cb7443226549e536f1c46f7f58bb01fb5016627227c293efb81e2ce1dce5786a",
+          "pose_initialization_sha256": "5be10d2c13da2a09498ab7a8097f60d63de55a292a31755e722f6879db81188c",
+          "script_sha256": "e9855b4b0b75e2997bc839be6b165d1f36056bc446143427b1a19e4ce27eba77",
+          "variant": "V5.3-R2.5c_HybridGroundLinkPortfolio-public-alpha"
+        },
+        "initializer_diagnostics": {
+          "attempted_samples": 4096,
+          "branch_and_order_consistent": 249,
+          "enabled": true,
+          "evaluated_seed_count": 6,
+          "finite_dyads": 4096,
+          "full_cycle_robust_crank_shortest": 249,
+          "generation_runtime_seconds": 0.008556699998734985,
+          "method": "three_pose_dyad_v1",
+          "refined_candidate_count": 6,
+          "refinement_runtime_seconds": 24.667532700004813,
+          "requested_samples": 4096,
+          "requested_seed_count": 6,
+          "returned_seeds": 6,
+          "source_sha256": "5be10d2c13da2a09498ab7a8097f60d63de55a292a31755e722f6879db81188c",
+          "transmission_selection_floors": 240,
+          "verification_runtime_seconds": 0.09812989999772981,
+          "within_search_bounds": 2700
+        },
+        "model_identity": [
+          {
+            "role": "balanced",
+            "sha256": "72a20f1f6828686c18100b3f5c7f913161b6042cfd9ea3baac15042d1b9fa8a0"
+          },
+          {
+            "role": "path",
+            "sha256": "8193a5d5208c227424cd570405b4c148cc2987c3a266a348a0f6b8184445f61e"
+          },
+          {
+            "role": "transmission",
+            "sha256": "30a23c4aee3a7d5e29673757a791acde6bddd93cf207aaea0cceb5627621e55f"
+          }
+        ],
+        "selected": {
+          "best_by_joint_error": {
+            "candidate_id": "pose_seed_003",
+            "crank_is_strictly_shortest": true,
+            "engine_selection_eligible": true,
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 50.60991172674247,
+            "grashof": true,
+            "joint_normalized_error": 1.4210854715202004e-14,
+            "maximum_orientation_error_deg": 2.842170943040401e-14,
+            "maximum_position_error": 8.881784197001252e-16,
+            "mean_orientation_error_deg": 1.8947806286936004e-14,
+            "mean_position_error": 6.661338147750939e-16,
+            "orientation_errors_deg": [
+              2.842170943040401e-14,
+              0.0,
+              2.842170943040401e-14
+            ],
+            "pose_within_tolerances": true,
+            "target_assembly": true,
+            "target_minimum_transmission_deg": 51.173427246735535
+          },
+          "candidate_count": 5,
+          "engine_eligible_count": 5,
+          "pose_match_and_engine_eligible_count": 5,
+          "pose_match_count": 5
+        },
+        "status": "completed",
+        "wall_runtime_seconds": 118.49000610000076
+      },
+      "case_id": "development-003",
+      "case_sha256": "731960101e5f72fcc3bfa6366f517e2442e88a50653bb6b20b220564aedca7b4"
+    },
+    {
+      "baseline": {
+        "all_candidates_diagnostic": {
+          "best_by_joint_error": {
+            "candidate_id": "bridge_release_003",
+            "crank_is_strictly_shortest": true,
+            "engine_selection_eligible": false,
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 14.99687651560411,
+            "grashof": true,
+            "joint_normalized_error": 6.225420941516688,
+            "maximum_orientation_error_deg": 12.450841883033377,
+            "maximum_position_error": 0.4225276586888339,
+            "mean_orientation_error_deg": 10.050270224147985,
+            "mean_position_error": 0.3038154966404068,
+            "orientation_errors_deg": [
+              5.29756279866146,
+              12.450841883033377,
+              12.402405990749116
+            ],
+            "pose_within_tolerances": false,
+            "target_assembly": true,
+            "target_minimum_transmission_deg": 16.825194249290384
+          },
+          "candidate_count": 18,
+          "engine_eligible_count": 0,
+          "pose_match_and_engine_eligible_count": 0,
+          "pose_match_count": 0
+        },
+        "case_id": "development-004",
+        "effective_initializer_arguments": {},
+        "engine_identity": {
+          "engine_sha256": "03ddbc935722f4e7536354f42fc5397ef6e311f0d2030360498b7f5192843cdd",
+          "orientation_sha256": "cb7443226549e536f1c46f7f58bb01fb5016627227c293efb81e2ce1dce5786a",
+          "script_sha256": "8f7e773dddf80f547a07a210c3b1e0daab07d43fda340ac9e038d5393a11967a",
+          "variant": "V5.3-R2.5c_HybridGroundLinkPortfolio-public-alpha"
+        },
+        "initializer_diagnostics": null,
+        "model_identity": [
+          {
+            "role": "balanced",
+            "sha256": "72a20f1f6828686c18100b3f5c7f913161b6042cfd9ea3baac15042d1b9fa8a0"
+          },
+          {
+            "role": "path",
+            "sha256": "8193a5d5208c227424cd570405b4c148cc2987c3a266a348a0f6b8184445f61e"
+          },
+          {
+            "role": "transmission",
+            "sha256": "30a23c4aee3a7d5e29673757a791acde6bddd93cf207aaea0cceb5627621e55f"
+          }
+        ],
+        "selected": {
+          "best_by_joint_error": null,
+          "candidate_count": 0,
+          "engine_eligible_count": 0,
+          "pose_match_and_engine_eligible_count": 0,
+          "pose_match_count": 0
+        },
+        "status": "completed",
+        "wall_runtime_seconds": 62.81208080000215
+      },
+      "candidate": {
+        "all_candidates_diagnostic": {
+          "best_by_joint_error": {
+            "candidate_id": "pose_seed_002",
+            "crank_is_strictly_shortest": true,
+            "engine_selection_eligible": true,
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 54.67089146256493,
+            "grashof": true,
+            "joint_normalized_error": 4.0173561009151194e-14,
+            "maximum_orientation_error_deg": 2.842170943040401e-14,
+            "maximum_position_error": 2.5208725561797295e-15,
+            "mean_orientation_error_deg": 9.473903143468002e-15,
+            "mean_position_error": 2.00867805045756e-15,
+            "orientation_errors_deg": [
+              0.0,
+              0.0,
+              2.842170943040401e-14
+            ],
+            "pose_within_tolerances": true,
+            "target_assembly": true,
+            "target_minimum_transmission_deg": 60.52462083311304
+          },
+          "candidate_count": 30,
+          "engine_eligible_count": 12,
+          "pose_match_and_engine_eligible_count": 12,
+          "pose_match_count": 12
+        },
+        "case_id": "development-004",
+        "effective_initializer_arguments": {
+          "pose_dyad_samples": 4096,
+          "pose_dyad_seed_count": 6
+        },
+        "engine_identity": {
+          "engine_sha256": "03ddbc935722f4e7536354f42fc5397ef6e311f0d2030360498b7f5192843cdd",
+          "orientation_sha256": "cb7443226549e536f1c46f7f58bb01fb5016627227c293efb81e2ce1dce5786a",
+          "pose_initialization_sha256": "5be10d2c13da2a09498ab7a8097f60d63de55a292a31755e722f6879db81188c",
+          "script_sha256": "e9855b4b0b75e2997bc839be6b165d1f36056bc446143427b1a19e4ce27eba77",
+          "variant": "V5.3-R2.5c_HybridGroundLinkPortfolio-public-alpha"
+        },
+        "initializer_diagnostics": {
+          "attempted_samples": 4096,
+          "branch_and_order_consistent": 367,
+          "enabled": true,
+          "evaluated_seed_count": 6,
+          "finite_dyads": 4096,
+          "full_cycle_robust_crank_shortest": 367,
+          "generation_runtime_seconds": 0.01309919999766862,
+          "method": "three_pose_dyad_v1",
+          "refined_candidate_count": 6,
+          "refinement_runtime_seconds": 27.618775700000697,
+          "requested_samples": 4096,
+          "requested_seed_count": 6,
+          "returned_seeds": 6,
+          "source_sha256": "5be10d2c13da2a09498ab7a8097f60d63de55a292a31755e722f6879db81188c",
+          "transmission_selection_floors": 340,
+          "verification_runtime_seconds": 0.12600349999411264,
+          "within_search_bounds": 2851
+        },
+        "model_identity": [
+          {
+            "role": "balanced",
+            "sha256": "72a20f1f6828686c18100b3f5c7f913161b6042cfd9ea3baac15042d1b9fa8a0"
+          },
+          {
+            "role": "path",
+            "sha256": "8193a5d5208c227424cd570405b4c148cc2987c3a266a348a0f6b8184445f61e"
+          },
+          {
+            "role": "transmission",
+            "sha256": "30a23c4aee3a7d5e29673757a791acde6bddd93cf207aaea0cceb5627621e55f"
+          }
+        ],
+        "selected": {
+          "best_by_joint_error": {
+            "candidate_id": "pose_seed_002",
+            "crank_is_strictly_shortest": true,
+            "engine_selection_eligible": true,
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 54.67089146256493,
+            "grashof": true,
+            "joint_normalized_error": 4.0173561009151194e-14,
+            "maximum_orientation_error_deg": 2.842170943040401e-14,
+            "maximum_position_error": 2.5208725561797295e-15,
+            "mean_orientation_error_deg": 9.473903143468002e-15,
+            "mean_position_error": 2.00867805045756e-15,
+            "orientation_errors_deg": [
+              0.0,
+              0.0,
+              2.842170943040401e-14
+            ],
+            "pose_within_tolerances": true,
+            "target_assembly": true,
+            "target_minimum_transmission_deg": 60.52462083311304
+          },
+          "candidate_count": 5,
+          "engine_eligible_count": 5,
+          "pose_match_and_engine_eligible_count": 5,
+          "pose_match_count": 5
+        },
+        "status": "completed",
+        "wall_runtime_seconds": 99.81650029999582
+      },
+      "case_id": "development-004",
+      "case_sha256": "7df50c1acb265b726454476c1dd7ad0e5851d69067cae9d213bcf9e99da386c3"
+    },
+    {
+      "baseline": {
+        "all_candidates_diagnostic": {
+          "best_by_joint_error": {
+            "candidate_id": "bridge_release_001",
+            "crank_is_strictly_shortest": true,
+            "engine_selection_eligible": false,
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 29.476693747216682,
+            "grashof": true,
+            "joint_normalized_error": 4.852632291096313,
+            "maximum_orientation_error_deg": 9.705264582192626,
+            "maximum_position_error": 0.1001655654357987,
+            "mean_orientation_error_deg": 9.35947796619547,
+            "mean_position_error": 0.09508304504521085,
+            "orientation_errors_deg": [
+              9.705264582192626,
+              9.144865058960363,
+              9.228304257433422
+            ],
+            "pose_within_tolerances": false,
+            "target_assembly": true,
+            "target_minimum_transmission_deg": 30.54470820413235
+          },
+          "candidate_count": 18,
+          "engine_eligible_count": 0,
+          "pose_match_and_engine_eligible_count": 0,
+          "pose_match_count": 0
+        },
+        "case_id": "development-005",
+        "effective_initializer_arguments": {},
+        "engine_identity": {
+          "engine_sha256": "03ddbc935722f4e7536354f42fc5397ef6e311f0d2030360498b7f5192843cdd",
+          "orientation_sha256": "cb7443226549e536f1c46f7f58bb01fb5016627227c293efb81e2ce1dce5786a",
+          "script_sha256": "8f7e773dddf80f547a07a210c3b1e0daab07d43fda340ac9e038d5393a11967a",
+          "variant": "V5.3-R2.5c_HybridGroundLinkPortfolio-public-alpha"
+        },
+        "initializer_diagnostics": null,
+        "model_identity": [
+          {
+            "role": "balanced",
+            "sha256": "72a20f1f6828686c18100b3f5c7f913161b6042cfd9ea3baac15042d1b9fa8a0"
+          },
+          {
+            "role": "path",
+            "sha256": "8193a5d5208c227424cd570405b4c148cc2987c3a266a348a0f6b8184445f61e"
+          },
+          {
+            "role": "transmission",
+            "sha256": "30a23c4aee3a7d5e29673757a791acde6bddd93cf207aaea0cceb5627621e55f"
+          }
+        ],
+        "selected": {
+          "best_by_joint_error": null,
+          "candidate_count": 0,
+          "engine_eligible_count": 0,
+          "pose_match_and_engine_eligible_count": 0,
+          "pose_match_count": 0
+        },
+        "status": "completed",
+        "wall_runtime_seconds": 43.344797700003255
+      },
+      "candidate": {
+        "all_candidates_diagnostic": {
+          "best_by_joint_error": {
+            "candidate_id": "pose_seed_006",
+            "crank_is_strictly_shortest": true,
+            "engine_selection_eligible": true,
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 56.29836898809167,
+            "grashof": true,
+            "joint_normalized_error": 8.881784197001252e-15,
+            "maximum_orientation_error_deg": 0.0,
+            "maximum_position_error": 6.661338147750939e-16,
+            "mean_orientation_error_deg": 0.0,
+            "mean_position_error": 3.267174355039496e-16,
+            "orientation_errors_deg": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "pose_within_tolerances": true,
+            "target_assembly": true,
+            "target_minimum_transmission_deg": 56.318295652327706
+          },
+          "candidate_count": 30,
+          "engine_eligible_count": 12,
+          "pose_match_and_engine_eligible_count": 12,
+          "pose_match_count": 12
+        },
+        "case_id": "development-005",
+        "effective_initializer_arguments": {
+          "pose_dyad_samples": 4096,
+          "pose_dyad_seed_count": 6
+        },
+        "engine_identity": {
+          "engine_sha256": "03ddbc935722f4e7536354f42fc5397ef6e311f0d2030360498b7f5192843cdd",
+          "orientation_sha256": "cb7443226549e536f1c46f7f58bb01fb5016627227c293efb81e2ce1dce5786a",
+          "pose_initialization_sha256": "5be10d2c13da2a09498ab7a8097f60d63de55a292a31755e722f6879db81188c",
+          "script_sha256": "e9855b4b0b75e2997bc839be6b165d1f36056bc446143427b1a19e4ce27eba77",
+          "variant": "V5.3-R2.5c_HybridGroundLinkPortfolio-public-alpha"
+        },
+        "initializer_diagnostics": {
+          "attempted_samples": 4096,
+          "branch_and_order_consistent": 492,
+          "enabled": true,
+          "evaluated_seed_count": 6,
+          "finite_dyads": 4096,
+          "full_cycle_robust_crank_shortest": 492,
+          "generation_runtime_seconds": 0.009412899999006186,
+          "method": "three_pose_dyad_v1",
+          "refined_candidate_count": 6,
+          "refinement_runtime_seconds": 28.032079700002214,
+          "requested_samples": 4096,
+          "requested_seed_count": 6,
+          "returned_seeds": 6,
+          "source_sha256": "5be10d2c13da2a09498ab7a8097f60d63de55a292a31755e722f6879db81188c",
+          "transmission_selection_floors": 460,
+          "verification_runtime_seconds": 0.12582250000559725,
+          "within_search_bounds": 2783
+        },
+        "model_identity": [
+          {
+            "role": "balanced",
+            "sha256": "72a20f1f6828686c18100b3f5c7f913161b6042cfd9ea3baac15042d1b9fa8a0"
+          },
+          {
+            "role": "path",
+            "sha256": "8193a5d5208c227424cd570405b4c148cc2987c3a266a348a0f6b8184445f61e"
+          },
+          {
+            "role": "transmission",
+            "sha256": "30a23c4aee3a7d5e29673757a791acde6bddd93cf207aaea0cceb5627621e55f"
+          }
+        ],
+        "selected": {
+          "best_by_joint_error": {
+            "candidate_id": "pose_seed_004",
+            "crank_is_strictly_shortest": true,
+            "engine_selection_eligible": true,
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 57.528506146861815,
+            "grashof": true,
+            "joint_normalized_error": 1.7737380685361298e-14,
+            "maximum_orientation_error_deg": 0.0,
+            "maximum_position_error": 1.1443916996305594e-15,
+            "mean_orientation_error_deg": 0.0,
+            "mean_position_error": 8.868690342680649e-16,
+            "orientation_errors_deg": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "pose_within_tolerances": true,
+            "target_assembly": true,
+            "target_minimum_transmission_deg": 58.35323843834818
+          },
+          "candidate_count": 5,
+          "engine_eligible_count": 5,
+          "pose_match_and_engine_eligible_count": 5,
+          "pose_match_count": 5
+        },
+        "status": "completed",
+        "wall_runtime_seconds": 149.75140810000448
+      },
+      "case_id": "development-005",
+      "case_sha256": "9289b0ae93e1c1eba7deec51a21d9e34dd85df3c2b1ec1113ec1a00d93157cc5"
+    },
+    {
+      "baseline": {
+        "all_candidates_diagnostic": {
+          "best_by_joint_error": {
+            "candidate_id": "bridge_release_003",
+            "crank_is_strictly_shortest": true,
+            "engine_selection_eligible": false,
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 38.61185156798444,
+            "grashof": true,
+            "joint_normalized_error": 4.6125646720036,
+            "maximum_orientation_error_deg": 9.2251293440072,
+            "maximum_position_error": 0.0666025477227975,
+            "mean_orientation_error_deg": 7.082733929346442,
+            "mean_position_error": 0.05252015875506922,
+            "orientation_errors_deg": [
+              9.2251293440072,
+              9.21125476065373,
+              2.8118176833783934
+            ],
+            "pose_within_tolerances": false,
+            "target_assembly": true,
+            "target_minimum_transmission_deg": 46.743765592231334
+          },
+          "candidate_count": 18,
+          "engine_eligible_count": 0,
+          "pose_match_and_engine_eligible_count": 0,
+          "pose_match_count": 0
+        },
+        "case_id": "development-006",
+        "effective_initializer_arguments": {},
+        "engine_identity": {
+          "engine_sha256": "03ddbc935722f4e7536354f42fc5397ef6e311f0d2030360498b7f5192843cdd",
+          "orientation_sha256": "cb7443226549e536f1c46f7f58bb01fb5016627227c293efb81e2ce1dce5786a",
+          "script_sha256": "8f7e773dddf80f547a07a210c3b1e0daab07d43fda340ac9e038d5393a11967a",
+          "variant": "V5.3-R2.5c_HybridGroundLinkPortfolio-public-alpha"
+        },
+        "initializer_diagnostics": null,
+        "model_identity": [
+          {
+            "role": "balanced",
+            "sha256": "72a20f1f6828686c18100b3f5c7f913161b6042cfd9ea3baac15042d1b9fa8a0"
+          },
+          {
+            "role": "path",
+            "sha256": "8193a5d5208c227424cd570405b4c148cc2987c3a266a348a0f6b8184445f61e"
+          },
+          {
+            "role": "transmission",
+            "sha256": "30a23c4aee3a7d5e29673757a791acde6bddd93cf207aaea0cceb5627621e55f"
+          }
+        ],
+        "selected": {
+          "best_by_joint_error": null,
+          "candidate_count": 0,
+          "engine_eligible_count": 0,
+          "pose_match_and_engine_eligible_count": 0,
+          "pose_match_count": 0
+        },
+        "status": "completed",
+        "wall_runtime_seconds": 47.16369670000131
+      },
+      "candidate": {
+        "all_candidates_diagnostic": {
+          "best_by_joint_error": {
+            "candidate_id": "pose_seed_004",
+            "crank_is_strictly_shortest": true,
+            "engine_selection_eligible": true,
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 56.158013391262074,
+            "grashof": true,
+            "joint_normalized_error": 1.7763568394002505e-14,
+            "maximum_orientation_error_deg": 0.0,
+            "maximum_position_error": 1.3322676295501878e-15,
+            "mean_orientation_error_deg": 0.0,
+            "mean_position_error": 7.401486830834377e-16,
+            "orientation_errors_deg": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "pose_within_tolerances": true,
+            "target_assembly": true,
+            "target_minimum_transmission_deg": 58.18539163895763
+          },
+          "candidate_count": 30,
+          "engine_eligible_count": 12,
+          "pose_match_and_engine_eligible_count": 12,
+          "pose_match_count": 12
+        },
+        "case_id": "development-006",
+        "effective_initializer_arguments": {
+          "pose_dyad_samples": 4096,
+          "pose_dyad_seed_count": 6
+        },
+        "engine_identity": {
+          "engine_sha256": "03ddbc935722f4e7536354f42fc5397ef6e311f0d2030360498b7f5192843cdd",
+          "orientation_sha256": "cb7443226549e536f1c46f7f58bb01fb5016627227c293efb81e2ce1dce5786a",
+          "pose_initialization_sha256": "5be10d2c13da2a09498ab7a8097f60d63de55a292a31755e722f6879db81188c",
+          "script_sha256": "e9855b4b0b75e2997bc839be6b165d1f36056bc446143427b1a19e4ce27eba77",
+          "variant": "V5.3-R2.5c_HybridGroundLinkPortfolio-public-alpha"
+        },
+        "initializer_diagnostics": {
+          "attempted_samples": 4096,
+          "branch_and_order_consistent": 941,
+          "enabled": true,
+          "evaluated_seed_count": 6,
+          "finite_dyads": 4096,
+          "full_cycle_robust_crank_shortest": 941,
+          "generation_runtime_seconds": 0.020987100004276726,
+          "method": "three_pose_dyad_v1",
+          "refined_candidate_count": 6,
+          "refinement_runtime_seconds": 25.68728099999862,
+          "requested_samples": 4096,
+          "requested_seed_count": 6,
+          "returned_seeds": 6,
+          "source_sha256": "5be10d2c13da2a09498ab7a8097f60d63de55a292a31755e722f6879db81188c",
+          "transmission_selection_floors": 884,
+          "verification_runtime_seconds": 0.10654709999653278,
+          "within_search_bounds": 2323
+        },
+        "model_identity": [
+          {
+            "role": "balanced",
+            "sha256": "72a20f1f6828686c18100b3f5c7f913161b6042cfd9ea3baac15042d1b9fa8a0"
+          },
+          {
+            "role": "path",
+            "sha256": "8193a5d5208c227424cd570405b4c148cc2987c3a266a348a0f6b8184445f61e"
+          },
+          {
+            "role": "transmission",
+            "sha256": "30a23c4aee3a7d5e29673757a791acde6bddd93cf207aaea0cceb5627621e55f"
+          }
+        ],
+        "selected": {
+          "best_by_joint_error": {
+            "candidate_id": "pose_seed_004",
+            "crank_is_strictly_shortest": true,
+            "engine_selection_eligible": true,
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 56.158013391262074,
+            "grashof": true,
+            "joint_normalized_error": 1.7763568394002505e-14,
+            "maximum_orientation_error_deg": 0.0,
+            "maximum_position_error": 1.3322676295501878e-15,
+            "mean_orientation_error_deg": 0.0,
+            "mean_position_error": 7.401486830834377e-16,
+            "orientation_errors_deg": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "pose_within_tolerances": true,
+            "target_assembly": true,
+            "target_minimum_transmission_deg": 58.18539163895763
+          },
+          "candidate_count": 5,
+          "engine_eligible_count": 5,
+          "pose_match_and_engine_eligible_count": 5,
+          "pose_match_count": 5
+        },
+        "status": "completed",
+        "wall_runtime_seconds": 110.67363680000562
+      },
+      "case_id": "development-006",
+      "case_sha256": "b550d89672b3f5e380337f11367951c8f6b5501f7ae0dcf7951692a7802e9cb2"
+    },
+    {
+      "baseline": {
+        "all_candidates_diagnostic": {
+          "best_by_joint_error": {
+            "candidate_id": "variable_006",
+            "crank_is_strictly_shortest": true,
+            "engine_selection_eligible": false,
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 35.8857242086099,
+            "grashof": true,
+            "joint_normalized_error": 3.251113181149421,
+            "maximum_orientation_error_deg": 6.502226362298842,
+            "maximum_position_error": 0.10563570947631133,
+            "mean_orientation_error_deg": 5.963755807147568,
+            "mean_position_error": 0.06519322725370201,
+            "orientation_errors_deg": [
+              6.479317968892843,
+              6.502226362298842,
+              4.9097230902510205
+            ],
+            "pose_within_tolerances": false,
+            "target_assembly": true,
+            "target_minimum_transmission_deg": 40.12713672954408
+          },
+          "candidate_count": 18,
+          "engine_eligible_count": 0,
+          "pose_match_and_engine_eligible_count": 0,
+          "pose_match_count": 0
+        },
+        "case_id": "development-007",
+        "effective_initializer_arguments": {},
+        "engine_identity": {
+          "engine_sha256": "03ddbc935722f4e7536354f42fc5397ef6e311f0d2030360498b7f5192843cdd",
+          "orientation_sha256": "cb7443226549e536f1c46f7f58bb01fb5016627227c293efb81e2ce1dce5786a",
+          "script_sha256": "8f7e773dddf80f547a07a210c3b1e0daab07d43fda340ac9e038d5393a11967a",
+          "variant": "V5.3-R2.5c_HybridGroundLinkPortfolio-public-alpha"
+        },
+        "initializer_diagnostics": null,
+        "model_identity": [
+          {
+            "role": "balanced",
+            "sha256": "72a20f1f6828686c18100b3f5c7f913161b6042cfd9ea3baac15042d1b9fa8a0"
+          },
+          {
+            "role": "path",
+            "sha256": "8193a5d5208c227424cd570405b4c148cc2987c3a266a348a0f6b8184445f61e"
+          },
+          {
+            "role": "transmission",
+            "sha256": "30a23c4aee3a7d5e29673757a791acde6bddd93cf207aaea0cceb5627621e55f"
+          }
+        ],
+        "selected": {
+          "best_by_joint_error": null,
+          "candidate_count": 0,
+          "engine_eligible_count": 0,
+          "pose_match_and_engine_eligible_count": 0,
+          "pose_match_count": 0
+        },
+        "status": "completed",
+        "wall_runtime_seconds": 68.3993632999991
+      },
+      "candidate": {
+        "all_candidates_diagnostic": {
+          "best_by_joint_error": {
+            "candidate_id": "pose_seed_004",
+            "crank_is_strictly_shortest": true,
+            "engine_selection_eligible": true,
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 49.033393297951484,
+            "grashof": true,
+            "joint_normalized_error": 1.4210854715202004e-14,
+            "maximum_orientation_error_deg": 2.842170943040401e-14,
+            "maximum_position_error": 9.155133597044475e-16,
+            "mean_orientation_error_deg": 9.473903143468002e-15,
+            "mean_position_error": 5.092902489080868e-16,
+            "orientation_errors_deg": [
+              0.0,
+              2.842170943040401e-14,
+              0.0
+            ],
+            "pose_within_tolerances": true,
+            "target_assembly": true,
+            "target_minimum_transmission_deg": 54.86478042917886
+          },
+          "candidate_count": 30,
+          "engine_eligible_count": 12,
+          "pose_match_and_engine_eligible_count": 12,
+          "pose_match_count": 12
+        },
+        "case_id": "development-007",
+        "effective_initializer_arguments": {
+          "pose_dyad_samples": 4096,
+          "pose_dyad_seed_count": 6
+        },
+        "engine_identity": {
+          "engine_sha256": "03ddbc935722f4e7536354f42fc5397ef6e311f0d2030360498b7f5192843cdd",
+          "orientation_sha256": "cb7443226549e536f1c46f7f58bb01fb5016627227c293efb81e2ce1dce5786a",
+          "pose_initialization_sha256": "5be10d2c13da2a09498ab7a8097f60d63de55a292a31755e722f6879db81188c",
+          "script_sha256": "e9855b4b0b75e2997bc839be6b165d1f36056bc446143427b1a19e4ce27eba77",
+          "variant": "V5.3-R2.5c_HybridGroundLinkPortfolio-public-alpha"
+        },
+        "initializer_diagnostics": {
+          "attempted_samples": 4096,
+          "branch_and_order_consistent": 646,
+          "enabled": true,
+          "evaluated_seed_count": 6,
+          "finite_dyads": 4096,
+          "full_cycle_robust_crank_shortest": 734,
+          "generation_runtime_seconds": 0.007903000005171634,
+          "method": "three_pose_dyad_v1",
+          "refined_candidate_count": 6,
+          "refinement_runtime_seconds": 22.891703000001144,
+          "requested_samples": 4096,
+          "requested_seed_count": 6,
+          "returned_seeds": 6,
+          "source_sha256": "5be10d2c13da2a09498ab7a8097f60d63de55a292a31755e722f6879db81188c",
+          "transmission_selection_floors": 600,
+          "verification_runtime_seconds": 0.05299800000648247,
+          "within_search_bounds": 2429
+        },
+        "model_identity": [
+          {
+            "role": "balanced",
+            "sha256": "72a20f1f6828686c18100b3f5c7f913161b6042cfd9ea3baac15042d1b9fa8a0"
+          },
+          {
+            "role": "path",
+            "sha256": "8193a5d5208c227424cd570405b4c148cc2987c3a266a348a0f6b8184445f61e"
+          },
+          {
+            "role": "transmission",
+            "sha256": "30a23c4aee3a7d5e29673757a791acde6bddd93cf207aaea0cceb5627621e55f"
+          }
+        ],
+        "selected": {
+          "best_by_joint_error": {
+            "candidate_id": "pose_seed_004",
+            "crank_is_strictly_shortest": true,
+            "engine_selection_eligible": true,
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 49.033393297951484,
+            "grashof": true,
+            "joint_normalized_error": 1.4210854715202004e-14,
+            "maximum_orientation_error_deg": 2.842170943040401e-14,
+            "maximum_position_error": 9.155133597044475e-16,
+            "mean_orientation_error_deg": 9.473903143468002e-15,
+            "mean_position_error": 5.092902489080868e-16,
+            "orientation_errors_deg": [
+              0.0,
+              2.842170943040401e-14,
+              0.0
+            ],
+            "pose_within_tolerances": true,
+            "target_assembly": true,
+            "target_minimum_transmission_deg": 54.86478042917886
+          },
+          "candidate_count": 5,
+          "engine_eligible_count": 5,
+          "pose_match_and_engine_eligible_count": 5,
+          "pose_match_count": 5
+        },
+        "status": "completed",
+        "wall_runtime_seconds": 89.98342660000344
+      },
+      "case_id": "development-007",
+      "case_sha256": "20f3596a62f1fe87ad9add371e53278ad4970657c181c00aba1bd5ae8870bb77"
+    },
+    {
+      "baseline": {
+        "all_candidates_diagnostic": {
+          "best_by_joint_error": {
+            "candidate_id": "bridge_release_001",
+            "crank_is_strictly_shortest": true,
+            "engine_selection_eligible": false,
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 34.1043679748148,
+            "grashof": true,
+            "joint_normalized_error": 4.904474276336174,
+            "maximum_orientation_error_deg": 9.808948552672348,
+            "maximum_position_error": 0.07273501918754012,
+            "mean_orientation_error_deg": 8.53736394987998,
+            "mean_position_error": 0.05184055013971416,
+            "orientation_errors_deg": [
+              6.089751823587591,
+              9.71339147338,
+              9.808948552672348
+            ],
+            "pose_within_tolerances": false,
+            "target_assembly": true,
+            "target_minimum_transmission_deg": 35.48018141616597
+          },
+          "candidate_count": 17,
+          "engine_eligible_count": 0,
+          "pose_match_and_engine_eligible_count": 0,
+          "pose_match_count": 0
+        },
+        "case_id": "development-008",
+        "effective_initializer_arguments": {},
+        "engine_identity": {
+          "engine_sha256": "03ddbc935722f4e7536354f42fc5397ef6e311f0d2030360498b7f5192843cdd",
+          "orientation_sha256": "cb7443226549e536f1c46f7f58bb01fb5016627227c293efb81e2ce1dce5786a",
+          "script_sha256": "8f7e773dddf80f547a07a210c3b1e0daab07d43fda340ac9e038d5393a11967a",
+          "variant": "V5.3-R2.5c_HybridGroundLinkPortfolio-public-alpha"
+        },
+        "initializer_diagnostics": null,
+        "model_identity": [
+          {
+            "role": "balanced",
+            "sha256": "72a20f1f6828686c18100b3f5c7f913161b6042cfd9ea3baac15042d1b9fa8a0"
+          },
+          {
+            "role": "path",
+            "sha256": "8193a5d5208c227424cd570405b4c148cc2987c3a266a348a0f6b8184445f61e"
+          },
+          {
+            "role": "transmission",
+            "sha256": "30a23c4aee3a7d5e29673757a791acde6bddd93cf207aaea0cceb5627621e55f"
+          }
+        ],
+        "selected": {
+          "best_by_joint_error": null,
+          "candidate_count": 0,
+          "engine_eligible_count": 0,
+          "pose_match_and_engine_eligible_count": 0,
+          "pose_match_count": 0
+        },
+        "status": "completed",
+        "wall_runtime_seconds": 74.38662489999842
+      },
+      "candidate": {
+        "all_candidates_diagnostic": {
+          "best_by_joint_error": {
+            "candidate_id": "pose_seed_006",
+            "crank_is_strictly_shortest": true,
+            "engine_selection_eligible": true,
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 38.03671520057748,
+            "grashof": true,
+            "joint_normalized_error": 2.842170943040401e-14,
+            "maximum_orientation_error_deg": 5.684341886080802e-14,
+            "maximum_position_error": 1.3322676295501878e-15,
+            "mean_orientation_error_deg": 1.8947806286936004e-14,
+            "mean_position_error": 1.2328548737074548e-15,
+            "orientation_errors_deg": [
+              5.684341886080802e-14,
+              0.0,
+              0.0
+            ],
+            "pose_within_tolerances": true,
+            "target_assembly": true,
+            "target_minimum_transmission_deg": 39.02614109417919
+          },
+          "candidate_count": 29,
+          "engine_eligible_count": 12,
+          "pose_match_and_engine_eligible_count": 12,
+          "pose_match_count": 12
+        },
+        "case_id": "development-008",
+        "effective_initializer_arguments": {
+          "pose_dyad_samples": 4096,
+          "pose_dyad_seed_count": 6
+        },
+        "engine_identity": {
+          "engine_sha256": "03ddbc935722f4e7536354f42fc5397ef6e311f0d2030360498b7f5192843cdd",
+          "orientation_sha256": "cb7443226549e536f1c46f7f58bb01fb5016627227c293efb81e2ce1dce5786a",
+          "pose_initialization_sha256": "5be10d2c13da2a09498ab7a8097f60d63de55a292a31755e722f6879db81188c",
+          "script_sha256": "e9855b4b0b75e2997bc839be6b165d1f36056bc446143427b1a19e4ce27eba77",
+          "variant": "V5.3-R2.5c_HybridGroundLinkPortfolio-public-alpha"
+        },
+        "initializer_diagnostics": {
+          "attempted_samples": 4096,
+          "branch_and_order_consistent": 188,
+          "enabled": true,
+          "evaluated_seed_count": 6,
+          "finite_dyads": 4096,
+          "full_cycle_robust_crank_shortest": 188,
+          "generation_runtime_seconds": 0.008543900003132876,
+          "method": "three_pose_dyad_v1",
+          "refined_candidate_count": 6,
+          "refinement_runtime_seconds": 19.709664299996803,
+          "requested_samples": 4096,
+          "requested_seed_count": 6,
+          "returned_seeds": 6,
+          "source_sha256": "5be10d2c13da2a09498ab7a8097f60d63de55a292a31755e722f6879db81188c",
+          "transmission_selection_floors": 147,
+          "verification_runtime_seconds": 0.09233070000482257,
+          "within_search_bounds": 2689
+        },
+        "model_identity": [
+          {
+            "role": "balanced",
+            "sha256": "72a20f1f6828686c18100b3f5c7f913161b6042cfd9ea3baac15042d1b9fa8a0"
+          },
+          {
+            "role": "path",
+            "sha256": "8193a5d5208c227424cd570405b4c148cc2987c3a266a348a0f6b8184445f61e"
+          },
+          {
+            "role": "transmission",
+            "sha256": "30a23c4aee3a7d5e29673757a791acde6bddd93cf207aaea0cceb5627621e55f"
+          }
+        ],
+        "selected": {
+          "best_by_joint_error": {
+            "candidate_id": "pose_seed_006",
+            "crank_is_strictly_shortest": true,
+            "engine_selection_eligible": true,
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 38.03671520057748,
+            "grashof": true,
+            "joint_normalized_error": 2.842170943040401e-14,
+            "maximum_orientation_error_deg": 5.684341886080802e-14,
+            "maximum_position_error": 1.3322676295501878e-15,
+            "mean_orientation_error_deg": 1.8947806286936004e-14,
+            "mean_position_error": 1.2328548737074548e-15,
+            "orientation_errors_deg": [
+              5.684341886080802e-14,
+              0.0,
+              0.0
+            ],
+            "pose_within_tolerances": true,
+            "target_assembly": true,
+            "target_minimum_transmission_deg": 39.02614109417919
+          },
+          "candidate_count": 5,
+          "engine_eligible_count": 5,
+          "pose_match_and_engine_eligible_count": 5,
+          "pose_match_count": 5
+        },
+        "status": "completed",
+        "wall_runtime_seconds": 101.84934449999855
+      },
+      "case_id": "development-008",
+      "case_sha256": "b1ccdb62da4620e289c4c029a4ae7c9f19067941efa5165ffaf8f6ef05a9812f"
+    }
+  ],
+  "common_configuration": {
+    "branches": "both",
+    "device": "cpu",
+    "dtype": "float64",
+    "model_roles": [
+      "balanced",
+      "path",
+      "transmission"
+    ],
+    "phase_mode": "ordered",
+    "portfolio_guarantee_fixed_count": 0,
+    "profile_matrix": "paired",
+    "strict_qualification": true
+  },
+  "compute_note": "Initializer work and extra seeds may differ even when optimizer step settings match. Inspect per-run initializer counts and wall times.",
+  "configured_optimizer_budgets_equal": true,
+  "corpus_manifest_sha256": "a3335f192f420c92f668983f3286bf32bc0a6c723fa348c6454ca39a70500cfc",
+  "corpus_path": "examples/benchmarks/pose-corpus-v1",
+  "equal_total_compute_claimed": false,
+  "evaluator_sha256": "a7edcba343c687ef1ee8a7d6ae50c661e827daf8d5ec74d163c8fa0ffab2d9ed",
+  "execution": {
+    "MKL_NUM_THREADS": 1,
+    "OMP_NUM_THREADS": 1,
+    "device": "cpu",
+    "dtype": "float64",
+    "maximum_concurrent_benchmark_processes": 4,
+    "platform": "Windows",
+    "python": "3.12.14",
+    "timing_interpretation": "Several runs overlapped on the same machine. Wall times describe these executions and do not support controlled speed comparisons."
+  },
+  "limitations": [
+    "A small constructed corpus, not a representative design population or a statistical guarantee",
+    "Reserve evaluation outcomes until the implementation is frozen. If outcomes inform changes, treat this split as development and create a fresh evaluation corpus.",
+    "Equal configured optimizer steps are not equal total compute: initializer samples and additional refinement seeds can add work",
+    "Engine labels describe intent; use recorded source/model hashes to establish implementation identity",
+    "Wall times are descriptive; hardware, concurrent work and initialization affect them",
+    "No strength, collision, manufacturability or physical validation"
+  ],
+  "numpy_version": "2.5.1",
+  "optimizer_budget_settings": {
+    "adam_accuracy_steps": 60,
+    "adam_tradeoff_steps": 100,
+    "lbfgs_steps": 20,
+    "optimization_global_steps": 181,
+    "portfolio_bridge_accuracy_steps": 30,
+    "portfolio_bridge_lbfgs_steps": 15,
+    "portfolio_bridge_tradeoff_steps": 60,
+    "portfolio_fixed_seed_count": 3,
+    "portfolio_release_accuracy_steps": 20,
+    "portfolio_release_lbfgs_steps": 12,
+    "portfolio_release_seed_count": 3,
+    "portfolio_release_tradeoff_steps": 50,
+    "seed_phase_steps": 721,
+    "verification_steps": 1441
+  },
+  "requested_model_identity": [
+    {
+      "role": "balanced",
+      "sha256": "72a20f1f6828686c18100b3f5c7f913161b6042cfd9ea3baac15042d1b9fa8a0"
+    },
+    {
+      "role": "path",
+      "sha256": "8193a5d5208c227424cd570405b4c148cc2987c3a266a348a0f6b8184445f61e"
+    },
+    {
+      "role": "transmission",
+      "sha256": "30a23c4aee3a7d5e29673757a791acde6bddd93cf207aaea0cceb5627621e55f"
+    }
+  ],
+  "runner_sha256": "5ad3e2505dbf3aa19cd10c526de9ea1bc406adfa66c860edeb5430cd329a8838",
+  "schema_version": "pose-corpus-comparison-1",
+  "seed": 101,
+  "source_freeze": {
+    "hashes": {
+      "pose_initialization_sha256": "5be10d2c13da2a09498ab7a8097f60d63de55a292a31755e722f6879db81188c",
+      "script_sha256": "e9855b4b0b75e2997bc839be6b165d1f36056bc446143427b1a19e4ce27eba77"
+    },
+    "tuning_after_evaluation_started": false
+  },
+  "split": "development",
+  "success_definition": "At least one selected, engine-eligible candidate independently meets both position and orientation tolerances and has full-cycle assembly",
+  "success_thresholds": {
+    "maximum_position": 0.075,
+    "mean_position": 0.05,
+    "orientation_deg": [
+      2.0,
+      2.0,
+      2.0
+    ]
+  },
+  "task_file_sha256": "2e52d9f46727dddc01c8a4535cd2b11579cbde269f4c3046b258d1c2b6cec09e"
+}

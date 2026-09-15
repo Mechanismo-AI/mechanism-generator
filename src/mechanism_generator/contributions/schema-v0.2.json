@@ -1,12 +1,12 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/Mechanismo-AI/mechanism-generator/blob/main/src/mechanism_generator/contributions/schema.json",
-  "title": "Mechanism Generator community contribution 0.3",
+  "title": "Mechanism Generator community contribution 0.2",
   "type": "object",
   "additionalProperties": false,
   "properties": {
     "schema_version": {
-      "const": "0.3"
+      "const": "0.2"
     },
     "kind": {
       "enum": [
@@ -152,101 +152,6 @@
             },
             "minItems": 3,
             "maxItems": 3
-          },
-          "pose_initialization": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "method": {
-                "const": "three_pose_dyad_v1"
-              },
-              "enabled": {
-                "type": "boolean"
-              },
-              "requested_samples": {
-                "type": "integer",
-                "minimum": 0
-              },
-              "requested_seed_count": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 6
-              },
-              "attempted_samples": {
-                "type": "integer",
-                "minimum": 0
-              },
-              "finite_dyads": {
-                "type": "integer",
-                "minimum": 0
-              },
-              "within_search_bounds": {
-                "type": "integer",
-                "minimum": 0
-              },
-              "full_cycle_robust_crank_shortest": {
-                "type": "integer",
-                "minimum": 0
-              },
-              "branch_and_order_consistent": {
-                "type": "integer",
-                "minimum": 0
-              },
-              "transmission_selection_floors": {
-                "type": "integer",
-                "minimum": 0
-              },
-              "returned_seeds": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 6
-              },
-              "evaluated_seed_count": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 6
-              },
-              "refined_candidate_count": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 6
-              },
-              "generation_runtime_seconds": {
-                "type": "number",
-                "minimum": 0
-              },
-              "verification_runtime_seconds": {
-                "type": "number",
-                "minimum": 0
-              },
-              "refinement_runtime_seconds": {
-                "type": "number",
-                "minimum": 0
-              },
-              "source_sha256": {
-                "type": "string",
-                "pattern": "^[0-9a-f]{64}$"
-              }
-            },
-            "required": [
-              "method",
-              "enabled",
-              "requested_samples",
-              "requested_seed_count",
-              "attempted_samples",
-              "finite_dyads",
-              "within_search_bounds",
-              "full_cycle_robust_crank_shortest",
-              "branch_and_order_consistent",
-              "transmission_selection_floors",
-              "returned_seeds",
-              "evaluated_seed_count",
-              "refined_candidate_count",
-              "generation_runtime_seconds",
-              "verification_runtime_seconds",
-              "refinement_runtime_seconds",
-              "source_sha256"
-            ]
           }
         },
         "required": [
@@ -626,8 +531,7 @@
                   "enum": [
                     "balanced",
                     "path",
-                    "transmission",
-                    "pose_geometry"
+                    "transmission"
                   ]
                 },
                 "profile": {
@@ -642,9 +546,7 @@
                     "fixed",
                     "variable",
                     "bridge_trust",
-                    "bridge_release",
-                    "pose_seed",
-                    "pose_refined"
+                    "bridge_release"
                   ]
                 },
                 "ground_link_mode": {
@@ -740,13 +642,6 @@
                   "type": "number",
                   "minimum": 0,
                   "maximum": 180
-                },
-                "proposal_source": {
-                  "const": "three_pose_dyad_v1"
-                },
-                "generator_sample_index": {
-                  "type": "integer",
-                  "minimum": 1
                 }
               },
               "required": [
@@ -779,68 +674,6 @@
                       "target_orientation_3_deg",
                       "orientation_tolerance_3_deg"
                     ]
-                  }
-                },
-                {
-                  "if": {
-                    "anyOf": [
-                      {
-                        "required": [
-                          "model_role"
-                        ],
-                        "properties": {
-                          "model_role": {
-                            "const": "pose_geometry"
-                          }
-                        }
-                      },
-                      {
-                        "required": [
-                          "portfolio_origin"
-                        ],
-                        "properties": {
-                          "portfolio_origin": {
-                            "enum": [
-                              "pose_seed",
-                              "pose_refined"
-                            ]
-                          }
-                        }
-                      },
-                      {
-                        "required": [
-                          "proposal_source"
-                        ]
-                      },
-                      {
-                        "required": [
-                          "generator_sample_index"
-                        ]
-                      }
-                    ]
-                  },
-                  "then": {
-                    "required": [
-                      "model_role",
-                      "portfolio_origin",
-                      "proposal_source",
-                      "generator_sample_index",
-                      "orientation_required"
-                    ],
-                    "properties": {
-                      "model_role": {
-                        "const": "pose_geometry"
-                      },
-                      "portfolio_origin": {
-                        "enum": [
-                          "pose_seed",
-                          "pose_refined"
-                        ]
-                      },
-                      "orientation_required": {
-                        "const": true
-                      }
-                    }
                   }
                 }
               ]
@@ -892,10 +725,6 @@
               "sha256"
             ]
           }
-        },
-        "pose_initialization_sha256": {
-          "type": "string",
-          "pattern": "^[0-9a-f]{64}$"
         }
       },
       "required": [
@@ -1191,15 +1020,6 @@
         },
         "portfolio_stage_top_k": {
           "type": "integer"
-        },
-        "pose_dyad_samples": {
-          "type": "integer",
-          "minimum": 0
-        },
-        "pose_dyad_seed_count": {
-          "type": "integer",
-          "minimum": 0,
-          "maximum": 6
         }
       },
       "required": []

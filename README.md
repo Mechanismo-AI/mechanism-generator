@@ -9,7 +9,7 @@ The package includes the R2.5c/R2.5b solver, task validation, and a strict OMTS
 adapter. Three Apache-2.0 proposal models are available as verified GitHub release
 downloads. A task can now specify the output point's position and directed coupler
 orientation at each of three target phases. This is a planar kinematic research
-tool; training reproduction, prescribed timing/dwell, dynamics, collisions, and
+tool; prescribed timing/dwell, dynamics, collisions, and
 synchronization remain future work.
 
 ## Generate a mechanism
@@ -36,8 +36,23 @@ all preferred engineering thresholds. It is not a hardware-validated design.
 To control the direction of the carried object as well as its position, try the
 [three-pose guide](docs/three-pose.md). The first pose capability uses a tool frame
 at output point P with its positive x-axis parallel to the directed coupler A to B.
-The existing models still propose geometry from positions; the local solver adds
-the angular requirements. No retraining is needed to use this feature.
+The existing models propose geometry from positions; pose tasks also use a
+deterministic geometric initializer and local refinement. No retraining is needed
+to use this feature. See the [broader pose evaluation](docs/pose-corpus.md).
+
+## Train and refine proposal models
+
+The full R2 â†’ R2.2 â†’ R2.3a â†’ R2.4 training sequence is packaged with historical
+recipes, a synthetic data generator and verified starting weights. Start with a
+small four-stage check:
+
+```sh
+mechanism-train chain --preset smoke --output runs/training-smoke
+```
+
+The [training guide](docs/training.md) covers full runs, warm starts, clean weight
+exports and reproducibility limits. The smoke run checks the pipeline; it does
+not replace the released proposal models or establish model quality.
 
 ## Share a run
 
@@ -106,7 +121,7 @@ including unsupported soft constraints. They are never silently discarded.
 - Focused regression tests and continuous integration for Windows and Linux
 
 The public engine runs the research pipeline:
-neural proposals â†’ local refinement â†’ physical/kinematic checks â†’ diverse designs.
+neural proposals Ã¢â€ â€™ local refinement Ã¢â€ â€™ physical/kinematic checks Ã¢â€ â€™ diverse designs.
 Richer orientation paths, prescribed timing/dwell, dynamics, collision checks, and
 multi-mechanism synchronization are future capabilities. Reproducible training and
 broader evaluation support that development; released models remain ready to use.

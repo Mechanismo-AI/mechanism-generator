@@ -146,3 +146,9 @@ identify the public implementation. Three planar pose targets extend the prior
 position-only subset without changing the existing model weights.
 The model exports passed exact tensor and prediction parity checks, and current
 numerical engine checks are documented in the engine guide.
+
+From 0.1.0a5, prepared pose plans explicitly enable 4,096 deterministic geometric
+samples and at most six retained seeds, in addition to the existing proposal and
+refinement paths. The new `pose_seeds.py` is covered by source verification.
+This adds search work; it does not relax position, orientation, transmission or
+robustness checks. Point-only plans do not invoke geometric pose initialization.

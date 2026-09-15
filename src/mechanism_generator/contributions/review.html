@@ -136,7 +136,7 @@
     (() => {
       const byId = id => document.getElementById(id);
       const sections = [
-        ["task", "Task geometry", "Target positions and, for pose tasks, requested angles, angular tolerances and tool frame."],
+        ["task", "Task geometry and diagnostics", "Target positions and, for pose tasks, requested angles, angular tolerances, tool frame and geometric search diagnostics."],
         ["candidates", "Candidate results", "Candidate geometry, requested and matched pose angles, tolerances, errors, scores and recorded acceptance decisions."],
         ["provenance", "Engine and model versions", "Artifact fingerprints that identify the engine and model weights."],
         ["settings", "Search settings", "The recorded parameters that help others interpret or reproduce the run."]
@@ -279,7 +279,7 @@
 
       try {
         bundle = JSON.parse(byId("bundle-data").textContent);
-        if (!["0.1", "0.2"].includes(bundle.schema_version) || bundle.kind !== "local" || !bundle.core || !Array.isArray(bundle.core.tasks)) {
+        if (!["0.1", "0.2", "0.3"].includes(bundle.schema_version) || bundle.kind !== "local" || !bundle.core || !Array.isArray(bundle.core.tasks)) {
           throw new Error("This file does not contain a supported local contribution bundle.");
         }
         const statuses = {completed: "Completed", partial: "Partial", unknown: "Unknown"};

@@ -1,0 +1,71 @@
+{
+  "version": "0.1.0a5",
+  "license": "Apache-2.0",
+  "format": "safetensors",
+  "description": "Optional model-only dependencies for preserved training recipes; transmission reuses the published a2 asset.",
+  "training_data": {
+    "origin": "Synthetic target triples generated locally with private CPU PyTorch generators; no external dataset is required.",
+    "development_data": "Repeatedly reused research development targets, not an untouched test set.",
+    "development_tensor_sha256": "4636ea89d5210676c17fe66cf385008ab043ae876c04fdbfea72ad423e911b7f"
+  },
+  "export_verification": {
+    "device": "cpu",
+    "torch": "2.13.0+cpu",
+    "numpy": "2.5.1",
+    "seed": 9142026,
+    "dtype": "float32"
+  },
+  "assets": {
+    "teacher": {
+      "source_file": "R2_teacher_best_validation.pth",
+      "source_sha256": "5f1534d697ce950e473303f81358fb0423ceab289cd184d09c681ebcf24ecdb8",
+      "file": "teacher.safetensors",
+      "variant": "V5.3-R2_GeometryFix",
+      "state_epoch": 239,
+      "url": "https://github.com/Mechanismo-AI/mechanism-generator/releases/download/v0.1.0a5/teacher.safetensors",
+      "sha256": "e9fbee3d6885a1f1c198e5b466464fc52db59caa3fbc9ac8d60807b89e456a9d",
+      "bytes": 7386800,
+      "parameters": 1846280,
+      "tensor_count": 18,
+      "export_checks": {
+        "exact_tensor_equality": true,
+        "inference_cases": 128,
+        "max_absolute_difference": 0.0
+      }
+    },
+    "warmstart_r22": {
+      "source_file": "R2_2_warmstart_best_feasible_transmission.pth",
+      "source_sha256": "67d90a31d98d42d2f2d9b4bf877cb34a06dfa510d333327b4902524c300c8900",
+      "file": "warmstart-r22.safetensors",
+      "variant": "V5.3-R2.2_ConstrainedTransmission",
+      "state_epoch": 148,
+      "url": "https://github.com/Mechanismo-AI/mechanism-generator/releases/download/v0.1.0a5/warmstart-r22.safetensors",
+      "sha256": "7e36221fb8ffa97c5b5618618aa93f561087527bceb2cc1d74e60dce337dc6b5",
+      "bytes": 7386816,
+      "parameters": 1846280,
+      "tensor_count": 18,
+      "export_checks": {
+        "exact_tensor_equality": true,
+        "inference_cases": 128,
+        "max_absolute_difference": 0.0
+      }
+    },
+    "transmission": {
+      "file": "transmission.safetensors",
+      "sha256": "30a23c4aee3a7d5e29673757a791acde6bddd93cf207aaea0cceb5627621e55f",
+      "bytes": 7386824,
+      "source_file": "R2_3a_warmstart_best_feasible_transmission.pth",
+      "source_sha256": "b035b26099e1dcd30e9f0b748b88eb9179a0a7922ed3bb95933b26948a53f60d",
+      "variant": "V5.3-R2.3a_WindowedFeasibilityController",
+      "state_epoch": 70,
+      "parameters": 1846280,
+      "tensor_count": 18,
+      "export_checks": {
+        "exact_tensor_equality": true,
+        "inference_cases": 128,
+        "max_absolute_difference": 0.0
+      },
+      "url": "https://github.com/Mechanismo-AI/mechanism-generator/releases/download/v0.1.0a2/transmission.safetensors"
+    }
+  }
+}

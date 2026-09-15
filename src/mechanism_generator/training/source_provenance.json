@@ -1,0 +1,77 @@
+{
+  "license": "Apache-2.0",
+  "stages": {
+    "r2": {
+      "variant": "V5.3-R2_GeometryFix",
+      "historical_filename": "V5.3-R2_GeometryFix.py",
+      "historical_sha256": "98cb9cd17e824ad9f39dc390f3aa20f872b3663a76bbab7475d42e77d0635317",
+      "packaged_sha256": "6605cbd7fa95fc2bb366ce8335e4fdbea88043d83d27139e61e1a9be371bd123",
+      "unchanged_top_level_functions_and_classes": 44,
+      "changed_functions": [
+        "capture_rng_state",
+        "restore_rng_state",
+        "torch_load"
+      ],
+      "changes": [
+        "Restricted checkpoint loading and safetensors support",
+        "NumPy random state stored as primitive values and a tensor",
+        "Restore random-state tensors on CPU after device-mapped checkpoint loading",
+        "Reject imports to avoid accidentally starting training"
+      ]
+    },
+    "r22": {
+      "variant": "V5.3-R2.2_ConstrainedTransmission",
+      "historical_filename": "V5.3-R2.2_ConstrainedTransmission.py",
+      "historical_sha256": "88225975f4a5079173289f00bb1454f452da744b00d9247686e968cc2434cbc7",
+      "packaged_sha256": "8bb080c51ff54c14185b2a4e57090e53ca51dab21dce30684f8426ea5597f0da",
+      "unchanged_top_level_functions_and_classes": 51,
+      "changed_functions": [
+        "capture_rng_state",
+        "restore_rng_state",
+        "torch_load"
+      ],
+      "changes": [
+        "Restricted checkpoint loading and safetensors support",
+        "NumPy random state stored as primitive values and a tensor",
+        "Restore random-state tensors on CPU after device-mapped checkpoint loading",
+        "Reject imports to avoid accidentally starting training"
+      ]
+    },
+    "r23a": {
+      "variant": "V5.3-R2.3a_WindowedFeasibilityController",
+      "historical_filename": "V5.3-R2.3a_WindowedFeasibilityController.py",
+      "historical_sha256": "4c0e89050196329fc833d081eeb4d56c98ea71216bfdf10437c31fc7847793ee",
+      "packaged_sha256": "552881fd3e881f03a47eb5b4118c3ad59829eb7bbd8ec364ed837e0ca658ce7b",
+      "unchanged_top_level_functions_and_classes": 66,
+      "changed_functions": [
+        "capture_rng_state",
+        "restore_rng_state",
+        "torch_load"
+      ],
+      "changes": [
+        "Restricted checkpoint loading and safetensors support",
+        "NumPy random state stored as primitive values and a tensor",
+        "Restore random-state tensors on CPU after device-mapped checkpoint loading",
+        "Reject imports to avoid accidentally starting training"
+      ]
+    },
+    "r24": {
+      "variant": "V5.3-R2.4_StreamingTargetTraining",
+      "historical_filename": "V5.3-R2.4_StreamingTargetTraining.py",
+      "historical_sha256": "9ff68311c821a77a5aaf03063bcd273d1ab26c84da1613e359ef3acf8e95a260",
+      "packaged_sha256": "bd2c739855847872373755d2fa1715155ae83c0223430e73d27de14d45601925",
+      "unchanged_top_level_functions_and_classes": 73,
+      "changed_functions": [
+        "capture_rng_state",
+        "restore_rng_state",
+        "torch_load"
+      ],
+      "changes": [
+        "Restricted checkpoint loading and safetensors support",
+        "NumPy random state stored as primitive values and a tensor",
+        "Restore random-state tensors on CPU after device-mapped checkpoint loading",
+        "Reject imports to avoid accidentally starting training"
+      ]
+    }
+  }
+}

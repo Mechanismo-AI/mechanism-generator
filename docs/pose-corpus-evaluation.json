@@ -1,0 +1,1545 @@
+{
+  "baseline": {
+    "engine_identities": [
+      {
+        "engine_sha256": "03ddbc935722f4e7536354f42fc5397ef6e311f0d2030360498b7f5192843cdd",
+        "orientation_sha256": "cb7443226549e536f1c46f7f58bb01fb5016627227c293efb81e2ce1dce5786a",
+        "script_sha256": "8f7e773dddf80f547a07a210c3b1e0daab07d43fda340ac9e038d5393a11967a",
+        "variant": "V5.3-R2.5c_HybridGroundLinkPortfolio-public-alpha"
+      }
+    ],
+    "initializer_diagnostic_totals": null,
+    "initializer_settings": {
+      "pose_dyad_samples": null,
+      "pose_dyad_seed_count": null
+    },
+    "label": "v0.1.0a4",
+    "summary": {
+      "all_candidates": 144,
+      "attempted_cases": 8,
+      "completed_cases": 8,
+      "failed_cases": 0,
+      "requested_cases": 8,
+      "selected_candidates": 0,
+      "selected_pose_success_cases": 0,
+      "selected_pose_success_fraction": 0.0,
+      "total_wall_runtime_seconds": 716.9089276000086
+    }
+  },
+  "baseline_report_sha256": "572a97af7329ea4965e1a2757b186955c1b50b51b35f648479e46dd14b3c7aa4",
+  "candidate": {
+    "engine_identities": [
+      {
+        "engine_sha256": "03ddbc935722f4e7536354f42fc5397ef6e311f0d2030360498b7f5192843cdd",
+        "orientation_sha256": "cb7443226549e536f1c46f7f58bb01fb5016627227c293efb81e2ce1dce5786a",
+        "pose_initialization_sha256": "5be10d2c13da2a09498ab7a8097f60d63de55a292a31755e722f6879db81188c",
+        "script_sha256": "e9855b4b0b75e2997bc839be6b165d1f36056bc446143427b1a19e4ce27eba77",
+        "variant": "V5.3-R2.5c_HybridGroundLinkPortfolio-public-alpha"
+      }
+    ],
+    "initializer_diagnostic_totals": {
+      "attempted_samples": 32768,
+      "branch_and_order_consistent": 3794,
+      "evaluated_seed_count": 48,
+      "finite_dyads": 32768,
+      "full_cycle_robust_crank_shortest": 4408,
+      "generation_runtime_seconds": 0.08486139999877196,
+      "refined_candidate_count": 48,
+      "refinement_runtime_seconds": 213.4805370999893,
+      "requested_samples": 32768,
+      "requested_seed_count": 48,
+      "returned_seeds": 48,
+      "transmission_selection_floors": 3548,
+      "verification_runtime_seconds": 0.8336711000156356,
+      "within_search_bounds": 20145
+    },
+    "initializer_settings": {
+      "pose_dyad_samples": 4096,
+      "pose_dyad_seed_count": 6
+    },
+    "label": "source-frozen",
+    "summary": {
+      "all_candidates": 240,
+      "attempted_cases": 8,
+      "completed_cases": 8,
+      "failed_cases": 0,
+      "requested_cases": 8,
+      "selected_candidates": 40,
+      "selected_pose_success_cases": 8,
+      "selected_pose_success_fraction": 1.0,
+      "total_wall_runtime_seconds": 903.3887953000085
+    }
+  },
+  "candidate_report_sha256": "9527aa49529dbb628a912875ec07ee9935eba683fd2c47ee70d7c595541ad687",
+  "case_hashes": [
+    {
+      "id": "evaluation-001",
+      "sha256": "30748a33cc94a3550f29309afc3751c38769ddd27445acdec36da61634ed54c8"
+    },
+    {
+      "id": "evaluation-002",
+      "sha256": "99dae869fdef107dd0767300df86e60c3482f54dc5eba2915933636eb8bed883"
+    },
+    {
+      "id": "evaluation-003",
+      "sha256": "f54c1fcd94d21a17fe92a0f52d480ef876fb6e856096ddb3e3c159fe1d2bbc19"
+    },
+    {
+      "id": "evaluation-004",
+      "sha256": "c3c0a2df954e73ec5abd2d52f7defd31f78fd238422f7aac4246ccd331b8aa4a"
+    },
+    {
+      "id": "evaluation-005",
+      "sha256": "ded4d97fff2282acaa0037875b1353106f2b8f1bb4f7f5d33857aca2ecf2e3b0"
+    },
+    {
+      "id": "evaluation-006",
+      "sha256": "4149cafb04ea2ea7c67def84decfc971437a8b528ba6907a4125830cd18529a2"
+    },
+    {
+      "id": "evaluation-007",
+      "sha256": "c22220418d40893bd90d810d89a0a21f9aa8a516b4e863846888f7f94d79bdb7"
+    },
+    {
+      "id": "evaluation-008",
+      "sha256": "77d281516b8f813ce8348cf05c750ccfa22d9de089a65e62c87077219e2e62a9"
+    }
+  ],
+  "case_results": [
+    {
+      "baseline": {
+        "all_candidates_diagnostic": {
+          "best_by_joint_error": {
+            "candidate_id": "bridge_release_001",
+            "crank_is_strictly_shortest": true,
+            "engine_selection_eligible": false,
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 26.42799590586312,
+            "grashof": true,
+            "joint_normalized_error": 9.11320981145873,
+            "maximum_orientation_error_deg": 18.22641962291746,
+            "maximum_position_error": 0.2295701045555332,
+            "mean_orientation_error_deg": 15.225325765795276,
+            "mean_position_error": 0.15616320284539126,
+            "orientation_errors_deg": [
+              18.22641962291746,
+              9.642005360363243,
+              17.807552314105124
+            ],
+            "pose_within_tolerances": false,
+            "target_assembly": true,
+            "target_minimum_transmission_deg": 26.438689622343567
+          },
+          "candidate_count": 18,
+          "engine_eligible_count": 0,
+          "pose_match_and_engine_eligible_count": 0,
+          "pose_match_count": 0
+        },
+        "case_id": "evaluation-001",
+        "effective_initializer_arguments": {},
+        "engine_identity": {
+          "engine_sha256": "03ddbc935722f4e7536354f42fc5397ef6e311f0d2030360498b7f5192843cdd",
+          "orientation_sha256": "cb7443226549e536f1c46f7f58bb01fb5016627227c293efb81e2ce1dce5786a",
+          "script_sha256": "8f7e773dddf80f547a07a210c3b1e0daab07d43fda340ac9e038d5393a11967a",
+          "variant": "V5.3-R2.5c_HybridGroundLinkPortfolio-public-alpha"
+        },
+        "initializer_diagnostics": null,
+        "model_identity": [
+          {
+            "role": "balanced",
+            "sha256": "72a20f1f6828686c18100b3f5c7f913161b6042cfd9ea3baac15042d1b9fa8a0"
+          },
+          {
+            "role": "path",
+            "sha256": "8193a5d5208c227424cd570405b4c148cc2987c3a266a348a0f6b8184445f61e"
+          },
+          {
+            "role": "transmission",
+            "sha256": "30a23c4aee3a7d5e29673757a791acde6bddd93cf207aaea0cceb5627621e55f"
+          }
+        ],
+        "selected": {
+          "best_by_joint_error": null,
+          "candidate_count": 0,
+          "engine_eligible_count": 0,
+          "pose_match_and_engine_eligible_count": 0,
+          "pose_match_count": 0
+        },
+        "status": "completed",
+        "wall_runtime_seconds": 73.06014050000522
+      },
+      "candidate": {
+        "all_candidates_diagnostic": {
+          "best_by_joint_error": {
+            "candidate_id": "pose_seed_006",
+            "crank_is_strictly_shortest": true,
+            "engine_selection_eligible": true,
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 34.74262832935647,
+            "grashof": true,
+            "joint_normalized_error": 2.021620537564847e-14,
+            "maximum_orientation_error_deg": 2.842170943040401e-14,
+            "maximum_position_error": 1.2560739669470201e-15,
+            "mean_orientation_error_deg": 1.8947806286936004e-14,
+            "mean_position_error": 1.0108102687824235e-15,
+            "orientation_errors_deg": [
+              2.842170943040401e-14,
+              0.0,
+              2.842170943040401e-14
+            ],
+            "pose_within_tolerances": true,
+            "target_assembly": true,
+            "target_minimum_transmission_deg": 34.88983371644461
+          },
+          "candidate_count": 30,
+          "engine_eligible_count": 12,
+          "pose_match_and_engine_eligible_count": 12,
+          "pose_match_count": 12
+        },
+        "case_id": "evaluation-001",
+        "effective_initializer_arguments": {
+          "pose_dyad_samples": 4096,
+          "pose_dyad_seed_count": 6
+        },
+        "engine_identity": {
+          "engine_sha256": "03ddbc935722f4e7536354f42fc5397ef6e311f0d2030360498b7f5192843cdd",
+          "orientation_sha256": "cb7443226549e536f1c46f7f58bb01fb5016627227c293efb81e2ce1dce5786a",
+          "pose_initialization_sha256": "5be10d2c13da2a09498ab7a8097f60d63de55a292a31755e722f6879db81188c",
+          "script_sha256": "e9855b4b0b75e2997bc839be6b165d1f36056bc446143427b1a19e4ce27eba77",
+          "variant": "V5.3-R2.5c_HybridGroundLinkPortfolio-public-alpha"
+        },
+        "initializer_diagnostics": {
+          "attempted_samples": 4096,
+          "branch_and_order_consistent": 94,
+          "enabled": true,
+          "evaluated_seed_count": 6,
+          "finite_dyads": 4096,
+          "full_cycle_robust_crank_shortest": 94,
+          "generation_runtime_seconds": 0.008436199997959193,
+          "method": "three_pose_dyad_v1",
+          "refined_candidate_count": 6,
+          "refinement_runtime_seconds": 24.826863199996296,
+          "requested_samples": 4096,
+          "requested_seed_count": 6,
+          "returned_seeds": 6,
+          "source_sha256": "5be10d2c13da2a09498ab7a8097f60d63de55a292a31755e722f6879db81188c",
+          "transmission_selection_floors": 89,
+          "verification_runtime_seconds": 0.07153430000471417,
+          "within_search_bounds": 2844
+        },
+        "model_identity": [
+          {
+            "role": "balanced",
+            "sha256": "72a20f1f6828686c18100b3f5c7f913161b6042cfd9ea3baac15042d1b9fa8a0"
+          },
+          {
+            "role": "path",
+            "sha256": "8193a5d5208c227424cd570405b4c148cc2987c3a266a348a0f6b8184445f61e"
+          },
+          {
+            "role": "transmission",
+            "sha256": "30a23c4aee3a7d5e29673757a791acde6bddd93cf207aaea0cceb5627621e55f"
+          }
+        ],
+        "selected": {
+          "best_by_joint_error": {
+            "candidate_id": "pose_seed_006",
+            "crank_is_strictly_shortest": true,
+            "engine_selection_eligible": true,
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 34.74262832935647,
+            "grashof": true,
+            "joint_normalized_error": 2.021620537564847e-14,
+            "maximum_orientation_error_deg": 2.842170943040401e-14,
+            "maximum_position_error": 1.2560739669470201e-15,
+            "mean_orientation_error_deg": 1.8947806286936004e-14,
+            "mean_position_error": 1.0108102687824235e-15,
+            "orientation_errors_deg": [
+              2.842170943040401e-14,
+              0.0,
+              2.842170943040401e-14
+            ],
+            "pose_within_tolerances": true,
+            "target_assembly": true,
+            "target_minimum_transmission_deg": 34.88983371644461
+          },
+          "candidate_count": 5,
+          "engine_eligible_count": 5,
+          "pose_match_and_engine_eligible_count": 5,
+          "pose_match_count": 5
+        },
+        "status": "completed",
+        "wall_runtime_seconds": 98.38344589999906
+      },
+      "case_id": "evaluation-001",
+      "case_sha256": "30748a33cc94a3550f29309afc3751c38769ddd27445acdec36da61634ed54c8"
+    },
+    {
+      "baseline": {
+        "all_candidates_diagnostic": {
+          "best_by_joint_error": {
+            "candidate_id": "bridge_release_001",
+            "crank_is_strictly_shortest": true,
+            "engine_selection_eligible": false,
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 34.80607626827929,
+            "grashof": true,
+            "joint_normalized_error": 4.370993765036928,
+            "maximum_orientation_error_deg": 8.741987530073857,
+            "maximum_position_error": 0.07649732044181858,
+            "mean_orientation_error_deg": 5.591843212674689,
+            "mean_position_error": 0.05103472391505367,
+            "orientation_errors_deg": [
+              7.588785083765572,
+              8.741987530073857,
+              0.44475702418463925
+            ],
+            "pose_within_tolerances": false,
+            "target_assembly": true,
+            "target_minimum_transmission_deg": 41.386133343500994
+          },
+          "candidate_count": 18,
+          "engine_eligible_count": 0,
+          "pose_match_and_engine_eligible_count": 0,
+          "pose_match_count": 0
+        },
+        "case_id": "evaluation-002",
+        "effective_initializer_arguments": {},
+        "engine_identity": {
+          "engine_sha256": "03ddbc935722f4e7536354f42fc5397ef6e311f0d2030360498b7f5192843cdd",
+          "orientation_sha256": "cb7443226549e536f1c46f7f58bb01fb5016627227c293efb81e2ce1dce5786a",
+          "script_sha256": "8f7e773dddf80f547a07a210c3b1e0daab07d43fda340ac9e038d5393a11967a",
+          "variant": "V5.3-R2.5c_HybridGroundLinkPortfolio-public-alpha"
+        },
+        "initializer_diagnostics": null,
+        "model_identity": [
+          {
+            "role": "balanced",
+            "sha256": "72a20f1f6828686c18100b3f5c7f913161b6042cfd9ea3baac15042d1b9fa8a0"
+          },
+          {
+            "role": "path",
+            "sha256": "8193a5d5208c227424cd570405b4c148cc2987c3a266a348a0f6b8184445f61e"
+          },
+          {
+            "role": "transmission",
+            "sha256": "30a23c4aee3a7d5e29673757a791acde6bddd93cf207aaea0cceb5627621e55f"
+          }
+        ],
+        "selected": {
+          "best_by_joint_error": null,
+          "candidate_count": 0,
+          "engine_eligible_count": 0,
+          "pose_match_and_engine_eligible_count": 0,
+          "pose_match_count": 0
+        },
+        "status": "completed",
+        "wall_runtime_seconds": 86.39010849999613
+      },
+      "candidate": {
+        "all_candidates_diagnostic": {
+          "best_by_joint_error": {
+            "candidate_id": "pose_seed_001",
+            "crank_is_strictly_shortest": true,
+            "engine_selection_eligible": true,
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 51.314937027750624,
+            "grashof": true,
+            "joint_normalized_error": 8.972900663682327e-15,
+            "maximum_orientation_error_deg": 0.0,
+            "maximum_position_error": 6.661338147750939e-16,
+            "mean_orientation_error_deg": 0.0,
+            "mean_position_error": 4.486450331841164e-16,
+            "orientation_errors_deg": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "pose_within_tolerances": true,
+            "target_assembly": true,
+            "target_minimum_transmission_deg": 53.00184029908935
+          },
+          "candidate_count": 30,
+          "engine_eligible_count": 12,
+          "pose_match_and_engine_eligible_count": 12,
+          "pose_match_count": 12
+        },
+        "case_id": "evaluation-002",
+        "effective_initializer_arguments": {
+          "pose_dyad_samples": 4096,
+          "pose_dyad_seed_count": 6
+        },
+        "engine_identity": {
+          "engine_sha256": "03ddbc935722f4e7536354f42fc5397ef6e311f0d2030360498b7f5192843cdd",
+          "orientation_sha256": "cb7443226549e536f1c46f7f58bb01fb5016627227c293efb81e2ce1dce5786a",
+          "pose_initialization_sha256": "5be10d2c13da2a09498ab7a8097f60d63de55a292a31755e722f6879db81188c",
+          "script_sha256": "e9855b4b0b75e2997bc839be6b165d1f36056bc446143427b1a19e4ce27eba77",
+          "variant": "V5.3-R2.5c_HybridGroundLinkPortfolio-public-alpha"
+        },
+        "initializer_diagnostics": {
+          "attempted_samples": 4096,
+          "branch_and_order_consistent": 640,
+          "enabled": true,
+          "evaluated_seed_count": 6,
+          "finite_dyads": 4096,
+          "full_cycle_robust_crank_shortest": 640,
+          "generation_runtime_seconds": 0.015759400004753843,
+          "method": "three_pose_dyad_v1",
+          "refined_candidate_count": 6,
+          "refinement_runtime_seconds": 33.61038470000494,
+          "requested_samples": 4096,
+          "requested_seed_count": 6,
+          "returned_seeds": 6,
+          "source_sha256": "5be10d2c13da2a09498ab7a8097f60d63de55a292a31755e722f6879db81188c",
+          "transmission_selection_floors": 598,
+          "verification_runtime_seconds": 0.16766710000229068,
+          "within_search_bounds": 2421
+        },
+        "model_identity": [
+          {
+            "role": "balanced",
+            "sha256": "72a20f1f6828686c18100b3f5c7f913161b6042cfd9ea3baac15042d1b9fa8a0"
+          },
+          {
+            "role": "path",
+            "sha256": "8193a5d5208c227424cd570405b4c148cc2987c3a266a348a0f6b8184445f61e"
+          },
+          {
+            "role": "transmission",
+            "sha256": "30a23c4aee3a7d5e29673757a791acde6bddd93cf207aaea0cceb5627621e55f"
+          }
+        ],
+        "selected": {
+          "best_by_joint_error": {
+            "candidate_id": "pose_seed_001",
+            "crank_is_strictly_shortest": true,
+            "engine_selection_eligible": true,
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 51.314937027750624,
+            "grashof": true,
+            "joint_normalized_error": 8.972900663682327e-15,
+            "maximum_orientation_error_deg": 0.0,
+            "maximum_position_error": 6.661338147750939e-16,
+            "mean_orientation_error_deg": 0.0,
+            "mean_position_error": 4.486450331841164e-16,
+            "orientation_errors_deg": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "pose_within_tolerances": true,
+            "target_assembly": true,
+            "target_minimum_transmission_deg": 53.00184029908935
+          },
+          "candidate_count": 5,
+          "engine_eligible_count": 5,
+          "pose_match_and_engine_eligible_count": 5,
+          "pose_match_count": 5
+        },
+        "status": "completed",
+        "wall_runtime_seconds": 127.4665382000021
+      },
+      "case_id": "evaluation-002",
+      "case_sha256": "99dae869fdef107dd0767300df86e60c3482f54dc5eba2915933636eb8bed883"
+    },
+    {
+      "baseline": {
+        "all_candidates_diagnostic": {
+          "best_by_joint_error": {
+            "candidate_id": "bridge_trust_001",
+            "crank_is_strictly_shortest": true,
+            "engine_selection_eligible": false,
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 30.942378666960735,
+            "grashof": true,
+            "joint_normalized_error": 5.472123562781732,
+            "maximum_orientation_error_deg": 10.944247125563464,
+            "maximum_position_error": 0.12785641023446798,
+            "mean_orientation_error_deg": 8.212777196911361,
+            "mean_position_error": 0.09748304872690473,
+            "orientation_errors_deg": [
+              10.944247125563464,
+              10.817367641064266,
+              2.876716824106353
+            ],
+            "pose_within_tolerances": false,
+            "target_assembly": true,
+            "target_minimum_transmission_deg": 35.28257121165966
+          },
+          "candidate_count": 18,
+          "engine_eligible_count": 0,
+          "pose_match_and_engine_eligible_count": 0,
+          "pose_match_count": 0
+        },
+        "case_id": "evaluation-003",
+        "effective_initializer_arguments": {},
+        "engine_identity": {
+          "engine_sha256": "03ddbc935722f4e7536354f42fc5397ef6e311f0d2030360498b7f5192843cdd",
+          "orientation_sha256": "cb7443226549e536f1c46f7f58bb01fb5016627227c293efb81e2ce1dce5786a",
+          "script_sha256": "8f7e773dddf80f547a07a210c3b1e0daab07d43fda340ac9e038d5393a11967a",
+          "variant": "V5.3-R2.5c_HybridGroundLinkPortfolio-public-alpha"
+        },
+        "initializer_diagnostics": null,
+        "model_identity": [
+          {
+            "role": "balanced",
+            "sha256": "72a20f1f6828686c18100b3f5c7f913161b6042cfd9ea3baac15042d1b9fa8a0"
+          },
+          {
+            "role": "path",
+            "sha256": "8193a5d5208c227424cd570405b4c148cc2987c3a266a348a0f6b8184445f61e"
+          },
+          {
+            "role": "transmission",
+            "sha256": "30a23c4aee3a7d5e29673757a791acde6bddd93cf207aaea0cceb5627621e55f"
+          }
+        ],
+        "selected": {
+          "best_by_joint_error": null,
+          "candidate_count": 0,
+          "engine_eligible_count": 0,
+          "pose_match_and_engine_eligible_count": 0,
+          "pose_match_count": 0
+        },
+        "status": "completed",
+        "wall_runtime_seconds": 99.46272650000174
+      },
+      "candidate": {
+        "all_candidates_diagnostic": {
+          "best_by_joint_error": {
+            "candidate_id": "pose_seed_001",
+            "crank_is_strictly_shortest": true,
+            "engine_selection_eligible": true,
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 46.752492073678155,
+            "grashof": true,
+            "joint_normalized_error": 1.4210854715202004e-14,
+            "maximum_orientation_error_deg": 2.842170943040401e-14,
+            "maximum_position_error": 9.930136612989092e-16,
+            "mean_orientation_error_deg": 9.473903143468002e-15,
+            "mean_position_error": 7.101905419761294e-16,
+            "orientation_errors_deg": [
+              0.0,
+              0.0,
+              2.842170943040401e-14
+            ],
+            "pose_within_tolerances": true,
+            "target_assembly": true,
+            "target_minimum_transmission_deg": 51.304627966221794
+          },
+          "candidate_count": 30,
+          "engine_eligible_count": 12,
+          "pose_match_and_engine_eligible_count": 12,
+          "pose_match_count": 12
+        },
+        "case_id": "evaluation-003",
+        "effective_initializer_arguments": {
+          "pose_dyad_samples": 4096,
+          "pose_dyad_seed_count": 6
+        },
+        "engine_identity": {
+          "engine_sha256": "03ddbc935722f4e7536354f42fc5397ef6e311f0d2030360498b7f5192843cdd",
+          "orientation_sha256": "cb7443226549e536f1c46f7f58bb01fb5016627227c293efb81e2ce1dce5786a",
+          "pose_initialization_sha256": "5be10d2c13da2a09498ab7a8097f60d63de55a292a31755e722f6879db81188c",
+          "script_sha256": "e9855b4b0b75e2997bc839be6b165d1f36056bc446143427b1a19e4ce27eba77",
+          "variant": "V5.3-R2.5c_HybridGroundLinkPortfolio-public-alpha"
+        },
+        "initializer_diagnostics": {
+          "attempted_samples": 4096,
+          "branch_and_order_consistent": 244,
+          "enabled": true,
+          "evaluated_seed_count": 6,
+          "finite_dyads": 4096,
+          "full_cycle_robust_crank_shortest": 245,
+          "generation_runtime_seconds": 0.005627599995932542,
+          "method": "three_pose_dyad_v1",
+          "refined_candidate_count": 6,
+          "refinement_runtime_seconds": 24.19289310000022,
+          "requested_samples": 4096,
+          "requested_seed_count": 6,
+          "returned_seeds": 6,
+          "source_sha256": "5be10d2c13da2a09498ab7a8097f60d63de55a292a31755e722f6879db81188c",
+          "transmission_selection_floors": 218,
+          "verification_runtime_seconds": 0.07594870000320952,
+          "within_search_bounds": 2644
+        },
+        "model_identity": [
+          {
+            "role": "balanced",
+            "sha256": "72a20f1f6828686c18100b3f5c7f913161b6042cfd9ea3baac15042d1b9fa8a0"
+          },
+          {
+            "role": "path",
+            "sha256": "8193a5d5208c227424cd570405b4c148cc2987c3a266a348a0f6b8184445f61e"
+          },
+          {
+            "role": "transmission",
+            "sha256": "30a23c4aee3a7d5e29673757a791acde6bddd93cf207aaea0cceb5627621e55f"
+          }
+        ],
+        "selected": {
+          "best_by_joint_error": {
+            "candidate_id": "pose_seed_001",
+            "crank_is_strictly_shortest": true,
+            "engine_selection_eligible": true,
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 46.752492073678155,
+            "grashof": true,
+            "joint_normalized_error": 1.4210854715202004e-14,
+            "maximum_orientation_error_deg": 2.842170943040401e-14,
+            "maximum_position_error": 9.930136612989092e-16,
+            "mean_orientation_error_deg": 9.473903143468002e-15,
+            "mean_position_error": 7.101905419761294e-16,
+            "orientation_errors_deg": [
+              0.0,
+              0.0,
+              2.842170943040401e-14
+            ],
+            "pose_within_tolerances": true,
+            "target_assembly": true,
+            "target_minimum_transmission_deg": 51.304627966221794
+          },
+          "candidate_count": 5,
+          "engine_eligible_count": 5,
+          "pose_match_and_engine_eligible_count": 5,
+          "pose_match_count": 5
+        },
+        "status": "completed",
+        "wall_runtime_seconds": 116.10533320000104
+      },
+      "case_id": "evaluation-003",
+      "case_sha256": "f54c1fcd94d21a17fe92a0f52d480ef876fb6e856096ddb3e3c159fe1d2bbc19"
+    },
+    {
+      "baseline": {
+        "all_candidates_diagnostic": {
+          "best_by_joint_error": {
+            "candidate_id": "bridge_release_001",
+            "crank_is_strictly_shortest": true,
+            "engine_selection_eligible": false,
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 22.72936716303973,
+            "grashof": true,
+            "joint_normalized_error": 6.8475678183608295,
+            "maximum_orientation_error_deg": 13.695135636721659,
+            "maximum_position_error": 0.1791308838957507,
+            "mean_orientation_error_deg": 10.676762589010215,
+            "mean_position_error": 0.0930939038709684,
+            "orientation_errors_deg": [
+              12.708099300599855,
+              13.695135636721659,
+              5.627052829709129
+            ],
+            "pose_within_tolerances": false,
+            "target_assembly": true,
+            "target_minimum_transmission_deg": 22.749880556543754
+          },
+          "candidate_count": 18,
+          "engine_eligible_count": 0,
+          "pose_match_and_engine_eligible_count": 0,
+          "pose_match_count": 0
+        },
+        "case_id": "evaluation-004",
+        "effective_initializer_arguments": {},
+        "engine_identity": {
+          "engine_sha256": "03ddbc935722f4e7536354f42fc5397ef6e311f0d2030360498b7f5192843cdd",
+          "orientation_sha256": "cb7443226549e536f1c46f7f58bb01fb5016627227c293efb81e2ce1dce5786a",
+          "script_sha256": "8f7e773dddf80f547a07a210c3b1e0daab07d43fda340ac9e038d5393a11967a",
+          "variant": "V5.3-R2.5c_HybridGroundLinkPortfolio-public-alpha"
+        },
+        "initializer_diagnostics": null,
+        "model_identity": [
+          {
+            "role": "balanced",
+            "sha256": "72a20f1f6828686c18100b3f5c7f913161b6042cfd9ea3baac15042d1b9fa8a0"
+          },
+          {
+            "role": "path",
+            "sha256": "8193a5d5208c227424cd570405b4c148cc2987c3a266a348a0f6b8184445f61e"
+          },
+          {
+            "role": "transmission",
+            "sha256": "30a23c4aee3a7d5e29673757a791acde6bddd93cf207aaea0cceb5627621e55f"
+          }
+        ],
+        "selected": {
+          "best_by_joint_error": null,
+          "candidate_count": 0,
+          "engine_eligible_count": 0,
+          "pose_match_and_engine_eligible_count": 0,
+          "pose_match_count": 0
+        },
+        "status": "completed",
+        "wall_runtime_seconds": 87.78323260000616
+      },
+      "candidate": {
+        "all_candidates_diagnostic": {
+          "best_by_joint_error": {
+            "candidate_id": "pose_seed_003",
+            "crank_is_strictly_shortest": true,
+            "engine_selection_eligible": true,
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 49.463752025256944,
+            "grashof": true,
+            "joint_normalized_error": 3.3525651403954507e-14,
+            "maximum_orientation_error_deg": 2.842170943040401e-14,
+            "maximum_position_error": 2.5121479338940403e-15,
+            "mean_orientation_error_deg": 9.473903143468002e-15,
+            "mean_position_error": 1.6762825701977254e-15,
+            "orientation_errors_deg": [
+              2.842170943040401e-14,
+              0.0,
+              0.0
+            ],
+            "pose_within_tolerances": true,
+            "target_assembly": true,
+            "target_minimum_transmission_deg": 49.50848183242226
+          },
+          "candidate_count": 30,
+          "engine_eligible_count": 12,
+          "pose_match_and_engine_eligible_count": 12,
+          "pose_match_count": 12
+        },
+        "case_id": "evaluation-004",
+        "effective_initializer_arguments": {
+          "pose_dyad_samples": 4096,
+          "pose_dyad_seed_count": 6
+        },
+        "engine_identity": {
+          "engine_sha256": "03ddbc935722f4e7536354f42fc5397ef6e311f0d2030360498b7f5192843cdd",
+          "orientation_sha256": "cb7443226549e536f1c46f7f58bb01fb5016627227c293efb81e2ce1dce5786a",
+          "pose_initialization_sha256": "5be10d2c13da2a09498ab7a8097f60d63de55a292a31755e722f6879db81188c",
+          "script_sha256": "e9855b4b0b75e2997bc839be6b165d1f36056bc446143427b1a19e4ce27eba77",
+          "variant": "V5.3-R2.5c_HybridGroundLinkPortfolio-public-alpha"
+        },
+        "initializer_diagnostics": {
+          "attempted_samples": 4096,
+          "branch_and_order_consistent": 339,
+          "enabled": true,
+          "evaluated_seed_count": 6,
+          "finite_dyads": 4096,
+          "full_cycle_robust_crank_shortest": 693,
+          "generation_runtime_seconds": 0.014347900003485847,
+          "method": "three_pose_dyad_v1",
+          "refined_candidate_count": 6,
+          "refinement_runtime_seconds": 27.254015399994387,
+          "requested_samples": 4096,
+          "requested_seed_count": 6,
+          "returned_seeds": 6,
+          "source_sha256": "5be10d2c13da2a09498ab7a8097f60d63de55a292a31755e722f6879db81188c",
+          "transmission_selection_floors": 320,
+          "verification_runtime_seconds": 0.1367208000010578,
+          "within_search_bounds": 3221
+        },
+        "model_identity": [
+          {
+            "role": "balanced",
+            "sha256": "72a20f1f6828686c18100b3f5c7f913161b6042cfd9ea3baac15042d1b9fa8a0"
+          },
+          {
+            "role": "path",
+            "sha256": "8193a5d5208c227424cd570405b4c148cc2987c3a266a348a0f6b8184445f61e"
+          },
+          {
+            "role": "transmission",
+            "sha256": "30a23c4aee3a7d5e29673757a791acde6bddd93cf207aaea0cceb5627621e55f"
+          }
+        ],
+        "selected": {
+          "best_by_joint_error": {
+            "candidate_id": "pose_seed_003",
+            "crank_is_strictly_shortest": true,
+            "engine_selection_eligible": true,
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 49.463752025256944,
+            "grashof": true,
+            "joint_normalized_error": 3.3525651403954507e-14,
+            "maximum_orientation_error_deg": 2.842170943040401e-14,
+            "maximum_position_error": 2.5121479338940403e-15,
+            "mean_orientation_error_deg": 9.473903143468002e-15,
+            "mean_position_error": 1.6762825701977254e-15,
+            "orientation_errors_deg": [
+              2.842170943040401e-14,
+              0.0,
+              0.0
+            ],
+            "pose_within_tolerances": true,
+            "target_assembly": true,
+            "target_minimum_transmission_deg": 49.50848183242226
+          },
+          "candidate_count": 5,
+          "engine_eligible_count": 5,
+          "pose_match_and_engine_eligible_count": 5,
+          "pose_match_count": 5
+        },
+        "status": "completed",
+        "wall_runtime_seconds": 103.26016000000527
+      },
+      "case_id": "evaluation-004",
+      "case_sha256": "c3c0a2df954e73ec5abd2d52f7defd31f78fd238422f7aac4246ccd331b8aa4a"
+    },
+    {
+      "baseline": {
+        "all_candidates_diagnostic": {
+          "best_by_joint_error": {
+            "candidate_id": "bridge_release_001",
+            "crank_is_strictly_shortest": true,
+            "engine_selection_eligible": false,
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 31.46351352840319,
+            "grashof": true,
+            "joint_normalized_error": 9.53343433772828,
+            "maximum_orientation_error_deg": 19.06686867545656,
+            "maximum_position_error": 0.20654922143579035,
+            "mean_orientation_error_deg": 14.325350124689171,
+            "mean_position_error": 0.13809671808058002,
+            "orientation_errors_deg": [
+              19.06686867545656,
+              4.95232586436191,
+              18.95685583424904
+            ],
+            "pose_within_tolerances": false,
+            "target_assembly": true,
+            "target_minimum_transmission_deg": 33.04442774129976
+          },
+          "candidate_count": 18,
+          "engine_eligible_count": 0,
+          "pose_match_and_engine_eligible_count": 0,
+          "pose_match_count": 0
+        },
+        "case_id": "evaluation-005",
+        "effective_initializer_arguments": {},
+        "engine_identity": {
+          "engine_sha256": "03ddbc935722f4e7536354f42fc5397ef6e311f0d2030360498b7f5192843cdd",
+          "orientation_sha256": "cb7443226549e536f1c46f7f58bb01fb5016627227c293efb81e2ce1dce5786a",
+          "script_sha256": "8f7e773dddf80f547a07a210c3b1e0daab07d43fda340ac9e038d5393a11967a",
+          "variant": "V5.3-R2.5c_HybridGroundLinkPortfolio-public-alpha"
+        },
+        "initializer_diagnostics": null,
+        "model_identity": [
+          {
+            "role": "balanced",
+            "sha256": "72a20f1f6828686c18100b3f5c7f913161b6042cfd9ea3baac15042d1b9fa8a0"
+          },
+          {
+            "role": "path",
+            "sha256": "8193a5d5208c227424cd570405b4c148cc2987c3a266a348a0f6b8184445f61e"
+          },
+          {
+            "role": "transmission",
+            "sha256": "30a23c4aee3a7d5e29673757a791acde6bddd93cf207aaea0cceb5627621e55f"
+          }
+        ],
+        "selected": {
+          "best_by_joint_error": null,
+          "candidate_count": 0,
+          "engine_eligible_count": 0,
+          "pose_match_and_engine_eligible_count": 0,
+          "pose_match_count": 0
+        },
+        "status": "completed",
+        "wall_runtime_seconds": 75.77228170000308
+      },
+      "candidate": {
+        "all_candidates_diagnostic": {
+          "best_by_joint_error": {
+            "candidate_id": "pose_seed_001",
+            "crank_is_strictly_shortest": true,
+            "engine_selection_eligible": true,
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 56.723201691800746,
+            "grashof": true,
+            "joint_normalized_error": 2.7490256843598003e-14,
+            "maximum_orientation_error_deg": 2.842170943040401e-14,
+            "maximum_position_error": 1.831026719408895e-15,
+            "mean_orientation_error_deg": 9.473903143468002e-15,
+            "mean_position_error": 1.3745128421799002e-15,
+            "orientation_errors_deg": [
+              0.0,
+              2.842170943040401e-14,
+              0.0
+            ],
+            "pose_within_tolerances": true,
+            "target_assembly": true,
+            "target_minimum_transmission_deg": 73.31858368070505
+          },
+          "candidate_count": 30,
+          "engine_eligible_count": 12,
+          "pose_match_and_engine_eligible_count": 12,
+          "pose_match_count": 12
+        },
+        "case_id": "evaluation-005",
+        "effective_initializer_arguments": {
+          "pose_dyad_samples": 4096,
+          "pose_dyad_seed_count": 6
+        },
+        "engine_identity": {
+          "engine_sha256": "03ddbc935722f4e7536354f42fc5397ef6e311f0d2030360498b7f5192843cdd",
+          "orientation_sha256": "cb7443226549e536f1c46f7f58bb01fb5016627227c293efb81e2ce1dce5786a",
+          "pose_initialization_sha256": "5be10d2c13da2a09498ab7a8097f60d63de55a292a31755e722f6879db81188c",
+          "script_sha256": "e9855b4b0b75e2997bc839be6b165d1f36056bc446143427b1a19e4ce27eba77",
+          "variant": "V5.3-R2.5c_HybridGroundLinkPortfolio-public-alpha"
+        },
+        "initializer_diagnostics": {
+          "attempted_samples": 4096,
+          "branch_and_order_consistent": 776,
+          "enabled": true,
+          "evaluated_seed_count": 6,
+          "finite_dyads": 4096,
+          "full_cycle_robust_crank_shortest": 784,
+          "generation_runtime_seconds": 0.00868839999748161,
+          "method": "three_pose_dyad_v1",
+          "refined_candidate_count": 6,
+          "refinement_runtime_seconds": 27.418637499999022,
+          "requested_samples": 4096,
+          "requested_seed_count": 6,
+          "returned_seeds": 6,
+          "source_sha256": "5be10d2c13da2a09498ab7a8097f60d63de55a292a31755e722f6879db81188c",
+          "transmission_selection_floors": 739,
+          "verification_runtime_seconds": 0.09213830000226153,
+          "within_search_bounds": 1873
+        },
+        "model_identity": [
+          {
+            "role": "balanced",
+            "sha256": "72a20f1f6828686c18100b3f5c7f913161b6042cfd9ea3baac15042d1b9fa8a0"
+          },
+          {
+            "role": "path",
+            "sha256": "8193a5d5208c227424cd570405b4c148cc2987c3a266a348a0f6b8184445f61e"
+          },
+          {
+            "role": "transmission",
+            "sha256": "30a23c4aee3a7d5e29673757a791acde6bddd93cf207aaea0cceb5627621e55f"
+          }
+        ],
+        "selected": {
+          "best_by_joint_error": {
+            "candidate_id": "pose_seed_001",
+            "crank_is_strictly_shortest": true,
+            "engine_selection_eligible": true,
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 56.723201691800746,
+            "grashof": true,
+            "joint_normalized_error": 2.7490256843598003e-14,
+            "maximum_orientation_error_deg": 2.842170943040401e-14,
+            "maximum_position_error": 1.831026719408895e-15,
+            "mean_orientation_error_deg": 9.473903143468002e-15,
+            "mean_position_error": 1.3745128421799002e-15,
+            "orientation_errors_deg": [
+              0.0,
+              2.842170943040401e-14,
+              0.0
+            ],
+            "pose_within_tolerances": true,
+            "target_assembly": true,
+            "target_minimum_transmission_deg": 73.31858368070505
+          },
+          "candidate_count": 5,
+          "engine_eligible_count": 5,
+          "pose_match_and_engine_eligible_count": 5,
+          "pose_match_count": 5
+        },
+        "status": "completed",
+        "wall_runtime_seconds": 154.15334979999898
+      },
+      "case_id": "evaluation-005",
+      "case_sha256": "ded4d97fff2282acaa0037875b1353106f2b8f1bb4f7f5d33857aca2ecf2e3b0"
+    },
+    {
+      "baseline": {
+        "all_candidates_diagnostic": {
+          "best_by_joint_error": {
+            "candidate_id": "bridge_trust_002",
+            "crank_is_strictly_shortest": true,
+            "engine_selection_eligible": false,
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 21.797300448921927,
+            "grashof": true,
+            "joint_normalized_error": 6.8533181991785375,
+            "maximum_orientation_error_deg": 8.89625035545157,
+            "maximum_position_error": 0.45646497515343043,
+            "mean_orientation_error_deg": 7.181589847861933,
+            "mean_position_error": 0.3426659099589269,
+            "orientation_errors_deg": [
+              4.270285691017762,
+              8.89625035545157,
+              8.378233497116469
+            ],
+            "pose_within_tolerances": false,
+            "target_assembly": true,
+            "target_minimum_transmission_deg": 67.3313768476225
+          },
+          "candidate_count": 18,
+          "engine_eligible_count": 0,
+          "pose_match_and_engine_eligible_count": 0,
+          "pose_match_count": 0
+        },
+        "case_id": "evaluation-006",
+        "effective_initializer_arguments": {},
+        "engine_identity": {
+          "engine_sha256": "03ddbc935722f4e7536354f42fc5397ef6e311f0d2030360498b7f5192843cdd",
+          "orientation_sha256": "cb7443226549e536f1c46f7f58bb01fb5016627227c293efb81e2ce1dce5786a",
+          "script_sha256": "8f7e773dddf80f547a07a210c3b1e0daab07d43fda340ac9e038d5393a11967a",
+          "variant": "V5.3-R2.5c_HybridGroundLinkPortfolio-public-alpha"
+        },
+        "initializer_diagnostics": null,
+        "model_identity": [
+          {
+            "role": "balanced",
+            "sha256": "72a20f1f6828686c18100b3f5c7f913161b6042cfd9ea3baac15042d1b9fa8a0"
+          },
+          {
+            "role": "path",
+            "sha256": "8193a5d5208c227424cd570405b4c148cc2987c3a266a348a0f6b8184445f61e"
+          },
+          {
+            "role": "transmission",
+            "sha256": "30a23c4aee3a7d5e29673757a791acde6bddd93cf207aaea0cceb5627621e55f"
+          }
+        ],
+        "selected": {
+          "best_by_joint_error": null,
+          "candidate_count": 0,
+          "engine_eligible_count": 0,
+          "pose_match_and_engine_eligible_count": 0,
+          "pose_match_count": 0
+        },
+        "status": "completed",
+        "wall_runtime_seconds": 120.72380359999806
+      },
+      "candidate": {
+        "all_candidates_diagnostic": {
+          "best_by_joint_error": {
+            "candidate_id": "pose_seed_003",
+            "crank_is_strictly_shortest": true,
+            "engine_selection_eligible": true,
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 63.50433237232077,
+            "grashof": true,
+            "joint_normalized_error": 2.842170943040401e-14,
+            "maximum_orientation_error_deg": 5.684341886080802e-14,
+            "maximum_position_error": 1.9860273225978185e-15,
+            "mean_orientation_error_deg": 2.842170943040401e-14,
+            "mean_position_error": 1.3767599030816545e-15,
+            "orientation_errors_deg": [
+              0.0,
+              5.684341886080802e-14,
+              2.842170943040401e-14
+            ],
+            "pose_within_tolerances": true,
+            "target_assembly": true,
+            "target_minimum_transmission_deg": 69.38714816219306
+          },
+          "candidate_count": 30,
+          "engine_eligible_count": 12,
+          "pose_match_and_engine_eligible_count": 12,
+          "pose_match_count": 12
+        },
+        "case_id": "evaluation-006",
+        "effective_initializer_arguments": {
+          "pose_dyad_samples": 4096,
+          "pose_dyad_seed_count": 6
+        },
+        "engine_identity": {
+          "engine_sha256": "03ddbc935722f4e7536354f42fc5397ef6e311f0d2030360498b7f5192843cdd",
+          "orientation_sha256": "cb7443226549e536f1c46f7f58bb01fb5016627227c293efb81e2ce1dce5786a",
+          "pose_initialization_sha256": "5be10d2c13da2a09498ab7a8097f60d63de55a292a31755e722f6879db81188c",
+          "script_sha256": "e9855b4b0b75e2997bc839be6b165d1f36056bc446143427b1a19e4ce27eba77",
+          "variant": "V5.3-R2.5c_HybridGroundLinkPortfolio-public-alpha"
+        },
+        "initializer_diagnostics": {
+          "attempted_samples": 4096,
+          "branch_and_order_consistent": 333,
+          "enabled": true,
+          "evaluated_seed_count": 6,
+          "finite_dyads": 4096,
+          "full_cycle_robust_crank_shortest": 335,
+          "generation_runtime_seconds": 0.011943600002268795,
+          "method": "three_pose_dyad_v1",
+          "refined_candidate_count": 6,
+          "refinement_runtime_seconds": 28.46458700000221,
+          "requested_samples": 4096,
+          "requested_seed_count": 6,
+          "returned_seeds": 6,
+          "source_sha256": "5be10d2c13da2a09498ab7a8097f60d63de55a292a31755e722f6879db81188c",
+          "transmission_selection_floors": 332,
+          "verification_runtime_seconds": 0.09834090000367723,
+          "within_search_bounds": 2652
+        },
+        "model_identity": [
+          {
+            "role": "balanced",
+            "sha256": "72a20f1f6828686c18100b3f5c7f913161b6042cfd9ea3baac15042d1b9fa8a0"
+          },
+          {
+            "role": "path",
+            "sha256": "8193a5d5208c227424cd570405b4c148cc2987c3a266a348a0f6b8184445f61e"
+          },
+          {
+            "role": "transmission",
+            "sha256": "30a23c4aee3a7d5e29673757a791acde6bddd93cf207aaea0cceb5627621e55f"
+          }
+        ],
+        "selected": {
+          "best_by_joint_error": {
+            "candidate_id": "pose_seed_003",
+            "crank_is_strictly_shortest": true,
+            "engine_selection_eligible": true,
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 63.50433237232077,
+            "grashof": true,
+            "joint_normalized_error": 2.842170943040401e-14,
+            "maximum_orientation_error_deg": 5.684341886080802e-14,
+            "maximum_position_error": 1.9860273225978185e-15,
+            "mean_orientation_error_deg": 2.842170943040401e-14,
+            "mean_position_error": 1.3767599030816545e-15,
+            "orientation_errors_deg": [
+              0.0,
+              5.684341886080802e-14,
+              2.842170943040401e-14
+            ],
+            "pose_within_tolerances": true,
+            "target_assembly": true,
+            "target_minimum_transmission_deg": 69.38714816219306
+          },
+          "candidate_count": 5,
+          "engine_eligible_count": 5,
+          "pose_match_and_engine_eligible_count": 5,
+          "pose_match_count": 5
+        },
+        "status": "completed",
+        "wall_runtime_seconds": 113.11007480000262
+      },
+      "case_id": "evaluation-006",
+      "case_sha256": "4149cafb04ea2ea7c67def84decfc971437a8b528ba6907a4125830cd18529a2"
+    },
+    {
+      "baseline": {
+        "all_candidates_diagnostic": {
+          "best_by_joint_error": {
+            "candidate_id": "bridge_trust_001",
+            "crank_is_strictly_shortest": true,
+            "engine_selection_eligible": false,
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 31.365172678199617,
+            "grashof": true,
+            "joint_normalized_error": 4.908716047709717,
+            "maximum_orientation_error_deg": 9.817432095419434,
+            "maximum_position_error": 0.10915629215236643,
+            "mean_orientation_error_deg": 9.656298151224215,
+            "mean_position_error": 0.08156381269256706,
+            "orientation_errors_deg": [
+              9.769771066730527,
+              9.817432095419434,
+              9.381691291522685
+            ],
+            "pose_within_tolerances": false,
+            "target_assembly": true,
+            "target_minimum_transmission_deg": 38.944911791116006
+          },
+          "candidate_count": 18,
+          "engine_eligible_count": 0,
+          "pose_match_and_engine_eligible_count": 0,
+          "pose_match_count": 0
+        },
+        "case_id": "evaluation-007",
+        "effective_initializer_arguments": {},
+        "engine_identity": {
+          "engine_sha256": "03ddbc935722f4e7536354f42fc5397ef6e311f0d2030360498b7f5192843cdd",
+          "orientation_sha256": "cb7443226549e536f1c46f7f58bb01fb5016627227c293efb81e2ce1dce5786a",
+          "script_sha256": "8f7e773dddf80f547a07a210c3b1e0daab07d43fda340ac9e038d5393a11967a",
+          "variant": "V5.3-R2.5c_HybridGroundLinkPortfolio-public-alpha"
+        },
+        "initializer_diagnostics": null,
+        "model_identity": [
+          {
+            "role": "balanced",
+            "sha256": "72a20f1f6828686c18100b3f5c7f913161b6042cfd9ea3baac15042d1b9fa8a0"
+          },
+          {
+            "role": "path",
+            "sha256": "8193a5d5208c227424cd570405b4c148cc2987c3a266a348a0f6b8184445f61e"
+          },
+          {
+            "role": "transmission",
+            "sha256": "30a23c4aee3a7d5e29673757a791acde6bddd93cf207aaea0cceb5627621e55f"
+          }
+        ],
+        "selected": {
+          "best_by_joint_error": null,
+          "candidate_count": 0,
+          "engine_eligible_count": 0,
+          "pose_match_and_engine_eligible_count": 0,
+          "pose_match_count": 0
+        },
+        "status": "completed",
+        "wall_runtime_seconds": 92.76310219999868
+      },
+      "candidate": {
+        "all_candidates_diagnostic": {
+          "best_by_joint_error": {
+            "candidate_id": "pose_seed_003",
+            "crank_is_strictly_shortest": true,
+            "engine_selection_eligible": true,
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 48.47169721129478,
+            "grashof": true,
+            "joint_normalized_error": 2.1183977975993768e-14,
+            "maximum_orientation_error_deg": 2.842170943040401e-14,
+            "maximum_position_error": 1.4043333874306805e-15,
+            "mean_orientation_error_deg": 9.473903143468002e-15,
+            "mean_position_error": 1.0591988987996885e-15,
+            "orientation_errors_deg": [
+              2.842170943040401e-14,
+              0.0,
+              0.0
+            ],
+            "pose_within_tolerances": true,
+            "target_assembly": true,
+            "target_minimum_transmission_deg": 58.50821118790936
+          },
+          "candidate_count": 30,
+          "engine_eligible_count": 12,
+          "pose_match_and_engine_eligible_count": 12,
+          "pose_match_count": 12
+        },
+        "case_id": "evaluation-007",
+        "effective_initializer_arguments": {
+          "pose_dyad_samples": 4096,
+          "pose_dyad_seed_count": 6
+        },
+        "engine_identity": {
+          "engine_sha256": "03ddbc935722f4e7536354f42fc5397ef6e311f0d2030360498b7f5192843cdd",
+          "orientation_sha256": "cb7443226549e536f1c46f7f58bb01fb5016627227c293efb81e2ce1dce5786a",
+          "pose_initialization_sha256": "5be10d2c13da2a09498ab7a8097f60d63de55a292a31755e722f6879db81188c",
+          "script_sha256": "e9855b4b0b75e2997bc839be6b165d1f36056bc446143427b1a19e4ce27eba77",
+          "variant": "V5.3-R2.5c_HybridGroundLinkPortfolio-public-alpha"
+        },
+        "initializer_diagnostics": {
+          "attempted_samples": 4096,
+          "branch_and_order_consistent": 941,
+          "enabled": true,
+          "evaluated_seed_count": 6,
+          "finite_dyads": 4096,
+          "full_cycle_robust_crank_shortest": 966,
+          "generation_runtime_seconds": 0.012634099999559112,
+          "method": "three_pose_dyad_v1",
+          "refined_candidate_count": 6,
+          "refinement_runtime_seconds": 28.25712719999865,
+          "requested_samples": 4096,
+          "requested_seed_count": 6,
+          "returned_seeds": 6,
+          "source_sha256": "5be10d2c13da2a09498ab7a8097f60d63de55a292a31755e722f6879db81188c",
+          "transmission_selection_floors": 859,
+          "verification_runtime_seconds": 0.11633669999719132,
+          "within_search_bounds": 1898
+        },
+        "model_identity": [
+          {
+            "role": "balanced",
+            "sha256": "72a20f1f6828686c18100b3f5c7f913161b6042cfd9ea3baac15042d1b9fa8a0"
+          },
+          {
+            "role": "path",
+            "sha256": "8193a5d5208c227424cd570405b4c148cc2987c3a266a348a0f6b8184445f61e"
+          },
+          {
+            "role": "transmission",
+            "sha256": "30a23c4aee3a7d5e29673757a791acde6bddd93cf207aaea0cceb5627621e55f"
+          }
+        ],
+        "selected": {
+          "best_by_joint_error": {
+            "candidate_id": "pose_seed_003",
+            "crank_is_strictly_shortest": true,
+            "engine_selection_eligible": true,
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 48.47169721129478,
+            "grashof": true,
+            "joint_normalized_error": 2.1183977975993768e-14,
+            "maximum_orientation_error_deg": 2.842170943040401e-14,
+            "maximum_position_error": 1.4043333874306805e-15,
+            "mean_orientation_error_deg": 9.473903143468002e-15,
+            "mean_position_error": 1.0591988987996885e-15,
+            "orientation_errors_deg": [
+              2.842170943040401e-14,
+              0.0,
+              0.0
+            ],
+            "pose_within_tolerances": true,
+            "target_assembly": true,
+            "target_minimum_transmission_deg": 58.50821118790936
+          },
+          "candidate_count": 5,
+          "engine_eligible_count": 5,
+          "pose_match_and_engine_eligible_count": 5,
+          "pose_match_count": 5
+        },
+        "status": "completed",
+        "wall_runtime_seconds": 92.93461730000126
+      },
+      "case_id": "evaluation-007",
+      "case_sha256": "c22220418d40893bd90d810d89a0a21f9aa8a516b4e863846888f7f94d79bdb7"
+    },
+    {
+      "baseline": {
+        "all_candidates_diagnostic": {
+          "best_by_joint_error": {
+            "candidate_id": "bridge_trust_001",
+            "crank_is_strictly_shortest": true,
+            "engine_selection_eligible": false,
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 18.100442173914995,
+            "grashof": true,
+            "joint_normalized_error": 5.493477062460499,
+            "maximum_orientation_error_deg": 10.986954124920999,
+            "maximum_position_error": 0.21003302631286422,
+            "mean_orientation_error_deg": 9.064052527356466,
+            "mean_position_error": 0.15471981745559452,
+            "orientation_errors_deg": [
+              5.3128048916285024,
+              10.986954124920999,
+              10.892398565519898
+            ],
+            "pose_within_tolerances": false,
+            "target_assembly": true,
+            "target_minimum_transmission_deg": 27.2108393796137
+          },
+          "candidate_count": 18,
+          "engine_eligible_count": 0,
+          "pose_match_and_engine_eligible_count": 0,
+          "pose_match_count": 0
+        },
+        "case_id": "evaluation-008",
+        "effective_initializer_arguments": {},
+        "engine_identity": {
+          "engine_sha256": "03ddbc935722f4e7536354f42fc5397ef6e311f0d2030360498b7f5192843cdd",
+          "orientation_sha256": "cb7443226549e536f1c46f7f58bb01fb5016627227c293efb81e2ce1dce5786a",
+          "script_sha256": "8f7e773dddf80f547a07a210c3b1e0daab07d43fda340ac9e038d5393a11967a",
+          "variant": "V5.3-R2.5c_HybridGroundLinkPortfolio-public-alpha"
+        },
+        "initializer_diagnostics": null,
+        "model_identity": [
+          {
+            "role": "balanced",
+            "sha256": "72a20f1f6828686c18100b3f5c7f913161b6042cfd9ea3baac15042d1b9fa8a0"
+          },
+          {
+            "role": "path",
+            "sha256": "8193a5d5208c227424cd570405b4c148cc2987c3a266a348a0f6b8184445f61e"
+          },
+          {
+            "role": "transmission",
+            "sha256": "30a23c4aee3a7d5e29673757a791acde6bddd93cf207aaea0cceb5627621e55f"
+          }
+        ],
+        "selected": {
+          "best_by_joint_error": null,
+          "candidate_count": 0,
+          "engine_eligible_count": 0,
+          "pose_match_and_engine_eligible_count": 0,
+          "pose_match_count": 0
+        },
+        "status": "completed",
+        "wall_runtime_seconds": 80.95353199999954
+      },
+      "candidate": {
+        "all_candidates_diagnostic": {
+          "best_by_joint_error": {
+            "candidate_id": "pose_seed_002",
+            "crank_is_strictly_shortest": true,
+            "engine_selection_eligible": true,
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 48.26744668063637,
+            "grashof": true,
+            "joint_normalized_error": 3.349530578525387e-14,
+            "maximum_orientation_error_deg": 5.684341886080802e-14,
+            "maximum_position_error": 2.5121479338940403e-15,
+            "mean_orientation_error_deg": 3.789561257387201e-14,
+            "mean_position_error": 1.6015532470082819e-15,
+            "orientation_errors_deg": [
+              0.0,
+              5.684341886080802e-14,
+              5.684341886080802e-14
+            ],
+            "pose_within_tolerances": true,
+            "target_assembly": true,
+            "target_minimum_transmission_deg": 48.81903834672099
+          },
+          "candidate_count": 30,
+          "engine_eligible_count": 12,
+          "pose_match_and_engine_eligible_count": 12,
+          "pose_match_count": 12
+        },
+        "case_id": "evaluation-008",
+        "effective_initializer_arguments": {
+          "pose_dyad_samples": 4096,
+          "pose_dyad_seed_count": 6
+        },
+        "engine_identity": {
+          "engine_sha256": "03ddbc935722f4e7536354f42fc5397ef6e311f0d2030360498b7f5192843cdd",
+          "orientation_sha256": "cb7443226549e536f1c46f7f58bb01fb5016627227c293efb81e2ce1dce5786a",
+          "pose_initialization_sha256": "5be10d2c13da2a09498ab7a8097f60d63de55a292a31755e722f6879db81188c",
+          "script_sha256": "e9855b4b0b75e2997bc839be6b165d1f36056bc446143427b1a19e4ce27eba77",
+          "variant": "V5.3-R2.5c_HybridGroundLinkPortfolio-public-alpha"
+        },
+        "initializer_diagnostics": {
+          "attempted_samples": 4096,
+          "branch_and_order_consistent": 427,
+          "enabled": true,
+          "evaluated_seed_count": 6,
+          "finite_dyads": 4096,
+          "full_cycle_robust_crank_shortest": 651,
+          "generation_runtime_seconds": 0.007424199997331016,
+          "method": "three_pose_dyad_v1",
+          "refined_candidate_count": 6,
+          "refinement_runtime_seconds": 19.456028999993578,
+          "requested_samples": 4096,
+          "requested_seed_count": 6,
+          "returned_seeds": 6,
+          "source_sha256": "5be10d2c13da2a09498ab7a8097f60d63de55a292a31755e722f6879db81188c",
+          "transmission_selection_floors": 393,
+          "verification_runtime_seconds": 0.07498430000123335,
+          "within_search_bounds": 2592
+        },
+        "model_identity": [
+          {
+            "role": "balanced",
+            "sha256": "72a20f1f6828686c18100b3f5c7f913161b6042cfd9ea3baac15042d1b9fa8a0"
+          },
+          {
+            "role": "path",
+            "sha256": "8193a5d5208c227424cd570405b4c148cc2987c3a266a348a0f6b8184445f61e"
+          },
+          {
+            "role": "transmission",
+            "sha256": "30a23c4aee3a7d5e29673757a791acde6bddd93cf207aaea0cceb5627621e55f"
+          }
+        ],
+        "selected": {
+          "best_by_joint_error": {
+            "candidate_id": "pose_seed_005",
+            "crank_is_strictly_shortest": true,
+            "engine_selection_eligible": true,
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 48.24886554202702,
+            "grashof": true,
+            "joint_normalized_error": 3.575713719328505e-14,
+            "maximum_orientation_error_deg": 2.842170943040401e-14,
+            "maximum_position_error": 1.9860273225978185e-15,
+            "mean_orientation_error_deg": 9.473903143468002e-15,
+            "mean_position_error": 1.7878568596642525e-15,
+            "orientation_errors_deg": [
+              0.0,
+              0.0,
+              2.842170943040401e-14
+            ],
+            "pose_within_tolerances": true,
+            "target_assembly": true,
+            "target_minimum_transmission_deg": 53.5293054603842
+          },
+          "candidate_count": 5,
+          "engine_eligible_count": 5,
+          "pose_match_and_engine_eligible_count": 5,
+          "pose_match_count": 5
+        },
+        "status": "completed",
+        "wall_runtime_seconds": 97.97527609999815
+      },
+      "case_id": "evaluation-008",
+      "case_sha256": "77d281516b8f813ce8348cf05c750ccfa22d9de089a65e62c87077219e2e62a9"
+    }
+  ],
+  "common_configuration": {
+    "branches": "both",
+    "device": "cpu",
+    "dtype": "float64",
+    "model_roles": [
+      "balanced",
+      "path",
+      "transmission"
+    ],
+    "phase_mode": "ordered",
+    "portfolio_guarantee_fixed_count": 0,
+    "profile_matrix": "paired",
+    "strict_qualification": true
+  },
+  "compute_note": "Initializer work and extra seeds may differ even when optimizer step settings match. Inspect per-run initializer counts and wall times.",
+  "configured_optimizer_budgets_equal": true,
+  "corpus_manifest_sha256": "a3335f192f420c92f668983f3286bf32bc0a6c723fa348c6454ca39a70500cfc",
+  "corpus_path": "examples/benchmarks/pose-corpus-v1",
+  "equal_total_compute_claimed": false,
+  "evaluator_sha256": "a7edcba343c687ef1ee8a7d6ae50c661e827daf8d5ec74d163c8fa0ffab2d9ed",
+  "execution": {
+    "MKL_NUM_THREADS": 1,
+    "OMP_NUM_THREADS": 1,
+    "device": "cpu",
+    "dtype": "float64",
+    "maximum_concurrent_benchmark_processes": 4,
+    "platform": "Windows",
+    "python": "3.12.14",
+    "timing_interpretation": "Several runs overlapped on the same machine. Wall times describe these executions and do not support controlled speed comparisons."
+  },
+  "limitations": [
+    "A small constructed corpus, not a representative design population or a statistical guarantee",
+    "Reserve evaluation outcomes until the implementation is frozen. If outcomes inform changes, treat this split as development and create a fresh evaluation corpus.",
+    "Equal configured optimizer steps are not equal total compute: initializer samples and additional refinement seeds can add work",
+    "Engine labels describe intent; use recorded source/model hashes to establish implementation identity",
+    "Wall times are descriptive; hardware, concurrent work and initialization affect them",
+    "No strength, collision, manufacturability or physical validation"
+  ],
+  "numpy_version": "2.5.1",
+  "optimizer_budget_settings": {
+    "adam_accuracy_steps": 60,
+    "adam_tradeoff_steps": 100,
+    "lbfgs_steps": 20,
+    "optimization_global_steps": 181,
+    "portfolio_bridge_accuracy_steps": 30,
+    "portfolio_bridge_lbfgs_steps": 15,
+    "portfolio_bridge_tradeoff_steps": 60,
+    "portfolio_fixed_seed_count": 3,
+    "portfolio_release_accuracy_steps": 20,
+    "portfolio_release_lbfgs_steps": 12,
+    "portfolio_release_seed_count": 3,
+    "portfolio_release_tradeoff_steps": 50,
+    "seed_phase_steps": 721,
+    "verification_steps": 1441
+  },
+  "requested_model_identity": [
+    {
+      "role": "balanced",
+      "sha256": "72a20f1f6828686c18100b3f5c7f913161b6042cfd9ea3baac15042d1b9fa8a0"
+    },
+    {
+      "role": "path",
+      "sha256": "8193a5d5208c227424cd570405b4c148cc2987c3a266a348a0f6b8184445f61e"
+    },
+    {
+      "role": "transmission",
+      "sha256": "30a23c4aee3a7d5e29673757a791acde6bddd93cf207aaea0cceb5627621e55f"
+    }
+  ],
+  "runner_sha256": "5ad3e2505dbf3aa19cd10c526de9ea1bc406adfa66c860edeb5430cd329a8838",
+  "schema_version": "pose-corpus-comparison-1",
+  "seed": 101,
+  "source_freeze": {
+    "hashes": {
+      "pose_initialization_sha256": "5be10d2c13da2a09498ab7a8097f60d63de55a292a31755e722f6879db81188c",
+      "script_sha256": "e9855b4b0b75e2997bc839be6b165d1f36056bc446143427b1a19e4ce27eba77"
+    },
+    "tuning_after_evaluation_started": false
+  },
+  "split": "evaluation",
+  "success_definition": "At least one selected, engine-eligible candidate independently meets both position and orientation tolerances and has full-cycle assembly",
+  "success_thresholds": {
+    "maximum_position": 0.075,
+    "mean_position": 0.05,
+    "orientation_deg": [
+      2.0,
+      2.0,
+      2.0
+    ]
+  },
+  "task_file_sha256": "e7b31e2fa3fb8a0e333ced0fbd8e43049fcec06d1c83777ce625a456b19ff4b0"
+}

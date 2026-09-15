@@ -245,9 +245,9 @@ async function verifyReviewFlow() {
   assert.equal(ui.openings.length, 1);
 }
 
-async function verifyPoseReviewFlow() {
+async function verifyPoseReviewFlow(version = "0.2") {
   const pose = structuredClone(fixture);
-  pose.schema_version = "0.2";
+  pose.schema_version = version;
   pose.core.generator_version = "0.1.0a4";
   Object.assign(pose.core.tasks[0], {
     orientation_required: true,
@@ -273,9 +273,26 @@ async function verifyPoseReviewFlow() {
       item["orientation_tolerance_" + (targetIndex + 1) + "_deg"] = pose.task[0].orientation_tolerances_deg[targetIndex];
     });
   }
+  if (version === "0.3") {
+    pose.task[0].pose_initialization = {
+      method: "three_pose_dyad_v1", enabled: true, requested_samples: 4096,
+      requested_seed_count: 1, attempted_samples: 4096, finite_dyads: 4096,
+      within_search_bounds: 100, full_cycle_robust_crank_shortest: 20,
+      branch_and_order_consistent: 15, transmission_selection_floors: 10,
+      returned_seeds: 1, evaluated_seed_count: 1, refined_candidate_count: 1,
+      generation_runtime_seconds: 0.01, verification_runtime_seconds: 0.1,
+      refinement_runtime_seconds: 1, source_sha256: "5".repeat(64)
+    };
+    pose.provenance.pose_initialization_sha256 = "5".repeat(64);
+    Object.assign(pose.settings, {pose_dyad_samples: 4096, pose_dyad_seed_count: 1});
+    pose.candidates[0].items.forEach((item, index) => Object.assign(item, {
+      model_role: "pose_geometry", portfolio_origin: index ? "pose_refined" : "pose_seed",
+      proposal_source: "three_pose_dyad_v1", generator_sample_index: 73
+    }));
+  }
   const ui = makeHarness(pose);
   assert.equal(ui.element("error").hidden, true);
-  assert.equal(ui.preview().schema_version, "0.2");
+  assert.equal(ui.preview().schema_version, version);
   assert.deepEqual(ui.preview().task, pose.task);
   assert.deepEqual(ui.preview().candidates, pose.candidates);
   const stats = Object.fromEntries(ui.element("run-summary").children.map(stat =>
@@ -283,10 +300,11 @@ async function verifyPoseReviewFlow() {
   assert.equal(stats["Tasks requiring orientation"], "1");
   assert.equal(stats["Orientation acceptable · pose tasks"], "1");
   assert.equal(stats["Position and orientation acceptable"], "1");
-  assert.ok(html.includes("requested angles, angular tolerances and tool frame"));
+  assert.ok(html.includes("requested angles, angular tolerances, tool frame"));
   assert.ok(html.includes("Pose requirements appear in both Task and Candidate sections"));
   ui.change("include-task", false);
   assert.equal(Object.hasOwn(ui.preview(), "task"), false);
+  assert.equal(JSON.stringify(ui.preview()).includes("requested_samples"), false);
   assert.deepEqual(ui.preview().candidates, pose.candidates, "Candidate section explicitly retains its own requested angles");
   ui.change("include-candidates", false);
   assert.deepEqual(ui.preview().core, pose.core, "Pose outcome cannot disappear when angle data is excluded");
@@ -296,9 +314,16 @@ async function verifyPoseReviewFlow() {
   ui.agree();
   ui.element("download").click();
   const exported = JSON.parse(await ui.downloads[0].text());
-  assert.equal(exported.schema_version, "0.2");
+  assert.equal(exported.schema_version, version);
   assert.deepEqual(exported.core, pose.core);
   assert.equal(ui.openings.length, 0, "Pose sharing still requires the explicit GitHub step");
+  if (version === "0.3") {
+    ui.change("include-provenance", false);
+    ui.change("include-settings", false);
+    assert.equal(JSON.stringify(ui.preview()).includes("three_pose_dyad_v1"), false);
+    assert.equal(JSON.stringify(ui.preview()).includes("pose_initialization"), false);
+    assert.deepEqual(ui.preview().core, pose.core);
+  }
 }
 
 function verifyInvalidInput() {
@@ -320,8 +345,9 @@ function verifyInvalidInput() {
   verifyHashVectors();
   await verifyReviewFlow();
   await verifyPoseReviewFlow();
+  await verifyPoseReviewFlow("0.3");
   verifyInvalidInput();
-  console.log("Offline contribution review checks passed: legacy and pose schema versions, pose outcome retention, digest vectors, consent gates, all section exclusions, Unicode and hostile text, exact download, fixed GitHub URL, changed-file re-export, and invalid-input handling.");
+  console.log("Offline contribution review checks passed: schemas 0.1/0.2/0.3, pose and geometric provenance retention, diagnostics exclusions, digest vectors, consent gates, all section exclusions, Unicode and hostile text, exact download, fixed GitHub URL, changed-file re-export, and invalid-input handling.");
 })().catch(error => {
   console.error(error);
   process.exitCode = 1;

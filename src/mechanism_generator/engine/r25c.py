@@ -14,6 +14,7 @@ For every target triple the portfolio performs:
         + independent variable L1 search
         + trust-region variable continuation from strong fixed candidates
         + optional full-range release continuation
+        + target-only geometric pose seeds and refined children, when requested
         -> one shared path-quality reference
         -> combined qualification, deduplication, Pareto ranking, and export
 
@@ -81,6 +82,14 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--no_contribution_bundle", action="store_true",
         help="Skip local contribution bundle creation (bundles never upload automatically)",
+    )
+    parser.add_argument(
+        "--pose_dyad_samples", type=int, default=4096,
+        help="Deterministic geometric samples for pose tasks only; zero disables this additional branch",
+    )
+    parser.add_argument(
+        "--pose_dyad_seed_count", type=int, default=6,
+        help="Maximum geometric pose seeds (0 to 6); each exact seed is retained alongside a refined child",
     )
     parser.add_argument(
         "--portfolio_fixed_seed_count",
@@ -156,6 +165,10 @@ def build_parser() -> argparse.ArgumentParser:
 
 def validate_args(parser: argparse.ArgumentParser, args: argparse.Namespace) -> None:
     ENGINE.validate_args(parser, args)
+    if args.pose_dyad_samples < 0:
+        parser.error("--pose_dyad_samples must be non-negative")
+    if not 0 <= args.pose_dyad_seed_count <= 6:
+        parser.error("--pose_dyad_seed_count must be between 0 and 6")
     integer_nonnegative = (
         args.portfolio_fixed_seed_count,
         args.portfolio_bridge_perturbations,
@@ -298,6 +311,101 @@ def run_tradeoff(
             f"physical={candidate['physical_feasible']}"
         )
     return evaluated
+
+
+def run_pose_geometry(
+    target: torch.Tensor,
+    args: argparse.Namespace,
+    shared_reference: Dict[str, Any],
+    output_dir: Path,
+    lineage_by_id: Dict[str, Dict[str, str]],
+) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]], Dict[str, Any]]:
+    """Add exact pose candidates and their children without changing neural runs.
+
+    The exact candidates are evaluated and retained before any optimization.
+    Refined children have distinct identities; an unsuccessful refinement cannot
+    overwrite or remove its geometric parent. Both enter ordinary qualification.
+    """
+    from . import pose_seeds
+
+    seeds, diagnostics = pose_seeds.generate_pose_seeds(
+        target.detach().cpu().reshape(3, 2).numpy(), args.target_orientations_deg, args,
+        sample_count=args.pose_dyad_samples, max_seeds=args.pose_dyad_seed_count,
+    )
+    diagnostics.update(
+        source_sha256=sha256_file(Path(pose_seeds.__file__)),
+        evaluated_seed_count=0, refined_candidate_count=0,
+        verification_runtime_seconds=0.0, refinement_runtime_seconds=0.0,
+    )
+    if not seeds:
+        return [], [], diagnostics
+    output_dir.mkdir(parents=True, exist_ok=True)
+    exact: List[Dict[str, Any]] = []
+    refinement_starts: List[Any] = []
+    sample_by_id: Dict[str, int] = {}
+    verification_started = time.perf_counter()
+    for index, seed in enumerate(seeds, 1):
+        params = torch.tensor(seed["parameters"], dtype=target.dtype, device=target.device)
+        phases = torch.tensor(seed["phases_rad"], dtype=target.dtype, device=target.device)
+        raw = ENGINE.encode_refinement_variables(params, phases, target, args.phase_mode, args)
+        candidate_id = f"pose_seed_{index:03d}"
+        profile = tuple(ENGINE.PROFILES)[(index - 1) % len(ENGINE.PROFILES)]
+        start = ENGINE.StartSpec(
+            candidate_id=candidate_id, model_role="pose_geometry", profile=profile,
+            checkpoint_variant="three-pose-dyad-v1", checkpoint_epoch=None,
+            branch_sign=float(seed["branch_sign"]), perturbation_index=0,
+            raw_initial=raw, initial_params=params, initial_phases=phases,
+        )
+        history_path = output_dir / f"history_{candidate_id}.csv"
+        optimized = {
+            "start": start, "raw_selected": raw,
+            "mean_budget": shared_reference["shared_mean_budget"],
+            "point_budget": shared_reference["shared_point_budgets"],
+            "selection_reason": "preserved_geometric_seed",
+            "acquired_mean_error": 0.0, "acquired_errors": [0.0, 0.0, 0.0],
+            "history_path": str(history_path),
+        }
+        candidate = ENGINE.evaluate_selected_candidate(optimized, target, args)
+        candidate.update(
+            acquired_mean_error=candidate["mean_error"],
+            proposal_source=pose_seeds.METHOD,
+            generator_sample_index=int(seed["sample_index"]),
+        )
+        for target_index in (1, 2, 3):
+            candidate[f"acquired_error_{target_index}"] = candidate[f"error_{target_index}"]
+        lineage = f"pose_seed:halton_sample={seed['sample_index']}"
+        set_candidate_origin(candidate, "pose_seed", lineage=lineage)
+        lineage_by_id[candidate_id] = {"origin": "pose_seed", "parent_candidate_id": "", "lineage": lineage}
+        ENGINE.write_csv(history_path, [{
+            "candidate_id": candidate_id, "stage": "exact_pose_seed", "step": 0,
+            "mean_error": candidate["mean_error"], "max_error": candidate["max_error"],
+            "max_orientation_error_deg": candidate["max_orientation_error_deg"],
+            "physical_feasible": candidate["physical_feasible"],
+            "orientation_acceptable": candidate["orientation_acceptable"],
+        }])
+        exact.append(candidate)
+        child = copy.deepcopy(start)
+        child.candidate_id = f"pose_refined_{index:03d}"
+        refinement_starts.append(child)
+        sample_by_id[child.candidate_id] = int(seed["sample_index"])
+        lineage_by_id[child.candidate_id] = {
+            "origin": "pose_refined", "parent_candidate_id": candidate_id,
+            "lineage": f"pose_refined<-{lineage}",
+        }
+    diagnostics["evaluated_seed_count"] = len(exact)
+    diagnostics["verification_runtime_seconds"] = time.perf_counter() - verification_started
+    refinement_started = time.perf_counter()
+    acquisitions = run_acquisitions(refinement_starts, target, args, "POSE GEOMETRY")
+    refined = run_tradeoff(
+        acquisitions, shared_reference, target, args, output_dir,
+        "POSE GEOMETRY", lineage_by_id,
+    )
+    for candidate in refined:
+        candidate["proposal_source"] = pose_seeds.METHOD
+        candidate["generator_sample_index"] = sample_by_id[candidate["candidate_id"]]
+    diagnostics["refined_candidate_count"] = len(refined)
+    diagnostics["refinement_runtime_seconds"] = time.perf_counter() - refinement_started
+    return exact, refined, diagnostics
 
 
 def candidate_pool_by_tier(candidates: Sequence[Dict[str, Any]]) -> List[Dict[str, Any]]:
@@ -701,6 +809,7 @@ def main() -> int:
         "engine_variant": ENGINE_VARIANT,
         "engine_sha256": sha256_file(ENGINE_PATH),
         "orientation_sha256": sha256_file(ENGINE_PATH.with_name("orientation.py")),
+        "pose_initialization_sha256": sha256_file(ENGINE_PATH.with_name("pose_seeds.py")),
         "arguments": vars(args),
         "models": [
             {
@@ -890,11 +999,27 @@ def main() -> int:
                 release_candidates, release_args, shared_reference
             )
 
+        pose_exact: List[Dict[str, Any]] = []
+        pose_refined: List[Dict[str, Any]] = []
+        pose_initialization = None
+        if ENGINE.has_pose_targets(args):
+            pose_exact, pose_refined, pose_initialization = run_pose_geometry(
+                target, variable_args, shared_reference,
+                target_dir / "05_pose_geometry", lineage_by_id,
+            )
+            ENGINE.write_json(target_dir / "pose_initialization.json", pose_initialization)
+            print(
+                f"[POSE GEOMETRY] samples={pose_initialization['attempted_samples']} "
+                f"exact={len(pose_exact)} refined={len(pose_refined)}"
+            )
+
         all_candidates = [
             *fixed_candidates,
             *variable_candidates,
             *trust_candidates,
             *release_candidates,
+            *pose_exact,
+            *pose_refined,
         ]
         portfolio_args = copy.deepcopy(args)
         portfolio_args.ground_link_mode = "portfolio"
@@ -941,6 +1066,8 @@ def main() -> int:
         rejected = [c for c in all_candidates if not c.get("selection_eligible", False)]
 
         origin_names = ("fixed", "variable", "bridge_trust", "bridge_release")
+        if pose_initialization is not None:
+            origin_names += ("pose_seed", "pose_refined")
         origin_rows = [summarize_origin(name, all_candidates) for name in origin_names]
         ENGINE.write_json(target_dir / "selection_reference.json", qualification)
         ENGINE.write_json(target_dir / "portfolio_lineage.json", lineage_by_id)
@@ -983,12 +1110,15 @@ def main() -> int:
             target_dir / "variable_pareto_front.csv",
             [ENGINE.flat_candidate_row(c) for c in variable_front],
         )
-        for origin, candidates in (
+        stage_candidates = [
             ("fixed", fixed_candidates),
             ("variable", variable_candidates),
             ("bridge_trust", trust_candidates),
             ("bridge_release", release_candidates),
-        ):
+        ]
+        if pose_initialization is not None:
+            stage_candidates.extend([("pose_seed", pose_exact), ("pose_refined", pose_refined)])
+        for origin, candidates in stage_candidates:
             stage_args = portfolio_args
             champions = choose_diverse_champions(
                 candidates, args.portfolio_stage_top_k, stage_args
@@ -1030,6 +1160,7 @@ def main() -> int:
         }
         if ENGINE.has_pose_targets(args):
             target_manifest.update(
+                pose_initialization=pose_initialization,
                 target_orientations_deg=list(args.target_orientations_deg),
                 orientation_tolerances_deg=ENGINE.pose_tolerances(args),
                 orientation_frame="coupler_A_to_B",

@@ -46,11 +46,14 @@ lineage. R2.3a used a windowed feasibility controller. The fixed development set
 and previously examined random targets are development evidence, not untouched
 final test sets.
 
-This release supports reproducible inference and solver execution. It does **not**
-include the complete training pipeline, teacher checkpoint, development data,
-historical training environments, or dataset licenses. It therefore does not
-claim independently reproducible training. Those artifacts require a separate
-release and provenance review. No new training occurred during this export.
+Version 0.1.0a5 adds the complete R2 → R2.2 → R2.3a → R2.4 training source,
+recorded recipes, synthetic data regeneration, and cleaned historical dependencies.
+The R2 teacher is from state epoch 239; the R2.2 warm start is from epoch 148.
+Their exact tensor and prediction parity was verified. See the
+[training guide](docs/training.md) and [asset manifest](src/mechanism_generator/training/assets.json).
+Small repeatability checks exercise the full chain. A fresh complete training run
+has not been shown to reproduce the historical weights bit for bit. The three
+released inference models remain unchanged.
 
 ## Export and verification
 

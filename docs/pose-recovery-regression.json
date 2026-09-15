@@ -1,0 +1,752 @@
+{
+  "baseline_coverage": {
+    "attempted_cases": 4,
+    "completed_cases": 4,
+    "requested_cases": 4,
+    "selected_pose_success_cases": 2,
+    "selected_pose_success_fraction": 0.5,
+    "total_wall_runtime_seconds": 166.60583249999036
+  },
+  "baseline_report_sha256": "426542414353b2eb0e822dba0fc0824c52ef391bfb0d59a09be115b6bbfd58b1",
+  "baseline_runs": [
+    {
+      "all_candidates_diagnostic": {
+        "best_by_joint_error": {
+          "candidate_id": "bridge_release_003",
+          "crank_is_strictly_shortest": true,
+          "engine_selection_eligible": false,
+          "full_cycle_assembly": true,
+          "global_minimum_transmission_deg": 47.13274157267722,
+          "grashof": true,
+          "joint_normalized_error": 3.8749284829654727,
+          "maximum_orientation_error_deg": 7.749856965930945,
+          "maximum_position_error": 0.08050539283885857,
+          "mean_orientation_error_deg": 6.651378978396802,
+          "mean_position_error": 0.05156234108375649,
+          "orientation_errors_deg": [
+            4.683301731981487,
+            7.749856965930945,
+            7.520978237277973
+          ],
+          "pose_within_tolerances": false,
+          "target_assembly": true,
+          "target_minimum_transmission_deg": 50.281923673345474
+        },
+        "candidate_count": 18,
+        "engine_eligible_count": 0,
+        "pose_match_and_engine_eligible_count": 0,
+        "pose_match_count": 0
+      },
+      "case_id": "wide_sweep",
+      "engine_identity": {
+        "engine_sha256": "03ddbc935722f4e7536354f42fc5397ef6e311f0d2030360498b7f5192843cdd",
+        "orientation_sha256": "cb7443226549e536f1c46f7f58bb01fb5016627227c293efb81e2ce1dce5786a",
+        "script_sha256": "8f7e773dddf80f547a07a210c3b1e0daab07d43fda340ac9e038d5393a11967a",
+        "variant": "V5.3-R2.5c_HybridGroundLinkPortfolio-public-alpha"
+      },
+      "model_identity": [
+        {
+          "role": "balanced",
+          "sha256": "72a20f1f6828686c18100b3f5c7f913161b6042cfd9ea3baac15042d1b9fa8a0"
+        },
+        {
+          "role": "path",
+          "sha256": "8193a5d5208c227424cd570405b4c148cc2987c3a266a348a0f6b8184445f61e"
+        },
+        {
+          "role": "transmission",
+          "sha256": "30a23c4aee3a7d5e29673757a791acde6bddd93cf207aaea0cceb5627621e55f"
+        }
+      ],
+      "selected": {
+        "best_by_joint_error": null,
+        "candidate_count": 0,
+        "engine_eligible_count": 0,
+        "pose_match_and_engine_eligible_count": 0,
+        "pose_match_count": 0
+      },
+      "status": "completed",
+      "wall_runtime_seconds": 39.24117569999362
+    },
+    {
+      "all_candidates_diagnostic": {
+        "best_by_joint_error": {
+          "candidate_id": "bridge_release_002",
+          "crank_is_strictly_shortest": true,
+          "engine_selection_eligible": true,
+          "full_cycle_assembly": true,
+          "global_minimum_transmission_deg": 50.42145316839761,
+          "grashof": true,
+          "joint_normalized_error": 0.45543635031165763,
+          "maximum_orientation_error_deg": 0.9108727006233153,
+          "maximum_position_error": 0.016043851127846533,
+          "mean_orientation_error_deg": 0.7802269801784784,
+          "mean_position_error": 0.011461959708694758,
+          "orientation_errors_deg": [
+            0.5349921269535116,
+            0.9108727006233153,
+            0.8948161129586083
+          ],
+          "pose_within_tolerances": true,
+          "target_assembly": true,
+          "target_minimum_transmission_deg": 61.60708798537054
+        },
+        "candidate_count": 17,
+        "engine_eligible_count": 4,
+        "pose_match_and_engine_eligible_count": 4,
+        "pose_match_count": 4
+      },
+      "case_id": "rotated_return",
+      "engine_identity": {
+        "engine_sha256": "03ddbc935722f4e7536354f42fc5397ef6e311f0d2030360498b7f5192843cdd",
+        "orientation_sha256": "cb7443226549e536f1c46f7f58bb01fb5016627227c293efb81e2ce1dce5786a",
+        "script_sha256": "8f7e773dddf80f547a07a210c3b1e0daab07d43fda340ac9e038d5393a11967a",
+        "variant": "V5.3-R2.5c_HybridGroundLinkPortfolio-public-alpha"
+      },
+      "model_identity": [
+        {
+          "role": "balanced",
+          "sha256": "72a20f1f6828686c18100b3f5c7f913161b6042cfd9ea3baac15042d1b9fa8a0"
+        },
+        {
+          "role": "path",
+          "sha256": "8193a5d5208c227424cd570405b4c148cc2987c3a266a348a0f6b8184445f61e"
+        },
+        {
+          "role": "transmission",
+          "sha256": "30a23c4aee3a7d5e29673757a791acde6bddd93cf207aaea0cceb5627621e55f"
+        }
+      ],
+      "selected": {
+        "best_by_joint_error": {
+          "candidate_id": "bridge_release_002",
+          "crank_is_strictly_shortest": true,
+          "engine_selection_eligible": true,
+          "full_cycle_assembly": true,
+          "global_minimum_transmission_deg": 50.42145316839761,
+          "grashof": true,
+          "joint_normalized_error": 0.45543635031165763,
+          "maximum_orientation_error_deg": 0.9108727006233153,
+          "maximum_position_error": 0.016043851127846533,
+          "mean_orientation_error_deg": 0.7802269801784784,
+          "mean_position_error": 0.011461959708694758,
+          "orientation_errors_deg": [
+            0.5349921269535116,
+            0.9108727006233153,
+            0.8948161129586083
+          ],
+          "pose_within_tolerances": true,
+          "target_assembly": true,
+          "target_minimum_transmission_deg": 61.60708798537054
+        },
+        "candidate_count": 3,
+        "engine_eligible_count": 3,
+        "pose_match_and_engine_eligible_count": 3,
+        "pose_match_count": 3
+      },
+      "status": "completed",
+      "wall_runtime_seconds": 41.91714779999893
+    },
+    {
+      "all_candidates_diagnostic": {
+        "best_by_joint_error": {
+          "candidate_id": "bridge_release_001",
+          "crank_is_strictly_shortest": true,
+          "engine_selection_eligible": true,
+          "full_cycle_assembly": true,
+          "global_minimum_transmission_deg": 30.39746552846837,
+          "grashof": true,
+          "joint_normalized_error": 0.40589265284998927,
+          "maximum_orientation_error_deg": 0.5868593628919712,
+          "maximum_position_error": 0.023213331622086282,
+          "mean_orientation_error_deg": 0.5438008159133005,
+          "mean_position_error": 0.020294632642499463,
+          "orientation_errors_deg": [
+            0.5716487743029575,
+            0.5868593628919712,
+            0.472894310544973
+          ],
+          "pose_within_tolerances": true,
+          "target_assembly": true,
+          "target_minimum_transmission_deg": 56.252759876339766
+        },
+        "candidate_count": 18,
+        "engine_eligible_count": 6,
+        "pose_match_and_engine_eligible_count": 6,
+        "pose_match_count": 6
+      },
+      "case_id": "offset_tool",
+      "engine_identity": {
+        "engine_sha256": "03ddbc935722f4e7536354f42fc5397ef6e311f0d2030360498b7f5192843cdd",
+        "orientation_sha256": "cb7443226549e536f1c46f7f58bb01fb5016627227c293efb81e2ce1dce5786a",
+        "script_sha256": "8f7e773dddf80f547a07a210c3b1e0daab07d43fda340ac9e038d5393a11967a",
+        "variant": "V5.3-R2.5c_HybridGroundLinkPortfolio-public-alpha"
+      },
+      "model_identity": [
+        {
+          "role": "balanced",
+          "sha256": "72a20f1f6828686c18100b3f5c7f913161b6042cfd9ea3baac15042d1b9fa8a0"
+        },
+        {
+          "role": "path",
+          "sha256": "8193a5d5208c227424cd570405b4c148cc2987c3a266a348a0f6b8184445f61e"
+        },
+        {
+          "role": "transmission",
+          "sha256": "30a23c4aee3a7d5e29673757a791acde6bddd93cf207aaea0cceb5627621e55f"
+        }
+      ],
+      "selected": {
+        "best_by_joint_error": {
+          "candidate_id": "bridge_release_001",
+          "crank_is_strictly_shortest": true,
+          "engine_selection_eligible": true,
+          "full_cycle_assembly": true,
+          "global_minimum_transmission_deg": 30.39746552846837,
+          "grashof": true,
+          "joint_normalized_error": 0.40589265284998927,
+          "maximum_orientation_error_deg": 0.5868593628919712,
+          "maximum_position_error": 0.023213331622086282,
+          "mean_orientation_error_deg": 0.5438008159133005,
+          "mean_position_error": 0.020294632642499463,
+          "orientation_errors_deg": [
+            0.5716487743029575,
+            0.5868593628919712,
+            0.472894310544973
+          ],
+          "pose_within_tolerances": true,
+          "target_assembly": true,
+          "target_minimum_transmission_deg": 56.252759876339766
+        },
+        "candidate_count": 5,
+        "engine_eligible_count": 5,
+        "pose_match_and_engine_eligible_count": 5,
+        "pose_match_count": 5
+      },
+      "status": "completed",
+      "wall_runtime_seconds": 44.112913999997545
+    },
+    {
+      "all_candidates_diagnostic": {
+        "best_by_joint_error": {
+          "candidate_id": "bridge_release_001",
+          "crank_is_strictly_shortest": true,
+          "engine_selection_eligible": false,
+          "full_cycle_assembly": true,
+          "global_minimum_transmission_deg": 35.03842835113084,
+          "grashof": true,
+          "joint_normalized_error": 7.7143471762933125,
+          "maximum_orientation_error_deg": 15.34931622627596,
+          "maximum_position_error": 0.45125792511527035,
+          "mean_orientation_error_deg": 14.688320036067182,
+          "mean_position_error": 0.3857173588146656,
+          "orientation_errors_deg": [
+            13.557444857614314,
+            15.34931622627596,
+            15.158199024311273
+          ],
+          "pose_within_tolerances": false,
+          "target_assembly": true,
+          "target_minimum_transmission_deg": 35.040509167117634
+        },
+        "candidate_count": 18,
+        "engine_eligible_count": 0,
+        "pose_match_and_engine_eligible_count": 0,
+        "pose_match_count": 0
+      },
+      "case_id": "angle_wrap",
+      "engine_identity": {
+        "engine_sha256": "03ddbc935722f4e7536354f42fc5397ef6e311f0d2030360498b7f5192843cdd",
+        "orientation_sha256": "cb7443226549e536f1c46f7f58bb01fb5016627227c293efb81e2ce1dce5786a",
+        "script_sha256": "8f7e773dddf80f547a07a210c3b1e0daab07d43fda340ac9e038d5393a11967a",
+        "variant": "V5.3-R2.5c_HybridGroundLinkPortfolio-public-alpha"
+      },
+      "model_identity": [
+        {
+          "role": "balanced",
+          "sha256": "72a20f1f6828686c18100b3f5c7f913161b6042cfd9ea3baac15042d1b9fa8a0"
+        },
+        {
+          "role": "path",
+          "sha256": "8193a5d5208c227424cd570405b4c148cc2987c3a266a348a0f6b8184445f61e"
+        },
+        {
+          "role": "transmission",
+          "sha256": "30a23c4aee3a7d5e29673757a791acde6bddd93cf207aaea0cceb5627621e55f"
+        }
+      ],
+      "selected": {
+        "best_by_joint_error": null,
+        "candidate_count": 0,
+        "engine_eligible_count": 0,
+        "pose_match_and_engine_eligible_count": 0,
+        "pose_match_count": 0
+      },
+      "status": "completed",
+      "wall_runtime_seconds": 41.33459500000026
+    }
+  ],
+  "benchmark_script_sha256": "a7edcba343c687ef1ee8a7d6ae50c661e827daf8d5ec74d163c8fa0ffab2d9ed",
+  "equal_total_compute_claimed": false,
+  "execution": {
+    "MKL_NUM_THREADS": 1,
+    "OMP_NUM_THREADS": 1,
+    "device": "cpu",
+    "dtype": "float64",
+    "maximum_concurrent_benchmark_processes": 4,
+    "platform": "Windows",
+    "python": "3.12.14",
+    "timing_interpretation": "Several runs overlapped on the same machine. Wall times describe these executions and do not support controlled speed comparisons."
+  },
+  "limitations": [
+    "The four original development probes remain unchanged, including all tolerances",
+    "Source adds geometric initialization and additional refinement seeds",
+    "Published a4 baseline and source measurements overlap different workloads; no speed comparison",
+    "These are development regressions, not reserved evaluation results"
+  ],
+  "optimizer_budget_settings": {
+    "adam_accuracy_steps": 60,
+    "adam_tradeoff_steps": 100,
+    "lbfgs_steps": 20,
+    "optimization_global_steps": 181,
+    "portfolio_bridge_accuracy_steps": 30,
+    "portfolio_bridge_lbfgs_steps": 15,
+    "portfolio_bridge_tradeoff_steps": 60,
+    "portfolio_fixed_seed_count": 3,
+    "portfolio_release_accuracy_steps": 20,
+    "portfolio_release_lbfgs_steps": 12,
+    "portfolio_release_seed_count": 3,
+    "portfolio_release_tradeoff_steps": 50,
+    "seed_phase_steps": 721,
+    "verification_steps": 1441
+  },
+  "schema_version": "original-pose-recovery-1",
+  "seed": 101,
+  "source_coverage": {
+    "attempted_cases": 4,
+    "completed_cases": 4,
+    "requested_cases": 4,
+    "selected_pose_success_cases": 4,
+    "selected_pose_success_fraction": 1.0,
+    "total_wall_runtime_seconds": 493.86237200000323
+  },
+  "source_freeze": {
+    "pose_initialization_sha256": "5be10d2c13da2a09498ab7a8097f60d63de55a292a31755e722f6879db81188c",
+    "script_sha256": "e9855b4b0b75e2997bc839be6b165d1f36056bc446143427b1a19e4ce27eba77"
+  },
+  "source_report_sha256": "52c87ddbf2e36841e2aa6bb47e67dd199f27b1ff88377b9a9eca3effc514f012",
+  "source_runs": [
+    {
+      "all_candidates_diagnostic": {
+        "best_by_joint_error": {
+          "candidate_id": "pose_seed_005",
+          "crank_is_strictly_shortest": true,
+          "engine_selection_eligible": true,
+          "full_cycle_assembly": true,
+          "global_minimum_transmission_deg": 55.45935033030398,
+          "grashof": true,
+          "joint_normalized_error": 1.4568523058979494e-14,
+          "maximum_orientation_error_deg": 2.842170943040401e-14,
+          "maximum_position_error": 8.881784197001252e-16,
+          "mean_orientation_error_deg": 9.473903143468002e-15,
+          "mean_position_error": 7.284261529489747e-16,
+          "orientation_errors_deg": [
+            0.0,
+            2.842170943040401e-14,
+            0.0
+          ],
+          "pose_within_tolerances": true,
+          "target_assembly": true,
+          "target_minimum_transmission_deg": 58.391556188231206
+        },
+        "candidate_count": 30,
+        "engine_eligible_count": 12,
+        "pose_match_and_engine_eligible_count": 12,
+        "pose_match_count": 12
+      },
+      "case_id": "wide_sweep",
+      "effective_initializer_arguments": {
+        "pose_dyad_samples": 4096,
+        "pose_dyad_seed_count": 6
+      },
+      "engine_identity": {
+        "engine_sha256": "03ddbc935722f4e7536354f42fc5397ef6e311f0d2030360498b7f5192843cdd",
+        "orientation_sha256": "cb7443226549e536f1c46f7f58bb01fb5016627227c293efb81e2ce1dce5786a",
+        "pose_initialization_sha256": "5be10d2c13da2a09498ab7a8097f60d63de55a292a31755e722f6879db81188c",
+        "script_sha256": "e9855b4b0b75e2997bc839be6b165d1f36056bc446143427b1a19e4ce27eba77",
+        "variant": "V5.3-R2.5c_HybridGroundLinkPortfolio-public-alpha"
+      },
+      "initializer_diagnostics": {
+        "attempted_samples": 4096,
+        "branch_and_order_consistent": 389,
+        "enabled": true,
+        "evaluated_seed_count": 6,
+        "finite_dyads": 4096,
+        "full_cycle_robust_crank_shortest": 389,
+        "generation_runtime_seconds": 0.014958100000512786,
+        "method": "three_pose_dyad_v1",
+        "refined_candidate_count": 6,
+        "refinement_runtime_seconds": 27.205496200003836,
+        "requested_samples": 4096,
+        "requested_seed_count": 6,
+        "returned_seeds": 6,
+        "source_sha256": "5be10d2c13da2a09498ab7a8097f60d63de55a292a31755e722f6879db81188c",
+        "transmission_selection_floors": 348,
+        "verification_runtime_seconds": 0.13420079999923473,
+        "within_search_bounds": 2828
+      },
+      "model_identity": [
+        {
+          "role": "balanced",
+          "sha256": "72a20f1f6828686c18100b3f5c7f913161b6042cfd9ea3baac15042d1b9fa8a0"
+        },
+        {
+          "role": "path",
+          "sha256": "8193a5d5208c227424cd570405b4c148cc2987c3a266a348a0f6b8184445f61e"
+        },
+        {
+          "role": "transmission",
+          "sha256": "30a23c4aee3a7d5e29673757a791acde6bddd93cf207aaea0cceb5627621e55f"
+        }
+      ],
+      "selected": {
+        "best_by_joint_error": {
+          "candidate_id": "pose_seed_005",
+          "crank_is_strictly_shortest": true,
+          "engine_selection_eligible": true,
+          "full_cycle_assembly": true,
+          "global_minimum_transmission_deg": 55.45935033030398,
+          "grashof": true,
+          "joint_normalized_error": 1.4568523058979494e-14,
+          "maximum_orientation_error_deg": 2.842170943040401e-14,
+          "maximum_position_error": 8.881784197001252e-16,
+          "mean_orientation_error_deg": 9.473903143468002e-15,
+          "mean_position_error": 7.284261529489747e-16,
+          "orientation_errors_deg": [
+            0.0,
+            2.842170943040401e-14,
+            0.0
+          ],
+          "pose_within_tolerances": true,
+          "target_assembly": true,
+          "target_minimum_transmission_deg": 58.391556188231206
+        },
+        "candidate_count": 5,
+        "engine_eligible_count": 5,
+        "pose_match_and_engine_eligible_count": 5,
+        "pose_match_count": 5
+      },
+      "status": "completed",
+      "wall_runtime_seconds": 128.96866220000084
+    },
+    {
+      "all_candidates_diagnostic": {
+        "best_by_joint_error": {
+          "candidate_id": "pose_seed_001",
+          "crank_is_strictly_shortest": true,
+          "engine_selection_eligible": true,
+          "full_cycle_assembly": true,
+          "global_minimum_transmission_deg": 55.26003677815634,
+          "grashof": true,
+          "joint_normalized_error": 1.4210854715202004e-14,
+          "maximum_orientation_error_deg": 2.842170943040401e-14,
+          "maximum_position_error": 9.930136612989092e-16,
+          "mean_orientation_error_deg": 2.842170943040401e-14,
+          "mean_position_error": 6.270640269996781e-16,
+          "orientation_errors_deg": [
+            2.842170943040401e-14,
+            2.842170943040401e-14,
+            2.842170943040401e-14
+          ],
+          "pose_within_tolerances": true,
+          "target_assembly": true,
+          "target_minimum_transmission_deg": 55.845773464071925
+        },
+        "candidate_count": 29,
+        "engine_eligible_count": 16,
+        "pose_match_and_engine_eligible_count": 16,
+        "pose_match_count": 16
+      },
+      "case_id": "rotated_return",
+      "effective_initializer_arguments": {
+        "pose_dyad_samples": 4096,
+        "pose_dyad_seed_count": 6
+      },
+      "engine_identity": {
+        "engine_sha256": "03ddbc935722f4e7536354f42fc5397ef6e311f0d2030360498b7f5192843cdd",
+        "orientation_sha256": "cb7443226549e536f1c46f7f58bb01fb5016627227c293efb81e2ce1dce5786a",
+        "pose_initialization_sha256": "5be10d2c13da2a09498ab7a8097f60d63de55a292a31755e722f6879db81188c",
+        "script_sha256": "e9855b4b0b75e2997bc839be6b165d1f36056bc446143427b1a19e4ce27eba77",
+        "variant": "V5.3-R2.5c_HybridGroundLinkPortfolio-public-alpha"
+      },
+      "initializer_diagnostics": {
+        "attempted_samples": 4096,
+        "branch_and_order_consistent": 543,
+        "enabled": true,
+        "evaluated_seed_count": 6,
+        "finite_dyads": 4096,
+        "full_cycle_robust_crank_shortest": 631,
+        "generation_runtime_seconds": 0.01191370000015013,
+        "method": "three_pose_dyad_v1",
+        "refined_candidate_count": 6,
+        "refinement_runtime_seconds": 22.60120960000495,
+        "requested_samples": 4096,
+        "requested_seed_count": 6,
+        "returned_seeds": 6,
+        "source_sha256": "5be10d2c13da2a09498ab7a8097f60d63de55a292a31755e722f6879db81188c",
+        "transmission_selection_floors": 511,
+        "verification_runtime_seconds": 0.10388959999545477,
+        "within_search_bounds": 2479
+      },
+      "model_identity": [
+        {
+          "role": "balanced",
+          "sha256": "72a20f1f6828686c18100b3f5c7f913161b6042cfd9ea3baac15042d1b9fa8a0"
+        },
+        {
+          "role": "path",
+          "sha256": "8193a5d5208c227424cd570405b4c148cc2987c3a266a348a0f6b8184445f61e"
+        },
+        {
+          "role": "transmission",
+          "sha256": "30a23c4aee3a7d5e29673757a791acde6bddd93cf207aaea0cceb5627621e55f"
+        }
+      ],
+      "selected": {
+        "best_by_joint_error": {
+          "candidate_id": "pose_seed_001",
+          "crank_is_strictly_shortest": true,
+          "engine_selection_eligible": true,
+          "full_cycle_assembly": true,
+          "global_minimum_transmission_deg": 55.26003677815634,
+          "grashof": true,
+          "joint_normalized_error": 1.4210854715202004e-14,
+          "maximum_orientation_error_deg": 2.842170943040401e-14,
+          "maximum_position_error": 9.930136612989092e-16,
+          "mean_orientation_error_deg": 2.842170943040401e-14,
+          "mean_position_error": 6.270640269996781e-16,
+          "orientation_errors_deg": [
+            2.842170943040401e-14,
+            2.842170943040401e-14,
+            2.842170943040401e-14
+          ],
+          "pose_within_tolerances": true,
+          "target_assembly": true,
+          "target_minimum_transmission_deg": 55.845773464071925
+        },
+        "candidate_count": 5,
+        "engine_eligible_count": 5,
+        "pose_match_and_engine_eligible_count": 5,
+        "pose_match_count": 5
+      },
+      "status": "completed",
+      "wall_runtime_seconds": 98.65161739999894
+    },
+    {
+      "all_candidates_diagnostic": {
+        "best_by_joint_error": {
+          "candidate_id": "pose_seed_006",
+          "crank_is_strictly_shortest": true,
+          "engine_selection_eligible": true,
+          "full_cycle_assembly": true,
+          "global_minimum_transmission_deg": 49.54705584304514,
+          "grashof": true,
+          "joint_normalized_error": 2.842170943040401e-14,
+          "maximum_orientation_error_deg": 5.684341886080802e-14,
+          "maximum_position_error": 1.831026719408895e-15,
+          "mean_orientation_error_deg": 3.789561257387201e-14,
+          "mean_position_error": 1.3114211351109871e-15,
+          "orientation_errors_deg": [
+            5.684341886080802e-14,
+            0.0,
+            5.684341886080802e-14
+          ],
+          "pose_within_tolerances": true,
+          "target_assembly": true,
+          "target_minimum_transmission_deg": 50.10782849910335
+        },
+        "candidate_count": 30,
+        "engine_eligible_count": 18,
+        "pose_match_and_engine_eligible_count": 18,
+        "pose_match_count": 18
+      },
+      "case_id": "offset_tool",
+      "effective_initializer_arguments": {
+        "pose_dyad_samples": 4096,
+        "pose_dyad_seed_count": 6
+      },
+      "engine_identity": {
+        "engine_sha256": "03ddbc935722f4e7536354f42fc5397ef6e311f0d2030360498b7f5192843cdd",
+        "orientation_sha256": "cb7443226549e536f1c46f7f58bb01fb5016627227c293efb81e2ce1dce5786a",
+        "pose_initialization_sha256": "5be10d2c13da2a09498ab7a8097f60d63de55a292a31755e722f6879db81188c",
+        "script_sha256": "e9855b4b0b75e2997bc839be6b165d1f36056bc446143427b1a19e4ce27eba77",
+        "variant": "V5.3-R2.5c_HybridGroundLinkPortfolio-public-alpha"
+      },
+      "initializer_diagnostics": {
+        "attempted_samples": 4096,
+        "branch_and_order_consistent": 262,
+        "enabled": true,
+        "evaluated_seed_count": 6,
+        "finite_dyads": 4096,
+        "full_cycle_robust_crank_shortest": 284,
+        "generation_runtime_seconds": 0.017000400002871174,
+        "method": "three_pose_dyad_v1",
+        "refined_candidate_count": 6,
+        "refinement_runtime_seconds": 42.147063600001275,
+        "requested_samples": 4096,
+        "requested_seed_count": 6,
+        "returned_seeds": 6,
+        "source_sha256": "5be10d2c13da2a09498ab7a8097f60d63de55a292a31755e722f6879db81188c",
+        "transmission_selection_floors": 256,
+        "verification_runtime_seconds": 0.44470499999442836,
+        "within_search_bounds": 2723
+      },
+      "model_identity": [
+        {
+          "role": "balanced",
+          "sha256": "72a20f1f6828686c18100b3f5c7f913161b6042cfd9ea3baac15042d1b9fa8a0"
+        },
+        {
+          "role": "path",
+          "sha256": "8193a5d5208c227424cd570405b4c148cc2987c3a266a348a0f6b8184445f61e"
+        },
+        {
+          "role": "transmission",
+          "sha256": "30a23c4aee3a7d5e29673757a791acde6bddd93cf207aaea0cceb5627621e55f"
+        }
+      ],
+      "selected": {
+        "best_by_joint_error": {
+          "candidate_id": "pose_seed_001",
+          "crank_is_strictly_shortest": true,
+          "engine_selection_eligible": true,
+          "full_cycle_assembly": true,
+          "global_minimum_transmission_deg": 51.75856204367534,
+          "grashof": true,
+          "joint_normalized_error": 4.737529777603928e-14,
+          "maximum_orientation_error_deg": 0.0,
+          "maximum_position_error": 3.553147333202946e-15,
+          "mean_orientation_error_deg": 0.0,
+          "mean_position_error": 2.0771688631425982e-15,
+          "orientation_errors_deg": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "pose_within_tolerances": true,
+          "target_assembly": true,
+          "target_minimum_transmission_deg": 54.5067237887897
+        },
+        "candidate_count": 5,
+        "engine_eligible_count": 5,
+        "pose_match_and_engine_eligible_count": 5,
+        "pose_match_count": 5
+      },
+      "status": "completed",
+      "wall_runtime_seconds": 147.11325650000072
+    },
+    {
+      "all_candidates_diagnostic": {
+        "best_by_joint_error": {
+          "candidate_id": "pose_seed_004",
+          "crank_is_strictly_shortest": true,
+          "engine_selection_eligible": true,
+          "full_cycle_assembly": true,
+          "global_minimum_transmission_deg": 55.21637774253249,
+          "grashof": true,
+          "joint_normalized_error": 2.7930194844502774e-14,
+          "maximum_orientation_error_deg": 2.842170943040401e-14,
+          "maximum_position_error": 2.094764613337708e-15,
+          "mean_orientation_error_deg": 9.473903143468002e-15,
+          "mean_position_error": 1.3271008279926202e-15,
+          "orientation_errors_deg": [
+            0.0,
+            0.0,
+            2.842170943040401e-14
+          ],
+          "pose_within_tolerances": true,
+          "target_assembly": true,
+          "target_minimum_transmission_deg": 58.99116413362179
+        },
+        "candidate_count": 30,
+        "engine_eligible_count": 12,
+        "pose_match_and_engine_eligible_count": 12,
+        "pose_match_count": 12
+      },
+      "case_id": "angle_wrap",
+      "effective_initializer_arguments": {
+        "pose_dyad_samples": 4096,
+        "pose_dyad_seed_count": 6
+      },
+      "engine_identity": {
+        "engine_sha256": "03ddbc935722f4e7536354f42fc5397ef6e311f0d2030360498b7f5192843cdd",
+        "orientation_sha256": "cb7443226549e536f1c46f7f58bb01fb5016627227c293efb81e2ce1dce5786a",
+        "pose_initialization_sha256": "5be10d2c13da2a09498ab7a8097f60d63de55a292a31755e722f6879db81188c",
+        "script_sha256": "e9855b4b0b75e2997bc839be6b165d1f36056bc446143427b1a19e4ce27eba77",
+        "variant": "V5.3-R2.5c_HybridGroundLinkPortfolio-public-alpha"
+      },
+      "initializer_diagnostics": {
+        "attempted_samples": 4096,
+        "branch_and_order_consistent": 781,
+        "enabled": true,
+        "evaluated_seed_count": 6,
+        "finite_dyads": 4096,
+        "full_cycle_robust_crank_shortest": 806,
+        "generation_runtime_seconds": 0.01414380000642268,
+        "method": "three_pose_dyad_v1",
+        "refined_candidate_count": 6,
+        "refinement_runtime_seconds": 26.590280000003986,
+        "requested_samples": 4096,
+        "requested_seed_count": 6,
+        "returned_seeds": 6,
+        "source_sha256": "5be10d2c13da2a09498ab7a8097f60d63de55a292a31755e722f6879db81188c",
+        "transmission_selection_floors": 715,
+        "verification_runtime_seconds": 0.10958899999968708,
+        "within_search_bounds": 2609
+      },
+      "model_identity": [
+        {
+          "role": "balanced",
+          "sha256": "72a20f1f6828686c18100b3f5c7f913161b6042cfd9ea3baac15042d1b9fa8a0"
+        },
+        {
+          "role": "path",
+          "sha256": "8193a5d5208c227424cd570405b4c148cc2987c3a266a348a0f6b8184445f61e"
+        },
+        {
+          "role": "transmission",
+          "sha256": "30a23c4aee3a7d5e29673757a791acde6bddd93cf207aaea0cceb5627621e55f"
+        }
+      ],
+      "selected": {
+        "best_by_joint_error": {
+          "candidate_id": "pose_seed_004",
+          "crank_is_strictly_shortest": true,
+          "engine_selection_eligible": true,
+          "full_cycle_assembly": true,
+          "global_minimum_transmission_deg": 55.21637774253249,
+          "grashof": true,
+          "joint_normalized_error": 2.7930194844502774e-14,
+          "maximum_orientation_error_deg": 2.842170943040401e-14,
+          "maximum_position_error": 2.094764613337708e-15,
+          "mean_orientation_error_deg": 9.473903143468002e-15,
+          "mean_position_error": 1.3271008279926202e-15,
+          "orientation_errors_deg": [
+            0.0,
+            0.0,
+            2.842170943040401e-14
+          ],
+          "pose_within_tolerances": true,
+          "target_assembly": true,
+          "target_minimum_transmission_deg": 58.99116413362179
+        },
+        "candidate_count": 5,
+        "engine_eligible_count": 5,
+        "pose_match_and_engine_eligible_count": 5,
+        "pose_match_count": 5
+      },
+      "status": "completed",
+      "wall_runtime_seconds": 119.12883590000274
+    }
+  ]
+}
