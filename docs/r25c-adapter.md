@@ -1,6 +1,6 @@
 # R2.5c draft adapter
 
-The adapter creates input files for a separately supplied research engine. It
+The adapter creates input files for the packaged four-bar research engine. It
 does not install, import, download, or execute that engine during adaptation.
 The foundation is useful for validating OMTS without any machine-learning runtime.
 
@@ -25,7 +25,7 @@ your own input annotations and generated results before sharing them.
 | Units/frame | `normalized`, `deg`, `s`; right-handed planar XY, x right/y up |
 | Motion | Exactly three hard position targets; free phases, unordered or ordered |
 | Ordering | Listed order, or sorted by unique `order_index` supplied on every target |
-| Cycle | Positive 0–360 degree phase cycle, without period/speed/time constraints |
+| Cycle | Positive 0â€“360 degree phase cycle, without period/speed/time constraints |
 | Topology | Four-bar, one degree of freedom, one actuator |
 | Ground | Hybrid portfolio with one fixed seed; maps trust fraction and release controls |
 | Profiles | All three accuracy/balanced/transmission profiles; paired or cross matrix |
@@ -53,7 +53,7 @@ Transmission goals are 35/15 degrees (target/global), with selection floors 15/1
 The frozen research engine retains its normal optimizer schedules, profile-weighted
 objectives, compactness optimization/ranking, and search bounds relative to
 `D = max(maximum pairwise target separation, 0.25)`. Variable ground is searched
-over 0.5D–2.5D, moving links over 0.05D–3D. A report-only compactness request adds
+over 0.5Dâ€“2.5D, moving links over 0.05Dâ€“3D. A report-only compactness request adds
 no requirement or custom objective; the engine's existing preferences remain.
 These are heuristic search limits, not a claim to enumerate every valid mechanism.
 
@@ -72,26 +72,24 @@ Nonzero `guarantee_fixed_count` is rejected to avoid unqualified selected refere
 Requests above `kinematic_candidate` are rejected. Read [qualification](qualification.md)
 before interpreting any outputs.
 
-## Optional execution with existing research artifacts
+## Execute with the public engine and weights
 
-The engine and weights are not distributed here. If you already have them, place
-the two scripts and three checkpoints named by `omts capabilities` together in a
-directory. The generated helper checks their SHA-256 hashes before execution.
-Use an environment with the engine's dependencies (NumPy, pandas, matplotlib, and
-PyTorch) already installed:
+Install the engine extra and download the public weights as described in the
+[engine guide](engine.md). Then execute the generated helper:
 
 ```sh
-python generated/demo/run_r25c.py --engine-directory /path/to/research-artifacts
+python generated/demo/run_r25c.py --models-directory models --check-only
+python generated/demo/run_r25c.py --models-directory models
 ```
 
-On Windows, supply a Windows directory path instead. The runner uses its own file
-location for plan/target/result paths, so it works from another current directory.
-It defaults to the Python running the helper; `--python` can name the research
-environment's interpreter. Invocation uses an argument array with no command shell.
-The helper never downloads files and stops on the first failed run.
+The helper checks installed engine source and model SHA-256 hashes before any
+optimization. Use the Python environment in which the engine is installed. Its
+own location anchors the plan, target and output paths; the model directory is
+resolved from the invoking directory. Invocation uses argument arrays without a
+command shell. No download happens during execution.
 
-The pinned artifact hashes identify the existing research baseline, not a newly
-published model release. Clean public weight exports will receive new identities
-and parity checks in the subsequent release. End-to-end numerical behavior is not
-established by foundation adapter tests; those verify requirements and generated
-instructions independently of the optimizer.
+Regenerate foundation-era plans: the public engine and cleaned safetensors weights
+have new identities. `r2.5c-fourbar` remains the accepted input profile name; new
+plans identify the public implementation. The draft supported subset is unchanged.
+The model exports passed exact tensor and prediction parity checks, and current
+numerical engine checks are documented in the engine guide.

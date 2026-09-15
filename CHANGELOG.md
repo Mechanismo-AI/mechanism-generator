@@ -1,6 +1,21 @@
 # Changelog
 
-## Unreleased — 0.1.0a1 foundation
+## 0.1.0a2 — four-bar research alpha
+
+- Package the R2.5c/R2.5b engine with an explicit model downloader and verified CLI.
+- Publish three Apache-2.0 inference-only safetensors exports with exact tensor and
+  prediction parity, public provenance, and a model card.
+- Restrict selected fixed references to eligible designs; disable unqualified fallback.
+- Remove machine-specific directories from persisted path fields and fail on missing models.
+- Update OMTS runners to check the installed public engine and cleaned model identities.
+- Add geometry/gradient, ordering, qualification, download, and real optimizer tests.
+- Record a current full-budget example and reduced-budget comparison with the originals.
+
+The OMTS 0.1 draft and its narrow supported subset are unchanged. Regenerate old
+run plans after upgrading. This is an inference/research release, not a complete
+training reproduction release or engineering certification.
+
+## Unreleased â€” 0.1.0a1 foundation
 
 - Add the OMTS 0.1.0 draft specification, packaged schema, and two annotated examples.
 - Add shared document validation: schema, references, dimensions, ordering, bounds,

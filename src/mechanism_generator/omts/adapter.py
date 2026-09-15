@@ -1,4 +1,4 @@
-"""Prepare a narrow, explicitly checked OMTS subset for the external R2.5c engine.
+"""Prepare a narrow, explicitly checked OMTS subset for the packaged R2.5c engine.
 
 Every operational field is mapped, checked against a fixed supported value, or
 rejected. Annotation fields do not influence synthesis. No optimizer is run here.
@@ -222,6 +222,7 @@ def prepare_plan(data: dict) -> dict:
         "implementation": profile["implementation"],
         "adapter_version": profile["adapter_version"],
         "expected_artifacts": profile["expected_artifacts"],
+        "expected_engine_artifacts": profile["expected_engine_artifacts"],
         "input_sha256": hashlib.sha256(json.dumps(data, sort_keys=True, separators=(",", ":"), ensure_ascii=True).encode()).hexdigest(),
         "input_hash_format": "canonical JSON: sorted keys, compact separators, ASCII escapes, UTF-8",
         "runs": runs,

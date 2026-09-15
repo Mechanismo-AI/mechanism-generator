@@ -4,7 +4,7 @@ task_set_id: three_point_demo
 name: Three-point planar four-bar research task
 description: >-
   A task accepted by the draft R2.5c adapter. Adaptation prepares files only;
-  the separately supplied research engine determines whether solutions exist.
+  the packaged research engine determines whether solutions exist when executed.
 capabilities_required:
   - planar_2d
   - cyclic_motion

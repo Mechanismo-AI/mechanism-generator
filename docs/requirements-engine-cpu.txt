@@ -1,0 +1,7 @@
+# First install torch==2.13.0 from https://download.pytorch.org/whl/cpu.
+# Tested numerical dependencies on Python 3.12; this is not a full dependency lock.
+torch==2.13.0
+numpy==2.5.1
+pandas==3.0.5
+matplotlib==3.11.1
+safetensors==0.8.0

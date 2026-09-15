@@ -1,6 +1,7 @@
-include LICENSE NOTICE README.md CONTRIBUTING.md CHANGELOG.md
+include LICENSE NOTICE README.md CONTRIBUTING.md CHANGELOG.md MODEL_CARD.md
 graft docs
 graft specs
 graft examples
 recursive-include tests *.py
+recursive-include tools *.py
 global-exclude __pycache__ *.py[cod]
