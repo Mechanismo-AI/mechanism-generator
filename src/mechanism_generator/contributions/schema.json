@@ -1,0 +1,948 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Mechanismo-AI/mechanism-generator/blob/main/src/mechanism_generator/contributions/schema.json",
+  "title": "Mechanism Generator community contribution 0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "0.1"
+    },
+    "kind": {
+      "enum": [
+        "local",
+        "submission"
+      ]
+    },
+    "core": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "generator_version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+[a-z0-9.]*$"
+        },
+        "engine": {
+          "const": "r2.5c"
+        },
+        "run_status": {
+          "enum": [
+            "completed",
+            "partial",
+            "unknown"
+          ]
+        },
+        "validation_status": {
+          "const": "unreviewed"
+        },
+        "tasks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "pattern": "^task-[0-9]{4,}$"
+              },
+              "candidate_count": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "path_acceptable_count": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "selection_eligible_count": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "engineering_acceptable_count": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "selected_count": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "task_id",
+              "candidate_count",
+              "path_acceptable_count",
+              "selection_eligible_count",
+              "engineering_acceptable_count",
+              "selected_count"
+            ]
+          }
+        }
+      },
+      "required": [
+        "generator_version",
+        "engine",
+        "run_status",
+        "validation_status",
+        "tasks"
+      ]
+    },
+    "task": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "task_id": {
+            "type": "string",
+            "pattern": "^task-[0-9]{4,}$"
+          },
+          "target_values": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "minItems": 6,
+            "maxItems": 6
+          }
+        },
+        "required": [
+          "task_id",
+          "target_values"
+        ]
+      }
+    },
+    "candidates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "task_id": {
+            "type": "string",
+            "pattern": "^task-[0-9]{4,}$"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "S_ratio": {
+                  "type": "number"
+                },
+                "absolute_mean_error_acceptable": {
+                  "type": "boolean"
+                },
+                "absolute_point_errors_acceptable": {
+                  "type": "boolean"
+                },
+                "accuracy_score": {
+                  "type": "number"
+                },
+                "acquired_error_1": {
+                  "type": "number"
+                },
+                "acquired_error_2": {
+                  "type": "number"
+                },
+                "acquired_error_3": {
+                  "type": "number"
+                },
+                "acquired_mean_error": {
+                  "type": "number"
+                },
+                "assembly_margin_ratio": {
+                  "type": "number"
+                },
+                "balanced_score": {
+                  "type": "number"
+                },
+                "bar_length": {
+                  "type": "number"
+                },
+                "bar_length_ratio": {
+                  "type": "number"
+                },
+                "base_angle": {
+                  "type": "number"
+                },
+                "base_x": {
+                  "type": "number"
+                },
+                "base_y": {
+                  "type": "number"
+                },
+                "branch_sign": {
+                  "type": "number"
+                },
+                "checkpoint_epoch": {
+                  "type": "number"
+                },
+                "compactness_acceptable": {
+                  "type": "boolean"
+                },
+                "compactness_penalty": {
+                  "type": "number"
+                },
+                "compactness_score": {
+                  "type": "number"
+                },
+                "crank_margin_min": {
+                  "type": "number"
+                },
+                "crank_margin_ratio": {
+                  "type": "number"
+                },
+                "engineering_acceptable": {
+                  "type": "boolean"
+                },
+                "error_1": {
+                  "type": "number"
+                },
+                "error_2": {
+                  "type": "number"
+                },
+                "error_3": {
+                  "type": "number"
+                },
+                "exact_mechanism_class": {
+                  "type": "boolean"
+                },
+                "follower_margin": {
+                  "type": "number"
+                },
+                "follower_margin_ratio": {
+                  "type": "number"
+                },
+                "follower_not_longest_enforced": {
+                  "type": "boolean"
+                },
+                "full_cycle_assembly": {
+                  "type": "boolean"
+                },
+                "full_cycle_assembly_violation": {
+                  "type": "number"
+                },
+                "global_angle_mean_deg": {
+                  "type": "number"
+                },
+                "global_angle_min_deg": {
+                  "type": "number"
+                },
+                "global_angle_softmin_deg": {
+                  "type": "number"
+                },
+                "global_below_floor_fraction": {
+                  "type": "number"
+                },
+                "global_below_target_fraction": {
+                  "type": "number"
+                },
+                "global_selection_floor_acceptable": {
+                  "type": "boolean"
+                },
+                "global_transmission_acceptable": {
+                  "type": "boolean"
+                },
+                "global_transmission_min_penalty": {
+                  "type": "number"
+                },
+                "global_transmission_penalty": {
+                  "type": "number"
+                },
+                "global_transmission_top_penalty": {
+                  "type": "number"
+                },
+                "grashof_margin": {
+                  "type": "number"
+                },
+                "grashof_margin_ratio": {
+                  "type": "number"
+                },
+                "grashof_ok": {
+                  "type": "boolean"
+                },
+                "grashof_violation": {
+                  "type": "number"
+                },
+                "initial_full_cycle_assembly": {
+                  "type": "boolean"
+                },
+                "initial_global_angle_min_deg": {
+                  "type": "number"
+                },
+                "initial_max_error": {
+                  "type": "number"
+                },
+                "initial_mean_error": {
+                  "type": "number"
+                },
+                "initial_target_angle_min_deg": {
+                  "type": "number"
+                },
+                "l1": {
+                  "type": "number"
+                },
+                "l2": {
+                  "type": "number"
+                },
+                "l3": {
+                  "type": "number"
+                },
+                "l4": {
+                  "type": "number"
+                },
+                "local_path_budget_feasible": {
+                  "type": "boolean"
+                },
+                "max_error": {
+                  "type": "number"
+                },
+                "max_error_improvement": {
+                  "type": "number"
+                },
+                "max_link_ratio": {
+                  "type": "number"
+                },
+                "mean_error": {
+                  "type": "number"
+                },
+                "mean_error_improvement": {
+                  "type": "number"
+                },
+                "mean_path_budget": {
+                  "type": "number"
+                },
+                "path_acceptable": {
+                  "type": "boolean"
+                },
+                "path_area_ratio": {
+                  "type": "number"
+                },
+                "path_budget_feasible": {
+                  "type": "boolean"
+                },
+                "perturbation_index": {
+                  "type": "number"
+                },
+                "phase_1_deg": {
+                  "type": "number"
+                },
+                "phase_1_rad": {
+                  "type": "number"
+                },
+                "phase_2_deg": {
+                  "type": "number"
+                },
+                "phase_2_rad": {
+                  "type": "number"
+                },
+                "phase_3_deg": {
+                  "type": "number"
+                },
+                "phase_3_rad": {
+                  "type": "number"
+                },
+                "physical_feasible": {
+                  "type": "boolean"
+                },
+                "point_budget_1": {
+                  "type": "number"
+                },
+                "point_budget_2": {
+                  "type": "number"
+                },
+                "point_budget_3": {
+                  "type": "number"
+                },
+                "profile_score": {
+                  "type": "number"
+                },
+                "robustness_acceptable": {
+                  "type": "boolean"
+                },
+                "robustness_penalty": {
+                  "type": "number"
+                },
+                "sampled_assembly_success": {
+                  "type": "number"
+                },
+                "selected_rank": {
+                  "type": "number"
+                },
+                "selection_eligible": {
+                  "type": "boolean"
+                },
+                "shared_mean_path_budget": {
+                  "type": "number"
+                },
+                "shared_path_budget_feasible": {
+                  "type": "boolean"
+                },
+                "shared_path_reference_error_1": {
+                  "type": "number"
+                },
+                "shared_path_reference_error_2": {
+                  "type": "number"
+                },
+                "shared_path_reference_error_3": {
+                  "type": "number"
+                },
+                "shared_path_reference_mean_error": {
+                  "type": "number"
+                },
+                "shared_point_budget_1": {
+                  "type": "number"
+                },
+                "shared_point_budget_2": {
+                  "type": "number"
+                },
+                "shared_point_budget_3": {
+                  "type": "number"
+                },
+                "sweep_area_ratio": {
+                  "type": "number"
+                },
+                "sweep_diagonal_ratio": {
+                  "type": "number"
+                },
+                "sweep_height_ratio": {
+                  "type": "number"
+                },
+                "sweep_radius_ratio": {
+                  "type": "number"
+                },
+                "sweep_width_ratio": {
+                  "type": "number"
+                },
+                "target_angle_1_deg": {
+                  "type": "number"
+                },
+                "target_angle_2_deg": {
+                  "type": "number"
+                },
+                "target_angle_3_deg": {
+                  "type": "number"
+                },
+                "target_angle_mean_deg": {
+                  "type": "number"
+                },
+                "target_angle_min_change_deg": {
+                  "type": "number"
+                },
+                "target_angle_min_deg": {
+                  "type": "number"
+                },
+                "target_angle_softmin_deg": {
+                  "type": "number"
+                },
+                "target_centroid_x": {
+                  "type": "number"
+                },
+                "target_centroid_y": {
+                  "type": "number"
+                },
+                "target_scale": {
+                  "type": "number"
+                },
+                "target_selection_floor_acceptable": {
+                  "type": "boolean"
+                },
+                "target_transmission_acceptable": {
+                  "type": "boolean"
+                },
+                "target_transmission_mean_penalty": {
+                  "type": "number"
+                },
+                "target_transmission_penalty": {
+                  "type": "number"
+                },
+                "target_transmission_worst_penalty": {
+                  "type": "number"
+                },
+                "total_link_ratio": {
+                  "type": "number"
+                },
+                "transmission_score": {
+                  "type": "number"
+                },
+                "candidate_id": {
+                  "type": "string",
+                  "pattern": "^candidate-[0-9]{4,}$"
+                },
+                "portfolio_parent_candidate_id": {
+                  "type": "string",
+                  "pattern": "^candidate-[0-9]{4,}$"
+                },
+                "shared_path_reference_candidate_id": {
+                  "type": "string",
+                  "pattern": "^candidate-[0-9]{4,}$"
+                },
+                "model_role": {
+                  "enum": [
+                    "balanced",
+                    "path",
+                    "transmission"
+                  ]
+                },
+                "profile": {
+                  "enum": [
+                    "accuracy",
+                    "balanced",
+                    "transmission"
+                  ]
+                },
+                "portfolio_origin": {
+                  "enum": [
+                    "fixed",
+                    "variable",
+                    "bridge_trust",
+                    "bridge_release"
+                  ]
+                },
+                "ground_link_mode": {
+                  "enum": [
+                    "fixed",
+                    "optimize"
+                  ]
+                },
+                "qualification_level": {
+                  "enum": [
+                    "not_physical",
+                    "physical_only_path_rejected",
+                    "path_acceptable_but_robustness_failed",
+                    "path_acceptable_but_compactness_failed",
+                    "path_acceptable_but_selection_floor_failed",
+                    "selection_acceptable",
+                    "engineering_acceptable",
+                    "not_evaluated"
+                  ]
+                }
+              },
+              "required": [
+                "candidate_id"
+              ]
+            }
+          }
+        },
+        "required": [
+          "task_id",
+          "items"
+        ]
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "engine_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "parent_engine_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "models": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "role": {
+                "enum": [
+                  "balanced",
+                  "path",
+                  "transmission"
+                ]
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              }
+            },
+            "required": [
+              "role",
+              "sha256"
+            ]
+          }
+        }
+      },
+      "required": [
+        "models"
+      ]
+    },
+    "settings": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "model_roles": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "balanced",
+              "path",
+              "transmission"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "profile_matrix": {
+          "enum": [
+            "paired",
+            "cross"
+          ]
+        },
+        "branches": {
+          "enum": [
+            "negative",
+            "positive",
+            "both"
+          ]
+        },
+        "phase_mode": {
+          "enum": [
+            "unordered",
+            "ordered"
+          ]
+        },
+        "perturbations_per_model": {
+          "type": "integer"
+        },
+        "parameter_noise": {
+          "type": "number"
+        },
+        "phase_noise_deg": {
+          "type": "number"
+        },
+        "ground_link_mode": {
+          "enum": [
+            "optimize",
+            "fixed"
+          ]
+        },
+        "fixed_ground_link_value": {
+          "type": "number"
+        },
+        "ground_link_min_ratio": {
+          "type": "number"
+        },
+        "ground_link_max_ratio": {
+          "type": "number"
+        },
+        "moving_link_min_ratio": {
+          "type": "number"
+        },
+        "moving_link_max_ratio": {
+          "type": "number"
+        },
+        "bar_length_max_ratio": {
+          "type": "number"
+        },
+        "base_search_radius_ratio": {
+          "type": "number"
+        },
+        "minimum_target_scale": {
+          "type": "number"
+        },
+        "adam_accuracy_steps": {
+          "type": "integer"
+        },
+        "adam_tradeoff_steps": {
+          "type": "integer"
+        },
+        "adam_lr": {
+          "type": "number"
+        },
+        "lbfgs_steps": {
+          "type": "integer"
+        },
+        "lbfgs_lr": {
+          "type": "number"
+        },
+        "grad_clip": {
+          "type": "number"
+        },
+        "seed_phase_steps": {
+          "type": "integer"
+        },
+        "optimization_global_steps": {
+          "type": "integer"
+        },
+        "verification_steps": {
+          "type": "integer"
+        },
+        "target_transmission_deg": {
+          "type": "number"
+        },
+        "global_transmission_floor_deg": {
+          "type": "number"
+        },
+        "worst_target_focus": {
+          "type": "number"
+        },
+        "worst_target_temperature": {
+          "type": "number"
+        },
+        "global_min_focus": {
+          "type": "number"
+        },
+        "global_min_temperature": {
+          "type": "number"
+        },
+        "global_top_fraction": {
+          "type": "number"
+        },
+        "class_margin": {
+          "type": "number"
+        },
+        "class_margin_ratio": {
+          "type": "number"
+        },
+        "assembly_margin_ratio": {
+          "type": "number"
+        },
+        "grashof_margin_ratio": {
+          "type": "number"
+        },
+        "enforce_follower_not_longest": {
+          "type": "boolean"
+        },
+        "assembly_weight": {
+          "type": "number"
+        },
+        "grashof_weight": {
+          "type": "number"
+        },
+        "class_weight": {
+          "type": "number"
+        },
+        "robustness_weight": {
+          "type": "number"
+        },
+        "target_validity_weight": {
+          "type": "number"
+        },
+        "drift_weight": {
+          "type": "number"
+        },
+        "compactness_weight": {
+          "type": "number"
+        },
+        "compactness_max_link_ratio": {
+          "type": "number"
+        },
+        "compactness_total_link_ratio": {
+          "type": "number"
+        },
+        "compactness_sweep_radius_ratio": {
+          "type": "number"
+        },
+        "compactness_sweep_area_ratio": {
+          "type": "number"
+        },
+        "compactness_bar_ratio": {
+          "type": "number"
+        },
+        "compactness_softness": {
+          "type": "number"
+        },
+        "ranking_compactness_weight": {
+          "type": "number"
+        },
+        "engineering_max_link_ratio": {
+          "type": "number"
+        },
+        "engineering_max_sweep_radius_ratio": {
+          "type": "number"
+        },
+        "max_mean_error": {
+          "type": "number"
+        },
+        "max_point_error": {
+          "type": "number"
+        },
+        "shared_mean_allowance": {
+          "type": "number"
+        },
+        "shared_point_allowance": {
+          "type": "number"
+        },
+        "minimum_target_transmission": {
+          "type": "number"
+        },
+        "minimum_global_transmission": {
+          "type": "number"
+        },
+        "strict_qualification": {
+          "type": "boolean"
+        },
+        "allow_unqualified_fallback": {
+          "type": "boolean"
+        },
+        "top_k": {
+          "type": "integer"
+        },
+        "dedup_parameter_threshold": {
+          "type": "number"
+        },
+        "dedup_curve_threshold": {
+          "type": "number"
+        },
+        "seed": {
+          "type": "integer"
+        },
+        "device": {
+          "enum": [
+            "auto",
+            "cpu",
+            "cuda"
+          ]
+        },
+        "dtype": {
+          "enum": [
+            "float32",
+            "float64"
+          ]
+        },
+        "quick": {
+          "type": "boolean"
+        },
+        "no_contribution_bundle": {
+          "type": "boolean"
+        },
+        "portfolio_fixed_seed_count": {
+          "type": "integer"
+        },
+        "portfolio_bridge_profile_matrix": {
+          "enum": [
+            "paired",
+            "cross"
+          ]
+        },
+        "portfolio_bridge_perturbations": {
+          "type": "integer"
+        },
+        "portfolio_bridge_parameter_noise": {
+          "type": "number"
+        },
+        "portfolio_bridge_phase_noise_deg": {
+          "type": "number"
+        },
+        "portfolio_l1_trust_fraction": {
+          "type": "number"
+        },
+        "portfolio_bridge_accuracy_steps": {
+          "type": "integer"
+        },
+        "portfolio_bridge_tradeoff_steps": {
+          "type": "integer"
+        },
+        "portfolio_bridge_lbfgs_steps": {
+          "type": "integer"
+        },
+        "portfolio_release_seed_count": {
+          "type": "integer"
+        },
+        "portfolio_skip_release": {
+          "type": "boolean"
+        },
+        "portfolio_release_accuracy_steps": {
+          "type": "integer"
+        },
+        "portfolio_release_tradeoff_steps": {
+          "type": "integer"
+        },
+        "portfolio_release_lbfgs_steps": {
+          "type": "integer"
+        },
+        "portfolio_guarantee_fixed_count": {
+          "type": "integer"
+        },
+        "portfolio_stage_top_k": {
+          "type": "integer"
+        }
+      },
+      "required": []
+    },
+    "contributor": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "pseudonym": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "application": {
+          "type": "string",
+          "maxLength": 4000
+        }
+      },
+      "required": [
+        "pseudonym",
+        "application"
+      ]
+    },
+    "consent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "terms_version": {
+          "const": "1"
+        },
+        "license": {
+          "const": "Apache-2.0"
+        },
+        "rights_confirmed": {
+          "const": true
+        },
+        "public_sharing_and_training": {
+          "const": true
+        }
+      },
+      "required": [
+        "terms_version",
+        "license",
+        "rights_confirmed",
+        "public_sharing_and_training"
+      ]
+    }
+  },
+  "required": [
+    "schema_version",
+    "kind",
+    "core"
+  ],
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "submission"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "contributor",
+          "consent"
+        ]
+      },
+      "else": {
+        "not": {
+          "anyOf": [
+            {
+              "required": [
+                "contributor"
+              ]
+            },
+            {
+              "required": [
+                "consent"
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

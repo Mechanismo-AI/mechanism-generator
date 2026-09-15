@@ -16,6 +16,24 @@ from safetensors.torch import save_file
 from mechanism_generator.engine import r25b, r25c, provenance
 
 
+def test_contribution_packaging_can_be_disabled_and_cannot_discard_results(tmp_path, monkeypatch, capsys):
+    from types import SimpleNamespace
+    import mechanism_generator.contributions
+    calls = []
+
+    def fail(_):
+        calls.append(True)
+        raise ValueError("PRIVATE-error-payload")
+
+    monkeypatch.setattr(mechanism_generator.contributions, "prepare_bundle", fail)
+    r25c.write_local_contribution(tmp_path, SimpleNamespace(no_contribution_bundle=True))
+    assert not calls
+    r25c.write_local_contribution(tmp_path, SimpleNamespace(no_contribution_bundle=False))
+    assert calls == [True]
+    error = capsys.readouterr().err
+    assert "results remain saved" in error and "PRIVATE" not in error
+
+
 @pytest.mark.parametrize("branch", [-1, 1])
 def test_circle_geometry_preserves_lengths_and_has_finite_gradients(branch):
     params = torch.tensor([[6., 2., 5., 4., .5, 1., -3., 2., .4]], dtype=torch.float64, requires_grad=True)
@@ -101,6 +119,15 @@ def test_tiny_optimizer_run_with_synthetic_weights(tmp_path):
     assert len(manifests) == 1
     manifest = json.loads(manifests[0].read_text())
     assert len(manifest["targets"]) == 1
+    assert manifest["run_status"] == "completed"
+    from mechanism_generator.contributions import validate_bundle
+    contribution = manifests[0].parent / "contribution"
+    bundle = json.loads((contribution / "bundle.json").read_text())
+    validate_bundle(bundle)
+    assert bundle["core"]["run_status"] == "completed"
+    assert len(bundle["candidates"][0]["items"]) == manifest["targets"][0]["candidate_count"]
+    assert "__BUNDLE_JSON__" not in (contribution / "review.html").read_text()
+    assert "[CONTRIBUTION WARNING]" not in result.stderr
     for artifact in output.rglob("*.json"):
         assert str(tmp_path) not in artifact.read_text()
     for selected in output.rglob("selected_candidates.csv"):

@@ -1,6 +1,6 @@
 {
   "implementation": "r2.5c-public-alpha",
-  "adapter_version": "0.1.0a2",
+  "adapter_version": "0.1.0a3",
   "status": "draft_with_packaged_engine",
   "omts_versions": [
     "0.1",
@@ -74,6 +74,6 @@
     "models.py": "80b145876288d53ea1e96c59543923ec03b1c9266a06b0253753e3c65b333e5f",
     "provenance.py": "1d84d20d1f730fc692c2e5826c269a5efeb808c4b063e8871b79331883190670",
     "r25b.py": "7fa6eaa135afcb9cd6ea1566c37df9caea70e40547f3f3fe38db287529a81237",
-    "r25c.py": "663fdb609d063267c71e4c514a5f680ba7ba9eb747bc4bf71e88df0e3e3e2540"
+    "r25c.py": "d3a664fd71a7012e6aa95243b145859a3d2baad88822db96eec3d7d26b3553b8"
   }
 }
