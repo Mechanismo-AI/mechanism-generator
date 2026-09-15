@@ -119,6 +119,19 @@ def test_legacy_schema_is_the_unchanged_a3_schema():
     assert contributions.schema("0.1")["properties"]["schema_version"]["const"] == "0.1"
 
 
+def test_pose_schema_is_the_unchanged_a4_schema():
+    previous = Path(contributions.__file__).with_name("schema-v0.2.json").read_bytes()
+    assert hashlib.sha256(previous).hexdigest() == "5022f732c9799f7a617f37afc6ee1b03b32ece40c115d9656ac7bfb7490009cc"
+    assert contributions.schema("0.2")["properties"]["schema_version"]["const"] == "0.2"
+
+
+def test_previous_pose_bundle_and_submission_still_validate(pose_run):
+    previous = contributions.build_bundle(pose_run)
+    previous["schema_version"] = "0.2"
+    contributions.validate_bundle(previous)
+    contributions.validate_bundle(reviewed(previous))
+
+
 def test_legacy_position_bundle_and_submission_still_validate(recorded_run):
     legacy = contributions.build_bundle(recorded_run)
     legacy["schema_version"] = "0.1"
@@ -133,7 +146,7 @@ def test_legacy_position_bundle_and_submission_still_validate(recorded_run):
 
 def test_new_position_bundle_identifies_no_orientation_requirement(recorded_run):
     bundle = contributions.build_bundle(recorded_run)
-    assert bundle["schema_version"] == "0.2"
+    assert bundle["schema_version"] == "0.3"
     assert bundle["core"]["tasks"][0]["orientation_required"] is False
     assert "orientation_acceptable_count" not in bundle["core"]["tasks"][0]
 

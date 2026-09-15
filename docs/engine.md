@@ -127,5 +127,11 @@ test weights. Actual release-weight verification is separate from those fixtures
 The constructed position-versus-pose experiment is documented in the
 [three-pose guide](three-pose.md); broad success-rate claims require broader evaluation.
 
-Training source and teacher/development artifacts are not included in this alpha.
-See the [model card](../MODEL_CARD.md) for provenance and reproduction limits.
+The geometric-pose release also matched installed a4 exactly across 1,968
+candidate fields (1,472 numeric) on the original point-only task at short budgets.
+Both runs selected zero candidates, so this is a regression check rather than
+evidence of search success ([report](pose-recovery-point-parity.json)).
+
+The four-stage training source, historical recipes, clean teacher dependencies and
+synthetic data generator are now included. See the [training guide](training.md)
+and [model card](../MODEL_CARD.md) for the setup check and reproduction limits.

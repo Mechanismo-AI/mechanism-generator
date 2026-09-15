@@ -32,10 +32,10 @@ POSE_CANDIDATE_FIELDS = (
 )
 
 
-def schema(version: str = "0.2") -> dict:
-    if version not in ("0.1", "0.2"):
+def schema(version: str = "0.3") -> dict:
+    if version not in ("0.1", "0.2", "0.3"):
         raise ValueError("Unsupported contribution schema version")
-    name = "schema-v0.1.json" if version == "0.1" else "schema.json"
+    name = f"schema-v{version}.json" if version != "0.3" else "schema.json"
     return json.loads(files(__package__).joinpath(name).read_text(encoding="utf-8"))
 
 
@@ -105,6 +105,23 @@ def validate_bundle(bundle: dict) -> None:
                     raise ValueError("Included pose task must retain its orientation requirements")
                 if not pose_required and any(key in task for key in POSE_TASK_FIELDS):
                     raise ValueError("Orientation requirements contradict the recorded task type")
+                if "pose_initialization" in task:
+                    if not pose_required:
+                        raise ValueError("Geometric initialization requires an orientation task")
+                    diagnostic = task["pose_initialization"]
+                    pipeline = [diagnostic[key] for key in (
+                        "requested_samples", "attempted_samples", "finite_dyads", "within_search_bounds",
+                        "full_cycle_robust_crank_shortest", "branch_and_order_consistent",
+                        "transmission_selection_floors", "returned_seeds", "evaluated_seed_count")]
+                    if any(after > before for before, after in zip(pipeline, pipeline[1:])):
+                        raise ValueError("Geometric initializer counts are inconsistent")
+                    if diagnostic["returned_seeds"] > diagnostic["requested_seed_count"] or diagnostic["refined_candidate_count"] > diagnostic["evaluated_seed_count"]:
+                        raise ValueError("Geometric candidate count exceeds the seed budget")
+                    if not diagnostic["enabled"] and diagnostic["attempted_samples"]:
+                        raise ValueError("Disabled geometric initialization reports sampled work")
+                    fingerprint = bundle.get("provenance", {}).get("pose_initialization_sha256")
+                    if fingerprint is not None and fingerprint != diagnostic["source_sha256"]:
+                        raise ValueError("Geometric source fingerprints disagree")
             if section == "candidates":
                 items = task["items"]
                 ids = {item["candidate_id"] for item in items}
@@ -183,7 +200,7 @@ def build_bundle(run_directory: Path) -> dict:
         raise ValueError("Only R2.5c run manifests are supported")
     props = schema()["properties"]
     bundle = {
-        "schema_version": "0.2", "kind": "local",
+        "schema_version": "0.3", "kind": "local",
         "core": {"generator_version": __version__, "engine": "r2.5c",
                  "run_status": manifest.get("run_status", "unknown"),
                  "validation_status": "unreviewed", "tasks": []},
@@ -200,6 +217,9 @@ def build_bundle(run_directory: Path) -> dict:
         if pose_required:
             core.update({key: target[key] for key in POSE_COUNTS})
             task_record.update({key: target[key] for key in POSE_TASK_FIELDS})
+            if "pose_initialization" in target:
+                rules = props["task"]["items"]["properties"]["pose_initialization"]["properties"]
+                task_record["pose_initialization"] = _project(target["pose_initialization"], rules)
         bundle["core"]["tasks"].append(core)
         bundle["task"].append(task_record)
         directory = _inside(root, target["directory"])
@@ -224,7 +244,8 @@ def build_bundle(run_directory: Path) -> dict:
     provenance = props["provenance"]["properties"]
     bundle["provenance"].update(_project({"engine_sha256": manifest.get("script_sha256"),
         "parent_engine_sha256": manifest.get("engine_sha256"),
-        "orientation_sha256": manifest.get("orientation_sha256")}, provenance))
+        "orientation_sha256": manifest.get("orientation_sha256"),
+        "pose_initialization_sha256": manifest.get("pose_initialization_sha256")}, provenance))
     for model in manifest.get("models", []):
         selected = _project(model, provenance["models"]["items"]["properties"])
         if set(selected) == {"role", "sha256"}:

@@ -19,19 +19,25 @@ released models let designers work without running training themselves.
    that independently meet both position and orientation tolerances. A separate
    four-case comparison produced qualifying pose designs in two cases; the
    position-only search produced none meeting the same combined requirements.
-   The other two constructed cases remain unresolved at those budgets. This
-   narrow development evidence does not establish a general success rate.
-5. **Next: reproducible training and broader research.** Review and publish
-   training source, teacher dependencies, configurations, dataset provenance and
-   licenses. Expand evaluation across tasks, search budgets, and seeds. Build
-   datasets retaining several verified designs per task, with task-level separation
-   between training and testing, then evaluate improved proposal models.
-6. **Broader design capabilities.** Use measured failure cases to prioritize richer
+   A subsequent geometric initializer addresses those search failures while
+   retaining the same qualification gates; see the [broader evaluation](pose-corpus.md).
+5. **Implemented: training reproduction and broader pose evaluation.** The full
+   four-stage historical training chain, clean dependencies, synthetic data
+   generator, recorded recipes and a repeatability check are packaged. A frozen
+   corpus separates eight development tasks from eight reserved evaluation tasks.
+   See the [training guide](training.md) for the distinction between a repeatable
+   small run and reproducing historical model weights.
+6. **Next: evaluate improved proposal models.** Establish full-run training
+   baselines across seeds. Build datasets retaining several verified designs per
+   task, with task-level separation between training and testing, then compare
+   orientation-conditioned proposals against the geometric baseline. Preserve
+   failed runs and additional compute in the comparison.
+7. **Broader design capabilities.** Use measured failure cases to prioritize richer
    trajectories and orientation requirements, prescribed timing and dwell,
    additional mechanism types, dynamics, collisions, and synchronized tasks.
 
-The current pose feature uses the existing position-input proposal weights with
-additional local refinement. Orientation-conditioned model training remains future
+The current pose feature combines existing position-input proposal weights,
+geometric pose initialization and local refinement. Orientation-conditioned training remains future
 work. Loads, manufacturability, and physical validation are outside the present
 kinematic alpha. See the [three-pose guide](three-pose.md),
 [engine guide](engine.md), and [model card](../MODEL_CARD.md) for the supported scope.

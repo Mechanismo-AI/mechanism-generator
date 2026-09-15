@@ -1,0 +1,278 @@
+{
+  "cases": [
+    {
+      "case_sha256": "30748a33cc94a3550f29309afc3751c38769ddd27445acdec36da61634ed54c8",
+      "id": "evaluation-001",
+      "split": "evaluation",
+      "target_orientations_deg": [
+        145.2743998983,
+        -160.6837146491,
+        -164.3479788603
+      ],
+      "target_points": [
+        [
+          -5.9183730929,
+          2.3900144704
+        ],
+        [
+          -4.020504665,
+          4.4756208845
+        ],
+        [
+          -6.4117948032,
+          5.5220374106
+        ]
+      ],
+      "tolerances": {
+        "maximum_position": 0.075,
+        "mean_position": 0.05,
+        "orientation_deg": [
+          2.0,
+          2.0,
+          2.0
+        ]
+      },
+      "within_historical_position_box": true
+    },
+    {
+      "case_sha256": "99dae869fdef107dd0767300df86e60c3482f54dc5eba2915933636eb8bed883",
+      "id": "evaluation-002",
+      "split": "evaluation",
+      "target_orientations_deg": [
+        -91.2951962799,
+        -105.981443792,
+        -92.6321405713
+      ],
+      "target_points": [
+        [
+          -1.997727864,
+          1.6138065535
+        ],
+        [
+          -0.4158373904,
+          3.6102953381
+        ],
+        [
+          -0.5034375052,
+          4.5893813481
+        ]
+      ],
+      "tolerances": {
+        "maximum_position": 0.075,
+        "mean_position": 0.05,
+        "orientation_deg": [
+          2.0,
+          2.0,
+          2.0
+        ]
+      },
+      "within_historical_position_box": true
+    },
+    {
+      "case_sha256": "f54c1fcd94d21a17fe92a0f52d480ef876fb6e856096ddb3e3c159fe1d2bbc19",
+      "id": "evaluation-003",
+      "split": "evaluation",
+      "target_orientations_deg": [
+        -149.6393542708,
+        -116.4401497093,
+        -102.8902500932
+      ],
+      "target_points": [
+        [
+          -1.9941708949,
+          2.0805808781
+        ],
+        [
+          -2.7151335641,
+          4.0366035762
+        ],
+        [
+          -3.9801232063,
+          1.5786879065
+        ]
+      ],
+      "tolerances": {
+        "maximum_position": 0.075,
+        "mean_position": 0.05,
+        "orientation_deg": [
+          2.0,
+          2.0,
+          2.0
+        ]
+      },
+      "within_historical_position_box": true
+    },
+    {
+      "case_sha256": "c3c0a2df954e73ec5abd2d52f7defd31f78fd238422f7aac4246ccd331b8aa4a",
+      "id": "evaluation-004",
+      "split": "evaluation",
+      "target_orientations_deg": [
+        134.8309279242,
+        166.6522787207,
+        172.4395114724
+      ],
+      "target_points": [
+        [
+          -4.3041674375,
+          5.7431568039
+        ],
+        [
+          -1.1128877693,
+          3.5565063936
+        ],
+        [
+          -3.0058266528,
+          5.2481296092
+        ]
+      ],
+      "tolerances": {
+        "maximum_position": 0.075,
+        "mean_position": 0.05,
+        "orientation_deg": [
+          2.0,
+          2.0,
+          2.0
+        ]
+      },
+      "within_historical_position_box": true
+    },
+    {
+      "case_sha256": "ded4d97fff2282acaa0037875b1353106f2b8f1bb4f7f5d33857aca2ecf2e3b0",
+      "id": "evaluation-005",
+      "split": "evaluation",
+      "target_orientations_deg": [
+        92.6611296732,
+        124.8574409319,
+        118.4150481268
+      ],
+      "target_points": [
+        [
+          -5.051988008,
+          2.6063885654
+        ],
+        [
+          -3.596466064,
+          3.784194027
+        ],
+        [
+          -5.3239436036,
+          5.8334163519
+        ]
+      ],
+      "tolerances": {
+        "maximum_position": 0.075,
+        "mean_position": 0.05,
+        "orientation_deg": [
+          2.0,
+          2.0,
+          2.0
+        ]
+      },
+      "within_historical_position_box": true
+    },
+    {
+      "case_sha256": "4149cafb04ea2ea7c67def84decfc971437a8b528ba6907a4125830cd18529a2",
+      "id": "evaluation-006",
+      "split": "evaluation",
+      "target_orientations_deg": [
+        -80.9625557634,
+        -77.8561790313,
+        -54.6428692075
+      ],
+      "target_points": [
+        [
+          -3.9941237027,
+          4.2746840127
+        ],
+        [
+          -4.50384737,
+          6.2286786838
+        ],
+        [
+          -5.9389178375,
+          6.1775786269
+        ]
+      ],
+      "tolerances": {
+        "maximum_position": 0.075,
+        "mean_position": 0.05,
+        "orientation_deg": [
+          2.0,
+          2.0,
+          2.0
+        ]
+      },
+      "within_historical_position_box": true
+    },
+    {
+      "case_sha256": "c22220418d40893bd90d810d89a0a21f9aa8a516b4e863846888f7f94d79bdb7",
+      "id": "evaluation-007",
+      "split": "evaluation",
+      "target_orientations_deg": [
+        -179.3023898389,
+        -145.5755365517,
+        -153.2325435034
+      ],
+      "target_points": [
+        [
+          0.734314436,
+          3.3202881045
+        ],
+        [
+          0.1463884881,
+          4.4409895683
+        ],
+        [
+          -1.662228195,
+          2.1851992818
+        ]
+      ],
+      "tolerances": {
+        "maximum_position": 0.075,
+        "mean_position": 0.05,
+        "orientation_deg": [
+          2.0,
+          2.0,
+          2.0
+        ]
+      },
+      "within_historical_position_box": true
+    },
+    {
+      "case_sha256": "77d281516b8f813ce8348cf05c750ccfa22d9de089a65e62c87077219e2e62a9",
+      "id": "evaluation-008",
+      "split": "evaluation",
+      "target_orientations_deg": [
+        -103.9166379334,
+        -98.9382094814,
+        -64.5578319684
+      ],
+      "target_points": [
+        [
+          -2.7193493753,
+          2.0627713193
+        ],
+        [
+          -1.5043377996,
+          5.982576412
+        ],
+        [
+          -2.9846455689,
+          6.553174257
+        ]
+      ],
+      "tolerances": {
+        "maximum_position": 0.075,
+        "mean_position": 0.05,
+        "orientation_deg": [
+          2.0,
+          2.0,
+          2.0
+        ]
+      },
+      "within_historical_position_box": true
+    }
+  ],
+  "schema_version": "pose-corpus-v1",
+  "split": "evaluation"
+}

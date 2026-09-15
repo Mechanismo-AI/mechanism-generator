@@ -187,6 +187,7 @@ def _options(task: dict, index: int, outputs: dict) -> dict:
     arguments = [str(value) for pair in flags.items() for value in pair]
     pose_fields = {}
     if pose_target_count:
+        arguments.extend(["--pose_dyad_samples", "4096", "--pose_dyad_seed_count", "6"])
         pose_fields = {
             "target_orientations_deg": [target["orientation"]["value"] for target in targets],
             "orientation_tolerances_deg": [target.get("tolerance", {}).get("orientation", 5) for target in targets],

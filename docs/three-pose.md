@@ -100,7 +100,35 @@ selected. Optional selected-design plots show requested and achieved orientation
 arrows at the target points. Read the [qualification guide](qualification.md)
 before interpreting the engine's engineering labels.
 
-## Reproduce the controlled comparison
+## Geometric initialization added in 0.1.0a5
+
+Pose requests now receive additional starting designs built directly from the
+three rigid transforms. Choose two joint locations in the moving tool frame,
+transform each into its three world positions, and find their circumcenters.
+Those centers are the fixed pivots of two revolute dyads; their radii and the
+distance between the moving joints define a four-bar candidate.
+
+The implementation samples 4,096 deterministic combinations of coupler length,
+attachment fraction and offset, screens the engine's existing bounds and
+kinematic constraints, then keeps up to six diverse candidates. Each exact seed
+is evaluated and retained alongside an optionally refined child. Both still pass
+the ordinary final qualification. Singular constructions can yield no seeds;
+the neural proposal and continuation paths still run.
+
+The candidates have `model_role=pose_geometry`, origins `pose_seed` or
+`pose_refined`, and `proposal_source=three_pose_dyad_v1`. This separates them from
+neural proposals. Target manifests record the sample and rejection counts,
+runtime and source hash under `pose_initialization`. Contributions retain these
+allowlisted diagnostics. Point-only tasks do not execute this initializer.
+Set `--pose_dyad_samples 0` to disable it for an ablation; the maximum retained
+seed count is controlled by `--pose_dyad_seed_count` (0 through 6).
+
+The new method adds work to the previous search budget. The
+[frozen broader evaluation](pose-corpus.md) records that work separately and
+compares selected designs using unchanged position and orientation tolerances.
+It does not establish an equal-compute comparison or universal feasibility.
+
+## Historical 0.1.0a4 controlled comparison
 
 The benchmark runs position-only and pose-aware searches with the same configured
 budgets and seed, then independently recomputes both position and orientation
@@ -116,7 +144,7 @@ reference tasks without running a search. A fresh output directory is required.
 The report records completion status, model/engine identities, runtime, selected
 candidates meeting both tolerances, and failures.
 
-The [recorded standard comparison](pose-benchmark.json), using seed 101, completed
+The [recorded 0.1.0a4 standard comparison](pose-benchmark.json), using seed 101, completed
 all eight runs. Pose-aware search returned selected designs satisfying both the
 position and 2-degree angular tolerances in **2 of 4 cases**. Position-only search
 returned none satisfying those same combined requirements. The counts below are
@@ -134,13 +162,13 @@ The separately recorded OMTS example above selected four designs; the benchmark'
 and artifact identities. These are individual executions, not a promise of a
 fixed candidate count.
 
-`wide_sweep` and `angle_wrap` remain search failures at these budgets despite
+In that release, `wide_sweep` and `angle_wrap` were search failures at these budgets despite
 having known feasible reference geometries. The four constructed development
 cases and one seed do not estimate general design success. Equal configured
 budgets need not mean equal runtime; the recorded timings are descriptive.
 
 A separate [point-only parity check](pose-point-parity.json) compared the released
-v0.1.0a3 wheel with this implementation on one fixed-seed case at quick budgets.
+v0.1.0a3 wheel with v0.1.0a4 on one fixed-seed case at quick budgets.
 All 2,232 compared common fields matched exactly, including 1,660 numeric fields;
 candidate identities and ordering matched for 16 candidates and 2 selections.
 Runtime and history locations were excluded. This checks that specific regression

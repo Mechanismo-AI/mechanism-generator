@@ -1,0 +1,163 @@
+{
+  "analytic_evaluator_sha256": "a7edcba343c687ef1ee8a7d6ae50c661e827daf8d5ec74d163c8fa0ffab2d9ed",
+  "generation_numpy_version": "2.5.1",
+  "generator_sha256": "5ad3e2505dbf3aa19cd10c526de9ea1bc406adfa66c860edeb5430cd329a8838",
+  "protocol": {
+    "case_count_per_split": 8,
+    "evaluation_policy": "Reserve evaluation outcomes until the implementation is frozen. If outcomes inform changes, treat this split as development and create a fresh evaluation corpus.",
+    "generation_filters": {
+      "crank_strictly_shortest": true,
+      "full_cycle_assembly": true,
+      "grashof": true,
+      "maximum_pairwise_target_distance_range": [
+        2.5,
+        5.75
+      ],
+      "maximum_target_height": 5.2,
+      "maximum_target_width": 6.6,
+      "minimum_coupler_orientation_span_deg": 8.0,
+      "minimum_full_cycle_transmission_deg": 20.0,
+      "minimum_pairwise_target_distance": 0.75,
+      "reference_in_fixed_and_variable_solver_design_bounds": true
+    },
+    "generator": "Python random.Random with independent split seeds; analytic NumPy circle intersections",
+    "parameter_sampling": {
+      "S_ratio": [
+        0.05,
+        0.9
+      ],
+      "assembly_branch": "Alternating +1/-1 by case index; four cases of each per split",
+      "bar_length": [
+        0.25,
+        1.8
+      ],
+      "base_angle_rad": [
+        -3.141592653589793,
+        3.141592653589793
+      ],
+      "l1": 6.0,
+      "l2": [
+        1.0,
+        2.4
+      ],
+      "l3": [
+        4.4,
+        6.4
+      ],
+      "l4": [
+        3.5,
+        5.8
+      ],
+      "phases_rad": "Three uniform samples in [0,2pi), sorted; reject cyclic gaps outside [45,180] degrees",
+      "translation": "Uniform over translations fitting every requested point inside x=[-6.8,.8], y=[1.2,6.8]"
+    },
+    "rounding": {
+      "parameters_and_phases_decimals": 12,
+      "requested_poses_decimals": 10
+    },
+    "scope": "A small constructed corpus, not a representative design population or a statistical guarantee",
+    "selection_policy": "Accept the first eight cases satisfying only declared geometric conditions; never filter by solver outcome",
+    "split_seeds": {
+      "development": 731204,
+      "evaluation": 902617
+    },
+    "tolerances": {
+      "maximum_position": 0.075,
+      "mean_position": 0.05,
+      "orientation_deg": [
+        2.0,
+        2.0,
+        2.0
+      ]
+    }
+  },
+  "schema_version": "pose-corpus-v1",
+  "splits": {
+    "development": {
+      "case_count": 8,
+      "cases": [
+        {
+          "id": "development-001",
+          "sha256": "d8841b7078c9c0aa735e46961c8bfec6c8c9afbcf4ea8f8ba5e552d50489f150"
+        },
+        {
+          "id": "development-002",
+          "sha256": "74b82a37635d6c2bdb27217a2d5c9bf0432f7cc38c26987e382e48838b4e40fd"
+        },
+        {
+          "id": "development-003",
+          "sha256": "731960101e5f72fcc3bfa6366f517e2442e88a50653bb6b20b220564aedca7b4"
+        },
+        {
+          "id": "development-004",
+          "sha256": "7df50c1acb265b726454476c1dd7ad0e5851d69067cae9d213bcf9e99da386c3"
+        },
+        {
+          "id": "development-005",
+          "sha256": "9289b0ae93e1c1eba7deec51a21d9e34dd85df3c2b1ec1113ec1a00d93157cc5"
+        },
+        {
+          "id": "development-006",
+          "sha256": "b550d89672b3f5e380337f11367951c8f6b5501f7ae0dcf7951692a7802e9cb2"
+        },
+        {
+          "id": "development-007",
+          "sha256": "20f3596a62f1fe87ad9add371e53278ad4970657c181c00aba1bd5ae8870bb77"
+        },
+        {
+          "id": "development-008",
+          "sha256": "b1ccdb62da4620e289c4c029a4ae7c9f19067941efa5165ffaf8f6ef05a9812f"
+        }
+      ],
+      "generation_attempts": 94,
+      "references_file": "development.references.json",
+      "references_sha256": "f81cd3e41bc8de8142bc5b61aad1efec98db1a95aa4274317caa6cf3a8139263",
+      "seed": 731204,
+      "tasks_file": "development.tasks.json",
+      "tasks_sha256": "2e52d9f46727dddc01c8a4535cd2b11579cbde269f4c3046b258d1c2b6cec09e"
+    },
+    "evaluation": {
+      "case_count": 8,
+      "cases": [
+        {
+          "id": "evaluation-001",
+          "sha256": "30748a33cc94a3550f29309afc3751c38769ddd27445acdec36da61634ed54c8"
+        },
+        {
+          "id": "evaluation-002",
+          "sha256": "99dae869fdef107dd0767300df86e60c3482f54dc5eba2915933636eb8bed883"
+        },
+        {
+          "id": "evaluation-003",
+          "sha256": "f54c1fcd94d21a17fe92a0f52d480ef876fb6e856096ddb3e3c159fe1d2bbc19"
+        },
+        {
+          "id": "evaluation-004",
+          "sha256": "c3c0a2df954e73ec5abd2d52f7defd31f78fd238422f7aac4246ccd331b8aa4a"
+        },
+        {
+          "id": "evaluation-005",
+          "sha256": "ded4d97fff2282acaa0037875b1353106f2b8f1bb4f7f5d33857aca2ecf2e3b0"
+        },
+        {
+          "id": "evaluation-006",
+          "sha256": "4149cafb04ea2ea7c67def84decfc971437a8b528ba6907a4125830cd18529a2"
+        },
+        {
+          "id": "evaluation-007",
+          "sha256": "c22220418d40893bd90d810d89a0a21f9aa8a516b4e863846888f7f94d79bdb7"
+        },
+        {
+          "id": "evaluation-008",
+          "sha256": "77d281516b8f813ce8348cf05c750ccfa22d9de089a65e62c87077219e2e62a9"
+        }
+      ],
+      "generation_attempts": 66,
+      "references_file": "evaluation.references.json",
+      "references_sha256": "0a9445fdea89c4b7a200b05d8fbd9b0e307568eb377b2c377cace929ad1f0e85",
+      "seed": 902617,
+      "tasks_file": "evaluation.tasks.json",
+      "tasks_sha256": "e7b31e2fa3fb8a0e333ced0fbd8e43049fcec06d1c83777ce625a456b19ff4b0"
+    }
+  }
+}

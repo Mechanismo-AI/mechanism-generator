@@ -1,0 +1,79 @@
+{
+  "purpose": "Two-epoch CPU setup and numerical reproducibility check; not a quality benchmark",
+  "passed": true,
+  "stages": [
+    {
+      "stage": "r2",
+      "all_training_state_equal": true,
+      "terminal_completed_epoch_index": 1,
+      "terminal_state_epoch": 2,
+      "two_epochs_exercised_with_nonzero_gradients": true,
+      "changed_model_checkpoint_saved": true,
+      "terminal_model_changed": true,
+      "terminal_model_tensor_sha256": "4f62a83de567591e2dda5150e4cbcf536b8bb5061c673bcf3b4af34af474559f",
+      "trainer_sha256": "6605cbd7fa95fc2bb366ce8335e4fdbea88043d83d27139e61e1a9be371bd123",
+      "passed": true
+    },
+    {
+      "stage": "r22",
+      "all_training_state_equal": true,
+      "terminal_completed_epoch_index": 0,
+      "terminal_state_epoch": 1,
+      "two_epochs_exercised_with_nonzero_gradients": true,
+      "changed_model_checkpoint_saved": true,
+      "terminal_model_changed": false,
+      "terminal_model_tensor_sha256": "4f62a83de567591e2dda5150e4cbcf536b8bb5061c673bcf3b4af34af474559f",
+      "trainer_sha256": "8bb080c51ff54c14185b2a4e57090e53ca51dab21dce30684f8426ea5597f0da",
+      "passed": true
+    },
+    {
+      "stage": "r23a",
+      "all_training_state_equal": true,
+      "terminal_completed_epoch_index": 1,
+      "terminal_state_epoch": 2,
+      "two_epochs_exercised_with_nonzero_gradients": true,
+      "changed_model_checkpoint_saved": true,
+      "terminal_model_changed": true,
+      "terminal_model_tensor_sha256": "ae46769b0f0195759d942b8341c0569d31f0a181d6e56efef4194ed8e84efcc2",
+      "trainer_sha256": "552881fd3e881f03a47eb5b4118c3ad59829eb7bbd8ec364ed837e0ca658ce7b",
+      "passed": true
+    },
+    {
+      "stage": "r24",
+      "all_training_state_equal": true,
+      "terminal_completed_epoch_index": 1,
+      "terminal_state_epoch": 2,
+      "two_epochs_exercised_with_nonzero_gradients": true,
+      "changed_model_checkpoint_saved": true,
+      "terminal_model_changed": true,
+      "terminal_model_tensor_sha256": "52f737930b3ec13514f51b49ebd065ef10b559451c8bb42079f7ca9f76c2b935",
+      "trainer_sha256": "bd2c739855847872373755d2fa1715155ae83c0223430e73d27de14d45601925",
+      "passed": true
+    }
+  ],
+  "environment": {
+    "python": "3.12.14",
+    "system": "Windows",
+    "torch": "2.13.0+cpu",
+    "numpy": "2.5.1",
+    "pandas": "3.0.5",
+    "matplotlib": "3.11.1",
+    "safetensors": "0.8.0"
+  },
+  "training_source_sha256": {
+    "cli.py": "0810d80e589b5ebeb280f1640c951ea684efc43c72686d23d4f9e2bcdc5f4172",
+    "state.py": "021c5fa94294506473984576962393df54bb8a4e122b042274a3e2f9a631501f",
+    "data.py": "3b0280197d56a15071352c192ccbdfb070e3df3bd1b7e1cf7b7445ea617d21f7",
+    "recipes.json": "735da44e1e49619c950fe708626558b84329b3994e0a6d073e0703ce5cfd3ebf"
+  },
+  "seed": 101,
+  "epochs": 2,
+  "training_targets_per_stage": 64,
+  "development_targets": 32,
+  "threads": 1,
+  "compared_state_exclusions": [
+    "created_at",
+    "teacher_model_sha256",
+    "teacher_model_source"
+  ]
+}

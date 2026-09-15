@@ -1,0 +1,214 @@
+{
+  "references": [
+    {
+      "branch_sign": 1,
+      "case_id": "evaluation-001",
+      "case_sha256": "30748a33cc94a3550f29309afc3751c38769ddd27445acdec36da61634ed54c8",
+      "crank_is_strictly_shortest": true,
+      "full_cycle_assembly": true,
+      "global_minimum_transmission_deg": 20.61531383396555,
+      "grashof": true,
+      "parameters": {
+        "S_ratio": 0.298662351684,
+        "bar_length": 0.532448084767,
+        "base_angle": -2.670421768959,
+        "base_x": -4.739598794501,
+        "base_y": 4.235381185783,
+        "l1": 6.0,
+        "l2": 2.227215068497,
+        "l3": 4.711899589667,
+        "l4": 3.648032711012
+      },
+      "phases_rad": [
+        1.226197537699,
+        3.243805291591,
+        4.44960225759
+      ],
+      "target_minimum_transmission_deg": 21.26578974947293
+    },
+    {
+      "branch_sign": -1,
+      "case_id": "evaluation-002",
+      "case_sha256": "99dae869fdef107dd0767300df86e60c3482f54dc5eba2915933636eb8bed883",
+      "crank_is_strictly_shortest": true,
+      "full_cycle_assembly": true,
+      "global_minimum_transmission_deg": 44.71240731428514,
+      "grashof": true,
+      "parameters": {
+        "S_ratio": 0.812048464581,
+        "bar_length": 0.793909620279,
+        "base_angle": -2.470996802815,
+        "base_x": -1.447403551134,
+        "base_y": 7.73234473219,
+        "l1": 6.0,
+        "l2": 1.766579330804,
+        "l3": 5.958194280725,
+        "l4": 4.82578043913
+      },
+      "phases_rad": [
+        0.126337966537,
+        2.90813554611,
+        3.828999077544
+      ],
+      "target_minimum_transmission_deg": 44.9511768414938
+    },
+    {
+      "branch_sign": 1,
+      "case_id": "evaluation-003",
+      "case_sha256": "f54c1fcd94d21a17fe92a0f52d480ef876fb6e856096ddb3e3c159fe1d2bbc19",
+      "crank_is_strictly_shortest": true,
+      "full_cycle_assembly": true,
+      "global_minimum_transmission_deg": 38.52026267904306,
+      "grashof": true,
+      "parameters": {
+        "S_ratio": 0.524833584452,
+        "bar_length": 0.453226509641,
+        "base_angle": -1.299111518835,
+        "base_x": -1.516220851765,
+        "base_y": 4.899138177828,
+        "l1": 6.0,
+        "l2": 2.198385745125,
+        "l3": 6.067113643628,
+        "l4": 5.16500054113
+      },
+      "phases_rad": [
+        0.917827384221,
+        2.955034361085,
+        4.49320437819
+      ],
+      "target_minimum_transmission_deg": 51.88837153901622
+    },
+    {
+      "branch_sign": -1,
+      "case_id": "evaluation-004",
+      "case_sha256": "c3c0a2df954e73ec5abd2d52f7defd31f78fd238422f7aac4246ccd331b8aa4a",
+      "crank_is_strictly_shortest": true,
+      "full_cycle_assembly": true,
+      "global_minimum_transmission_deg": 43.565472883251964,
+      "grashof": true,
+      "parameters": {
+        "S_ratio": 0.85171161585,
+        "bar_length": 1.129297157438,
+        "base_angle": 1.763426876544,
+        "base_x": 1.715532800603,
+        "base_y": 3.759188599157,
+        "l1": 6.0,
+        "l2": 1.993827812956,
+        "l3": 5.494135241443,
+        "l4": 5.28945316758
+      },
+      "phases_rad": [
+        1.651622752862,
+        4.427250236995,
+        6.057464784704
+      ],
+      "target_minimum_transmission_deg": 44.426827190573206
+    },
+    {
+      "branch_sign": 1,
+      "case_id": "evaluation-005",
+      "case_sha256": "ded4d97fff2282acaa0037875b1353106f2b8f1bb4f7f5d33857aca2ecf2e3b0",
+      "crank_is_strictly_shortest": true,
+      "full_cycle_assembly": true,
+      "global_minimum_transmission_deg": 46.3935918164663,
+      "grashof": true,
+      "parameters": {
+        "S_ratio": 0.503670556748,
+        "bar_length": 1.755233348908,
+        "base_angle": 2.556603388412,
+        "base_x": -2.797271306061,
+        "base_y": 2.22624476054,
+        "l1": 6.0,
+        "l2": 2.169969293787,
+        "l3": 5.16362977092,
+        "l4": 4.391620268542
+      },
+      "phases_rad": [
+        1.979467414859,
+        3.924651228074,
+        5.179738581963
+      ],
+      "target_minimum_transmission_deg": 68.0240202069141
+    },
+    {
+      "branch_sign": -1,
+      "case_id": "evaluation-006",
+      "case_sha256": "4149cafb04ea2ea7c67def84decfc971437a8b528ba6907a4125830cd18529a2",
+      "crank_is_strictly_shortest": true,
+      "full_cycle_assembly": true,
+      "global_minimum_transmission_deg": 55.585758711790604,
+      "grashof": true,
+      "parameters": {
+        "S_ratio": 0.396927750033,
+        "bar_length": 1.490930227216,
+        "base_angle": -1.878708123666,
+        "base_x": -7.055661949824,
+        "base_y": 6.810544560045,
+        "l1": 6.0,
+        "l2": 1.390442182596,
+        "l3": 5.494879950816,
+        "l4": 3.941480422203
+      },
+      "phases_rad": [
+        1.419689290353,
+        2.974891777022,
+        4.815283651611
+      ],
+      "target_minimum_transmission_deg": 76.23400754616779
+    },
+    {
+      "branch_sign": 1,
+      "case_id": "evaluation-007",
+      "case_sha256": "c22220418d40893bd90d810d89a0a21f9aa8a516b4e863846888f7f94d79bdb7",
+      "crank_is_strictly_shortest": true,
+      "full_cycle_assembly": true,
+      "global_minimum_transmission_deg": 47.136966404907824,
+      "grashof": true,
+      "parameters": {
+        "S_ratio": 0.513451681799,
+        "bar_length": 0.821345861967,
+        "base_angle": -1.726711279527,
+        "base_x": 1.695612958519,
+        "base_y": 4.854186327572,
+        "l1": 6.0,
+        "l2": 1.686662778746,
+        "l3": 4.896495018345,
+        "l4": 5.723247079291
+      },
+      "phases_rad": [
+        1.310442553435,
+        3.261763555634,
+        5.364756036183
+      ],
+      "target_minimum_transmission_deg": 57.428420415511034
+    },
+    {
+      "branch_sign": -1,
+      "case_id": "evaluation-008",
+      "case_sha256": "77d281516b8f813ce8348cf05c750ccfa22d9de089a65e62c87077219e2e62a9",
+      "crank_is_strictly_shortest": true,
+      "full_cycle_assembly": true,
+      "global_minimum_transmission_deg": 39.333549797260105,
+      "grashof": true,
+      "parameters": {
+        "S_ratio": 0.58656759415,
+        "bar_length": 0.693691671365,
+        "base_angle": -2.338092502604,
+        "base_x": -3.302176660295,
+        "base_y": 7.714306349448,
+        "l1": 6.0,
+        "l2": 2.345790609333,
+        "l3": 5.709143697787,
+        "l4": 4.924401072884
+      },
+      "phases_rad": [
+        1.076988832932,
+        3.138957866755,
+        4.749369552969
+      ],
+      "target_minimum_transmission_deg": 59.32756088689278
+    }
+  ],
+  "schema_version": "pose-corpus-v1",
+  "split": "evaluation"
+}

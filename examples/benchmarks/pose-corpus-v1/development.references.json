@@ -1,0 +1,214 @@
+{
+  "references": [
+    {
+      "branch_sign": 1,
+      "case_id": "development-001",
+      "case_sha256": "d8841b7078c9c0aa735e46961c8bfec6c8c9afbcf4ea8f8ba5e552d50489f150",
+      "crank_is_strictly_shortest": true,
+      "full_cycle_assembly": true,
+      "global_minimum_transmission_deg": 46.486291807170296,
+      "grashof": true,
+      "parameters": {
+        "S_ratio": 0.318897531481,
+        "bar_length": 1.584071306745,
+        "base_angle": -1.090028882594,
+        "base_x": -4.994589344766,
+        "base_y": 4.355410292441,
+        "l1": 6.0,
+        "l2": 2.028901757536,
+        "l3": 4.896302497697,
+        "l4": 5.149194317723
+      },
+      "phases_rad": [
+        1.192951340739,
+        3.65882159996,
+        4.595359623735
+      ],
+      "target_minimum_transmission_deg": 67.42977082360665
+    },
+    {
+      "branch_sign": -1,
+      "case_id": "development-002",
+      "case_sha256": "74b82a37635d6c2bdb27217a2d5c9bf0432f7cc38c26987e382e48838b4e40fd",
+      "crank_is_strictly_shortest": true,
+      "full_cycle_assembly": true,
+      "global_minimum_transmission_deg": 45.615487982744206,
+      "grashof": true,
+      "parameters": {
+        "S_ratio": 0.124642366172,
+        "bar_length": 1.001139691997,
+        "base_angle": -0.660350947285,
+        "base_x": -5.081838886296,
+        "base_y": 3.276448001291,
+        "l1": 6.0,
+        "l2": 2.130778518187,
+        "l3": 4.927968644637,
+        "l4": 5.049334822702
+      },
+      "phases_rad": [
+        1.164744577119,
+        2.684960621523,
+        5.694530191863
+      ],
+      "target_minimum_transmission_deg": 52.193775873254026
+    },
+    {
+      "branch_sign": 1,
+      "case_id": "development-003",
+      "case_sha256": "731960101e5f72fcc3bfa6366f517e2442e88a50653bb6b20b220564aedca7b4",
+      "crank_is_strictly_shortest": true,
+      "full_cycle_assembly": true,
+      "global_minimum_transmission_deg": 46.691355144144694,
+      "grashof": true,
+      "parameters": {
+        "S_ratio": 0.132391491697,
+        "bar_length": 1.659221590381,
+        "base_angle": -3.056688699601,
+        "base_x": -1.368698868236,
+        "base_y": 5.958415295044,
+        "l1": 6.0,
+        "l2": 1.723392101944,
+        "l3": 5.322639103759,
+        "l4": 5.464317639549
+      },
+      "phases_rad": [
+        1.987745788064,
+        3.866839735803,
+        6.054380022131
+      ],
+      "target_minimum_transmission_deg": 47.416618651150294
+    },
+    {
+      "branch_sign": -1,
+      "case_id": "development-004",
+      "case_sha256": "7df50c1acb265b726454476c1dd7ad0e5851d69067cae9d213bcf9e99da386c3",
+      "crank_is_strictly_shortest": true,
+      "full_cycle_assembly": true,
+      "global_minimum_transmission_deg": 42.22252386636964,
+      "grashof": true,
+      "parameters": {
+        "S_ratio": 0.16494411428,
+        "bar_length": 1.287405526918,
+        "base_angle": 0.997338735769,
+        "base_x": -0.562483024292,
+        "base_y": 4.217130245571,
+        "l1": 6.0,
+        "l2": 2.398416771327,
+        "l3": 4.811644837172,
+        "l4": 5.149407048534
+      },
+      "phases_rad": [
+        1.660722851455,
+        4.108964786757,
+        5.940789085872
+      ],
+      "target_minimum_transmission_deg": 45.02268141384267
+    },
+    {
+      "branch_sign": 1,
+      "case_id": "development-005",
+      "case_sha256": "9289b0ae93e1c1eba7deec51a21d9e34dd85df3c2b1ec1113ec1a00d93157cc5",
+      "crank_is_strictly_shortest": true,
+      "full_cycle_assembly": true,
+      "global_minimum_transmission_deg": 50.81264054390508,
+      "grashof": true,
+      "parameters": {
+        "S_ratio": 0.28760775122,
+        "bar_length": 0.905305188762,
+        "base_angle": 2.463175348746,
+        "base_x": -0.605129232651,
+        "base_y": 1.583592634246,
+        "l1": 6.0,
+        "l2": 1.713471873644,
+        "l3": 5.215315924334,
+        "l4": 4.721550380427
+      },
+      "phases_rad": [
+        2.453879060137,
+        3.95727756883,
+        6.122267259093
+      ],
+      "target_minimum_transmission_deg": 51.21024918277839
+    },
+    {
+      "branch_sign": -1,
+      "case_id": "development-006",
+      "case_sha256": "b550d89672b3f5e380337f11367951c8f6b5501f7ae0dcf7951692a7802e9cb2",
+      "crank_is_strictly_shortest": true,
+      "full_cycle_assembly": true,
+      "global_minimum_transmission_deg": 54.320973822019106,
+      "grashof": true,
+      "parameters": {
+        "S_ratio": 0.732505207935,
+        "bar_length": 0.667990658968,
+        "base_angle": 1.024794197774,
+        "base_x": -3.060081986069,
+        "base_y": 0.4941871393,
+        "l1": 6.0,
+        "l2": 1.463903155853,
+        "l3": 5.142787220248,
+        "l4": 4.767240785326
+      },
+      "phases_rad": [
+        0.288369757272,
+        2.875956394074,
+        3.795640863302
+      ],
+      "target_minimum_transmission_deg": 55.35772603099044
+    },
+    {
+      "branch_sign": 1,
+      "case_id": "development-007",
+      "case_sha256": "20f3596a62f1fe87ad9add371e53278ad4970657c181c00aba1bd5ae8870bb77",
+      "crank_is_strictly_shortest": true,
+      "full_cycle_assembly": true,
+      "global_minimum_transmission_deg": 44.860552842477034,
+      "grashof": true,
+      "parameters": {
+        "S_ratio": 0.611682423495,
+        "bar_length": 0.400030450424,
+        "base_angle": 0.803152696511,
+        "base_x": -4.98272589334,
+        "base_y": 5.532074237579,
+        "l1": 6.0,
+        "l2": 1.650646538935,
+        "l3": 5.944242720524,
+        "l4": 5.3692261552
+      },
+      "phases_rad": [
+        1.00055299996,
+        2.379860350113,
+        4.944633660454
+      ],
+      "target_minimum_transmission_deg": 55.52601423174969
+    },
+    {
+      "branch_sign": -1,
+      "case_id": "development-008",
+      "case_sha256": "b1ccdb62da4620e289c4c029a4ae7c9f19067941efa5165ffaf8f6ef05a9812f",
+      "crank_is_strictly_shortest": true,
+      "full_cycle_assembly": true,
+      "global_minimum_transmission_deg": 47.302381440148515,
+      "grashof": true,
+      "parameters": {
+        "S_ratio": 0.241674429574,
+        "bar_length": 0.729225589069,
+        "base_angle": -2.004026050285,
+        "base_x": -6.224532015842,
+        "base_y": 3.157067034868,
+        "l1": 6.0,
+        "l2": 1.816041202276,
+        "l3": 4.73074071775,
+        "l4": 5.53554266663
+      },
+      "phases_rad": [
+        2.217551999226,
+        3.057741684119,
+        6.049972673286
+      ],
+      "target_minimum_transmission_deg": 48.174427544624756
+    }
+  ],
+  "schema_version": "pose-corpus-v1",
+  "split": "development"
+}
