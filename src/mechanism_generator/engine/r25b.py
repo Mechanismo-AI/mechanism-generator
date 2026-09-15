@@ -69,6 +69,8 @@ import numpy as np
 import pandas as pd
 import torch
 import torch.nn as nn
+
+from .orientation import orientation_angles, orientation_metrics
 from safetensors import safe_open
 from safetensors.torch import load_file
 from .provenance import public_data, set_run_root
@@ -253,6 +255,16 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--phase_mode", choices=("unordered", "ordered"), default="unordered",
     )
+    parser.add_argument(
+        "--target_orientations_deg", type=float, nargs=3, default=None,
+        metavar=("A1", "A2", "A3"),
+        help="Optional directed coupler orientations at the three target positions, in world degrees (A to B)",
+    )
+    parser.add_argument(
+        "--orientation_tolerances_deg", type=float, nargs=3, default=None,
+        metavar=("T1", "T2", "T3"),
+        help="Per-target angular tolerances in degrees; default 5 each when orientations are requested",
+    )
     parser.add_argument("--perturbations_per_model", type=int, default=0)
     parser.add_argument("--parameter_noise", type=float, default=0.18)
     parser.add_argument("--phase_noise_deg", type=float, default=4.0)
@@ -349,6 +361,19 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def validate_args(parser: argparse.ArgumentParser, args: argparse.Namespace) -> None:
+    if args.target_orientations_deg is None:
+        if args.orientation_tolerances_deg is not None:
+            parser.error("Orientation tolerances require --target_orientations_deg")
+    else:
+        if not all(math.isfinite(value) for value in args.target_orientations_deg):
+            parser.error("Target orientations must be finite")
+        # Reduce before conversion to refinement dtype so large finite degree
+        # values retain their direction and cannot overflow a float32 tensor.
+        args.target_orientations_deg = [math.remainder(value, 360.0) for value in args.target_orientations_deg]
+        if args.orientation_tolerances_deg is None:
+            args.orientation_tolerances_deg = [5.0, 5.0, 5.0]
+        if not all(math.isfinite(value) and 0 < value < 180 for value in args.orientation_tolerances_deg):
+            parser.error("Orientation tolerances must be finite and strictly between 0 and 180 degrees")
     if args.perturbations_per_model < 0:
         parser.error("--perturbations_per_model must be non-negative")
     if args.parameter_noise < 0 or args.phase_noise_deg < 0:
@@ -1051,7 +1076,7 @@ def parse_targets_file(path: Path) -> List[Tuple[str, np.ndarray]]:
     return results
 
 
-def collect_targets(args: argparse.Namespace) -> List[Tuple[str, np.ndarray]]:
+def _collect_targets(args: argparse.Namespace) -> List[Tuple[str, np.ndarray]]:
     if args.targets is not None:
         return [("target_0001", np.asarray(args.targets, dtype=float))]
     if args.targets_file:
@@ -1067,6 +1092,13 @@ def collect_targets(args: argparse.Namespace) -> List[Tuple[str, np.ndarray]]:
             raise ValueError("Exactly six numbers are required")
         return [("interactive", np.asarray([float(part) for part in parts], dtype=float))]
     raise ValueError("Provide --targets, --targets_file, or --demo")
+
+
+def collect_targets(args: argparse.Namespace) -> List[Tuple[str, np.ndarray]]:
+    targets = _collect_targets(args)
+    if has_pose_targets(args) and len(targets) != 1:
+        raise ValueError("Orientation arguments require one target triple per run; prepare separate OMTS runs for different tasks")
+    return targets
 
 
 # ======================
@@ -1092,6 +1124,7 @@ def seed_target_phases(
     target: torch.Tensor,
     branch_sign: float,
     steps: int,
+    args: Optional[argparse.Namespace] = None,
 ) -> torch.Tensor:
     theta = torch.linspace(
         0.0, TWO_PI, int(steps) + 1,
@@ -1103,6 +1136,11 @@ def seed_target_phases(
         (simulation["Px"][0][None, :] - targets_xy[:, 0, None]).square()
         + (simulation["Py"][0][None, :] - targets_xy[:, 1, None]).square()
     )
+    if args is not None and has_pose_targets(args):
+        desired = torch.deg2rad(torch.as_tensor(args.target_orientations_deg, dtype=params.dtype, device=params.device))
+        actual = orientation_angles(simulation)[0]
+        scale = target_design_space(target, args)["scale"]
+        squared = squared + scale.square() * torch.sin((actual[None, :] - desired[:, None]) / 2).square()
     squared = torch.where(
         simulation["valid"][0][None, :],
         squared,
@@ -1128,7 +1166,7 @@ def build_starts(
         for profile_index, profile_name in enumerate(profile_names):
             for branch_sign in branches:
                 phases = seed_target_phases(
-                    initial_params, target, branch_sign, args.seed_phase_steps
+                    initial_params, target, branch_sign, args.seed_phase_steps, args
                 )
                 raw_base = encode_refinement_variables(
                     initial_params, phases, target, args.phase_mode, args
@@ -1335,6 +1373,24 @@ def robustness_terms(
     }
 
 
+def has_pose_targets(args: argparse.Namespace) -> bool:
+    return getattr(args, "target_orientations_deg", None) is not None
+
+
+def pose_tolerances(args: argparse.Namespace) -> List[float]:
+    return getattr(args, "orientation_tolerances_deg", None) or [5.0, 5.0, 5.0]
+
+
+def acquisition_key(metrics: Dict[str, torch.Tensor]) -> tuple:
+    mean = float(metrics["mean_error"].detach().item())
+    worst = float(metrics["max_error"].detach().item())
+    if "orientation_feasible" not in metrics:
+        return mean, worst
+    if bool(metrics["orientation_feasible"].item()):
+        return 0, mean, worst
+    return 1, float(metrics["pose_acquisition_loss"].detach().item()), worst
+
+
 def objective_terms(
     raw: torch.Tensor,
     raw_reference: torch.Tensor,
@@ -1424,6 +1480,19 @@ def objective_terms(
     else:
         raise ValueError(f"Unknown stage: {stage}")
 
+    pose = None
+    if has_pose_targets(args):
+        pose = orientation_metrics(phase_sim, args.target_orientations_deg, pose_tolerances(args))
+        # Translate angular mismatch into a scale-relative geometric loss.
+        # The guard keeps Stage B from trading away a hard orientation tolerance.
+        angular_loss = space["scale"].square() * pose["penalty"][0]
+        tolerance = torch.as_tensor(pose_tolerances(args), dtype=raw.dtype, device=raw.device)
+        excess = torch.relu(torch.deg2rad(pose["errors_deg"][0] - tolerance))
+        angular_guard = 100.0 * space["scale"].square() * excess.square().mean()
+        objective = objective + angular_loss
+        if stage == "tradeoff":
+            objective = objective + angular_guard
+
     target_q = phase_sim["transmission_q"][0]
     target_angles = acute_angle_from_q(target_q)
     global_q = global_sim["transmission_q"][0]
@@ -1468,6 +1537,14 @@ def objective_terms(
         "path_constraint": path_constraint, "point_guard": point_guard,
         "objective": objective,
     }
+    if pose is not None:
+        metrics.update(
+            orientation_feasible=pose["feasible"][0],
+            orientation_errors_deg=pose["errors_deg"][0],
+            max_orientation_error_deg=pose["max_error_deg"][0],
+            orientation_loss=angular_loss,
+            pose_acquisition_loss=position_loss + angular_loss,
+        )
     return objective, metrics
 
 
@@ -1507,7 +1584,7 @@ def history_row(
     physical: bool,
     budget_feasible: Optional[bool],
 ) -> Dict[str, Any]:
-    return {
+    row = {
         "candidate_id": start.candidate_id,
         "model_role": start.model_role,
         "profile": start.profile,
@@ -1541,6 +1618,10 @@ def history_row(
         "physical_feasible": physical,
         "budget_feasible": budget_feasible if budget_feasible is not None else "",
     }
+    if "orientation_feasible" in metrics:
+        row["orientation_acceptable"] = bool(metrics["orientation_feasible"].item())
+        row["max_orientation_error_deg"] = float(metrics["max_orientation_error_deg"].detach().item())
+    return row
 
 def acquire_start_path(
     start: StartSpec,
@@ -1574,10 +1655,7 @@ def acquire_start_path(
             best_any_state = raw.detach().clone()
         physical = metrics_are_physical(metrics)
         if physical:
-            key = (
-                float(metrics["mean_error"].detach().item()),
-                float(metrics["max_error"].detach().item()),
-            )
+            key = acquisition_key(metrics)
             if key < best_physical_key:
                 best_physical_key = key
                 best_physical_state = raw.detach().clone()
@@ -1631,7 +1709,7 @@ def acquire_start_path(
             profile, "accuracy", args, global_theta
         )
 
-    return {
+    result = {
         "start": start,
         "raw_reference": raw_reference,
         "raw_acquired": acquired_raw.detach().clone(),
@@ -1643,6 +1721,10 @@ def acquire_start_path(
         "acquired_target_angle_min_deg": float(acquired_metrics["target_angle_min"].detach().item()),
         "acquired_global_angle_min_deg": float(acquired_metrics["global_angle_min"].detach().item()),
     }
+    if has_pose_targets(args):
+        result["acquired_pose_key"] = acquisition_key(acquired_metrics)
+        result["acquired_orientation_acceptable"] = bool(acquired_metrics["orientation_feasible"].item())
+    return result
 
 
 def build_shared_path_reference(
@@ -1654,9 +1736,12 @@ def build_shared_path_reference(
         raise ValueError("No Stage-A acquisitions were produced")
     physical = [item for item in acquisitions if item["acquired_physical"]]
     pool = physical if physical else list(acquisitions)
+    if has_pose_targets(args):
+        compatible = [item for item in pool if item["acquired_orientation_acceptable"]]
+        pool = compatible or pool
     reference = min(
         pool,
-        key=lambda item: (item["acquired_mean_error"], item["acquired_max_error"]),
+        key=lambda item: item["acquired_pose_key"] if has_pose_targets(args) else (item["acquired_mean_error"], item["acquired_max_error"]),
     )
     start: StartSpec = reference["start"]
     reference_errors = reference["acquired_errors"].detach().clone()
@@ -1722,6 +1807,8 @@ def optimize_start_with_shared_budget(
         (acquired["acquired_mean_error"], acquired["acquired_max_error"])
         if acquired["acquired_physical"] else (float("inf"), float("inf"))
     )
+    if has_pose_targets(args) and acquired["acquired_physical"]:
+        best_physical_key = acquired["acquired_pose_key"]
     best_any_state = acquired["raw_acquired"].detach().clone()
     best_any_objective = float("inf")
 
@@ -1738,11 +1825,10 @@ def optimize_start_with_shared_budget(
             metrics["mean_error"].detach().item() <= mean_budget.item() + 1e-9
             and torch.all(metrics["errors"].detach() <= point_budget + 1e-9).item()
         )
+        if has_pose_targets(args):
+            budget_feasible = budget_feasible and bool(metrics["orientation_feasible"].item())
         if physical:
-            key = (
-                float(metrics["mean_error"].detach().item()),
-                float(metrics["max_error"].detach().item()),
-            )
+            key = acquisition_key(metrics)
             if key < best_physical_key:
                 best_physical_key = key
                 best_physical_state = raw.detach().clone()
@@ -2057,6 +2143,22 @@ def evaluate_selected_candidate(
     for index, value in enumerate(phases_np, start=1):
         record[f"phase_{index}_rad"] = float(value)
         record[f"phase_{index}_deg"] = float(math.degrees(value))
+    if has_pose_targets(args):
+        pose = orientation_metrics(phase_sim, args.target_orientations_deg, pose_tolerances(args))
+        initial_pose = orientation_metrics(initial_phase_sim, args.target_orientations_deg, pose_tolerances(args))
+        record.update(
+            orientation_required=True,
+            orientation_frame="coupler_A_to_B",
+            orientation_acceptable=bool(pose["feasible"][0].item()),
+            max_orientation_error_deg=float(pose["max_error_deg"][0].item()),
+            mean_orientation_error_deg=float(pose["mean_error_deg"][0].item()),
+            initial_max_orientation_error_deg=float(initial_pose["max_error_deg"][0].item()),
+        )
+        for i in range(3):
+            record[f"target_orientation_{i + 1}_deg"] = float(args.target_orientations_deg[i])
+            record[f"orientation_tolerance_{i + 1}_deg"] = float(pose_tolerances(args)[i])
+            record[f"matched_orientation_{i + 1}_deg"] = float(torch.rad2deg(pose["angles_rad"][0, i]).item())
+            record[f"orientation_error_{i + 1}_deg"] = float(pose["errors_deg"][0, i].item())
     return record
 
 def flat_candidate_row(candidate: Dict[str, Any]) -> Dict[str, Any]:
@@ -2122,6 +2224,8 @@ def apply_shared_candidate_qualification(
                 "selection_eligible": False,
                 "qualification_level": "not_physical",
             })
+            if has_pose_targets(args):
+                candidate["pose_acceptable"] = False
         return {
             "reference_candidate_id": None,
             "physical_candidate_count": 0,
@@ -2192,7 +2296,8 @@ def apply_shared_candidate_qualification(
             (args.engineering_max_link_ratio <= 0.0 or candidate["max_link_ratio"] <= args.engineering_max_link_ratio + 1e-12)
             and (args.engineering_max_sweep_radius_ratio <= 0.0 or candidate["sweep_radius_ratio"] <= args.engineering_max_sweep_radius_ratio + 1e-12)
         )
-        engineering_ok = bool(path_ok and target_tx_ok and global_tx_ok and robustness_ok and compactness_ok)
+        orientation_ok = (not has_pose_targets(args)) or bool(candidate.get("orientation_acceptable", False))
+        engineering_ok = bool(path_ok and orientation_ok and target_tx_ok and global_tx_ok and robustness_ok and compactness_ok)
         target_selection_ok = bool(
             args.minimum_target_transmission <= 0.0
             or candidate["target_angle_min_deg"] + 1e-12 >= args.minimum_target_transmission
@@ -2201,11 +2306,13 @@ def apply_shared_candidate_qualification(
             args.minimum_global_transmission <= 0.0
             or candidate["global_angle_min_deg"] + 1e-12 >= args.minimum_global_transmission
         )
-        selection_ok = bool(path_ok and target_selection_ok and global_selection_ok and robustness_ok and compactness_ok)
+        selection_ok = bool(path_ok and orientation_ok and target_selection_ok and global_selection_ok and robustness_ok and compactness_ok)
         if engineering_ok:
             level = "engineering_acceptable"
         elif selection_ok:
             level = "selection_acceptable"
+        elif path_ok and not orientation_ok:
+            level = "path_acceptable_but_orientation_failed"
         elif path_ok and not robustness_ok:
             level = "path_acceptable_but_robustness_failed"
         elif path_ok and not compactness_ok:
@@ -2241,6 +2348,8 @@ def apply_shared_candidate_qualification(
             "qualification_level": level,
             "path_budget_feasible": shared_ok,
         })
+        if has_pose_targets(args):
+            candidate["pose_acceptable"] = bool(path_ok and orientation_ok)
         path_count += int(path_ok)
         robustness_count += int(robustness_ok)
         selection_count += int(selection_ok)
@@ -2412,6 +2521,19 @@ def save_candidate_artifacts(
             f" mu={candidate[f'target_angle_{index + 1}_deg']:.1f} deg",
             fontsize=8,
         )
+
+    if candidate.get("orientation_required", False):
+        arrow_length = max(float(candidate["target_scale"]) * 0.13, 0.1)
+        for index in range(3):
+            desired = math.radians(candidate[f"target_orientation_{index + 1}_deg"])
+            actual = math.radians(candidate[f"matched_orientation_{index + 1}_deg"])
+            for point, angle, color, label in (
+                (targets[index], desired, "tab:orange", "Requested orientation"),
+                (matched[index], actual, "tab:green", "Achieved orientation"),
+            ):
+                axis.quiver(point[0], point[1], arrow_length * math.cos(angle), arrow_length * math.sin(angle),
+                            angles="xy", scale_units="xy", scale=1, color=color, width=0.006,
+                            label=label if index == 0 else None)
 
     snapshot = phase
     i = 0

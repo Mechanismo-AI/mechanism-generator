@@ -95,7 +95,7 @@
           <h2 id="include-heading">Information to include</h2>
           <p class="help">Open each section to inspect its contents. Deselect any optional section you want to keep private.</p>
           <div id="section-choices"></div>
-          <p class="notice">Geometry, target positions, and application descriptions can reveal a confidential design. Check the actual values even if names and local paths have been removed.</p>
+          <p class="notice">Geometry, target positions and angles, and application descriptions can reveal a confidential design. Pose requirements appear in both Task and Candidate sections. Check the actual values even if names and local paths have been removed.</p>
         </section>
         <section class="card" aria-labelledby="context-heading">
           <h2 id="context-heading">Add some context <span class="help">· optional</span></h2>
@@ -136,8 +136,8 @@
     (() => {
       const byId = id => document.getElementById(id);
       const sections = [
-        ["task", "Task geometry", "Target values and task geometry used in this search."],
-        ["candidates", "Candidate results", "Included candidate geometry, scores, and recorded acceptance decisions."],
+        ["task", "Task geometry", "Target positions and, for pose tasks, requested angles, angular tolerances and tool frame."],
+        ["candidates", "Candidate results", "Candidate geometry, requested and matched pose angles, tolerances, errors, scores and recorded acceptance decisions."],
         ["provenance", "Engine and model versions", "Artifact fingerprints that identify the engine and model weights."],
         ["settings", "Search settings", "The recorded parameters that help others interpret or reproduce the run."]
       ];
@@ -199,7 +199,7 @@
       }
 
       function makeSubmission() {
-        const submission = {schema_version: "0.1", kind: "submission", core: bundle.core};
+        const submission = {schema_version: bundle.schema_version, kind: "submission", core: bundle.core};
         for (const [name, input] of selectedSections) {
           if (input.checked) submission[name] = bundle[name];
         }
@@ -279,7 +279,7 @@
 
       try {
         bundle = JSON.parse(byId("bundle-data").textContent);
-        if (bundle.schema_version !== "0.1" || bundle.kind !== "local" || !bundle.core || !Array.isArray(bundle.core.tasks)) {
+        if (!["0.1", "0.2"].includes(bundle.schema_version) || bundle.kind !== "local" || !bundle.core || !Array.isArray(bundle.core.tasks)) {
           throw new Error("This file does not contain a supported local contribution bundle.");
         }
         const statuses = {completed: "Completed", partial: "Partial", unknown: "Unknown"};
@@ -288,6 +288,11 @@
         addStat("Recorded candidates", total("candidate_count"));
         addStat("Selection eligible", total("selection_eligible_count"));
         addStat("Engineering acceptable", total("engineering_acceptable_count"));
+        if (bundle.core.tasks.some(task => task.orientation_required === true)) {
+          addStat("Tasks requiring orientation", bundle.core.tasks.filter(task => task.orientation_required === true).length);
+          addStat("Orientation acceptable · pose tasks", total("orientation_acceptable_count"));
+          addStat("Position and orientation acceptable", total("pose_acceptable_count"));
+        }
         byId("core-preview").textContent = JSON.stringify(bundle.core, null, 2);
         for (const section of sections) addSection(...section);
         if (!selectedSections.size) byId("section-choices").textContent = "This bundle contains only the required outcome.";

@@ -245,6 +245,62 @@ async function verifyReviewFlow() {
   assert.equal(ui.openings.length, 1);
 }
 
+async function verifyPoseReviewFlow() {
+  const pose = structuredClone(fixture);
+  pose.schema_version = "0.2";
+  pose.core.generator_version = "0.1.0a4";
+  Object.assign(pose.core.tasks[0], {
+    orientation_required: true,
+    orientation_acceptable_count: 1,
+    pose_acceptable_count: 1,
+    path_acceptable_count: 2
+  });
+  Object.assign(pose.task[0], {
+    target_orientations_deg: [170, -170, 390],
+    orientation_tolerances_deg: [1, 5, 12],
+    orientation_frame: "coupler_A_to_B"
+  });
+  for (const [index, item] of pose.candidates[0].items.entries()) {
+    Object.assign(item, {
+      orientation_required: true, orientation_frame: "coupler_A_to_B",
+      path_acceptable: true, orientation_acceptable: index === 0,
+      pose_acceptable: index === 0, selection_eligible: index === 0,
+      engineering_acceptable: false, max_orientation_error_deg: index === 0 ? 0.5 : 20,
+      qualification_level: index === 0 ? "selection_acceptable" : "path_acceptable_but_orientation_failed"
+    });
+    pose.task[0].target_orientations_deg.forEach((angle, targetIndex) => {
+      item["target_orientation_" + (targetIndex + 1) + "_deg"] = angle;
+      item["orientation_tolerance_" + (targetIndex + 1) + "_deg"] = pose.task[0].orientation_tolerances_deg[targetIndex];
+    });
+  }
+  const ui = makeHarness(pose);
+  assert.equal(ui.element("error").hidden, true);
+  assert.equal(ui.preview().schema_version, "0.2");
+  assert.deepEqual(ui.preview().task, pose.task);
+  assert.deepEqual(ui.preview().candidates, pose.candidates);
+  const stats = Object.fromEntries(ui.element("run-summary").children.map(stat =>
+    [stat.children[0].textContent, stat.children[1].textContent]));
+  assert.equal(stats["Tasks requiring orientation"], "1");
+  assert.equal(stats["Orientation acceptable · pose tasks"], "1");
+  assert.equal(stats["Position and orientation acceptable"], "1");
+  assert.ok(html.includes("requested angles, angular tolerances and tool frame"));
+  assert.ok(html.includes("Pose requirements appear in both Task and Candidate sections"));
+  ui.change("include-task", false);
+  assert.equal(Object.hasOwn(ui.preview(), "task"), false);
+  assert.deepEqual(ui.preview().candidates, pose.candidates, "Candidate section explicitly retains its own requested angles");
+  ui.change("include-candidates", false);
+  assert.deepEqual(ui.preview().core, pose.core, "Pose outcome cannot disappear when angle data is excluded");
+  assert.equal(ui.preview().core.tasks[0].orientation_required, true);
+  assert.equal(ui.preview().core.tasks[0].pose_acceptable_count, 1);
+  assert.equal(JSON.stringify(ui.preview()).includes("target_orientations_deg"), false);
+  ui.agree();
+  ui.element("download").click();
+  const exported = JSON.parse(await ui.downloads[0].text());
+  assert.equal(exported.schema_version, "0.2");
+  assert.deepEqual(exported.core, pose.core);
+  assert.equal(ui.openings.length, 0, "Pose sharing still requires the explicit GitHub step");
+}
+
 function verifyInvalidInput() {
   for (const malformed of ["invalid json", {schema_version: "999", kind: "local", core: fixture.core}, {schema_version: "0.1", kind: "submission", core: fixture.core}]) {
     const ui = makeHarness(malformed);
@@ -263,8 +319,9 @@ function verifyInvalidInput() {
 (async () => {
   verifyHashVectors();
   await verifyReviewFlow();
+  await verifyPoseReviewFlow();
   verifyInvalidInput();
-  console.log("Offline contribution review checks passed: digest vectors, consent gates, all section exclusions, Unicode and hostile text, exact download, fixed GitHub URL, changed-file re-export, and invalid-input handling.");
+  console.log("Offline contribution review checks passed: legacy and pose schema versions, pose outcome retention, digest vectors, consent gates, all section exclusions, Unicode and hostile text, exact download, fixed GitHub URL, changed-file re-export, and invalid-input handling.");
 })().catch(error => {
   console.error(error);
   process.exitCode = 1;

@@ -4,11 +4,13 @@ Open tools for describing motion requirements and developing inspectable mechani
 designs. The long-term aim is to help designers create purpose-built, synchronized
 automation using open solvers, training code, and model weights.
 
-**Current status: runnable four-bar research alpha and OMTS v0.1 draft.**
+**Current status: runnable four-bar research alpha with three-pose targets and OMTS v0.1 draft.**
 The package includes the R2.5c/R2.5b solver, task validation, and a strict OMTS
 adapter. Three Apache-2.0 proposal models are available as verified GitHub release
-downloads. This is a planar kinematic research tool; training reproduction,
-orientation, timing/dwell, dynamics, collisions, and synchronization remain future work.
+downloads. A task can now specify the output point's position and directed coupler
+orientation at each of three target phases. This is a planar kinematic research
+tool; training reproduction, prescribed timing/dwell, dynamics, collisions, and
+synchronization remain future work.
 
 ## Generate a mechanism
 
@@ -30,6 +32,12 @@ and the [model card](MODEL_CARD.md) for provenance, licensing, and limitations.
 
 This illustrated candidate passed practical selection criteria, but did not meet
 all preferred engineering thresholds. It is not a hardware-validated design.
+
+To control the direction of the carried object as well as its position, try the
+[three-pose guide](docs/three-pose.md). The first pose capability uses a tool frame
+at output point P with its positive x-axis parallel to the directed coupler A to B.
+The existing models still propose geometry from positions; the local solver adds
+the angular requirements. No retraining is needed to use this feature.
 
 ## Share a run
 
@@ -75,16 +83,18 @@ CSVs, and a portable Python runner. It refuses existing output directories.
 **A valid document or prepared plan is not a solved mechanism.** No optimizer runs
 during either command. The generated runner uses the installed engine and downloaded weights; see the [adapter guide](docs/r25c-adapter.md).
 
-## Two examples, with different purposes
+## Examples, with different purposes
 
 | Example | Document validation | R2.5c adaptation |
 |---|---|---|
 | [Three-point four-bar](examples/omts/three_point.omts.yaml) | Passes | Prepares an independent cyclic four-bar run |
-| [Synchronized line](examples/omts/synchronized_line.omts.yaml) | Passes | Rejected: illustrates future poses, loads, dwell, and synchronization |
+| [Three-pose four-bar](examples/omts/three_pose.omts.yaml) | Passes | Prepares three ordered positions and directed orientations |
+| [Synchronized line](examples/omts/synchronized_line.omts.yaml) | Passes | Rejected: includes unsupported loads, dwell, and synchronization |
 
 The adapter accepts normalized planar coordinates, exactly three target positions,
-optional cyclic ordering, hybrid ground-link search, and the requirements listed
-in its [profile](docs/r25c-adapter.md). Unsupported operational fields are rejected,
+optional orientations on all three targets, optional cyclic ordering, hybrid
+ground-link search, and the requirements listed in its
+[profile](docs/r25c-adapter.md). Unsupported operational fields are rejected,
 including unsupported soft constraints. They are never silently discarded.
 
 ## Project contents
@@ -97,8 +107,9 @@ including unsupported soft constraints. They are never silently discarded.
 
 The public engine runs the research pipeline:
 neural proposals â†’ local refinement â†’ physical/kinematic checks â†’ diverse designs.
-Orientation synthesis, prescribed timing/dwell, dynamics, collision checks, and
-multi-mechanism synchronization are future capabilities.
+Richer orientation paths, prescribed timing/dwell, dynamics, collision checks, and
+multi-mechanism synchronization are future capabilities. Reproducible training and
+broader evaluation support that development; released models remain ready to use.
 
 ## Contribute and license
 

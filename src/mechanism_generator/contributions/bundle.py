@@ -22,10 +22,21 @@ COUNT_FIELDS = (
     "candidate_count", "path_acceptable_count", "selection_eligible_count",
     "engineering_acceptable_count", "selected_count",
 )
+POSE_COUNTS = ("orientation_acceptable_count", "pose_acceptable_count")
+POSE_TASK_FIELDS = ("target_orientations_deg", "orientation_tolerances_deg", "orientation_frame")
+POSE_CANDIDATE_FIELDS = (
+    "orientation_frame", "orientation_acceptable", "pose_acceptable",
+    "max_orientation_error_deg", "mean_orientation_error_deg", "initial_max_orientation_error_deg",
+    *(f"{prefix}_{index}_deg" for index in range(1, 4) for prefix in
+      ("target_orientation", "orientation_tolerance", "matched_orientation", "orientation_error")),
+)
 
 
-def schema() -> dict:
-    return json.loads(files(__package__).joinpath("schema.json").read_text(encoding="utf-8"))
+def schema(version: str = "0.2") -> dict:
+    if version not in ("0.1", "0.2"):
+        raise ValueError("Unsupported contribution schema version")
+    name = "schema-v0.1.json" if version == "0.1" else "schema.json"
+    return json.loads(files(__package__).joinpath(name).read_text(encoding="utf-8"))
 
 
 def _unique_object(pairs):
@@ -57,10 +68,11 @@ def _finite(value):
 def validate_bundle(bundle: dict) -> None:
     """Validate structure and internal references, not scientific truth or rights."""
     _finite(bundle)
-    errors = list(Draft202012Validator(schema()).iter_errors(bundle))
+    version = bundle.get("schema_version") if isinstance(bundle, dict) else None
+    errors = list(Draft202012Validator(schema(version)).iter_errors(bundle))
     if errors:
         # Do not echo submitted free text or unknown field contents in errors.
-        raise ValueError("Contribution does not match schema 0.1")
+        raise ValueError("Contribution does not match its declared schema")
     tasks = bundle["core"]["tasks"]
     by_id = {task["task_id"]: task for task in tasks}
     if len(by_id) != len(tasks):
@@ -70,6 +82,16 @@ def validate_bundle(bundle: dict) -> None:
             raise ValueError("Outcome count exceeds candidate count")
         if task["selected_count"] > task["selection_eligible_count"]:
             raise ValueError("Selected count exceeds eligible count")
+        if task.get("orientation_required", False):
+            if any(task[key] > task["candidate_count"] for key in POSE_COUNTS):
+                raise ValueError("Pose outcome count exceeds candidate count")
+            if task["pose_acceptable_count"] > min(task["path_acceptable_count"], task["orientation_acceptable_count"]):
+                raise ValueError("Pose count exceeds position or orientation acceptance")
+            if max(task["selected_count"], task["selection_eligible_count"], task["engineering_acceptable_count"]) > task["pose_acceptable_count"]:
+                raise ValueError("Selected or qualified count exceeds pose acceptance")
+        elif any(key in task for key in POSE_COUNTS):
+            raise ValueError("Pose outcome counts require an orientation task")
+    task_details = {task["task_id"]: task for task in bundle.get("task", [])}
     for section in ("task", "candidates"):
         seen = set()
         for task in bundle.get(section, []):
@@ -77,16 +99,40 @@ def validate_bundle(bundle: dict) -> None:
             if identity not in by_id or identity in seen:
                 raise ValueError("Invalid or duplicate task reference")
             seen.add(identity)
+            pose_required = by_id[identity].get("orientation_required", False)
+            if section == "task":
+                if pose_required and not all(key in task for key in POSE_TASK_FIELDS):
+                    raise ValueError("Included pose task must retain its orientation requirements")
+                if not pose_required and any(key in task for key in POSE_TASK_FIELDS):
+                    raise ValueError("Orientation requirements contradict the recorded task type")
             if section == "candidates":
                 items = task["items"]
                 ids = {item["candidate_id"] for item in items}
                 if len(ids) != len(items) or len(items) != by_id[identity]["candidate_count"]:
                     raise ValueError("Candidate identifiers or counts are inconsistent")
-                for flag in ("path_acceptable", "selection_eligible", "engineering_acceptable"):
+                flags = ["path_acceptable", "selection_eligible", "engineering_acceptable"]
+                if pose_required:
+                    flags.extend(["orientation_acceptable", "pose_acceptable"])
+                for flag in flags:
                     if all(flag in item for item in items):
                         if sum(item[flag] for item in items) != by_id[identity][flag + "_count"]:
                             raise ValueError("Candidate qualification flags contradict outcome counts")
                 for item in items:
+                    if pose_required:
+                        if item.get("orientation_required") is not True:
+                            raise ValueError("Included pose candidates must retain their orientation requirements")
+                        if item["pose_acceptable"] != (item["path_acceptable"] and item["orientation_acceptable"]):
+                            raise ValueError("Pose acceptance contradicts position or orientation acceptance")
+                        if (item["selection_eligible"] or item["engineering_acceptable"]) and not item["pose_acceptable"]:
+                            raise ValueError("Qualified pose candidate fails its orientation or position gate")
+                        details = task_details.get(identity)
+                        if details:
+                            for index in range(1, 4):
+                                if (item[f"target_orientation_{index}_deg"] != details["target_orientations_deg"][index - 1]
+                                        or item[f"orientation_tolerance_{index}_deg"] != details["orientation_tolerances_deg"][index - 1]):
+                                    raise ValueError("Candidate and task orientation requirements disagree")
+                    elif item.get("orientation_required", False) or any(key in item for key in POSE_CANDIDATE_FIELDS):
+                        raise ValueError("Candidate orientation fields contradict the recorded task type")
                     for key in ("portfolio_parent_candidate_id", "shared_path_reference_candidate_id"):
                         if key in item and item[key] not in ids:
                             raise ValueError("Invalid candidate reference")
@@ -137,7 +183,7 @@ def build_bundle(run_directory: Path) -> dict:
         raise ValueError("Only R2.5c run manifests are supported")
     props = schema()["properties"]
     bundle = {
-        "schema_version": "0.1", "kind": "local",
+        "schema_version": "0.2", "kind": "local",
         "core": {"generator_version": __version__, "engine": "r2.5c",
                  "run_status": manifest.get("run_status", "unknown"),
                  "validation_status": "unreviewed", "tasks": []},
@@ -147,9 +193,15 @@ def build_bundle(run_directory: Path) -> dict:
     candidate_props = props["candidates"]["items"]["properties"]["items"]["items"]["properties"]
     for index, target in enumerate(manifest["targets"], 1):
         identity = f"task-{index:04d}"
-        core = {"task_id": identity, **{key: target[key] for key in COUNT_FIELDS}}
+        pose_required = any(key in target for key in (*POSE_TASK_FIELDS, *POSE_COUNTS))
+        core = {"task_id": identity, **{key: target[key] for key in COUNT_FIELDS},
+                "orientation_required": pose_required}
+        task_record = {"task_id": identity, "target_values": target["target_values"]}
+        if pose_required:
+            core.update({key: target[key] for key in POSE_COUNTS})
+            task_record.update({key: target[key] for key in POSE_TASK_FIELDS})
         bundle["core"]["tasks"].append(core)
-        bundle["task"].append({"task_id": identity, "target_values": target["target_values"]})
+        bundle["task"].append(task_record)
         directory = _inside(root, target["directory"])
         source = _inside(root, str((directory / "all_candidates.csv").relative_to(root)))
         if source.stat().st_size > MAX_BYTES:
@@ -171,7 +223,8 @@ def build_bundle(run_directory: Path) -> dict:
         bundle["candidates"].append({"task_id": identity, "items": items})
     provenance = props["provenance"]["properties"]
     bundle["provenance"].update(_project({"engine_sha256": manifest.get("script_sha256"),
-        "parent_engine_sha256": manifest.get("engine_sha256")}, provenance))
+        "parent_engine_sha256": manifest.get("engine_sha256"),
+        "orientation_sha256": manifest.get("orientation_sha256")}, provenance))
     for model in manifest.get("models", []):
         selected = _project(model, provenance["models"]["items"]["properties"])
         if set(selected) == {"role", "sha256"}:

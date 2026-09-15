@@ -703,6 +703,7 @@ supports:
   - unordered_targets
   - ordered_targets
   - target_positions
+  - target_orientation
   - four_bar
   - fixed_ground_link
   - variable_ground_link
@@ -725,19 +726,36 @@ Recommended behavior:
 
 ## 20. Current R2.5c adapter profile
 
-The packaged adapter prepares independent three-point planar cyclic four-bar tasks
-for an external, version-identified R2.5c research engine. It supports ordered/free
+The packaged adapter prepares independent three-target planar cyclic four-bar tasks
+for the packaged, version-identified R2.5c research engine. It supports positions
+alone or positions with planar orientations on all three targets, ordered/free
 target phases, hybrid ground search, common hard path ceilings, soft transmission
 goals, and report-only compactness. It only accepts normalized length units,
 degrees, and a positive 0–360 degree cycle. It never performs synthesis itself.
+
+For this implementation, each target tool frame is located at output point P,
+with positive x directed from coupler joint A (on the input crank) toward joint B
+(on the output rocker). Orientation is the counterclockwise angle from world +x
+in the right-handed XY frame. There is no adjustable tool mounting angle. All
+three targets must use `orientation.type: planar_angle`, or all must omit
+orientation. Individual `tolerance.orientation` values may differ and default
+to 5 degrees when omitted; each must be finite, greater than zero and below
+180 degrees. The engine uses the shortest circular angular difference, at the
+same optimized phase used to evaluate that target's position. An angular
+tolerance without a target orientation is rejected. Reordering by `order_index`
+preserves the pairing of position, orientation, tolerance and target ID.
+
+The orientation constraints apply only at the three targets. They do not enforce
+orientation during the intervening trajectory, timing or dwell, and a prepared
+pose plan does not establish that an eligible mechanism exists.
 
 The [exact profile](../../../docs/r25c-adapter.md) documents defaults, mapped fields,
 rejections, the artifact identity contract, and known research-engine limitations.
 The machine-readable manifest is `src/mechanism_generator/omts/r25c_capabilities.json`.
 Passing general OMTS validation does not imply acceptance by this adapter.
 
-Fixed-only search, custom geometry bounds, per-target unequal tolerances, custom
-objective weights, orientation, timing/dwell, dynamics, collision, synchronization,
+Fixed-only search, custom geometry bounds, per-target unequal position tolerances,
+custom objective weights, partial/spatial orientation, timing/dwell, dynamics, collision, synchronization,
 and higher validation levels are rejected. A future adapter can support them
 without reducing the broader specification.
 

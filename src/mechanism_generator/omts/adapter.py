@@ -9,6 +9,7 @@ from __future__ import annotations
 import csv
 import hashlib
 import json
+import math
 from importlib.resources import files
 from pathlib import Path
 
@@ -60,14 +61,31 @@ def _options(task: dict, index: int, outputs: dict) -> dict:
     tolerances = []
     for i, target in enumerate(targets):
         tp = f"{path}.motion.targets[{i}]"
-        _only(target, "id name position occurrence tolerance mode notes", tp)
+        _only(target, "id name position orientation occurrence tolerance mode notes", tp)
         _fixed(target, "mode", "hard", tp)
         occurrence = target.get("occurrence", {})
         _only(occurrence, "free order_index", tp + ".occurrence")
         _fixed(occurrence, "free", True, tp + ".occurrence")
         tolerance = target.get("tolerance", {})
-        _only(tolerance, "position", tp + ".tolerance")
+        _only(tolerance, "position orientation", tp + ".tolerance")
         tolerances.append(tolerance.get("position"))
+        if "orientation" in target:
+            _only(target["orientation"], "type value", tp + ".orientation")
+            _fixed(target["orientation"], "type", "planar_angle", tp + ".orientation")
+            try:
+                angle_is_finite = math.isfinite(target["orientation"]["value"])
+            except OverflowError:
+                angle_is_finite = False
+            if not angle_is_finite:
+                raise UnsupportedFeature(f"{tp}.orientation.value: must be representable as finite degrees.")
+            angular_tolerance = tolerance.get("orientation", 5)
+            if not 0 < angular_tolerance < 180:
+                raise UnsupportedFeature(f"{tp}.tolerance.orientation: must be greater than 0 and less than 180 degrees.")
+        elif "orientation" in tolerance:
+            raise UnsupportedFeature(f"{tp}.tolerance.orientation: requires a target orientation.")
+    pose_target_count = sum("orientation" in target for target in targets)
+    if pose_target_count not in (0, 3):
+        raise UnsupportedFeature(f"{path}.motion.targets: orientation must be supplied on all three targets, or omitted on all three.")
     if len(set(tolerances)) != 1:
         raise UnsupportedFeature(f"{path}.motion.targets: position tolerances must be identical on all targets, or omitted on all targets.")
     if phase_mode == "ordered" and "order_index" in targets[0].get("occurrence", {}):
@@ -167,6 +185,14 @@ def _options(task: dict, index: int, outputs: dict) -> dict:
         "--run_label": task["id"],
     }
     arguments = [str(value) for pair in flags.items() for value in pair]
+    pose_fields = {}
+    if pose_target_count:
+        pose_fields = {
+            "target_orientations_deg": [target["orientation"]["value"] for target in targets],
+            "orientation_tolerances_deg": [target.get("tolerance", {}).get("orientation", 5) for target in targets],
+        }
+        for name, values in pose_fields.items():
+            arguments.extend([f"--{name}", *(str(value) for value in values)])
     arguments.extend(["--headless", "--strict_qualification"])
     if "png" not in outputs.get("formats", ["json", "csv", "npz"]):
         arguments.append("--no_plots")
@@ -178,6 +204,7 @@ def _options(task: dict, index: int, outputs: dict) -> dict:
         "task_id": task["id"],
         "target_ids": [target["id"] for target in targets],
         "positions": [target["position"] for target in targets],
+        **pose_fields,
         "targets_file": f"tasks/task-{index + 1:03d}/targets.csv",
         "output_root": f"results/task-{index + 1:03d}",
         "arguments": arguments,

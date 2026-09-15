@@ -70,11 +70,188 @@ def change_manifest(run, edit):
 
 def reviewed(local):
     return {
-        "schema_version": "0.1", "kind": "submission", "core": copy.deepcopy(local["core"]),
+        "schema_version": local["schema_version"], "kind": "submission", "core": copy.deepcopy(local["core"]),
         "contributor": {"pseudonym": "A designer", "application": "Three-position handling."},
         "consent": {"terms_version": "1", "license": "Apache-2.0", "rights_confirmed": True,
                     "public_sharing_and_training": True},
     }
+
+
+@pytest.fixture
+def pose_run(recorded_run):
+    angles = [170, -170, 390]
+    tolerances = [1, 5, 12]
+
+    def add_pose(manifest):
+        manifest["arguments"].update(target_orientations_deg=angles, orientation_tolerances_deg=tolerances)
+        manifest["targets"][0].update(
+            target_orientations_deg=angles, orientation_tolerances_deg=tolerances,
+            orientation_frame="coupler_A_to_B", orientation_acceptable_count=1, pose_acceptable_count=1)
+
+    change_manifest(recorded_run, add_pose)
+    csv_path = recorded_run / "private-target" / "all_candidates.csv"
+    with csv_path.open(encoding="utf-8", newline="") as stream:
+        rows = list(csv.DictReader(stream))
+    for index, row in enumerate(rows):
+        accepted = index == 1
+        row.update(orientation_required="True", orientation_frame="coupler_A_to_B",
+                   orientation_acceptable=str(accepted), pose_acceptable=str(accepted),
+                   max_orientation_error_deg="0.5" if accepted else "25",
+                   mean_orientation_error_deg="0.5" if accepted else "25",
+                   initial_max_orientation_error_deg="30")
+        for number, (angle, tolerance) in enumerate(zip(angles, tolerances), 1):
+            error = 0.5 if accepted else 25
+            row[f"target_orientation_{number}_deg"] = str(angle)
+            row[f"orientation_tolerance_{number}_deg"] = str(tolerance)
+            row[f"matched_orientation_{number}_deg"] = str(angle + error)
+            row[f"orientation_error_{number}_deg"] = str(error)
+    rows[2]["qualification_level"] = "path_acceptable_but_orientation_failed"
+    with csv_path.open("w", encoding="utf-8", newline="") as stream:
+        writer = csv.DictWriter(stream, fieldnames=list(dict.fromkeys(key for row in rows for key in row)))
+        writer.writeheader()
+        writer.writerows(rows)
+    return recorded_run
+
+
+def test_legacy_schema_is_the_unchanged_a3_schema():
+    legacy = Path(contributions.__file__).with_name("schema-v0.1.json").read_bytes()
+    assert hashlib.sha256(legacy).hexdigest() == "98af5e0b7f7ccc581ca38c38bec008f79c90454a7096bacd57084d7fbdd92d98"
+    assert contributions.schema("0.1")["properties"]["schema_version"]["const"] == "0.1"
+
+
+def test_legacy_position_bundle_and_submission_still_validate(recorded_run):
+    legacy = contributions.build_bundle(recorded_run)
+    legacy["schema_version"] = "0.1"
+    for task in legacy["core"]["tasks"]:
+        task.pop("orientation_required")
+    contributions.validate_bundle(legacy)
+    contributions.validate_bundle(reviewed(legacy))
+    legacy["core"]["tasks"][0]["orientation_required"] = False
+    with pytest.raises(ValueError):
+        contributions.validate_bundle(legacy)
+
+
+def test_new_position_bundle_identifies_no_orientation_requirement(recorded_run):
+    bundle = contributions.build_bundle(recorded_run)
+    assert bundle["schema_version"] == "0.2"
+    assert bundle["core"]["tasks"][0]["orientation_required"] is False
+    assert "orientation_acceptable_count" not in bundle["core"]["tasks"][0]
+
+
+def test_orientation_source_fingerprint_is_preserved_and_invalid_hash_is_rejected(pose_run):
+    source = Path(__file__).resolve().parents[1] / "src/mechanism_generator/engine/orientation.py"
+    fingerprint = hashlib.sha256(source.read_bytes()).hexdigest()
+    change_manifest(pose_run, lambda manifest: manifest.update(orientation_sha256=fingerprint))
+    bundle = contributions.build_bundle(pose_run)
+    assert bundle["provenance"]["orientation_sha256"] == fingerprint
+    submission = reviewed(bundle)
+    submission["provenance"] = copy.deepcopy(bundle["provenance"])
+    contributions.validate_bundle(submission)
+    submission["provenance"]["orientation_sha256"] = "not-a-source-fingerprint"
+    with pytest.raises(ValueError):
+        contributions.validate_bundle(submission)
+
+
+def test_pose_bundle_preserves_requirements_flags_metrics_and_failures(pose_run):
+    bundle = contributions.build_bundle(pose_run)
+    outcome = bundle["core"]["tasks"][0]
+    assert outcome["orientation_required"] is True
+    assert outcome["orientation_acceptable_count"] == outcome["pose_acceptable_count"] == 1
+    assert bundle["task"][0]["target_orientations_deg"] == [170, -170, 390]
+    assert bundle["task"][0]["orientation_tolerances_deg"] == [1, 5, 12]
+    assert bundle["task"][0]["orientation_frame"] == "coupler_A_to_B"
+    assert "target_orientations_deg" not in bundle["settings"]
+    assert "orientation_tolerances_deg" not in bundle["settings"]
+    failed, selected, pose_failed = bundle["candidates"][0]["items"]
+    assert failed["orientation_required"] is True
+    assert selected["orientation_acceptable"] is selected["pose_acceptable"] is True
+    assert selected["target_orientation_3_deg"] == 390
+    assert selected["orientation_tolerance_3_deg"] == 12
+    assert selected["matched_orientation_3_deg"] == 390.5
+    assert selected["orientation_error_3_deg"] == selected["max_orientation_error_deg"] == 0.5
+    assert selected["initial_max_orientation_error_deg"] == 30
+    assert pose_failed["qualification_level"] == "path_acceptable_but_orientation_failed"
+    assert pose_failed["path_acceptable"] is True
+    assert pose_failed["orientation_acceptable"] is pose_failed["pose_acceptable"] is False
+    assert PRIVATE not in json.dumps(bundle)
+
+
+def test_pose_submission_keeps_pose_outcome_when_geometry_is_omitted(pose_run):
+    local = contributions.build_bundle(pose_run)
+    submission = reviewed(local)
+    contributions.validate_bundle(submission)
+    assert submission["core"]["tasks"][0]["orientation_required"] is True
+    assert submission["core"]["tasks"][0]["pose_acceptable_count"] == 1
+    assert "target_orientations_deg" not in json.dumps(submission)
+    submission["core"]["tasks"][0]["pose_acceptable_count"] = 0
+    with pytest.raises(ValueError, match="pose acceptance"):
+        contributions.validate_bundle(submission)
+
+
+@pytest.mark.parametrize("field", ["orientation_required", "orientation_acceptable_count", "pose_acceptable_count"])
+def test_pose_outcome_fields_cannot_be_dropped(pose_run, field):
+    submission = reviewed(contributions.build_bundle(pose_run))
+    submission["core"]["tasks"][0].pop(field)
+    with pytest.raises(ValueError):
+        contributions.validate_bundle(submission)
+
+
+@pytest.mark.parametrize("field,value", [("orientation_acceptable_count", 4), ("pose_acceptable_count", 4),
+                                        ("pose_acceptable_count", 2), ("orientation_acceptable_count", 0)])
+def test_pose_counts_are_bounded_and_consistent(pose_run, field, value):
+    submission = reviewed(contributions.build_bundle(pose_run))
+    submission["core"]["tasks"][0][field] = value
+    with pytest.raises(ValueError):
+        contributions.validate_bundle(submission)
+
+
+@pytest.mark.parametrize("field", ["orientation_required", "orientation_frame", "orientation_acceptable",
+                                   "pose_acceptable", "target_orientation_1_deg", "orientation_tolerance_3_deg"])
+def test_included_pose_candidate_cannot_drop_its_pose_facts(pose_run, field):
+    bundle = contributions.build_bundle(pose_run)
+    bundle["candidates"][0]["items"][1].pop(field)
+    with pytest.raises(ValueError):
+        contributions.validate_bundle(bundle)
+
+
+@pytest.mark.parametrize("field", ["target_orientations_deg", "orientation_tolerances_deg", "orientation_frame"])
+def test_included_pose_task_cannot_drop_its_pose_requirements(pose_run, field):
+    bundle = contributions.build_bundle(pose_run)
+    bundle["task"][0].pop(field)
+    with pytest.raises(ValueError):
+        contributions.validate_bundle(bundle)
+
+
+def test_pose_candidate_qualification_gate_survives_balanced_aggregate_counts(pose_run):
+    bundle = contributions.build_bundle(pose_run)
+    selected, failed = bundle["candidates"][0]["items"][1:]
+    selected["selection_eligible"] = False
+    failed["selection_eligible"] = True
+    with pytest.raises(ValueError, match="gate"):
+        contributions.validate_bundle(bundle)
+
+
+def test_pose_candidate_flags_must_agree_with_aggregate_counts(pose_run):
+    bundle = contributions.build_bundle(pose_run)
+    bundle["candidates"][0]["items"][0]["orientation_acceptable"] = True
+    with pytest.raises(ValueError, match="outcome counts"):
+        contributions.validate_bundle(bundle)
+
+
+def test_pose_candidate_and_task_requirements_must_agree(pose_run):
+    bundle = contributions.build_bundle(pose_run)
+    bundle["candidates"][0]["items"][0]["target_orientation_1_deg"] = 90
+    with pytest.raises(ValueError, match="requirements disagree"):
+        contributions.validate_bundle(bundle)
+
+
+def test_pose_task_type_cannot_be_hidden(pose_run):
+    bundle = contributions.build_bundle(pose_run)
+    bundle["core"]["tasks"][0]["orientation_required"] = False
+    for name in contributions.POSE_COUNTS:
+        bundle["core"]["tasks"][0].pop(name)
+    with pytest.raises(ValueError, match="task type"):
+        contributions.validate_bundle(bundle)
 
 
 def make_symlink(link: Path, destination: Path):

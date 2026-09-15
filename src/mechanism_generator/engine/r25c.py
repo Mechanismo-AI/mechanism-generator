@@ -603,6 +603,20 @@ def write_portfolio_summary(
         "- The combined Pareto front is the production output; no single ground-link mode is assumed universally superior.",
         "- This is a kinematic result, not machinery certification.",
     ])
+    if any(candidate.get("orientation_required", False) for candidate in candidates):
+        lines.extend([
+            "", "## Position and orientation", "",
+            "Orientation is the directed coupler A-to-B angle in world XY, with the tool frame at P.",
+            "Position and orientation are checked together at each selected target phase.",
+            "Path-acceptable counts refer to position; selection also requires every angular tolerance.",
+            "No orientation between target phases, timing, or dwell is prescribed.", "",
+            "| Candidate | Orientation acceptable | Maximum angular error (deg) | Pose acceptable |", "|---|---|---:|---|",
+        ])
+        for candidate in selected:
+            lines.append(f"| {candidate['candidate_id']} | {candidate['orientation_acceptable']} | "
+                         f"{candidate['max_orientation_error_deg']:.4f} | {candidate['pose_acceptable']} |")
+        if not selected:
+            lines.append("No candidate passed all selection requirements. Inspect all_candidates.csv for failure details.")
     (target_dir / "summary.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
@@ -686,6 +700,7 @@ def main() -> int:
         "engine_script": str(ENGINE_PATH),
         "engine_variant": ENGINE_VARIANT,
         "engine_sha256": sha256_file(ENGINE_PATH),
+        "orientation_sha256": sha256_file(ENGINE_PATH.with_name("orientation.py")),
         "arguments": vars(args),
         "models": [
             {
@@ -1013,6 +1028,15 @@ def main() -> int:
                 for rank, candidate in enumerate(selected, start=1)
             ],
         }
+        if ENGINE.has_pose_targets(args):
+            target_manifest.update(
+                target_orientations_deg=list(args.target_orientations_deg),
+                orientation_tolerances_deg=ENGINE.pose_tolerances(args),
+                orientation_frame="coupler_A_to_B",
+                orientation_acceptable_count=sum(bool(c.get("orientation_acceptable", False)) for c in all_candidates),
+                pose_acceptable_count=sum(bool(c.get("pose_acceptable", False)) for c in all_candidates),
+            )
+            print(f"[POSE QUALIFICATION] position-and-orientation={target_manifest['pose_acceptable_count']}/{len(all_candidates)}")
         run_manifest["targets"].append(target_manifest)
         ENGINE.write_json(run_dir / "run_manifest.json", run_manifest)
         write_local_contribution(run_dir, args)

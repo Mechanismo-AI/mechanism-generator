@@ -57,9 +57,9 @@ subset, while the local files can contain sections you chose to omit.
 
 | Section | Contents | Can omit from the reviewed download? |
 | --- | --- | --- |
-| Outcome | Run completion status and counts of candidates and qualification results | No |
-| Task | Target geometry | Yes |
-| Candidates | Candidate geometry and measured results, including rejected candidates | Yes |
+| Outcome | Run completion status, whether each task requires orientation, and counts of candidates and qualification results | No |
+| Task | Target positions and, for pose tasks, requested angles, angular tolerances and tool frame | Yes |
+| Candidates | Candidate geometry and measured results, including requested and matched pose angles, tolerances, errors and rejected candidates | Yes |
 | Settings | Selected solver settings and random seed | Yes |
 | Provenance | Available engine and model identifiers and hashes | Yes |
 
@@ -67,6 +67,15 @@ The exporter selects recognized fields from run outputs. It does not collect raw
 logs, machine paths, credentials, model files, training datasets, or arbitrary
 files from the run directory. Geometry can still describe a confidential design;
 inspect the preview even when it contains no names or file paths.
+
+For pose runs, both Task and Candidate sections contain requested angle data.
+Omit both sections to exclude those values. Search settings never contain target
+angles or angular tolerances. The required outcome still identifies orientation
+tasks and retains orientation-acceptable and pose-acceptable counts. This prevents
+a failed pose search from appearing to be a successful position-only search when
+the detailed geometry is withheld. Pose acceptance means that the candidate meets
+both position and orientation requirements; the usual selection and engineering
+gates still apply.
 
 Candidate failures and runs with no eligible designs are useful contributions.
 They help expose limits that successful examples alone would miss. A reported
@@ -87,9 +96,14 @@ The command below validates either a local bundle or a reviewed submission:
 mechanism-contribute validate path/to/reviewed-contribution.json
 ```
 
-Validation runs locally and does not submit the file. The version 0.1
+Validation runs locally and does not submit the file. New bundles use the version 0.2
 [contribution schema](../src/mechanism_generator/contributions/schema.json)
-defines the format. Valid structure does not establish correct results, ownership,
+with explicit pose requirements and qualification counts. Existing version 0.1
+bundles remain supported using the unchanged
+[legacy schema](../src/mechanism_generator/contributions/schema-v0.1.json).
+Reviewing a bundle preserves its schema version. Validation checks count and
+qualification consistency, including the pose gate when candidate details are
+included. Valid structure does not establish correct results, ownership,
 or suitability for training.
 
 ## How submissions become useful
