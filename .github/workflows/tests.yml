@@ -28,6 +28,11 @@ jobs:
       - run: omts validate examples/omts/three_point.omts.yaml
       - run: omts validate examples/omts/synchronized_line.omts.yaml
       - run: omts adapt examples/omts/three_point.omts.yaml --output-dir generated/ci
+      - run: mechanism-contribute --help
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+      - run: node tools/test_contribution_review.cjs
   engine:
     strategy:
       fail-fast: false

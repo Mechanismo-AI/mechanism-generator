@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.1.0a3 — local contribution review
+
+- Prepare an offline contribution bundle after each completed target and run.
+- Include numerical outcomes and optional task geometry, all candidates, settings,
+  and model/engine hashes through a fixed field allowlist.
+- Add an offline review page with exact export preview, selectable sections,
+  explicit sharing permission, and a manual GitHub submission form.
+- Add bundle validation and file fingerprints; no telemetry or automatic uploads.
+
+Model weights remain the unchanged Apache-2.0 exports from v0.1.0a2. Regenerate
+OMTS run plans after upgrading so their engine fingerprints match this release.
+
 ## 0.1.0a2 — four-bar research alpha
 
 - Package the R2.5c/R2.5b engine with an explicit model downloader and verified CLI.

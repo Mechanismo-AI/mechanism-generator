@@ -79,6 +79,10 @@ def build_parser() -> argparse.ArgumentParser:
         "continuation searches into one qualified portfolio"
     )
     parser.add_argument(
+        "--no_contribution_bundle", action="store_true",
+        help="Skip local contribution bundle creation (bundles never upload automatically)",
+    )
+    parser.add_argument(
         "--portfolio_fixed_seed_count",
         type=int,
         default=3,
@@ -602,6 +606,20 @@ def write_portfolio_summary(
     (target_dir / "summary.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
+def write_local_contribution(run_dir: Path, args: argparse.Namespace) -> None:
+    if args.no_contribution_bundle:
+        return
+    try:
+        from mechanism_generator.contributions import prepare_bundle
+        page = prepare_bundle(run_dir)
+        print(f"[LOCAL CONTRIBUTION] Review what to share: {page} (nothing uploaded)")
+    except Exception as exc:
+        # Contribution packaging must never discard a successful numerical run.
+        # Do not echo arbitrary source values in this warning.
+        print(f"[CONTRIBUTION WARNING] Local bundle unavailable ({type(exc).__name__}); "
+              "results remain saved. Retry with mechanism-contribute prepare.", file=sys.stderr)
+
+
 def main() -> int:
     parser = build_parser()
     args = parser.parse_args()
@@ -658,6 +676,7 @@ def main() -> int:
         "variant": VARIANT,
         "parent_variant": PARENT_VARIANT,
         "schema_version": SCHEMA_VERSION,
+        "run_status": "partial",
         "timestamp": timestamp,
         "device": str(device),
         "refinement_dtype": args.dtype,
@@ -996,6 +1015,7 @@ def main() -> int:
         }
         run_manifest["targets"].append(target_manifest)
         ENGINE.write_json(run_dir / "run_manifest.json", run_manifest)
+        write_local_contribution(run_dir, args)
 
         print(
             f"[PORTFOLIO QUALIFICATION] path_ok={len(path_ok)}/{len(all_candidates)} "
@@ -1017,7 +1037,9 @@ def main() -> int:
                 f"L1={best['l1']:.3f}, qualification={best.get('qualification_level')}"
             )
 
+    run_manifest["run_status"] = "completed"
     ENGINE.write_json(run_dir / "run_manifest.json", run_manifest)
+    write_local_contribution(run_dir, args)
     print(f"\nR2.5c hybrid portfolio complete. Artifacts: {run_dir}")
     return 0
 

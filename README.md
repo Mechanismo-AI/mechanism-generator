@@ -31,6 +31,16 @@ and the [model card](MODEL_CARD.md) for provenance, licensing, and limitations.
 This illustrated candidate passed practical selection criteria, but did not meet
 all preferred engineering thresholds. It is not a hardware-validated design.
 
+## Share a run
+
+Runs now prepare a local contribution bundle by default. Open
+`contribution/review.html` inside the run directory to choose what to share,
+inspect the outgoing data, and download a reviewed file. You can then attach it
+to a GitHub submission for possible future solver and training improvements.
+Sharing is voluntary, and local preparation sends no data. Read the
+[contribution guide](docs/contributing-results.md) for the review and submission
+steps, including what becomes public when you attach a file.
+
 ## Try the OMTS tools
 
 Requires Python 3.10 or later. From a checkout of this repository, install into a

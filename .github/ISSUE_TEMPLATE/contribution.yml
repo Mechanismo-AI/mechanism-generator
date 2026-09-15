@@ -1,0 +1,44 @@
+name: Contribute a reviewed run
+description: Share selected mechanism results for review and possible future refinements.
+title: "[Contribution] Reviewed mechanism run"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Prepare and review your contribution locally before attaching it here.
+        See the [contribution guide](https://github.com/Mechanismo-AI/mechanism-generator/blob/main/docs/contributing-results.md).
+
+        Attach only `reviewed-contribution.json`, not the original run folder or local review files.
+        GitHub uploads attachments immediately; attachments here are public even before you create the issue.
+        Your GitHub account will be associated with this issue, even if the bundle uses a pseudonym.
+
+        Submissions are unreviewed. Maintainers will check permissions, provenance, reproducibility, and quality before considering them for training or releases.
+  - type: input
+    id: bundle_digest
+    attributes:
+      label: Reviewed file SHA-256
+      description: The digest from the local review page, identifying the exact downloaded file. If you change the file, review and download it again.
+      placeholder: 64 hexadecimal characters
+    validations:
+      required: true
+  - type: textarea
+    id: bundle
+    attributes:
+      label: Reviewed contribution file
+      description: Drag reviewed-contribution.json into this field or use the attachment control. Check that its attachment link appears before submitting.
+      placeholder: Attach reviewed-contribution.json here.
+    validations:
+      required: true
+  - type: checkboxes
+    id: permissions
+    attributes:
+      label: Sharing permissions
+      options:
+        - label: I have reviewed the attached file and have the right and authority to contribute all included material.
+          required: true
+        - label: I contribute the attached material under the repository's Apache-2.0 license and permit its public reuse, including model training and refinement.
+          required: true
+        - label: I understand this issue and its attachment are public and have excluded confidential information and material I cannot share.
+          required: true
+        - label: I understand that submission does not mean the results are independently validated or will be included in training.
+          required: true

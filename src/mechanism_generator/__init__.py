@@ -1,3 +1,3 @@
-"""Open tools for mechanism design. This foundation release contains OMTS tools."""
+"""Open tools for mechanism design, motion tasks, and community contributions."""
 
-__version__ = "0.1.0a2"
+__version__ = "0.1.0a3"
