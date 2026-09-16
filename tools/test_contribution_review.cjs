@@ -248,6 +248,12 @@ async function verifyReviewFlow() {
 async function verifyPoseReviewFlow(version = "0.2") {
   const pose = structuredClone(fixture);
   pose.schema_version = version;
+  if (version === "0.4") {
+    pose.core.tasks[0].crank_direction = "negative";
+    pose.task[0].crank_direction = "negative";
+    pose.candidates[0].items.forEach(item => { item.crank_direction = "negative"; });
+    pose.settings.crank_direction = "negative";
+  }
   pose.core.generator_version = "0.1.0a4";
   Object.assign(pose.core.tasks[0], {
     orientation_required: true,
@@ -346,8 +352,9 @@ function verifyInvalidInput() {
   await verifyReviewFlow();
   await verifyPoseReviewFlow();
   await verifyPoseReviewFlow("0.3");
+  await verifyPoseReviewFlow("0.4");
   verifyInvalidInput();
-  console.log("Offline contribution review checks passed: schemas 0.1/0.2/0.3, pose and geometric provenance retention, diagnostics exclusions, digest vectors, consent gates, all section exclusions, Unicode and hostile text, exact download, fixed GitHub URL, changed-file re-export, and invalid-input handling.");
+  console.log("Offline contribution review checks passed: schemas 0.1/0.2/0.3/0.4, crank direction, pose and geometric provenance retention, diagnostics exclusions, digest vectors, consent gates, all section exclusions, Unicode and hostile text, exact download, fixed GitHub URL, changed-file re-export, and invalid-input handling.");
 })().catch(error => {
   console.error(error);
   process.exitCode = 1;

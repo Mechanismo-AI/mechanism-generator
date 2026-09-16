@@ -100,7 +100,7 @@ def test_ground_constraints_are_never_silently_weakened(task_document, replaceme
     ("mechanism_search", "bounds", {"l2": [1, 4]}),
     ("mechanism_search", "profiles", ["accuracy"]),
     ("motion", "cycle", {"period": 1.2}),
-    ("motion", "cycle", {"direction": "negative"}),
+    ("motion", "cycle", {"direction": "bidirectional"}),
     ("requirements", "compactness", {"mode": "hard", "max_link_ratio": 2}),
     ("requirements", "path", {"mode": "soft", "weight": 5}),
     ("requirements", "transmission", {"mode": "hard", "min_at_targets": 30}),

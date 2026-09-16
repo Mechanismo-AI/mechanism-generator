@@ -252,6 +252,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--branches", choices=("negative", "positive", "both"), default="negative",
     )
+    parser.add_argument("--crank_direction", choices=("positive", "negative", "either"),
+                        default="positive", help="Input crank rotation; either runs both directions with separate results.")
     parser.add_argument(
         "--phase_mode", choices=("unordered", "ordered"), default="unordered",
     )
@@ -919,6 +921,13 @@ def mechanism_constraint_tensors(
 # ======================
 # ===== PARAMETERIZATION =====
 # ======================
+def crank_direction_sign(args) -> int:
+    direction = getattr(args, "crank_direction", "positive")
+    if direction not in ("positive", "negative"):
+        raise ValueError("A single search requires positive or negative crank direction")
+    return -1 if direction == "negative" else 1
+
+
 def encode_refinement_variables(
     params: torch.Tensor,
     phases: torch.Tensor,
@@ -960,7 +969,7 @@ def encode_refinement_variables(
     if phase_mode == "unordered":
         return torch.cat([base, phases])
 
-    p0, p1, p2 = phases
+    p0, p1, p2 = phases * crank_direction_sign(args)
     gaps = torch.stack(
         [
             torch.remainder(p1 - p0, TWO_PI),
@@ -1012,7 +1021,7 @@ def decode_refinement_variables(
         phases = torch.stack(
             [base_phase, base_phase + gaps[0], base_phase + gaps[0] + gaps[1]]
         )
-        phases = torch.remainder(phases, TWO_PI)
+        phases = torch.remainder(phases * crank_direction_sign(args), TWO_PI)
     return params, phases
 
 
@@ -2125,6 +2134,7 @@ def evaluate_selected_candidate(
         "point_budget_1": float(point_budget[0]), "point_budget_2": float(point_budget[1]), "point_budget_3": float(point_budget[2]),
         "accuracy_score": accuracy_score, "balanced_score": balanced_score,
         "transmission_score": transmission_score, "profile_score": profile_score,
+        "crank_direction": getattr(args, "crank_direction", "positive"),
         "parameters": params_np.tolist(), "phases_rad": phases_np.tolist(),
         "phases_deg": np.degrees(phases_np).tolist(),
         "target_points": target_xy.cpu().numpy().tolist(),
@@ -2494,6 +2504,7 @@ def save_candidate_artifacts(
         target_points=np.asarray(candidate["target_points"], dtype=float),
         matched_points=np.asarray(candidate["matched_points"], dtype=float),
         parameters=np.asarray(candidate["parameters"], dtype=float),
+        crank_direction=np.asarray(candidate.get("crank_direction", "positive")),
         phases_rad=np.asarray(candidate["phases_rad"], dtype=float),
         theta=np.asarray(candidate["dense_theta"], dtype=float),
         **{f"dense_{key}": value for key, value in dense.items()},
@@ -2627,6 +2638,8 @@ def main() -> int:
     parser = build_parser()
     args = parser.parse_args()
     validate_args(parser, args)
+    if args.crank_direction == "either":
+        parser.error("Use mechanism-generate (R2.5c) for either-direction searches")
     if args.allow_unqualified_fallback:
         parser.error("Unqualified fallback is disabled in the public alpha; inspect all_candidates.csv instead")
 
@@ -2715,6 +2728,7 @@ def main() -> int:
         write_json(target_dir / "target.json", {
             "label": target_label, "values": target_values.tolist(),
             "points": target_points_np.tolist(), "phase_mode": args.phase_mode,
+            "crank_direction": args.crank_direction,
             "inside_proposal_training_domain": in_training_domain,
             "proposal_training_domain": {"x": [X_MIN, X_MAX], "y": [Y_MIN, Y_MAX], "historical_ground_link": PROPOSAL_L1_VALUE},
             "local_design_space": {

@@ -152,3 +152,12 @@ samples and at most six retained seeds, in addition to the existing proposal and
 refinement paths. The new `pose_seeds.py` is covered by source verification.
 This adds search work; it does not relax position, orientation, transmission or
 robustness checks. Point-only plans do not invoke geometric pose initialization.
+
+## Crank direction
+
+`motion.cycle.direction` accepts `positive` (default), `negative`, or `either`.
+Negative means decreasing physical input angles in the right-handed XY frame.
+Either permits either constant direction and runs both full search budgets with
+separate result and contribution folders. Ordered occurrences retain their target
+order in both directions. `bidirectional` remains unsupported: reversal within a
+cycle is a different requirement. No timing or speed profile is inferred.

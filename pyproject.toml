@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mechanism-generator"
-version = "0.1.0a5"
+version = "0.1.0a6"
 description = "Open motion-task validation and four-bar mechanism research synthesis"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -34,7 +34,7 @@ where = ["src"]
 [tool.setuptools.package-data]
 "mechanism_generator.omts" = ["schema.json", "r25c_capabilities.json", "runner_template.py.txt"]
 "mechanism_generator.engine" = ["models.json"]
-"mechanism_generator.contributions" = ["schema.json", "schema-v0.1.json", "schema-v0.2.json", "review.html"]
+"mechanism_generator.contributions" = ["schema.json", "schema-v0.1.json", "schema-v0.2.json", "schema-v0.3.json", "review.html"]
 "mechanism_generator.training" = ["assets.json", "recipes.json", "source_provenance.json"]
 
 [tool.pytest.ini_options]

@@ -27,12 +27,20 @@ released models let designers work without running training themselves.
    corpus separates eight development tasks from eight reserved evaluation tasks.
    See the [training guide](training.md) for the distinction between a repeatable
    small run and reproducing historical model weights.
-6. **Next: evaluate improved proposal models.** Establish full-run training
-   baselines across seeds. Build datasets retaining several verified designs per
+6. **Evaluated: additional proposal-model experiments.** Full local training and
+   a frozen paired evaluation did not establish the required success-coverage gain
+   for promoting the experimental weights. The published proposal models remain
+   unchanged. Continue to establish full-run training baselines across seeds. Build datasets retaining several verified designs per
    task, with task-level separation between training and testing, then compare
    orientation-conditioned proposals against the geometric baseline. Preserve
    failed runs and additional compute in the comparison.
-7. **Broader design capabilities.** Use measured failure cases to prioritize richer
+7. **Released: explicit crank direction.** Positive remains the default; negative
+   and either-direction requests preserve target order and report actual direction
+   in candidate and contribution exports. Assembly branch is independent.
+8. **Next: a practical design example and more discriminating evaluation.** Define
+   one dimensioned task, compare candidate motions, and use observed failures to
+   guide evaluation of precision, diversity, runtime, and dimensional sensitivity.
+9. **Broader design capabilities.** Use measured failure cases to prioritize richer
    trajectories and orientation requirements, prescribed timing and dwell,
    additional mechanism types, dynamics, collisions, and synchronized tasks.
 

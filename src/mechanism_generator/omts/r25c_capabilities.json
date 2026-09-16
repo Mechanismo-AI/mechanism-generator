@@ -1,6 +1,6 @@
 {
   "implementation": "r2.5c-public-alpha",
-  "adapter_version": "0.1.0a5",
+  "adapter_version": "0.1.0a6",
   "status": "draft_with_packaged_engine",
   "omts_versions": [
     "0.1",
@@ -54,7 +54,7 @@
   ],
   "notes": [
     "This manifest describes the adapter subset, not everything the research engine can do.",
-    "Only normalized lengths, degrees, and a positive full cyclic input in a right-handed XY frame.",
+    "Only normalized lengths, degrees, and a positive, negative, or either-direction full cyclic input in a right-handed XY frame.",
     "Fixed-only and optimized-only ground requests are rejected; hybrid with one fixed seed is supported.",
     "Identical per-target position tolerances are combined with the global point ceiling using the stricter value.",
     "Only soft worst-target transmission goals and report-only compactness requests are supported.",
@@ -77,8 +77,8 @@
     "models.py": "80b145876288d53ea1e96c59543923ec03b1c9266a06b0253753e3c65b333e5f",
     "orientation.py": "cb7443226549e536f1c46f7f58bb01fb5016627227c293efb81e2ce1dce5786a",
     "provenance.py": "1d84d20d1f730fc692c2e5826c269a5efeb808c4b063e8871b79331883190670",
-    "r25b.py": "03ddbc935722f4e7536354f42fc5397ef6e311f0d2030360498b7f5192843cdd",
-    "r25c.py": "e9855b4b0b75e2997bc839be6b165d1f36056bc446143427b1a19e4ce27eba77",
-    "pose_seeds.py": "5be10d2c13da2a09498ab7a8097f60d63de55a292a31755e722f6879db81188c"
+    "r25b.py": "af8ad32cfa432e602684f7c3c6890ac93bdc07ebe11995e51ace9f8d77042ae2",
+    "r25c.py": "0ee321559d151849a356a4e401aeebe0ff1c7630b03249eba2a6e53c7b641bd5",
+    "pose_seeds.py": "5397d52a3bb856c1e6261a0b7ce892ff3b1e77a31947b4d0e20dc8d55433da52"
   }
 }

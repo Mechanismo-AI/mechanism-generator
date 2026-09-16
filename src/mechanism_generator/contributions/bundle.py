@@ -32,10 +32,10 @@ POSE_CANDIDATE_FIELDS = (
 )
 
 
-def schema(version: str = "0.3") -> dict:
-    if version not in ("0.1", "0.2", "0.3"):
+def schema(version: str = "0.4") -> dict:
+    if version not in ("0.1", "0.2", "0.3", "0.4"):
         raise ValueError("Unsupported contribution schema version")
-    name = f"schema-v{version}.json" if version != "0.3" else "schema.json"
+    name = f"schema-v{version}.json" if version != "0.4" else "schema.json"
     return json.loads(files(__package__).joinpath(name).read_text(encoding="utf-8"))
 
 
@@ -91,6 +91,16 @@ def validate_bundle(bundle: dict) -> None:
                 raise ValueError("Selected or qualified count exceeds pose acceptance")
         elif any(key in task for key in POSE_COUNTS):
             raise ValueError("Pose outcome counts require an orientation task")
+    if version == "0.4":
+        settings_direction = bundle.get("settings", {}).get("crank_direction")
+        if settings_direction and any(task["crank_direction"] != settings_direction for task in tasks):
+            raise ValueError("Settings crank direction disagrees with outcome")
+        for detail in bundle.get("task", []):
+            if detail["crank_direction"] != by_id.get(detail["task_id"], {}).get("crank_direction"):
+                raise ValueError("Task crank direction disagrees with outcome")
+        for group in bundle.get("candidates", []):
+            if any(item["crank_direction"] != by_id.get(group["task_id"], {}).get("crank_direction") for item in group["items"]):
+                raise ValueError("Candidate crank direction disagrees with outcome")
     task_details = {task["task_id"]: task for task in bundle.get("task", [])}
     for section in ("task", "candidates"):
         seen = set()
@@ -200,7 +210,7 @@ def build_bundle(run_directory: Path) -> dict:
         raise ValueError("Only R2.5c run manifests are supported")
     props = schema()["properties"]
     bundle = {
-        "schema_version": "0.3", "kind": "local",
+        "schema_version": "0.4", "kind": "local",
         "core": {"generator_version": __version__, "engine": "r2.5c",
                  "run_status": manifest.get("run_status", "unknown"),
                  "validation_status": "unreviewed", "tasks": []},
@@ -210,10 +220,11 @@ def build_bundle(run_directory: Path) -> dict:
     candidate_props = props["candidates"]["items"]["properties"]["items"]["items"]["properties"]
     for index, target in enumerate(manifest["targets"], 1):
         identity = f"task-{index:04d}"
+        direction = target.get("crank_direction", manifest.get("arguments", {}).get("crank_direction", "positive"))
         pose_required = any(key in target for key in (*POSE_TASK_FIELDS, *POSE_COUNTS))
         core = {"task_id": identity, **{key: target[key] for key in COUNT_FIELDS},
-                "orientation_required": pose_required}
-        task_record = {"task_id": identity, "target_values": target["target_values"]}
+                "orientation_required": pose_required, "crank_direction": direction}
+        task_record = {"task_id": identity, "target_values": target["target_values"], "crank_direction": direction}
         if pose_required:
             core.update({key: target[key] for key in POSE_COUNTS})
             task_record.update({key: target[key] for key in POSE_TASK_FIELDS})
@@ -233,7 +244,10 @@ def build_bundle(run_directory: Path) -> dict:
             raise ValueError("Duplicate source candidate identifiers")
         items = []
         for row in rows:
+            if "crank_direction" in row and row["crank_direction"] != direction:
+                raise ValueError("Source candidate crank direction disagrees with task")
             item = _project(row, candidate_props, csv_values=True)
+            item.setdefault("crank_direction", direction)
             item["candidate_id"] = ids[row["candidate_id"]]
             for key in ("portfolio_parent_candidate_id", "shared_path_reference_candidate_id"):
                 item.pop(key, None)

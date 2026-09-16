@@ -1,12 +1,12 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/Mechanismo-AI/mechanism-generator/blob/main/src/mechanism_generator/contributions/schema.json",
-  "title": "Mechanism Generator community contribution 0.4",
+  "title": "Mechanism Generator community contribution 0.3",
   "type": "object",
   "additionalProperties": false,
   "properties": {
     "schema_version": {
-      "const": "0.4"
+      "const": "0.3"
     },
     "kind": {
       "enum": [
@@ -75,12 +75,6 @@
               "pose_acceptable_count": {
                 "type": "integer",
                 "minimum": 0
-              },
-              "crank_direction": {
-                "enum": [
-                  "positive",
-                  "negative"
-                ]
               }
             },
             "required": [
@@ -90,8 +84,7 @@
               "selection_eligible_count",
               "engineering_acceptable_count",
               "selected_count",
-              "orientation_required",
-              "crank_direction"
+              "orientation_required"
             ],
             "allOf": [
               {
@@ -254,18 +247,11 @@
               "refinement_runtime_seconds",
               "source_sha256"
             ]
-          },
-          "crank_direction": {
-            "enum": [
-              "positive",
-              "negative"
-            ]
           }
         },
         "required": [
           "task_id",
-          "target_values",
-          "crank_direction"
+          "target_values"
         ]
       }
     },
@@ -761,17 +747,10 @@
                 "generator_sample_index": {
                   "type": "integer",
                   "minimum": 1
-                },
-                "crank_direction": {
-                  "enum": [
-                    "positive",
-                    "negative"
-                  ]
                 }
               },
               "required": [
-                "candidate_id",
-                "crank_direction"
+                "candidate_id"
               ],
               "allOf": [
                 {
@@ -1221,12 +1200,6 @@
           "type": "integer",
           "minimum": 0,
           "maximum": 6
-        },
-        "crank_direction": {
-          "enum": [
-            "positive",
-            "negative"
-          ]
         }
       },
       "required": []

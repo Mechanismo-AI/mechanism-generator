@@ -742,10 +742,46 @@ def write_local_contribution(run_dir: Path, args: argparse.Namespace) -> None:
               "results remain saved. Retry with mechanism-contribute prepare.", file=sys.stderr)
 
 
-def main() -> int:
+def main(argv=None) -> int:
     parser = build_parser()
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     validate_args(parser, args)
+    if args.crank_direction == "either":
+        return run_either_direction(args)
+    return run_search(args)
+
+
+def run_either_direction(args) -> int:
+    """Run two complete budgets; preserve each run and its contribution review."""
+    stamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S_%f")
+    root = Path(args.output_root) / "either" / stamp
+    root.mkdir(parents=True, exist_ok=False)
+    index = {"crank_direction": "either", "run_status": "partial", "directions": {}}
+    failed = False
+    for direction in ("positive", "negative"):
+        child = copy.deepcopy(args)
+        child.crank_direction = direction
+        child.output_root = str(root / direction)
+        record = {"directory": direction, "run_status": "running"}
+        index["directions"][direction] = record
+        ENGINE.write_json(root / "direction_index.json", index)
+        try:
+            code = run_search(child)
+            record["run_status"] = "completed" if code == 0 else "failed"
+            failed |= code != 0
+        except Exception as exc:
+            record["run_status"] = "failed"
+            record["error_type"] = type(exc).__name__
+            failed = True
+            print(f"[DIRECTION ERROR] {direction}: {type(exc).__name__}", file=sys.stderr)
+        ENGINE.write_json(root / "direction_index.json", index)
+    index["run_status"] = "partial" if failed else "completed"
+    ENGINE.write_json(root / "direction_index.json", index)
+    print(f"Either-direction results (two full search budgets): {root}")
+    return 1 if failed else 0
+
+
+def run_search(args) -> int:
 
     if args.quick:
         args.perturbations_per_model = 0
@@ -1143,6 +1179,7 @@ def main() -> int:
             "label": target_label,
             "directory": str(target_dir),
             "target_values": target_values.tolist(),
+            "crank_direction": args.crank_direction,
             "target_scale": float(space["scale"].item()),
             "candidate_count": len(all_candidates),
             "origin_summary": origin_rows,

@@ -799,7 +799,8 @@
           "enum": [
             "positive",
             "negative",
-            "bidirectional"
+            "bidirectional",
+            "either"
           ]
         },
         "independent_variable": {
