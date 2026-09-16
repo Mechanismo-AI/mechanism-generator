@@ -24,7 +24,10 @@ mechanism-generate --models-directory models --targets -6 2 -2 6 0.5 3.5 --branc
 ```
 
 Python 3.12 is the tested engine environment. On Windows, choose a short checkout
-and output location. Add `--quick` for a smaller search budget. Read the
+and output location. Add `--quick` for a smaller search budget. For ordered targets, add
+`--phase_mode ordered`; choose `--crank_direction positive`, `negative`, or `either`.
+The default remains positive. Either runs two complete search budgets with separate
+results and reviews. Assembly branch (`--branches`) is a separate choice. Read the
 [engine guide](docs/engine.md) for installation, OMTS execution, and output details,
 and the [model card](MODEL_CARD.md) for provenance, licensing, and limitations.
 

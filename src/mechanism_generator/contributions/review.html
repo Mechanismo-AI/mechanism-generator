@@ -279,7 +279,7 @@
 
       try {
         bundle = JSON.parse(byId("bundle-data").textContent);
-        if (!["0.1", "0.2", "0.3"].includes(bundle.schema_version) || bundle.kind !== "local" || !bundle.core || !Array.isArray(bundle.core.tasks)) {
+        if (!["0.1", "0.2", "0.3", "0.4"].includes(bundle.schema_version) || bundle.kind !== "local" || !bundle.core || !Array.isArray(bundle.core.tasks)) {
           throw new Error("This file does not contain a supported local contribution bundle.");
         }
         const statuses = {completed: "Completed", partial: "Partial", unknown: "Unknown"};

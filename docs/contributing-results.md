@@ -131,3 +131,11 @@ traceable.
 This release provides local preparation and manual submission. It has no automatic
 sharing option. The existing Apache-2.0 license and the v0.1.0a2 model weights are
 unchanged.
+
+## Direction-aware outcomes (schema 0.4)
+
+Every shared outcome records the actual positive or negative input-crank direction,
+even when optional geometry and candidate details are excluded. Task, candidate,
+and settings directions must agree. Either-direction searches produce two separate
+run bundles; inspect each direction's review page. Previous schemas remain supported
+for historical results. The three published inference weight files are unchanged.

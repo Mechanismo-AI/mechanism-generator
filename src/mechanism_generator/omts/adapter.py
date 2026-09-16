@@ -53,8 +53,9 @@ def _options(task: dict, index: int, outputs: dict) -> dict:
     phase_mode = _choice(motion, "order_policy", "unordered", ("ordered", "unordered"), path + ".motion")
     cycle = motion.get("cycle", {})
     _only(cycle, "phase_start phase_end direction independent_variable", path + ".motion.cycle")
-    for key, value in dict(phase_start=0, phase_end=360, direction="positive", independent_variable="phase").items():
+    for key, value in dict(phase_start=0, phase_end=360, independent_variable="phase").items():
         _fixed(cycle, key, value, path + ".motion.cycle")
+    crank_direction = _choice(cycle, "direction", "positive", ("positive", "negative", "either"), path + ".motion.cycle")
     targets = motion["targets"]
     if len(targets) != 3:
         raise UnsupportedFeature(f"{path}.motion.targets: exactly three targets are required.")
@@ -160,6 +161,7 @@ def _options(task: dict, index: int, outputs: dict) -> dict:
     flags = {
         "--branches": branch,
         "--phase_mode": phase_mode,
+        "--crank_direction": crank_direction,
         "--profile_matrix": search.get("profile_matrix", "cross"),
         "--fixed_ground_link_value": fixed_values[0],
         "--portfolio_fixed_seed_count": portfolio.get("fixed_seed_count", 3),

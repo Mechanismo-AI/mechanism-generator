@@ -125,8 +125,43 @@ def test_pose_schema_is_the_unchanged_a4_schema():
     assert contributions.schema("0.2")["properties"]["schema_version"]["const"] == "0.2"
 
 
+def remove_direction_fields(bundle):
+    for task in [*bundle["core"]["tasks"], *bundle.get("task", [])]:
+        task.pop("crank_direction", None)
+    for group in bundle.get("candidates", []):
+        for item in group["items"]:
+            item.pop("crank_direction", None)
+    bundle.get("settings", {}).pop("crank_direction", None)
+
+
+def test_previous_03_bundle_still_validates(recorded_run):
+    bundle = contributions.build_bundle(recorded_run)
+    remove_direction_fields(bundle)
+    bundle["schema_version"] = "0.3"
+    contributions.validate_bundle(bundle)
+    contributions.validate_bundle(reviewed(bundle))
+
+
+def test_direction_survives_outcomes_only_and_rejects_mismatch(recorded_run):
+    change_manifest(recorded_run, lambda manifest: manifest["arguments"].update(crank_direction="negative"))
+    bundle = contributions.build_bundle(recorded_run)
+    assert bundle["core"]["tasks"][0]["crank_direction"] == "negative"
+    submission = reviewed(bundle)
+    for section in ("task", "candidates", "settings", "provenance"):
+        submission.pop(section, None)
+    contributions.validate_bundle(submission)
+    assert submission["core"]["tasks"][0]["crank_direction"] == "negative"
+    bundle["candidates"][0]["items"][0]["crank_direction"] = "positive"
+    with pytest.raises(ValueError, match="direction"):
+        contributions.validate_bundle(bundle)
+    bundle["candidates"][0]["items"][0].pop("crank_direction")
+    with pytest.raises(ValueError, match="schema"):
+        contributions.validate_bundle(bundle)
+
+
 def test_previous_pose_bundle_and_submission_still_validate(pose_run):
     previous = contributions.build_bundle(pose_run)
+    remove_direction_fields(previous)
     previous["schema_version"] = "0.2"
     contributions.validate_bundle(previous)
     contributions.validate_bundle(reviewed(previous))
@@ -134,6 +169,7 @@ def test_previous_pose_bundle_and_submission_still_validate(pose_run):
 
 def test_legacy_position_bundle_and_submission_still_validate(recorded_run):
     legacy = contributions.build_bundle(recorded_run)
+    remove_direction_fields(legacy)
     legacy["schema_version"] = "0.1"
     for task in legacy["core"]["tasks"]:
         task.pop("orientation_required")
@@ -146,7 +182,7 @@ def test_legacy_position_bundle_and_submission_still_validate(recorded_run):
 
 def test_new_position_bundle_identifies_no_orientation_requirement(recorded_run):
     bundle = contributions.build_bundle(recorded_run)
-    assert bundle["schema_version"] == "0.3"
+    assert bundle["schema_version"] == "0.4"
     assert bundle["core"]["tasks"][0]["orientation_required"] is False
     assert "orientation_acceptable_count" not in bundle["core"]["tasks"][0]
 
@@ -283,7 +319,7 @@ def test_export_allowlist_removes_source_identity_paths_and_unknown_fields(recor
         "engine_sha256": "a" * 64, "parent_engine_sha256": "b" * 64,
         "models": [{"role": "balanced", "sha256": "c" * 64}],
     }
-    assert result["task"] == [{"task_id": "task-0001", "target_values": [-6, 2, -2, 6, 0.5, 3.5]}]
+    assert result["task"] == [{"task_id": "task-0001", "target_values": [-6, 2, -2, 6, 0.5, 3.5], "crank_direction": "positive"}]
     assert result["core"]["validation_status"] == "unreviewed"
 
 

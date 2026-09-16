@@ -43,6 +43,21 @@ Add `--quick` for a smaller search budget. Add `--no_plots` to omit PNGs. A full
 search may find fewer than the requested `--top_k`, including none. Both branches
 are shown explicitly; the historical default considers the negative branch only.
 For cyclic T1 → T2 → T3 ordering add `--phase_mode ordered`.
+The default `--crank_direction positive` follows increasing physical crank angles.
+Use `--crank_direction negative` for decreasing angles, or `--crank_direction either`
+to search both directions. These controls are independent of `--branches` (assembly
+configuration). Target coordinates and exported phases always retain T1, T2, T3 order.
+With unordered targets, direction records the intended rotation without constraining
+the order of visits. Positive-only requests never fall back to negative rotation.
+
+Either-direction searches use two complete search budgets (approximately twice the
+work). The output contains `direction_index.json` and separate `positive` and
+`negative` run trees, each with its own candidates, manifest, and local contribution
+review. A completed search can legitimately select no candidates. An execution
+failure leaves the index partial and preserves the other direction's results.
+Each candidate's JSON, CSV, and NPZ records its actual `crank_direction`.
+Contribution schema 0.4 retains direction even when only outcome counts are shared;
+older bundles remain readable as historical positive-direction results.
 
 To request three poses, also provide `--target_orientations_deg` followed by three
 world-frame angles. `--orientation_tolerances_deg` sets three individual angular

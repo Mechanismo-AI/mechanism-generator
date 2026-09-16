@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.1.0a6 — explicit crank direction
+
+- Add positive (default), negative, and either input-crank direction controls.
+  Ordered phases retain target order and follow the requested rotation direction;
+  assembly branch remains a separate choice.
+- Run either-direction requests as two complete searches with separate candidates,
+  manifests, contribution reviews, and a top-level direction index. Preserve a
+  successful direction's artifacts if the other search encounters an error.
+- Apply direction to geometric pose seeds and preserve it in JSON, CSV, and NPZ.
+- Map OMTS cycle direction explicitly; within-cycle reversal remains unsupported.
+- Add contribution schema 0.4 with required direction in shared outcomes, retaining
+  support for schemas 0.1–0.3 and checking consistency across included sections.
+
+The published model weights and qualification thresholds are unchanged. Either
+uses two full budgets, not the budget of a single search. Regenerate OMTS plans
+after upgrading because the implementation fingerprints have changed.
+
 ## 0.1.0a5 — pose recovery and reproducible training
 
 - Add deterministic three-pose geometric seeds alongside neural proposals and

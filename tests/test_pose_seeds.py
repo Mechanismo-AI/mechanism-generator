@@ -210,7 +210,7 @@ def test_actual_geometric_result_survives_local_bundle_without_private_metadata(
     }
     (tmp_path / "run_manifest.json").write_text(json.dumps(manifest))
     bundle = contributions.build_bundle(tmp_path)
-    assert bundle["schema_version"] == "0.3"
+    assert bundle["schema_version"] == "0.4"
     assert private not in json.dumps(bundle)
     assert "checkpoint_variant" not in json.dumps(bundle)
     assert bundle["provenance"]["pose_initialization_sha256"] == diagnostics["source_sha256"]

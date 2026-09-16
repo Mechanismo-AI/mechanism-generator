@@ -934,3 +934,12 @@ The compatible three-point example and the illustrative synchronized-line exampl
 - Schema and semantic validation describe the document. Capability checking is a
   separate step. Neither checks feasibility, certifies a machine, or solves motion.
 - OMTS draft version `0.1` is accepted as an alias of `0.1.0`.
+
+### Cycle direction clarification
+
+The draft cycle direction vocabulary includes `positive` (increasing phase),
+`negative` (decreasing phase), `either` (either constant direction is acceptable),
+and `bidirectional` (direction reversal is permitted within the cycle). An adapter
+must reject unsupported choices. The R2.5c adapter supports the first three;
+it does not implement reversal within a cycle. Physical phases refer to targets
+in their declared occurrence order, independently of input rotation direction.

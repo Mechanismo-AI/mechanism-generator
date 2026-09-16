@@ -105,7 +105,8 @@ def generate_pose_seeds(points, orientations, args, *, sample_count=4096, max_se
     delta_b = b - o4[:, None]
     crosses = delta_a[:, :, 0] * delta_b[:, :, 1] - delta_a[:, :, 1] * delta_b[:, :, 0]
     signs = np.sign(crosses)
-    gaps = (np.roll(phases, -1, axis=1) - phases) % (2 * np.pi)
+    direction_sign = -1 if getattr(args, "crank_direction", "positive") == "negative" else 1
+    gaps = (direction_sign * (np.roll(phases, -1, axis=1) - phases)) % (2 * np.pi)
     links = np.column_stack((l1, l2, l3, l4))
     sorted_links = np.sort(links, axis=1)
     grashof_margin = sorted_links[:, 1] + sorted_links[:, 2] - sorted_links[:, 0] - sorted_links[:, 3]
