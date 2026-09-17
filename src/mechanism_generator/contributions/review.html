@@ -95,7 +95,7 @@
           <h2 id="include-heading">Information to include</h2>
           <p class="help">Open each section to inspect its contents. Deselect any optional section you want to keep private.</p>
           <div id="section-choices"></div>
-          <p class="notice">Geometry, target positions and angles, and application descriptions can reveal a confidential design. Pose requirements appear in both Task and Candidate sections. Check the actual values even if names and local paths have been removed.</p>
+          <p class="notice">Geometry, target positions and angles, panel dimensions, and application descriptions can reveal a confidential design. Pose requirements appear in both Task and Candidate sections. Panel requirements also appear in both sections when present. Check the actual values even if names and local paths have been removed.</p>
         </section>
         <section class="card" aria-labelledby="context-heading">
           <h2 id="context-heading">Add some context <span class="help">· optional</span></h2>
@@ -136,8 +136,8 @@
     (() => {
       const byId = id => document.getElementById(id);
       const sections = [
-        ["task", "Task geometry and diagnostics", "Target positions and, for pose tasks, requested angles, angular tolerances, tool frame and geometric search diagnostics."],
-        ["candidates", "Candidate results", "Candidate geometry, requested and matched pose angles, tolerances, errors, scores and recorded acceptance decisions."],
+        ["task", "Task geometry and diagnostics", "Target positions and, for pose tasks, requested angles, angular tolerances, tool frame, panel requirements and geometric search diagnostics."],
+        ["candidates", "Candidate results", "Candidate geometry, requested and matched pose angles, tolerances, errors, scores, sampled panel envelopes and recorded acceptance decisions."],
         ["provenance", "Engine and model versions", "Artifact fingerprints that identify the engine and model weights."],
         ["settings", "Search settings", "The recorded parameters that help others interpret or reproduce the run."]
       ];
@@ -279,7 +279,7 @@
 
       try {
         bundle = JSON.parse(byId("bundle-data").textContent);
-        if (!["0.1", "0.2", "0.3", "0.4"].includes(bundle.schema_version) || bundle.kind !== "local" || !bundle.core || !Array.isArray(bundle.core.tasks)) {
+        if (!["0.1", "0.2", "0.3", "0.4", "0.5"].includes(bundle.schema_version) || bundle.kind !== "local" || !bundle.core || !Array.isArray(bundle.core.tasks)) {
           throw new Error("This file does not contain a supported local contribution bundle.");
         }
         const statuses = {completed: "Completed", partial: "Partial", unknown: "Unknown"};
@@ -292,6 +292,10 @@
           addStat("Tasks requiring orientation", bundle.core.tasks.filter(task => task.orientation_required === true).length);
           addStat("Orientation acceptable · pose tasks", total("orientation_acceptable_count"));
           addStat("Position and orientation acceptable", total("pose_acceptable_count"));
+        }
+        if (bundle.core.tasks.some(task => task.panel_required === true)) {
+          addStat("Tasks requiring panel containment", bundle.core.tasks.filter(task => task.panel_required === true).length);
+          addStat("Sampled panel screen passed", total("panel_acceptable_count"));
         }
         byId("core-preview").textContent = JSON.stringify(bundle.core, null, 2);
         for (const section of sections) addSection(...section);

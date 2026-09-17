@@ -1,12 +1,12 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/Mechanismo-AI/mechanism-generator/blob/main/src/mechanism_generator/contributions/schema.json",
-  "title": "Mechanism Generator community contribution 0.5",
+  "title": "Mechanism Generator community contribution 0.4",
   "type": "object",
   "additionalProperties": false,
   "properties": {
     "schema_version": {
-      "const": "0.5"
+      "const": "0.4"
     },
     "kind": {
       "enum": [
@@ -81,13 +81,6 @@
                   "positive",
                   "negative"
                 ]
-              },
-              "panel_required": {
-                "type": "boolean"
-              },
-              "panel_acceptable_count": {
-                "type": "integer",
-                "minimum": 0
               }
             },
             "required": [
@@ -98,8 +91,7 @@
               "engineering_acceptable_count",
               "selected_count",
               "orientation_required",
-              "crank_direction",
-              "panel_required"
+              "crank_direction"
             ],
             "allOf": [
               {
@@ -114,23 +106,6 @@
                   "required": [
                     "orientation_acceptable_count",
                     "pose_acceptable_count"
-                  ]
-                }
-              },
-              {
-                "if": {
-                  "properties": {
-                    "panel_required": {
-                      "const": true
-                    }
-                  },
-                  "required": [
-                    "panel_required"
-                  ]
-                },
-                "then": {
-                  "required": [
-                    "panel_acceptable_count"
                   ]
                 }
               }
@@ -190,10 +165,7 @@
             "additionalProperties": false,
             "properties": {
               "method": {
-                "enum": [
-                  "three_pose_dyad_v1",
-                  "three_pose_dyad_v2"
-                ]
+                "const": "three_pose_dyad_v1"
               },
               "enabled": {
                 "type": "boolean"
@@ -205,7 +177,7 @@
               "requested_seed_count": {
                 "type": "integer",
                 "minimum": 0,
-                "maximum": 12
+                "maximum": 6
               },
               "attempted_samples": {
                 "type": "integer",
@@ -234,17 +206,17 @@
               "returned_seeds": {
                 "type": "integer",
                 "minimum": 0,
-                "maximum": 12
+                "maximum": 6
               },
               "evaluated_seed_count": {
                 "type": "integer",
                 "minimum": 0,
-                "maximum": 12
+                "maximum": 6
               },
               "refined_candidate_count": {
                 "type": "integer",
                 "minimum": 0,
-                "maximum": 12
+                "maximum": 6
               },
               "generation_runtime_seconds": {
                 "type": "number",
@@ -261,38 +233,6 @@
               "source_sha256": {
                 "type": "string",
                 "pattern": "^[0-9a-f]{64}$"
-              },
-              "nominal_samples": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 262144
-              },
-              "tolerance_samples": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 262144
-              },
-              "nominal_returned_seeds": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 6
-              },
-              "tolerance_returned_seeds": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 6
-              },
-              "panel_pivot_pass_count": {
-                "type": "integer",
-                "minimum": 0
-              },
-              "panel_screened_count": {
-                "type": "integer",
-                "minimum": 0
-              },
-              "panel_passing_count": {
-                "type": "integer",
-                "minimum": 0
               }
             },
             "required": [
@@ -313,77 +253,12 @@
               "verification_runtime_seconds",
               "refinement_runtime_seconds",
               "source_sha256"
-            ],
-            "allOf": [
-              {
-                "if": {
-                  "properties": {
-                    "method": {
-                      "const": "three_pose_dyad_v2"
-                    }
-                  }
-                },
-                "then": {
-                  "required": [
-                    "nominal_samples",
-                    "tolerance_samples",
-                    "nominal_returned_seeds",
-                    "tolerance_returned_seeds"
-                  ]
-                }
-              }
             ]
           },
           "crank_direction": {
             "enum": [
               "positive",
               "negative"
-            ]
-          },
-          "panel": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "bounds": {
-                "type": "array",
-                "items": {
-                  "type": "number"
-                },
-                "minItems": 4,
-                "maxItems": 4
-              },
-              "carrier_size": {
-                "type": "array",
-                "items": {
-                  "type": "number",
-                  "exclusiveMinimum": 0
-                },
-                "minItems": 2,
-                "maxItems": 2
-              },
-              "pivot_clearance": {
-                "type": "number",
-                "minimum": 0
-              },
-              "steps": {
-                "type": "integer",
-                "minimum": 361,
-                "maximum": 72001
-              },
-              "carrier_frame": {
-                "const": "coupler_A_to_B"
-              },
-              "method": {
-                "const": "sampled_full_cycle_panel_v1"
-              }
-            },
-            "required": [
-              "bounds",
-              "carrier_size",
-              "pivot_clearance",
-              "steps",
-              "carrier_frame",
-              "method"
             ]
           }
         },
@@ -802,8 +677,7 @@
                     "selection_acceptable",
                     "engineering_acceptable",
                     "not_evaluated",
-                    "path_acceptable_but_orientation_failed",
-                    "path_acceptable_but_panel_failed"
+                    "path_acceptable_but_orientation_failed"
                   ]
                 },
                 "orientation_required": {
@@ -882,10 +756,7 @@
                   "maximum": 180
                 },
                 "proposal_source": {
-                  "enum": [
-                    "three_pose_dyad_v1",
-                    "three_pose_tolerance_dyad_v1"
-                  ]
+                  "const": "three_pose_dyad_v1"
                 },
                 "generator_sample_index": {
                   "type": "integer",
@@ -896,62 +767,6 @@
                     "positive",
                     "negative"
                   ]
-                },
-                "panel_required": {
-                  "type": "boolean"
-                },
-                "panel_acceptable": {
-                  "type": "boolean"
-                },
-                "panel_geometry_valid": {
-                  "type": "boolean"
-                },
-                "panel_method": {
-                  "const": "sampled_full_cycle_panel_v1"
-                },
-                "panel_steps": {
-                  "type": "integer",
-                  "minimum": 361,
-                  "maximum": 72001
-                },
-                "panel_x_min": {
-                  "type": "number"
-                },
-                "panel_x_max": {
-                  "type": "number"
-                },
-                "panel_y_min": {
-                  "type": "number"
-                },
-                "panel_y_max": {
-                  "type": "number"
-                },
-                "carrier_width": {
-                  "type": "number"
-                },
-                "carrier_height": {
-                  "type": "number"
-                },
-                "panel_pivot_clearance_required": {
-                  "type": "number"
-                },
-                "panel_edge_clearance": {
-                  "type": "number"
-                },
-                "panel_pivot_clearance": {
-                  "type": "number"
-                },
-                "panel_envelope_x_min": {
-                  "type": "number"
-                },
-                "panel_envelope_x_max": {
-                  "type": "number"
-                },
-                "panel_envelope_y_min": {
-                  "type": "number"
-                },
-                "panel_envelope_y_max": {
-                  "type": "number"
                 }
               },
               "required": [
@@ -1048,68 +863,6 @@
                       }
                     }
                   }
-                },
-                {
-                  "if": {
-                    "properties": {
-                      "panel_required": {
-                        "const": true
-                      }
-                    },
-                    "required": [
-                      "panel_required"
-                    ]
-                  },
-                  "then": {
-                    "required": [
-                      "panel_required",
-                      "panel_acceptable",
-                      "panel_geometry_valid",
-                      "panel_method",
-                      "panel_steps",
-                      "panel_x_min",
-                      "panel_x_max",
-                      "panel_y_min",
-                      "panel_y_max",
-                      "carrier_width",
-                      "carrier_height",
-                      "panel_pivot_clearance_required"
-                    ]
-                  }
-                },
-                {
-                  "if": {
-                    "properties": {
-                      "panel_geometry_valid": {
-                        "const": true
-                      }
-                    },
-                    "required": [
-                      "panel_geometry_valid"
-                    ]
-                  },
-                  "then": {
-                    "required": [
-                      "panel_required",
-                      "panel_acceptable",
-                      "panel_geometry_valid",
-                      "panel_method",
-                      "panel_steps",
-                      "panel_x_min",
-                      "panel_x_max",
-                      "panel_y_min",
-                      "panel_y_max",
-                      "carrier_width",
-                      "carrier_height",
-                      "panel_pivot_clearance_required",
-                      "panel_edge_clearance",
-                      "panel_pivot_clearance",
-                      "panel_envelope_x_min",
-                      "panel_envelope_x_max",
-                      "panel_envelope_y_min",
-                      "panel_envelope_y_max"
-                    ]
-                  }
                 }
               ]
             }
@@ -1162,10 +915,6 @@
           }
         },
         "pose_initialization_sha256": {
-          "type": "string",
-          "pattern": "^[0-9a-f]{64}$"
-        },
-        "panel_screening_sha256": {
           "type": "string",
           "pattern": "^[0-9a-f]{64}$"
         }
@@ -1466,8 +1215,7 @@
         },
         "pose_dyad_samples": {
           "type": "integer",
-          "minimum": 0,
-          "maximum": 262144
+          "minimum": 0
         },
         "pose_dyad_seed_count": {
           "type": "integer",
@@ -1479,37 +1227,6 @@
             "positive",
             "negative"
           ]
-        },
-        "pose_tolerance_samples": {
-          "type": "integer",
-          "minimum": 0,
-          "maximum": 262144
-        },
-        "panel_bounds": {
-          "type": "array",
-          "items": {
-            "type": "number"
-          },
-          "minItems": 4,
-          "maxItems": 4
-        },
-        "carrier_size": {
-          "type": "array",
-          "items": {
-            "type": "number",
-            "exclusiveMinimum": 0
-          },
-          "minItems": 2,
-          "maxItems": 2
-        },
-        "panel_pivot_clearance": {
-          "type": "number",
-          "minimum": 0
-        },
-        "panel_steps": {
-          "type": "integer",
-          "minimum": 361,
-          "maximum": 72001
         }
       },
       "required": []

@@ -43,6 +43,16 @@ The existing models propose geometry from positions; pose tasks also use a
 deterministic geometric initializer and local refinement. No retraining is needed
 to use this feature. See the [broader pose evaluation](docs/pose-corpus.md).
 
+The [dimensioned tabletop-transfer case study](examples/tabletop-transfer/README.md)
+records a practical brief that the released solver did not satisfy, including
+independent millimetre checks and the measured reasons candidates were rejected.
+A [controlled follow-up](examples/tabletop-transfer/Diagnosis.md) found a kinematic
+candidate inside the original tolerances using an experimental geometric search.
+Release **v0.1.0a7** integrates that search with
+bounded angular-tolerance initialization and optional sampled panel screening.
+See the [integration guide](docs/tolerance-and-panel.md) and its reproducible
+tabletop example. Published inference weights remain unchanged.
+
 ## Train and refine proposal models
 
 The full R2 â†’ R2.2 â†’ R2.3a â†’ R2.4 training sequence is packaged with historical

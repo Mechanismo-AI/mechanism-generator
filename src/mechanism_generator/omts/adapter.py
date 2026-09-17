@@ -124,7 +124,7 @@ def _options(task: dict, index: int, outputs: dict) -> dict:
 
     requirements = task.get("requirements", {})
     rp = path + ".requirements"
-    _only(requirements, "path transmission assembly classification compactness", rp)
+    _only(requirements, "path transmission assembly classification compactness panel", rp)
     path_req = requirements.get("path", {})
     _only(path_req, "max_mean_error max_point_error shared_mean_allowance shared_point_allowance mode", rp + ".path")
     _fixed(path_req, "mode", "hard", rp + ".path")
@@ -149,10 +149,19 @@ def _options(task: dict, index: int, outputs: dict) -> dict:
     compactness = requirements.get("compactness", {})
     _only(compactness, "mode", rp + ".compactness")
     _fixed(compactness, "mode", "report_only", rp + ".compactness")
+    panel = requirements.get("panel")
+    if panel is not None:
+        _only(panel, "bounds carrier_size pivot_clearance steps mode carrier_frame", rp + ".panel")
+        _fixed(panel, "mode", "hard", rp + ".panel")
+        _fixed(panel, "carrier_frame", "coupler_A_to_B", rp + ".panel")
+        xmin, xmax, ymin, ymax = panel["bounds"]
+        clearance = panel.get("pivot_clearance", 0)
+        if xmin >= xmax or ymin >= ymax or 2 * clearance >= min(xmax - xmin, ymax - ymin):
+            raise UnsupportedFeature(f"{rp}.panel: bounds and pivot clearance must leave a usable interior.")
 
     options = task.get("search", {})
     op = path + ".search"
-    _only(options, "implementation_profile seed top_k perturbations_per_model parameter_noise phase_noise", op)
+    _only(options, "implementation_profile seed top_k perturbations_per_model parameter_noise phase_noise pose_initialization", op)
     _fixed(options, "implementation_profile", "r2.5c-fourbar", op)
     top_k = options.get("top_k", outputs.get("top_k", 5))
     if "top_k" in outputs and "top_k" in options and top_k != outputs["top_k"]:
@@ -188,14 +197,24 @@ def _options(task: dict, index: int, outputs: dict) -> dict:
     }
     arguments = [str(value) for pair in flags.items() for value in pair]
     pose_fields = {}
+    if "pose_initialization" in options and not pose_target_count:
+        raise UnsupportedFeature(f"{op}.pose_initialization: requires three orientation targets.")
     if pose_target_count:
-        arguments.extend(["--pose_dyad_samples", "4096", "--pose_dyad_seed_count", "6"])
+        initialization = options.get("pose_initialization", {})
+        arguments.extend(["--pose_dyad_samples", str(initialization.get("nominal_samples", 4096)),
+                          "--pose_tolerance_samples", str(initialization.get("tolerance_samples", 65536)),
+                          "--pose_dyad_seed_count", str(initialization.get("seeds_per_branch", 6))])
         pose_fields = {
             "target_orientations_deg": [target["orientation"]["value"] for target in targets],
             "orientation_tolerances_deg": [target.get("tolerance", {}).get("orientation", 5) for target in targets],
         }
         for name, values in pose_fields.items():
             arguments.extend([f"--{name}", *(str(value) for value in values)])
+    if panel is not None:
+        arguments.extend(["--panel_bounds", *map(str, panel["bounds"]),
+                          "--carrier_size", *map(str, panel["carrier_size"]),
+                          "--panel_pivot_clearance", str(panel.get("pivot_clearance", 0)),
+                          "--panel_steps", str(panel.get("steps", 7201))])
     arguments.extend(["--headless", "--strict_qualification"])
     if "png" not in outputs.get("formats", ["json", "csv", "npz"]):
         arguments.append("--no_plots")

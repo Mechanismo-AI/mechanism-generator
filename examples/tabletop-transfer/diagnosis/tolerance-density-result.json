@@ -1,0 +1,712 @@
+{
+  "plan_id": "tabletop-transfer-tolerance-density-v1",
+  "summary": {
+    "samples": 262144,
+    "finite": 262144,
+    "in_bounds": 152959,
+    "individual_passes_among_in_bounds": {
+      "full_cycle_assembly": 512,
+      "assembly_margin": 244,
+      "grashof": 28679,
+      "grashof_margin": 27333,
+      "crank_strictly_shortest": 61306,
+      "crank_margin": 53419,
+      "branch_consistent": 144517,
+      "target_transmission": 93951,
+      "global_transmission": 242
+    },
+    "cumulative_original_gate": {
+      "assembly_margin": 244,
+      "grashof_margin": 244,
+      "crank_margin": 244
+    },
+    "one_gate_removals": {
+      "remove_assembly_margin": 244,
+      "remove_grashof_margin": 244,
+      "remove_crank_margin": 244,
+      "remove_all_robustness_margins": 512
+    },
+    "joint_failures": {
+      "assembly_margin + grashof_margin": 53175,
+      "assembly_margin + grashof_margin + crank_margin": 72451,
+      "assembly_margin + crank_margin": 27089,
+      "none": 244
+    },
+    "margin_quantiles_normalized_by_target_span": {
+      "full_cycle_closure": [
+        -1.3879830807283193,
+        -0.4829754494015095,
+        -0.1291229421220712,
+        -0.032894880020482783,
+        0.07717242066353691
+      ],
+      "assembly": [
+        -1.3879830807283193,
+        -0.4829754494015095,
+        -0.1291229421220712,
+        -0.032894880020482783,
+        0.07717242066353691
+      ],
+      "grashof": [
+        -0.5026206441653227,
+        -0.20907367171221022,
+        -0.06720824213594945,
+        0.06622734734614177,
+        0.24046381996442023
+      ],
+      "crank": [
+        -0.9081162749707578,
+        -0.3598647024355373,
+        -0.02405896615410552,
+        0.19303773445268146,
+        0.6928423493843894
+      ]
+    },
+    "directions": {
+      "positive": {
+        "branch_and_order": 0,
+        "all_seed_filters": 0
+      },
+      "negative": {
+        "branch_and_order": 239,
+        "all_seed_filters": 230
+      }
+    }
+  },
+  "verification": {
+    "candidates_verified": 64,
+    "poses_verified": 192,
+    "maximum_position_error_normalized": 2.3092638912203256e-14,
+    "maximum_orientation_error_deg": 5.115907697472721e-13,
+    "full_cycle_and_class_agreements": 64
+  },
+  "screening": {
+    "positive": {
+      "survivors_before_panel": 0,
+      "survivors_after_pivot_clearance": 0,
+      "panel_screened": 0,
+      "panel_passed_among_screened": 0,
+      "witnesses": [],
+      "screened_candidates": []
+    },
+    "negative": {
+      "survivors_before_panel": 230,
+      "survivors_after_pivot_clearance": 7,
+      "panel_screened": 7,
+      "panel_passed_among_screened": 1,
+      "witnesses": [
+        {
+          "sample_index": 208725,
+          "direction": "negative",
+          "branch": -1,
+          "parameters_mm": [
+            284.1055611370376,
+            66.43099281028164,
+            242.4001693725586,
+            110.2272842550121,
+            0.2971525155191263,
+            9.98575104,
+            85.55472275531517,
+            67.34420104363025,
+            -0.1785530583731599
+          ],
+          "phases_rad": [
+            2.8192309374391464,
+            1.7192975956927188,
+            0.3048971498734913
+          ],
+          "phase_progress_deg": [
+            0.0,
+            63.02153822779115,
+            144.06071431465494
+          ],
+          "achieved_points_mm": [
+            [
+              99.99999999999996,
+              100.0
+            ],
+            [
+              160.0,
+              140.0
+            ],
+            [
+              220.0,
+              100.0
+            ]
+          ],
+          "achieved_orientations_deg": [
+            -7.298898782455823,
+            -2.958494231923184,
+            11.616338040307795
+          ],
+          "position_errors_mm": [
+            4.263256414560601e-14,
+            0.0,
+            0.0
+          ],
+          "orientation_errors_deg": [
+            2.7011012175441635,
+            2.958494231923197,
+            1.6163380403077952
+          ],
+          "cycle_checks": {
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 13.471232226939007,
+            "grashof": true,
+            "crank_is_strictly_shortest": true
+          },
+          "sampled_motion_minimum_transmission_deg": 13.471242775024118,
+          "target_minimum_transmission_deg": 20.59306660106399,
+          "envelope_min_mm": [
+            19.12372994595924,
+            0.9132082342743217
+          ],
+          "envelope_max_mm": [
+            389.05305183312805,
+            146.35198795633818
+          ],
+          "panel_screen_passed": true,
+          "pivot_clearance_passed": true,
+          "original_brief_passed": true,
+          "relaxed_limited_motion_passed": false,
+          "limited_reversing_input": false
+        }
+      ],
+      "screened_candidates": [
+        {
+          "sample_index": 147510,
+          "direction": "negative",
+          "branch": -1,
+          "parameters_mm": [
+            190.45403903675745,
+            69.4974144406579,
+            155.35590362548828,
+            107.20821358314953,
+            0.04831552326598813,
+            17.24881152,
+            152.85694105271,
+            53.66786848140761,
+            -0.21524567544068132
+          ],
+          "phases_rad": [
+            2.9068529617650385,
+            1.8037253454140736,
+            0.6274558282486719
+          ],
+          "phase_progress_deg": [
+            0.0,
+            63.20455668123695,
+            130.59983558470563
+          ],
+          "achieved_points_mm": [
+            [
+              99.99999999999997,
+              100.0
+            ],
+            [
+              160.0,
+              140.0
+            ],
+            [
+              220.0,
+              100.0
+            ]
+          ],
+          "achieved_orientations_deg": [
+            -7.602904766357017,
+            -2.9094696710979444,
+            12.896723073152469
+          ],
+          "position_errors_mm": [
+            2.842170943040401e-14,
+            0.0,
+            0.0
+          ],
+          "orientation_errors_deg": [
+            2.397095233642972,
+            2.909469671097952,
+            2.896723073152458
+          ],
+          "cycle_checks": {
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 16.46002805519537,
+            "grashof": true,
+            "crank_is_strictly_shortest": true
+          },
+          "sampled_motion_minimum_transmission_deg": 16.460028059237455,
+          "target_minimum_transmission_deg": 20.40970377084942,
+          "envelope_min_mm": [
+            65.36040388406968,
+            -19.25248285651079
+          ],
+          "envelope_max_mm": [
+            368.9232069633443,
+            146.26915996416676
+          ],
+          "panel_screen_passed": false,
+          "pivot_clearance_passed": true,
+          "original_brief_passed": false,
+          "relaxed_limited_motion_passed": false,
+          "limited_reversing_input": false
+        },
+        {
+          "sample_index": 21825,
+          "direction": "negative",
+          "branch": -1,
+          "parameters_mm": [
+            225.9651306836269,
+            66.84948861247743,
+            186.68389892578125,
+            107.80845133948856,
+            0.07006232112313501,
+            8.6209536,
+            146.54793463193076,
+            65.04646212131125,
+            -0.18816875259237217
+          ],
+          "phases_rad": [
+            2.895541522151981,
+            1.7582746733843364,
+            0.5517520161912404
+          ],
+          "phase_progress_deg": [
+            0.0,
+            65.1605906145289,
+            134.28924675860273
+          ],
+          "achieved_points_mm": [
+            [
+              100.0,
+              100.00000000000003
+            ],
+            [
+              160.0,
+              140.0
+            ],
+            [
+              220.0,
+              100.0
+            ]
+          ],
+          "achieved_orientations_deg": [
+            -7.541509065100365,
+            -2.236080496240317,
+            12.14708868737089
+          ],
+          "position_errors_mm": [
+            2.842170943040401e-14,
+            0.0,
+            0.0
+          ],
+          "orientation_errors_deg": [
+            2.458490934899629,
+            2.236080496240305,
+            2.147088687370882
+          ],
+          "cycle_checks": {
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 12.703590073954482,
+            "grashof": true,
+            "crank_is_strictly_shortest": true
+          },
+          "sampled_motion_minimum_transmission_deg": 12.703590232697254,
+          "target_minimum_transmission_deg": 17.652054738464408,
+          "envelope_min_mm": [
+            67.92926358981452,
+            -5.740154721141702
+          ],
+          "envelope_max_mm": [
+            392.15006224808565,
+            145.98784904568336
+          ],
+          "panel_screen_passed": false,
+          "pivot_clearance_passed": true,
+          "original_brief_passed": false,
+          "relaxed_limited_motion_passed": false,
+          "limited_reversing_input": false
+        },
+        {
+          "sample_index": 65505,
+          "direction": "negative",
+          "branch": -1,
+          "parameters_mm": [
+            235.23059716211847,
+            66.9852202160893,
+            194.05709838867188,
+            111.45214242703638,
+            0.15100842802869932,
+            11.448422400000002,
+            129.75143904273943,
+            63.0078815462205,
+            -0.2051719497515421
+          ],
+          "phases_rad": [
+            2.894508955895146,
+            1.7696727313018805,
+            0.5011723297854771
+          ],
+          "phase_progress_deg": [
+            0.0,
+            64.44836831262367,
+            137.12808763016392
+          ],
+          "achieved_points_mm": [
+            [
+              99.99999999999997,
+              99.99999999999999
+            ],
+            [
+              159.99999999999997,
+              140.0
+            ],
+            [
+              219.99999999999994,
+              100.0
+            ]
+          ],
+          "achieved_orientations_deg": [
+            -7.135147770061824,
+            -2.790439053467547,
+            12.353416304643503
+          ],
+          "position_errors_mm": [
+            3.1776437161565096e-14,
+            2.842170943040401e-14,
+            5.684341886080802e-14
+          ],
+          "orientation_errors_deg": [
+            2.8648522299381796,
+            2.790439053467537,
+            2.3534163046435026
+          ],
+          "cycle_checks": {
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 17.497660973620125,
+            "grashof": true,
+            "crank_is_strictly_shortest": true
+          },
+          "sampled_motion_minimum_transmission_deg": 17.49766196670473,
+          "target_minimum_transmission_deg": 21.3138723455392,
+          "envelope_min_mm": [
+            62.7662203801963,
+            -3.97733711632263
+          ],
+          "envelope_max_mm": [
+            383.56202040836047,
+            146.21145012502717
+          ],
+          "panel_screen_passed": false,
+          "pivot_clearance_passed": true,
+          "original_brief_passed": false,
+          "relaxed_limited_motion_passed": false,
+          "limited_reversing_input": false
+        },
+        {
+          "sample_index": 157905,
+          "direction": "negative",
+          "branch": -1,
+          "parameters_mm": [
+            237.939899844926,
+            67.48006025106352,
+            198.33112335205078,
+            109.56103654057763,
+            0.06784946964950013,
+            12.45978624,
+            146.15561791443173,
+            60.77326291933075,
+            -0.19632615413005614
+          ],
+          "phases_rad": [
+            2.9000095280920593,
+            1.7706600795392327,
+            0.5685497276321999
+          ],
+          "phase_progress_deg": [
+            0.0,
+            64.70695699750387,
+            133.582806670763
+          ],
+          "achieved_points_mm": [
+            [
+              99.99999999999999,
+              100.0
+            ],
+            [
+              160.0,
+              140.0
+            ],
+            [
+              220.0,
+              100.0
+            ]
+          ],
+          "achieved_orientations_deg": [
+            -7.441492429660577,
+            -2.964793760982547,
+            10.4041632888312
+          ],
+          "position_errors_mm": [
+            1.4210854715202004e-14,
+            0.0,
+            0.0
+          ],
+          "orientation_errors_deg": [
+            2.5585075703394295,
+            2.964793760982559,
+            0.40416328883119945
+          ],
+          "cycle_checks": {
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 15.179326967648885,
+            "grashof": true,
+            "crank_is_strictly_shortest": true
+          },
+          "sampled_motion_minimum_transmission_deg": 15.179328666840586,
+          "target_minimum_transmission_deg": 19.325595511829857,
+          "envelope_min_mm": [
+            67.38034998630073,
+            -6.7772847449107045
+          ],
+          "envelope_max_mm": [
+            405.0775011928291,
+            146.29383353226305
+          ],
+          "panel_screen_passed": false,
+          "pivot_clearance_passed": true,
+          "original_brief_passed": false,
+          "relaxed_limited_motion_passed": false,
+          "limited_reversing_input": false
+        },
+        {
+          "sample_index": 111705,
+          "direction": "negative",
+          "branch": -1,
+          "parameters_mm": [
+            258.6974075464171,
+            67.61790551533369,
+            219.19889831542972,
+            109.27869257033406,
+            0.23598192461627915,
+            15.352504320000001,
+            106.46944782538853,
+            59.632291750199954,
+            -0.18285063830586776
+          ],
+          "phases_rad": [
+            2.8364777288693035,
+            1.7373261254352592,
+            0.40532844197991874
+          ],
+          "phase_progress_deg": [
+            0.0,
+            62.9767479218079,
+            139.2945935050015
+          ],
+          "achieved_points_mm": [
+            [
+              100.00000000000003,
+              100.00000000000001
+            ],
+            [
+              160.00000000000003,
+              140.0
+            ],
+            [
+              220.00000000000003,
+              100.0
+            ]
+          ],
+          "achieved_orientations_deg": [
+            -7.288145245603454,
+            -2.8530279228318607,
+            11.609550947634348
+          ],
+          "position_errors_mm": [
+            3.1776437161565096e-14,
+            2.842170943040401e-14,
+            2.842170943040401e-14
+          ],
+          "orientation_errors_deg": [
+            2.7118547543965406,
+            2.8530279228318705,
+            1.6095509476343466
+          ],
+          "cycle_checks": {
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 13.964289997133777,
+            "grashof": true,
+            "crank_is_strictly_shortest": true
+          },
+          "sampled_motion_minimum_transmission_deg": 13.964298747039916,
+          "target_minimum_transmission_deg": 20.49263502072151,
+          "envelope_min_mm": [
+            38.85154303109273,
+            -7.985613044095842
+          ],
+          "envelope_max_mm": [
+            387.14626458434543,
+            146.2661575966783
+          ],
+          "panel_screen_passed": false,
+          "pivot_clearance_passed": true,
+          "original_brief_passed": false,
+          "relaxed_limited_motion_passed": false,
+          "limited_reversing_input": false
+        },
+        {
+          "sample_index": 236325,
+          "direction": "negative",
+          "branch": -1,
+          "parameters_mm": [
+            283.1725337381251,
+            66.18578573897564,
+            233.95745086669925,
+            116.8719477800009,
+            0.2076205448958586,
+            7.41927936,
+            109.41706060781942,
+            68.43913107734188,
+            -0.1857356381132295
+          ],
+          "phases_rad": [
+            2.84222804710558,
+            1.7301996966797075,
+            0.39907369619978583
+          ],
+          "phase_progress_deg": [
+            0.0,
+            63.71453117829743,
+            139.98243300592614
+          ],
+          "achieved_points_mm": [
+            [
+              100.0,
+              99.99999999999999
+            ],
+            [
+              160.0,
+              140.0
+            ],
+            [
+              220.0,
+              100.00000000000001
+            ]
+          ],
+          "achieved_orientations_deg": [
+            -7.869623079790631,
+            -2.3773118735398047,
+            12.238811396929108
+          ],
+          "position_errors_mm": [
+            1.4210854715202004e-14,
+            0.0,
+            1.4210854715202004e-14
+          ],
+          "orientation_errors_deg": [
+            2.1303769202093576,
+            2.37731187353981,
+            2.2388113969291226
+          ],
+          "cycle_checks": {
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 11.138029351955472,
+            "grashof": true,
+            "crank_is_strictly_shortest": true
+          },
+          "sampled_motion_minimum_transmission_deg": 11.138029519842338,
+          "target_minimum_transmission_deg": 18.069840668055924,
+          "envelope_min_mm": [
+            43.23127520834869,
+            2.2533456778711667
+          ],
+          "envelope_max_mm": [
+            402.7425733879488,
+            146.04320610014688
+          ],
+          "panel_screen_passed": false,
+          "pivot_clearance_passed": true,
+          "original_brief_passed": false,
+          "relaxed_limited_motion_passed": false,
+          "limited_reversing_input": false
+        },
+        {
+          "sample_index": 208725,
+          "direction": "negative",
+          "branch": -1,
+          "parameters_mm": [
+            284.1055611370376,
+            66.43099281028164,
+            242.4001693725586,
+            110.2272842550121,
+            0.2971525155191263,
+            9.98575104,
+            85.55472275531517,
+            67.34420104363025,
+            -0.1785530583731599
+          ],
+          "phases_rad": [
+            2.8192309374391464,
+            1.7192975956927188,
+            0.3048971498734913
+          ],
+          "phase_progress_deg": [
+            0.0,
+            63.02153822779115,
+            144.06071431465494
+          ],
+          "achieved_points_mm": [
+            [
+              99.99999999999996,
+              100.0
+            ],
+            [
+              160.0,
+              140.0
+            ],
+            [
+              220.0,
+              100.0
+            ]
+          ],
+          "achieved_orientations_deg": [
+            -7.298898782455823,
+            -2.958494231923184,
+            11.616338040307795
+          ],
+          "position_errors_mm": [
+            4.263256414560601e-14,
+            0.0,
+            0.0
+          ],
+          "orientation_errors_deg": [
+            2.7011012175441635,
+            2.958494231923197,
+            1.6163380403077952
+          ],
+          "cycle_checks": {
+            "full_cycle_assembly": true,
+            "global_minimum_transmission_deg": 13.471232226939007,
+            "grashof": true,
+            "crank_is_strictly_shortest": true
+          },
+          "sampled_motion_minimum_transmission_deg": 13.471242775024118,
+          "target_minimum_transmission_deg": 20.59306660106399,
+          "envelope_min_mm": [
+            19.12372994595924,
+            0.9132082342743217
+          ],
+          "envelope_max_mm": [
+            389.05305183312805,
+            146.35198795633818
+          ],
+          "panel_screen_passed": true,
+          "pivot_clearance_passed": true,
+          "original_brief_passed": true,
+          "relaxed_limited_motion_passed": false,
+          "limited_reversing_input": false
+        }
+      ]
+    }
+  },
+  "runtime_seconds": 0.7756284000060987
+}

@@ -1,0 +1,81 @@
+{
+  "samples": 65536,
+  "finite": 65536,
+  "in_bounds": 38453,
+  "individual_passes_among_in_bounds": {
+    "full_cycle_assembly": 0,
+    "assembly_margin": 0,
+    "grashof": 6899,
+    "grashof_margin": 6790,
+    "crank_strictly_shortest": 15361,
+    "crank_margin": 13282,
+    "branch_consistent": 37379,
+    "target_transmission": 23206,
+    "global_transmission": 0
+  },
+  "cumulative_original_gate": {
+    "assembly_margin": 0,
+    "grashof_margin": 0,
+    "crank_margin": 0
+  },
+  "one_gate_removals": {
+    "remove_assembly_margin": 0,
+    "remove_grashof_margin": 0,
+    "remove_crank_margin": 0,
+    "remove_all_robustness_margins": 0
+  },
+  "joint_failures": {
+    "assembly_margin + grashof_margin": 13282,
+    "assembly_margin + grashof_margin + crank_margin": 18381,
+    "assembly_margin + crank_margin": 6790
+  },
+  "margin_quantiles_normalized_by_target_span": {
+    "full_cycle_closure": [
+      -0.7495293831142917,
+      -0.42862813609066774,
+      -0.13328179826240882,
+      -0.04717316296195252,
+      -0.02074411821792399
+    ],
+    "assembly": [
+      -0.7495293831142917,
+      -0.42862813609066774,
+      -0.13328179826240882,
+      -0.04717316296195252,
+      -0.02074411821792399
+    ],
+    "grashof": [
+      -0.3681168490489526,
+      -0.220387953637209,
+      -0.08955951913929905,
+      0.07973471188823966,
+      0.14986088002465792
+    ],
+    "crank": [
+      -0.6537296504833012,
+      -0.3248731498042721,
+      -0.0222235052438573,
+      0.15323804922996664,
+      0.3138171879249072
+    ]
+  },
+  "directions": {
+    "positive": {
+      "branch_and_order": 0,
+      "all_seed_filters": 0
+    },
+    "negative": {
+      "branch_and_order": 0,
+      "all_seed_filters": 0
+    }
+  },
+  "original_counters_reproduced": true,
+  "independent_verification": {
+    "candidates_verified": 64,
+    "poses_verified": 192,
+    "maximum_position_error_normalized": 1.1314779551909883e-13,
+    "maximum_orientation_error_deg": 1.8758328224066645e-12,
+    "full_cycle_and_class_agreements": 64
+  },
+  "scope": "Exact-pose initialization within sampled bounds; not a proof about all geometry or the allowed pose-tolerance region. Panel bounds are not applied in this stage."
+}

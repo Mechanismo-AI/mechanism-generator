@@ -1,1 +1,5 @@
 * text=auto eol=lf
+# Preserve the byte fingerprints of frozen research evidence on every platform.
+examples/tabletop-transfer/*.json -text
+examples/tabletop-transfer/diagnosis/*.json -text
+examples/tabletop-transfer/integration/*.json -text

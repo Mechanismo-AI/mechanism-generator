@@ -32,10 +32,10 @@ POSE_CANDIDATE_FIELDS = (
 )
 
 
-def schema(version: str = "0.4") -> dict:
-    if version not in ("0.1", "0.2", "0.3", "0.4"):
+def schema(version: str = "0.5") -> dict:
+    if version not in ("0.1", "0.2", "0.3", "0.4", "0.5"):
         raise ValueError("Unsupported contribution schema version")
-    name = f"schema-v{version}.json" if version != "0.4" else "schema.json"
+    name = f"schema-v{version}.json" if version != "0.5" else "schema.json"
     return json.loads(files(__package__).joinpath(name).read_text(encoding="utf-8"))
 
 
@@ -91,7 +91,7 @@ def validate_bundle(bundle: dict) -> None:
                 raise ValueError("Selected or qualified count exceeds pose acceptance")
         elif any(key in task for key in POSE_COUNTS):
             raise ValueError("Pose outcome counts require an orientation task")
-    if version == "0.4":
+    if version in ("0.4", "0.5"):
         settings_direction = bundle.get("settings", {}).get("crank_direction")
         if settings_direction and any(task["crank_direction"] != settings_direction for task in tasks):
             raise ValueError("Settings crank direction disagrees with outcome")
@@ -102,6 +102,23 @@ def validate_bundle(bundle: dict) -> None:
             if any(item["crank_direction"] != by_id.get(group["task_id"], {}).get("crank_direction") for item in group["items"]):
                 raise ValueError("Candidate crank direction disagrees with outcome")
     task_details = {task["task_id"]: task for task in bundle.get("task", [])}
+    settings_panel = None
+    if version == "0.5":
+        settings = bundle.get("settings", {})
+        if "panel_bounds" in settings or "carrier_size" in settings:
+            if not all(key in settings for key in ("panel_bounds", "carrier_size", "panel_pivot_clearance", "panel_steps")):
+                raise ValueError("Included panel settings must retain all panel requirements")
+            settings_panel = dict(bounds=settings["panel_bounds"], carrier_size=settings["carrier_size"],
+                                  pivot_clearance=settings["panel_pivot_clearance"], steps=settings["panel_steps"])
+            _validate_panel_geometry(settings_panel)
+            if not all(task["panel_required"] for task in tasks):
+                raise ValueError("Panel settings contradict the recorded task type")
+        for outcome in tasks:
+            if outcome["panel_required"]:
+                if not max(outcome["selected_count"], outcome["selection_eligible_count"], outcome["engineering_acceptable_count"]) <= outcome["panel_acceptable_count"] <= outcome["candidate_count"]:
+                    raise ValueError("Panel acceptance counts contradict qualification")
+            elif "panel_acceptable_count" in outcome:
+                raise ValueError("Panel counts require a panel task")
     for section in ("task", "candidates"):
         seen = set()
         for task in bundle.get(section, []):
@@ -115,6 +132,12 @@ def validate_bundle(bundle: dict) -> None:
                     raise ValueError("Included pose task must retain its orientation requirements")
                 if not pose_required and any(key in task for key in POSE_TASK_FIELDS):
                     raise ValueError("Orientation requirements contradict the recorded task type")
+                if version == "0.5" and ("panel" in task) != by_id[identity]["panel_required"]:
+                    raise ValueError("Included task must retain its panel requirements")
+                if "panel" in task:
+                    _validate_panel_geometry(task["panel"])
+                    if settings_panel and any(task["panel"][key] != value for key, value in settings_panel.items()):
+                        raise ValueError("Task and settings panel requirements disagree")
                 if "pose_initialization" in task:
                     if not pose_required:
                         raise ValueError("Geometric initialization requires an orientation task")
@@ -129,6 +152,18 @@ def validate_bundle(bundle: dict) -> None:
                         raise ValueError("Geometric candidate count exceeds the seed budget")
                     if not diagnostic["enabled"] and diagnostic["attempted_samples"]:
                         raise ValueError("Disabled geometric initialization reports sampled work")
+                    if diagnostic["method"] == "three_pose_dyad_v2":
+                        if diagnostic["requested_samples"] != diagnostic["nominal_samples"] + diagnostic["tolerance_samples"] or diagnostic["returned_seeds"] != diagnostic["nominal_returned_seeds"] + diagnostic["tolerance_returned_seeds"]:
+                            raise ValueError("Nominal and tolerance initializer counts disagree")
+                    panel_counts = ("panel_pivot_pass_count", "panel_screened_count", "panel_passing_count")
+                    if by_id[identity].get("panel_required", False):
+                        if not all(key in diagnostic for key in panel_counts):
+                            raise ValueError("Panel initializer diagnostics are missing")
+                        chain = [diagnostic["transmission_selection_floors"], *(diagnostic[key] for key in panel_counts), diagnostic["returned_seeds"]]
+                        if any(after > before for before, after in zip(chain, chain[1:])):
+                            raise ValueError("Panel initializer counts are inconsistent")
+                    elif any(key in diagnostic for key in panel_counts):
+                        raise ValueError("Panel diagnostics require a panel task")
                     fingerprint = bundle.get("provenance", {}).get("pose_initialization_sha256")
                     if fingerprint is not None and fingerprint != diagnostic["source_sha256"]:
                         raise ValueError("Geometric source fingerprints disagree")
@@ -140,11 +175,36 @@ def validate_bundle(bundle: dict) -> None:
                 flags = ["path_acceptable", "selection_eligible", "engineering_acceptable"]
                 if pose_required:
                     flags.extend(["orientation_acceptable", "pose_acceptable"])
+                if by_id[identity].get("panel_required", False):
+                    flags.append("panel_acceptable")
                 for flag in flags:
                     if all(flag in item for item in items):
                         if sum(item[flag] for item in items) != by_id[identity][flag + "_count"]:
                             raise ValueError("Candidate qualification flags contradict outcome counts")
                 for item in items:
+                    panel_required = by_id[identity].get("panel_required", False)
+                    if panel_required:
+                        if item.get("panel_required") is not True:
+                            raise ValueError("Included candidates must retain their panel requirements")
+                        if (item["selection_eligible"] or item["engineering_acceptable"]) and not item["panel_acceptable"]:
+                            raise ValueError("Qualified candidate fails its panel gate")
+                        config = dict(bounds=[item[key] for key in ("panel_x_min", "panel_x_max", "panel_y_min", "panel_y_max")],
+                                      carrier_size=[item["carrier_width"], item["carrier_height"]],
+                                      pivot_clearance=item["panel_pivot_clearance_required"], steps=item["panel_steps"])
+                        _validate_panel_geometry(config)
+                        if settings_panel and settings_panel != config:
+                            raise ValueError("Candidate and settings panel requirements disagree")
+                        if item["panel_geometry_valid"]:
+                            expected = item["panel_edge_clearance"] >= 0 and item["panel_pivot_clearance"] >= config["pivot_clearance"]
+                            if item["panel_acceptable"] != expected:
+                                raise ValueError("Panel decision contradicts the reported clearance")
+                        elif item["panel_acceptable"]:
+                            raise ValueError("Undefined panel geometry cannot pass")
+                        details = task_details.get(identity, {}).get("panel")
+                        if details and any(details[key] != value for key, value in config.items()):
+                            raise ValueError("Candidate and task panel requirements disagree")
+                    elif any(key.startswith(("panel_", "carrier_")) for key in item):
+                        raise ValueError("Candidate panel fields contradict the recorded task type")
                     if pose_required:
                         if item.get("orientation_required") is not True:
                             raise ValueError("Included pose candidates must retain their orientation requirements")
@@ -192,6 +252,14 @@ def _project(source, properties, *, csv_values=False):
     return result
 
 
+def _validate_panel_geometry(config):
+    xmin, xmax, ymin, ymax = config["bounds"]
+    if (xmin >= xmax or ymin >= ymax or min(config["carrier_size"]) <= 0
+            or config["pivot_clearance"] < 0
+            or 2 * config["pivot_clearance"] >= min(xmax - xmin, ymax - ymin)):
+        raise ValueError("Panel geometry is invalid")
+
+
 def _inside(root: Path, relative: str) -> Path:
     if not isinstance(relative, str) or Path(relative).is_absolute():
         raise ValueError("Run artifact must use a relative path")
@@ -210,7 +278,7 @@ def build_bundle(run_directory: Path) -> dict:
         raise ValueError("Only R2.5c run manifests are supported")
     props = schema()["properties"]
     bundle = {
-        "schema_version": "0.4", "kind": "local",
+        "schema_version": "0.5", "kind": "local",
         "core": {"generator_version": __version__, "engine": "r2.5c",
                  "run_status": manifest.get("run_status", "unknown"),
                  "validation_status": "unreviewed", "tasks": []},
@@ -223,8 +291,12 @@ def build_bundle(run_directory: Path) -> dict:
         direction = target.get("crank_direction", manifest.get("arguments", {}).get("crank_direction", "positive"))
         pose_required = any(key in target for key in (*POSE_TASK_FIELDS, *POSE_COUNTS))
         core = {"task_id": identity, **{key: target[key] for key in COUNT_FIELDS},
-                "orientation_required": pose_required, "crank_direction": direction}
+                "orientation_required": pose_required, "crank_direction": direction,
+                "panel_required": "panel" in target}
         task_record = {"task_id": identity, "target_values": target["target_values"], "crank_direction": direction}
+        if "panel" in target:
+            core["panel_acceptable_count"] = target["panel_acceptable_count"]
+            task_record["panel"] = _project(target["panel"], props["task"]["items"]["properties"]["panel"]["properties"])
         if pose_required:
             core.update({key: target[key] for key in POSE_COUNTS})
             task_record.update({key: target[key] for key in POSE_TASK_FIELDS})
@@ -259,7 +331,8 @@ def build_bundle(run_directory: Path) -> dict:
     bundle["provenance"].update(_project({"engine_sha256": manifest.get("script_sha256"),
         "parent_engine_sha256": manifest.get("engine_sha256"),
         "orientation_sha256": manifest.get("orientation_sha256"),
-        "pose_initialization_sha256": manifest.get("pose_initialization_sha256")}, provenance))
+        "pose_initialization_sha256": manifest.get("pose_initialization_sha256"),
+        "panel_screening_sha256": manifest.get("panel_screening_sha256")}, provenance))
     for model in manifest.get("models", []):
         selected = _project(model, provenance["models"]["items"]["properties"])
         if set(selected) == {"role", "sha256"}:

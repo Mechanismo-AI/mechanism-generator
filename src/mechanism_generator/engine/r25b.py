@@ -347,6 +347,12 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--strict_qualification", action="store_true")
     parser.add_argument("--allow_unqualified_fallback", action="store_true")
 
+    parser.add_argument("--panel_bounds", type=float, nargs=4, metavar=("XMIN", "XMAX", "YMIN", "YMAX"))
+    parser.add_argument("--carrier_size", type=float, nargs=2, metavar=("WIDTH", "HEIGHT"),
+                        help="Rectangle centred on P, width parallel to coupler A-to-B; same units as targets")
+    parser.add_argument("--panel_pivot_clearance", type=float, default=0.)
+    parser.add_argument("--panel_steps", type=int, default=7201,
+                        help="Full-turn sampled panel containment phases (361 to 72001); not a collision certificate")
     parser.add_argument("--top_k", type=int, default=5)
     parser.add_argument("--dedup_parameter_threshold", type=float, default=0.025)
     parser.add_argument("--dedup_curve_threshold", type=float, default=0.025)
@@ -363,6 +369,11 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def validate_args(parser: argparse.ArgumentParser, args: argparse.Namespace) -> None:
+    from . import panel
+    try:
+        panel.configuration(args)
+    except ValueError as error:
+        parser.error(str(error))
     if args.target_orientations_deg is None:
         if args.orientation_tolerances_deg is not None:
             parser.error("Orientation tolerances require --target_orientations_deg")
@@ -2169,6 +2180,10 @@ def evaluate_selected_candidate(
             record[f"orientation_tolerance_{i + 1}_deg"] = float(pose_tolerances(args)[i])
             record[f"matched_orientation_{i + 1}_deg"] = float(torch.rad2deg(pose["angles_rad"][0, i]).item())
             record[f"orientation_error_{i + 1}_deg"] = float(pose["errors_deg"][0, i].item())
+    from . import panel
+    panel_config = panel.configuration(args)
+    if panel_config:
+        record.update(panel.screen(params_np, start.branch_sign, panel_config))
     return record
 
 def flat_candidate_row(candidate: Dict[str, Any]) -> Dict[str, Any]:
@@ -2307,7 +2322,8 @@ def apply_shared_candidate_qualification(
             and (args.engineering_max_sweep_radius_ratio <= 0.0 or candidate["sweep_radius_ratio"] <= args.engineering_max_sweep_radius_ratio + 1e-12)
         )
         orientation_ok = (not has_pose_targets(args)) or bool(candidate.get("orientation_acceptable", False))
-        engineering_ok = bool(path_ok and orientation_ok and target_tx_ok and global_tx_ok and robustness_ok and compactness_ok)
+        panel_ok = getattr(args, "panel_bounds", None) is None or bool(candidate.get("panel_acceptable", False))
+        engineering_ok = bool(path_ok and orientation_ok and panel_ok and target_tx_ok and global_tx_ok and robustness_ok and compactness_ok)
         target_selection_ok = bool(
             args.minimum_target_transmission <= 0.0
             or candidate["target_angle_min_deg"] + 1e-12 >= args.minimum_target_transmission
@@ -2316,13 +2332,15 @@ def apply_shared_candidate_qualification(
             args.minimum_global_transmission <= 0.0
             or candidate["global_angle_min_deg"] + 1e-12 >= args.minimum_global_transmission
         )
-        selection_ok = bool(path_ok and orientation_ok and target_selection_ok and global_selection_ok and robustness_ok and compactness_ok)
+        selection_ok = bool(path_ok and orientation_ok and panel_ok and target_selection_ok and global_selection_ok and robustness_ok and compactness_ok)
         if engineering_ok:
             level = "engineering_acceptable"
         elif selection_ok:
             level = "selection_acceptable"
         elif path_ok and not orientation_ok:
             level = "path_acceptable_but_orientation_failed"
+        elif path_ok and not panel_ok:
+            level = "path_acceptable_but_panel_failed"
         elif path_ok and not robustness_ok:
             level = "path_acceptable_but_robustness_failed"
         elif path_ok and not compactness_ok:
@@ -2507,6 +2525,7 @@ def save_candidate_artifacts(
         crank_direction=np.asarray(candidate.get("crank_direction", "positive")),
         phases_rad=np.asarray(candidate["phases_rad"], dtype=float),
         theta=np.asarray(candidate["dense_theta"], dtype=float),
+        **{key: np.asarray(value) for key, value in candidate.items() if key.startswith(("panel_", "carrier_"))},
         **{f"dense_{key}": value for key, value in dense.items()},
         **{f"phase_{key}": value for key, value in phase.items()},
     )

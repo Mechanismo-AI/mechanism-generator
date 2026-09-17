@@ -18,7 +18,11 @@ import time
 
 import numpy as np
 
+from . import panel
+
 METHOD = "three_pose_dyad_v1"
+TOLERANCE_METHOD = "three_pose_tolerance_dyad_v1"
+MAX_SAMPLES = 262144
 
 
 def _radical_inverse(count, base):
@@ -47,7 +51,7 @@ def _circumcenter(points):
     return center, radius, defined
 
 
-def generate_pose_seeds(points, orientations, args, *, sample_count=4096, max_seeds=6):
+def generate_pose_seeds(points, orientations, args, *, sample_count=4096, max_seeds=6, tolerance_aware=False):
     """Construct up to six diverse exact seeds from the requested poses alone.
 
     ``args`` supplies the existing engine's bounds, ordering, branch selection,
@@ -56,18 +60,21 @@ def generate_pose_seeds(points, orientations, args, *, sample_count=4096, max_se
     can produce an empty result; the regular search remains available.
     """
     started = time.perf_counter()
-    if isinstance(sample_count, bool) or not isinstance(sample_count, int) or sample_count < 0:
-        raise ValueError("Pose dyad sample count must be a non-negative integer.")
+    if isinstance(sample_count, bool) or not isinstance(sample_count, int) or not 0 <= sample_count <= MAX_SAMPLES:
+        raise ValueError(f"Pose dyad sample count must be an integer from 0 to {MAX_SAMPLES}.")
     if isinstance(max_seeds, bool) or not isinstance(max_seeds, int) or not 0 <= max_seeds <= 6:
         raise ValueError("Pose dyad seed count must be an integer between 0 and 6.")
     samples, count = sample_count, max_seeds
     counters = {
-        "method": METHOD, "enabled": bool(samples and count),
+        "method": TOLERANCE_METHOD if tolerance_aware else METHOD, "enabled": bool(samples and count),
         "requested_samples": samples, "requested_seed_count": count,
         "attempted_samples": 0, "finite_dyads": 0, "within_search_bounds": 0,
         "full_cycle_robust_crank_shortest": 0, "branch_and_order_consistent": 0,
         "transmission_selection_floors": 0, "returned_seeds": 0,
     }
+    panel_config = panel.configuration(args)
+    if panel_config:
+        counters.update(panel_pivot_pass_count=0, panel_screened_count=0, panel_passing_count=0)
     if not counters["enabled"]:
         counters["generation_runtime_seconds"] = time.perf_counter() - started
         return [], counters
@@ -83,8 +90,16 @@ def generate_pose_seeds(points, orientations, args, *, sample_count=4096, max_se
     centroid = world.mean(axis=0)
     points = (world - centroid) / scale
     angles = np.radians(np.remainder(orientations, 360.))
-    direction = np.column_stack((np.cos(angles), np.sin(angles)))
-    normal = np.column_stack((-np.sin(angles), np.cos(angles)))
+    if tolerance_aware:
+        tolerances = np.asarray(getattr(args, "orientation_tolerances_deg", None), dtype=float)
+        if tolerances.shape != (3,) or not np.isfinite(tolerances).all() or not ((tolerances > 0) & (tolerances < 180)).all():
+            raise ValueError("Tolerance-aware seeds require three finite angular tolerances between 0 and 180 degrees.")
+        jitter = 2 * np.column_stack([_radical_inverse(samples, base) for base in (7, 11, 13)]) - 1
+        angles = angles[None, :] + np.radians(jitter * tolerances)
+    else:
+        angles = angles[None, :]
+    direction = np.stack((np.cos(angles), np.sin(angles)), axis=-1)
+    normal = np.stack((-np.sin(angles), np.cos(angles)), axis=-1)
     u = np.column_stack([_radical_inverse(samples, base) for base in (2, 3, 5)])
     moving_min = max(.001 / scale, args.moving_link_min_ratio)
     moving_max = max(moving_min + 1e-6 / scale, args.moving_link_max_ratio)
@@ -93,8 +108,8 @@ def generate_pose_seeds(points, orientations, args, *, sample_count=4096, max_se
     min_bar = .1 / scale
     max_bar = max(min_bar + 1e-6 / scale, args.bar_length_max_ratio)
     bar = min_bar + u[:, 2] * (max_bar - min_bar)
-    a = points[None] - (s * l3)[:, None, None] * direction[None] - bar[:, None, None] * normal[None]
-    b = a + l3[:, None, None] * direction[None]
+    a = points[None] - (s * l3)[:, None, None] * direction - bar[:, None, None] * normal
+    b = a + l3[:, None, None] * direction
     o2, l2, ok_a = _circumcenter(a)
     o4, l4, ok_b = _circumcenter(b)
     ground = o4 - o2
@@ -144,22 +159,29 @@ def generate_pose_seeds(points, orientations, args, *, sample_count=4096, max_se
     counters['branch_and_order_consistent'] = int(mask.sum())
     mask &= (target_tx >= args.minimum_target_transmission) & (global_tx >= args.minimum_global_transmission)
     counters['transmission_selection_floors'] = int(mask.sum())
-    indices = np.flatnonzero(mask)
     parameters = np.column_stack((links*scale, s, bar*scale, o2*scale + centroid, base_angle))
+    if panel_config:
+        mask &= panel.pivot_clearances(parameters, panel_config) >= panel_config["pivot_clearance"]
+        counters["panel_pivot_pass_count"] = int(mask.sum())
+    indices = np.flatnonzero(mask)
     # Prefer the requested transmission goals, then transmission margin and size.
     preferred = (target_tx >= args.target_transmission_deg) & (global_tx >= args.global_transmission_floor_deg)
     ranking = sorted(indices, key=lambda i: (not preferred[i], -min(target_tx[i], global_tx[i]), links[i].sum(), i))
     selected = []
     features = np.column_stack((links, s, bar, o2))
     for index in ranking:
+        if panel_config:
+            counters["panel_screened_count"] += 1
+            if not panel.screen(parameters[index], int(signs[index, 0]), panel_config)["panel_acceptable"]:
+                continue
+            counters["panel_passing_count"] += 1
         if all(np.linalg.norm(features[index] - features[other]) > .1 for other in selected):
             selected.append(index)
         if len(selected) >= count:
             break
-    result = [{'sample_index': int(i + 1), 'parameters': parameters[i].tolist(), 'phases_rad': phases[i].tolist(),
+    result = [{'sample_index': int(i + 1), 'proposal_source': counters['method'], 'parameters': parameters[i].tolist(), 'phases_rad': phases[i].tolist(),
                'branch_sign': int(signs[i, 0]), 'target_transmission_deg': float(target_tx[i]),
                'global_transmission_deg': float(global_tx[i])} for i in selected]
     counters['returned_seeds'] = len(result)
     counters['generation_runtime_seconds'] = time.perf_counter() - started
     return result, counters
-

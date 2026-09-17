@@ -203,6 +203,13 @@ def semantic_errors(data: dict) -> list[str]:
             if not lo <= ground["value"] <= hi:
                 errors.append(f"{path}.mechanism_search: fixed ground value is outside l1 bounds.")
         tx = task.get("requirements", {}).get("transmission", {})
+        panel = task.get("requirements", {}).get("panel")
+        if panel is not None:
+            xmin, xmax, ymin, ymax = panel["bounds"]
+            if dimension != 2:
+                errors.append(f"{path}.requirements.panel: sampled rectangular panel requires a planar task.")
+            if xmin >= xmax or ymin >= ymax or 2 * panel.get("pivot_clearance", 0) >= min(xmax - xmin, ymax - ymin):
+                errors.append(f"{path}.requirements.panel: bounds and fixed-pivot clearance must leave a usable interior.")
         for key in ("min_at_targets", "min_global", "selection_min_at_targets", "selection_min_global"):
             if tx.get(key, 0) > angle_limit:
                 errors.append(f"{path}.requirements.transmission.{key}: exceeds {angle_limit:g} {data['units']['angle']}.")

@@ -120,8 +120,13 @@ The candidates have `model_role=pose_geometry`, origins `pose_seed` or
 neural proposals. Target manifests record the sample and rejection counts,
 runtime and source hash under `pose_initialization`. Contributions retain these
 allowlisted diagnostics. Point-only tasks do not execute this initializer.
-Set `--pose_dyad_samples 0` to disable it for an ablation; the maximum retained
+Set `--pose_dyad_samples 0` to disable the nominal branch for an ablation; the maximum retained
 seed count is controlled by `--pose_dyad_seed_count` (0 through 6).
+
+Release v0.1.0a7 also samples **within** requested angular
+tolerances, with separate seed slots and optional sampled panel containment.
+Disable this additional branch with `--pose_tolerance_samples 0`; disable both
+with `--pose_dyad_seed_count 0`. See [budgets, qualification and evidence](tolerance-and-panel.md).
 
 The new method adds work to the previous search budget. The
 [frozen broader evaluation](pose-corpus.md) records that work separately and

@@ -1,0 +1,76 @@
+{
+  "sample_index": 208725,
+  "direction": "negative",
+  "branch": -1,
+  "parameters_mm": [
+    284.1055611370376,
+    66.43099281028164,
+    242.4001693725586,
+    110.2272842550121,
+    0.2971525155191263,
+    9.98575104,
+    85.55472275531517,
+    67.34420104363025,
+    -0.1785530583731599
+  ],
+  "phases_rad": [
+    2.8192309374391464,
+    1.7192975956927188,
+    0.3048971498734913
+  ],
+  "phase_progress_deg": [
+    0.0,
+    63.02153822779115,
+    144.06071431465494
+  ],
+  "achieved_points_mm": [
+    [
+      99.99999999999996,
+      100.0
+    ],
+    [
+      160.0,
+      140.0
+    ],
+    [
+      220.0,
+      100.0
+    ]
+  ],
+  "achieved_orientations_deg": [
+    -7.298898782455823,
+    -2.958494231923184,
+    11.616338040307795
+  ],
+  "position_errors_mm": [
+    4.263256414560601e-14,
+    0.0,
+    0.0
+  ],
+  "orientation_errors_deg": [
+    2.7011012175441635,
+    2.958494231923197,
+    1.6163380403077952
+  ],
+  "cycle_checks": {
+    "full_cycle_assembly": true,
+    "global_minimum_transmission_deg": 13.471232226939007,
+    "grashof": true,
+    "crank_is_strictly_shortest": true
+  },
+  "sampled_motion_minimum_transmission_deg": 13.471242775024118,
+  "target_minimum_transmission_deg": 20.59306660106399,
+  "envelope_min_mm": [
+    19.12372994595924,
+    0.9132082342743217
+  ],
+  "envelope_max_mm": [
+    389.05305183312805,
+    146.35198795633818
+  ],
+  "panel_screen_passed": true,
+  "pivot_clearance_passed": true,
+  "original_brief_passed": true,
+  "relaxed_limited_motion_passed": false,
+  "limited_reversing_input": false
+}

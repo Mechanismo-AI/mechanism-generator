@@ -1,0 +1,10 @@
+{
+  "id": "tabletop-transfer-tolerance-density-v1",
+  "frozen_before_execution": true,
+  "basis": "65536 tolerance-aware samples produced 59 negative-direction candidates satisfying seed motion filters. Two passed pivot clearance but missed panel fit by 5.740 and 3.977 mm below y=0.",
+  "change": "Increase deterministic tolerance-aware sample count from 65536 to 262144. Keep the sequence, angle tolerance, positions, geometry bounds and all screens unchanged. This is extra compute on known development data, not an independent trial.",
+  "samples": 262144,
+  "settings": {"angle_jitter_deg": 3.0},
+  "panel_screen_budget": "Same at-most-128 shortest-total-link candidates per direction after fixed-pivot screening; 7201 phases each.",
+  "decision": "Record successes and failures against the unchanged original brief. Any passing witness requires independent checks and a second denser panel check before reporting it as a kinematic candidate. Do not equate sampled containment with hardware validation."
+}

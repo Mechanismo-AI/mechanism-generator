@@ -1,0 +1,3817 @@
+{
+  "brief_sha256": "89306bb105b71df4ad74562ce3d4cd0daf2534b4ca5f10fc4dac0bb56eaaa383",
+  "unit_conversion_verified_by_independent_physical_geometry": true,
+  "engine_counts": {
+    "negative": {
+      "all": 20,
+      "engine_selected": 1,
+      "engine_eligible": 2,
+      "pose_initializer": {
+        "attempted_samples": 266240,
+        "branch_and_order_consistent": 239,
+        "enabled": true,
+        "evaluated_seed_count": 1,
+        "finite_dyads": 266240,
+        "full_cycle_robust_crank_shortest": 244,
+        "generation_runtime_seconds": 0.5169160999939777,
+        "method": "three_pose_dyad_v2",
+        "nominal_returned_seeds": 0,
+        "nominal_samples": 4096,
+        "panel_passing_count": 1,
+        "panel_pivot_pass_count": 7,
+        "panel_screened_count": 7,
+        "refined_candidate_count": 1,
+        "refinement_runtime_seconds": 1.5464236999978311,
+        "requested_samples": 266240,
+        "requested_seed_count": 12,
+        "returned_seeds": 1,
+        "source_sha256": "5011ad2ef1d4dc4e4277093b30c0e6bb906a19456bdb673084f0d0bac2c50e7a",
+        "tolerance_returned_seeds": 1,
+        "tolerance_samples": 262144,
+        "transmission_selection_floors": 230,
+        "verification_runtime_seconds": 0.009201300010317937,
+        "within_search_bounds": 155356
+      }
+    },
+    "positive": {
+      "all": 18,
+      "engine_selected": 0,
+      "engine_eligible": 0,
+      "pose_initializer": {
+        "attempted_samples": 266240,
+        "branch_and_order_consistent": 0,
+        "enabled": true,
+        "evaluated_seed_count": 0,
+        "finite_dyads": 266240,
+        "full_cycle_robust_crank_shortest": 244,
+        "generation_runtime_seconds": 0.5070050999929663,
+        "method": "three_pose_dyad_v2",
+        "nominal_returned_seeds": 0,
+        "nominal_samples": 4096,
+        "panel_passing_count": 0,
+        "panel_pivot_pass_count": 0,
+        "panel_screened_count": 0,
+        "refined_candidate_count": 0,
+        "refinement_runtime_seconds": 0.0,
+        "requested_samples": 266240,
+        "requested_seed_count": 12,
+        "returned_seeds": 0,
+        "source_sha256": "5011ad2ef1d4dc4e4277093b30c0e6bb906a19456bdb673084f0d0bac2c50e7a",
+        "tolerance_returned_seeds": 0,
+        "tolerance_samples": 262144,
+        "transmission_selection_floors": 0,
+        "verification_runtime_seconds": 0.0,
+        "within_search_bounds": 155356
+      }
+    }
+  },
+  "identity": [
+    {
+      "direction": "negative",
+      "seed": 101,
+      "engine_sha256": "fd802f5e8d879e742ba09a5d4f880f77f8c7376a4680da744a630d7301477f33",
+      "portfolio_sha256": "750b19a8d89d09fc6d774b7572f0c495678b831d5b96a49cccaac2e2cce0bd1c",
+      "orientation_sha256": "cb7443226549e536f1c46f7f58bb01fb5016627227c293efb81e2ce1dce5786a",
+      "pose_initialization_sha256": "5011ad2ef1d4dc4e4277093b30c0e6bb906a19456bdb673084f0d0bac2c50e7a",
+      "panel_screening_sha256": "cb2cb38dbdf085253acef4210a063386e932718b3d97f5973f4ea0ed902b214f",
+      "models": [
+        {
+          "role": "balanced",
+          "sha256": "72a20f1f6828686c18100b3f5c7f913161b6042cfd9ea3baac15042d1b9fa8a0"
+        },
+        {
+          "role": "path",
+          "sha256": "8193a5d5208c227424cd570405b4c148cc2987c3a266a348a0f6b8184445f61e"
+        },
+        {
+          "role": "transmission",
+          "sha256": "30a23c4aee3a7d5e29673757a791acde6bddd93cf207aaea0cceb5627621e55f"
+        }
+      ]
+    },
+    {
+      "direction": "positive",
+      "seed": 101,
+      "engine_sha256": "fd802f5e8d879e742ba09a5d4f880f77f8c7376a4680da744a630d7301477f33",
+      "portfolio_sha256": "750b19a8d89d09fc6d774b7572f0c495678b831d5b96a49cccaac2e2cce0bd1c",
+      "orientation_sha256": "cb7443226549e536f1c46f7f58bb01fb5016627227c293efb81e2ce1dce5786a",
+      "pose_initialization_sha256": "5011ad2ef1d4dc4e4277093b30c0e6bb906a19456bdb673084f0d0bac2c50e7a",
+      "panel_screening_sha256": "cb2cb38dbdf085253acef4210a063386e932718b3d97f5973f4ea0ed902b214f",
+      "models": [
+        {
+          "role": "balanced",
+          "sha256": "72a20f1f6828686c18100b3f5c7f913161b6042cfd9ea3baac15042d1b9fa8a0"
+        },
+        {
+          "role": "path",
+          "sha256": "8193a5d5208c227424cd570405b4c148cc2987c3a266a348a0f6b8184445f61e"
+        },
+        {
+          "role": "transmission",
+          "sha256": "30a23c4aee3a7d5e29673757a791acde6bddd93cf207aaea0cceb5627621e55f"
+        }
+      ]
+    }
+  ],
+  "all_candidate_assessments": [
+    {
+      "id": "negative-fixed_001",
+      "direction": "negative",
+      "branch": -1,
+      "parameters_mm": [
+        180.0,
+        58.991515833135146,
+        328.22121360746996,
+        314.77313312906807,
+        0.17825409639503534,
+        6.937449060090388,
+        104.70290494045821,
+        69.46483488668896,
+        5.159819618907816
+      ],
+      "phases_rad": [
+        3.9519342848425416,
+        2.791795866441608,
+        1.7307752014618076
+      ],
+      "position_errors_mm": [
+        8.527472739100153,
+        9.08866264675903,
+        8.943760959201565
+      ],
+      "orientation_errors_deg": [
+        22.957339847259988,
+        3.835623694033302,
+        23.069101488409416
+      ],
+      "mean_position_error_mm": 8.853298781686915,
+      "maximum_position_error_mm": 9.08866264675903,
+      "maximum_orientation_error_deg": 23.069101488409416,
+      "achieved_points_mm": [
+        [
+          104.03946277092906,
+          107.5100287508354
+        ],
+        [
+          157.79228242281278,
+          131.18355106599196
+        ],
+        [
+          211.70263968847698,
+          96.6616363355529
+        ]
+      ],
+      "achieved_orientations_deg": [
+        12.957339847259984,
+        -3.835623694033293,
+        -13.069101488409405
+      ],
+      "global_minimum_transmission_deg": 21.563730190348938,
+      "target_minimum_transmission_deg": 35.81998546409771,
+      "envelope_min_mm": [
+        45.711390896856905,
+        -92.81627338269759
+      ],
+      "envelope_max_mm": [
+        484.755264973769,
+        171.20683979321433
+      ],
+      "phase_progress_deg": [
+        0.0,
+        66.47103502535595,
+        127.26304110486257
+      ],
+      "checks": {
+        "mean_position": false,
+        "maximum_position": false,
+        "orientation": false,
+        "target_assembly": true,
+        "target_order": true,
+        "full_cycle_assembly": true,
+        "grashof": true,
+        "crank_shortest": true,
+        "target_transmission": true,
+        "global_transmission": true,
+        "panel_fit": false,
+        "pivot_clearance": false
+      },
+      "failed_checks": [
+        "mean_position",
+        "maximum_position",
+        "orientation",
+        "panel_fit",
+        "pivot_clearance"
+      ],
+      "engine_selection_eligible": false,
+      "brief_passed": false,
+      "pose_tolerance_ratio": 8.853298781686915,
+      "engine_selected": false
+    },
+    {
+      "id": "negative-fixed_002",
+      "direction": "negative",
+      "branch": 1,
+      "parameters_mm": [
+        180.0,
+        63.50501361078655,
+        338.32694006401096,
+        252.6065948698648,
+        0.1531351697420861,
+        3.9485658642546158,
+        108.96498395307992,
+        84.89423783335296,
+        0.8220837767869291
+      ],
+      "phases_rad": [
+        1.9024506592591859,
+        0.7446690261547568,
+        5.323825235796518
+      ],
+      "position_errors_mm": [
+        2.0147873327085093,
+        0.882883866342917,
+        1.8745857196421036
+      ],
+      "orientation_errors_deg": [
+        7.723472732346238,
+        12.937633667895199,
+        12.737201058398995
+      ],
+      "mean_position_error_mm": 1.5907523062311766,
+      "maximum_position_error_mm": 2.0147873327085093,
+      "maximum_orientation_error_deg": 12.937633667895199,
+      "achieved_points_mm": [
+        [
+          101.45606704183436,
+          98.60743518437151
+        ],
+        [
+          160.60034190590147,
+          140.64735887841846
+        ],
+        [
+          218.12990668320862,
+          99.87029800780903
+        ]
+      ],
+      "achieved_orientations_deg": [
+        -17.723472732346234,
+        -12.937633667895204,
+        22.737201058399005
+      ],
+      "global_minimum_transmission_deg": 15.508224146738526,
+      "target_minimum_transmission_deg": 21.84564918187443,
+      "envelope_min_mm": [
+        45.459970378352445,
+        7.226198189106583
+      ],
+      "envelope_max_mm": [
+        484.0968912164966,
+        229.80005939226214
+      ],
+      "phase_progress_deg": [
+        0.0,
+        66.33600117464773,
+        163.96967663105164
+      ],
+      "checks": {
+        "mean_position": false,
+        "maximum_position": false,
+        "orientation": false,
+        "target_assembly": true,
+        "target_order": true,
+        "full_cycle_assembly": true,
+        "grashof": true,
+        "crank_shortest": true,
+        "target_transmission": true,
+        "global_transmission": true,
+        "panel_fit": false,
+        "pivot_clearance": true
+      },
+      "failed_checks": [
+        "mean_position",
+        "maximum_position",
+        "orientation",
+        "panel_fit"
+      ],
+      "engine_selection_eligible": false,
+      "brief_passed": false,
+      "pose_tolerance_ratio": 4.312544555965066,
+      "engine_selected": false
+    },
+    {
+      "id": "negative-fixed_003",
+      "direction": "negative",
+      "branch": -1,
+      "parameters_mm": [
+        180.0,
+        58.53725664257317,
+        328.5041264066805,
+        315.1998479367153,
+        0.18226161488315942,
+        6.900561202164306,
+        104.64215384806823,
+        69.46227719837555,
+        5.157261693499779
+      ],
+      "phases_rad": [
+        3.9578324357590215,
+        2.7891695085759776,
+        1.746159786186169
+      ],
+      "position_errors_mm": [
+        9.353669200126543,
+        9.448730650734955,
+        8.46661263908333
+      ],
+      "orientation_errors_deg": [
+        22.91698642066865,
+        3.894349864540942,
+        22.967152460293136
+      ],
+      "mean_position_error_mm": 9.089670829981609,
+      "maximum_position_error_mm": 9.448730650734955,
+      "maximum_orientation_error_deg": 22.967152460293136,
+      "achieved_points_mm": [
+        [
+          105.70555760657028,
+          107.41199972365784
+        ],
+        [
+          159.44222327416043,
+          130.5677470329592
+        ],
+        [
+          212.17161111831376,
+          96.77511905686785
+        ]
+      ],
+      "achieved_orientations_deg": [
+        12.916986420668644,
+        -3.894349864540934,
+        -12.967152460293132
+      ],
+      "global_minimum_transmission_deg": 21.6253017242027,
+      "target_minimum_transmission_deg": 35.894306083901895,
+      "envelope_min_mm": [
+        46.10489822075429,
+        -93.01750375241718
+      ],
+      "envelope_max_mm": [
+        484.5781781100569,
+        170.55224689842734
+      ],
+      "phase_progress_deg": [
+        0.0,
+        66.95945340099307,
+        126.71950848504073
+      ],
+      "checks": {
+        "mean_position": false,
+        "maximum_position": false,
+        "orientation": false,
+        "target_assembly": true,
+        "target_order": true,
+        "full_cycle_assembly": true,
+        "grashof": true,
+        "crank_shortest": true,
+        "target_transmission": true,
+        "global_transmission": true,
+        "panel_fit": false,
+        "pivot_clearance": false
+      },
+      "failed_checks": [
+        "mean_position",
+        "maximum_position",
+        "orientation",
+        "panel_fit",
+        "pivot_clearance"
+      ],
+      "engine_selection_eligible": false,
+      "brief_passed": false,
+      "pose_tolerance_ratio": 9.089670829981609,
+      "engine_selected": false
+    },
+    {
+      "id": "negative-fixed_004",
+      "direction": "negative",
+      "branch": 1,
+      "parameters_mm": [
+        180.0,
+        63.28389635293484,
+        335.9700140013705,
+        260.6372127709652,
+        0.14475245708200876,
+        3.852012254175076,
+        111.6668640670051,
+        83.38142096787413,
+        0.8942433723616068
+      ],
+      "phases_rad": [
+        1.824304174964195,
+        0.6696516524840304,
+        5.302024581163735
+      ],
+      "position_errors_mm": [
+        1.9743332735451786,
+        0.8414738272114505,
+        1.9495743185168428
+      ],
+      "orientation_errors_deg": [
+        6.98214318918113,
+        11.594139334770318,
+        12.76034197237712
+      ],
+      "mean_position_error_mm": 1.5884604730911576,
+      "maximum_position_error_mm": 1.9743332735451786,
+      "maximum_orientation_error_deg": 12.76034197237712,
+      "achieved_points_mm": [
+        [
+          101.59886112059617,
+          98.84171031599449
+        ],
+        [
+          160.51794920338102,
+          140.6631793306481
+        ],
+        [
+          218.06714081822355,
+          100.25474576903824
+        ]
+      ],
+      "achieved_orientations_deg": [
+        -16.982143189181137,
+        -11.594139334770317,
+        22.76034197237711
+      ],
+      "global_minimum_transmission_deg": 17.327219133758717,
+      "target_minimum_transmission_deg": 22.100416745806932,
+      "envelope_min_mm": [
+        48.38296950442853,
+        10.665684559637867
+      ],
+      "envelope_max_mm": [
+        485.0036905384251,
+        224.8918987010326
+      ],
+      "phase_progress_deg": [
+        0.0,
+        66.15671634224785,
+        160.74129839824403
+      ],
+      "checks": {
+        "mean_position": false,
+        "maximum_position": false,
+        "orientation": false,
+        "target_assembly": true,
+        "target_order": true,
+        "full_cycle_assembly": true,
+        "grashof": true,
+        "crank_shortest": true,
+        "target_transmission": true,
+        "global_transmission": true,
+        "panel_fit": false,
+        "pivot_clearance": true
+      },
+      "failed_checks": [
+        "mean_position",
+        "maximum_position",
+        "orientation",
+        "panel_fit"
+      ],
+      "engine_selection_eligible": false,
+      "brief_passed": false,
+      "pose_tolerance_ratio": 4.253447324125706,
+      "engine_selected": false
+    },
+    {
+      "id": "negative-fixed_005",
+      "direction": "negative",
+      "branch": -1,
+      "parameters_mm": [
+        180.0,
+        60.17779535377278,
+        326.93196383291587,
+        316.06478668023203,
+        0.17347689693396245,
+        5.807220482407473,
+        106.87950997316545,
+        69.32288848717607,
+        5.153179737536125
+      ],
+      "phases_rad": [
+        3.9203293838632387,
+        2.802349457305337,
+        1.7686309465516716
+      ],
+      "position_errors_mm": [
+        9.349590377270994,
+        8.942439413096556,
+        8.436636734296027
+      ],
+      "orientation_errors_deg": [
+        22.79280143910117,
+        3.6804868898762493,
+        22.953552780649346
+      ],
+      "mean_position_error_mm": 8.909555508221192,
+      "maximum_position_error_mm": 9.349590377270994,
+      "maximum_orientation_error_deg": 22.953552780649346,
+      "achieved_points_mm": [
+        [
+          104.39780231474622,
+          108.25070754682113
+        ],
+        [
+          157.75004820225388,
+          131.34523601912093
+        ],
+        [
+          211.77083420738688,
+          98.14051895837595
+        ]
+      ],
+      "achieved_orientations_deg": [
+        12.792801439101172,
+        -3.680486889876236,
+        -12.95355278064935
+      ],
+      "global_minimum_transmission_deg": 21.3931820128481,
+      "target_minimum_transmission_deg": 36.32516173580033,
+      "envelope_min_mm": [
+        46.701714891637295,
+        -93.47173334022926
+      ],
+      "envelope_max_mm": [
+        486.91522876804,
+        173.85511385184594
+      ],
+      "phase_progress_deg": [
+        0.0,
+        64.05553137211349,
+        123.28323924284733
+      ],
+      "checks": {
+        "mean_position": false,
+        "maximum_position": false,
+        "orientation": false,
+        "target_assembly": true,
+        "target_order": true,
+        "full_cycle_assembly": true,
+        "grashof": true,
+        "crank_shortest": true,
+        "target_transmission": true,
+        "global_transmission": true,
+        "panel_fit": false,
+        "pivot_clearance": false
+      },
+      "failed_checks": [
+        "mean_position",
+        "maximum_position",
+        "orientation",
+        "panel_fit",
+        "pivot_clearance"
+      ],
+      "engine_selection_eligible": false,
+      "brief_passed": false,
+      "pose_tolerance_ratio": 8.909555508221192,
+      "engine_selected": false
+    },
+    {
+      "id": "negative-fixed_006",
+      "direction": "negative",
+      "branch": 1,
+      "parameters_mm": [
+        180.0,
+        63.56603591258198,
+        335.9020835725137,
+        285.52668170098127,
+        0.13573169131515336,
+        3.811585961636905,
+        113.69278234024588,
+        83.51534020431592,
+        1.0220997353095909
+      ],
+      "phases_rad": [
+        1.6666743683034528,
+        0.531161267330243,
+        5.218512958425781
+      ],
+      "position_errors_mm": [
+        1.2323203375896192,
+        1.0993010030031753,
+        1.740269931894201
+      ],
+      "orientation_errors_deg": [
+        8.23566220710353,
+        12.295424082644786,
+        10.984391978028555
+      ],
+      "mean_position_error_mm": 1.3572970908289985,
+      "maximum_position_error_mm": 1.740269931894201,
+      "maximum_orientation_error_deg": 12.295424082644786,
+      "achieved_points_mm": [
+        [
+          101.02861582150149,
+          100.67864785138819
+        ],
+        [
+          160.16584496118534,
+          141.0867189811783
+        ],
+        [
+          218.4050106928654,
+          100.69609521330156
+        ]
+      ],
+      "achieved_orientations_deg": [
+        -18.235662207103523,
+        -12.295424082644777,
+        20.984391978028547
+      ],
+      "global_minimum_transmission_deg": 19.51501996228134,
+      "target_minimum_transmission_deg": 22.162632034209413,
+      "envelope_min_mm": [
+        50.12674782207279,
+        5.53155573583085
+      ],
+      "envelope_max_mm": [
+        491.985075995279,
+        237.09225328773292
+      ],
+      "phase_progress_deg": [
+        0.0,
+        65.06010826757742,
+        156.49463927429392
+      ],
+      "checks": {
+        "mean_position": false,
+        "maximum_position": false,
+        "orientation": false,
+        "target_assembly": true,
+        "target_order": true,
+        "full_cycle_assembly": true,
+        "grashof": true,
+        "crank_shortest": true,
+        "target_transmission": true,
+        "global_transmission": true,
+        "panel_fit": false,
+        "pivot_clearance": true
+      },
+      "failed_checks": [
+        "mean_position",
+        "maximum_position",
+        "orientation",
+        "panel_fit"
+      ],
+      "engine_selection_eligible": false,
+      "brief_passed": false,
+      "pose_tolerance_ratio": 4.098474694214929,
+      "engine_selected": false
+    },
+    {
+      "id": "negative-variable_001",
+      "direction": "negative",
+      "branch": -1,
+      "parameters_mm": [
+        273.99673652793814,
+        60.868445437386974,
+        282.68043595816545,
+        267.85414789964443,
+        0.1248159842704603,
+        7.873797339284401,
+        125.27997601804336,
+        73.98646958694768,
+        5.416574786958735
+      ],
+      "phases_rad": [
+        3.7568181852084717,
+        2.459179351722581,
+        1.1694145531754536
+      ],
+      "position_errors_mm": [
+        1.9597889678854534,
+        0.2726280808210946,
+        2.051841070700331
+      ],
+      "orientation_errors_deg": [
+        18.20512948221156,
+        4.555021796607264,
+        12.928541013864162
+      ],
+      "mean_position_error_mm": 1.4280860398022928,
+      "maximum_position_error_mm": 2.051841070700331,
+      "maximum_orientation_error_deg": 18.20512948221156,
+      "achieved_points_mm": [
+        [
+          100.1228279108785,
+          101.95593611934407
+        ],
+        [
+          159.75172732361855,
+          139.8873645321642
+        ],
+        [
+          219.01838990050695,
+          98.1981971828233
+        ]
+      ],
+      "achieved_orientations_deg": [
+        8.205129482211552,
+        -4.555021796607253,
+        -2.928541013864151
+      ],
+      "global_minimum_transmission_deg": 45.45291127289719,
+      "target_minimum_transmission_deg": 55.438791478233455,
+      "envelope_min_mm": [
+        64.4115306712083,
+        -134.83710841031865
+      ],
+      "envelope_max_mm": [
+        468.82652294142576,
+        146.85769671077918
+      ],
+      "phase_progress_deg": [
+        0.0,
+        74.34922849102094,
+        148.24730801231217
+      ],
+      "checks": {
+        "mean_position": false,
+        "maximum_position": false,
+        "orientation": false,
+        "target_assembly": true,
+        "target_order": true,
+        "full_cycle_assembly": true,
+        "grashof": true,
+        "crank_shortest": true,
+        "target_transmission": true,
+        "global_transmission": true,
+        "panel_fit": false,
+        "pivot_clearance": false
+      },
+      "failed_checks": [
+        "mean_position",
+        "maximum_position",
+        "orientation",
+        "panel_fit",
+        "pivot_clearance"
+      ],
+      "engine_selection_eligible": false,
+      "brief_passed": false,
+      "pose_tolerance_ratio": 6.06837649407052,
+      "engine_selected": false
+    },
+    {
+      "id": "negative-variable_002",
+      "direction": "negative",
+      "branch": 1,
+      "parameters_mm": [
+        269.868628136945,
+        64.26431436436515,
+        345.89194201764974,
+        233.24045096326475,
+        0.143665588191284,
+        4.3790778912423916,
+        108.75212700705532,
+        75.17574482626912,
+        0.8208557317151
+      ],
+      "phases_rad": [
+        1.9025998544028868,
+        0.705451984417244,
+        5.590687680330577
+      ],
+      "position_errors_mm": [
+        0.11326733202472547,
+        1.8308321567112158,
+        1.3781203965626685
+      ],
+      "orientation_errors_deg": [
+        3.5517273243093825,
+        5.535935225944229,
+        5.712810112721513
+      ],
+      "mean_position_error_mm": 1.10740662843287,
+      "maximum_position_error_mm": 1.8308321567112158,
+      "maximum_orientation_error_deg": 5.712810112721513,
+      "achieved_points_mm": [
+        [
+          99.8945700070737,
+          100.04140054462877
+        ],
+        [
+          161.4936605623798,
+          138.94126277554858
+        ],
+        [
+          219.1376530286772,
+          101.07497605948804
+        ]
+      ],
+      "achieved_orientations_deg": [
+        -6.448272675690612,
+        -5.535935225944229,
+        15.712810112721511
+      ],
+      "global_minimum_transmission_deg": 35.24847801690683,
+      "target_minimum_transmission_deg": 39.902304922602106,
+      "envelope_min_mm": [
+        44.487815967690096,
+        10.911433786903899
+      ],
+      "envelope_max_mm": [
+        505.83138116235847,
+        272.64654345225995
+      ],
+      "phase_progress_deg": [
+        0.0,
+        68.59152040325354,
+        148.68813310076393
+      ],
+      "checks": {
+        "mean_position": false,
+        "maximum_position": false,
+        "orientation": false,
+        "target_assembly": true,
+        "target_order": true,
+        "full_cycle_assembly": true,
+        "grashof": true,
+        "crank_shortest": true,
+        "target_transmission": true,
+        "global_transmission": true,
+        "panel_fit": false,
+        "pivot_clearance": true
+      },
+      "failed_checks": [
+        "mean_position",
+        "maximum_position",
+        "orientation",
+        "panel_fit"
+      ],
+      "engine_selection_eligible": false,
+      "brief_passed": false,
+      "pose_tolerance_ratio": 1.9042700375738377,
+      "engine_selected": false
+    },
+    {
+      "id": "negative-variable_003",
+      "direction": "negative",
+      "branch": -1,
+      "parameters_mm": [
+        288.2075996459739,
+        68.6875935220997,
+        214.01929678737037,
+        185.27140245307328,
+        0.08637015644240902,
+        7.910370530061394,
+        141.70919328667935,
+        62.16838566382499,
+        5.793844337650631
+      ],
+      "phases_rad": [
+        3.1492498159717672,
+        2.128922341976552,
+        0.9246449772421856
+      ],
+      "position_errors_mm": [
+        0.8570592824371294,
+        5.175153269956192,
+        1.8151215907840326
+      ],
+      "orientation_errors_deg": [
+        6.689539651774567,
+        6.615764599837064,
+        4.734463021033207
+      ],
+      "mean_position_error_mm": 2.615778047725785,
+      "maximum_position_error_mm": 5.175153269956192,
+      "maximum_orientation_error_deg": 6.689539651774567,
+      "achieved_points_mm": [
+        [
+          99.74796956498491,
+          100.8191649854808
+        ],
+        [
+          156.2613875872913,
+          136.42159412655877
+        ],
+        [
+          221.6720391954414,
+          100.70636486197856
+        ]
+      ],
+      "achieved_orientations_deg": [
+        -3.310460348225436,
+        -6.615764599837065,
+        5.265536978966805
+      ],
+      "global_minimum_transmission_deg": 53.43435165768726,
+      "target_minimum_transmission_deg": 53.435395742141175,
+      "envelope_min_mm": [
+        65.56910394076041,
+        -73.30195427727612
+      ],
+      "envelope_max_mm": [
+        420.2740326176779,
+        144.40792807079686
+      ],
+      "phase_progress_deg": [
+        0.0,
+        58.46045798117008,
+        127.46046834358617
+      ],
+      "checks": {
+        "mean_position": false,
+        "maximum_position": false,
+        "orientation": false,
+        "target_assembly": true,
+        "target_order": true,
+        "full_cycle_assembly": true,
+        "grashof": true,
+        "crank_shortest": true,
+        "target_transmission": true,
+        "global_transmission": true,
+        "panel_fit": false,
+        "pivot_clearance": false
+      },
+      "failed_checks": [
+        "mean_position",
+        "maximum_position",
+        "orientation",
+        "panel_fit",
+        "pivot_clearance"
+      ],
+      "engine_selection_eligible": false,
+      "brief_passed": false,
+      "pose_tolerance_ratio": 3.450102179970795,
+      "engine_selected": false
+    },
+    {
+      "id": "negative-variable_004",
+      "direction": "negative",
+      "branch": 1,
+      "parameters_mm": [
+        273.03668911256153,
+        65.05481384736974,
+        345.88465453250564,
+        237.0511547925883,
+        0.13758600190413436,
+        4.376314741283841,
+        110.6970774049268,
+        73.5845389906733,
+        0.839450669370251
+      ],
+      "phases_rad": [
+        1.8486229650584285,
+        0.6932626808125499,
+        5.594434707618578
+      ],
+      "position_errors_mm": [
+        1.0893213419614471,
+        1.8014604579198368,
+        0.558259811515455
+      ],
+      "orientation_errors_deg": [
+        3.54946315760219,
+        5.391254081150663,
+        5.6882589225952245
+      ],
+      "mean_position_error_mm": 1.1496805371322463,
+      "maximum_position_error_mm": 1.8014604579198368,
+      "maximum_orientation_error_deg": 5.6882589225952245,
+      "achieved_points_mm": [
+        [
+          99.997868147821,
+          101.08931925589286
+        ],
+        [
+          160.96351072842026,
+          138.47786109120494
+        ],
+        [
+          219.64727125062632,
+          100.43270826952873
+        ]
+      ],
+      "achieved_orientations_deg": [
+        -6.450536842397813,
+        -5.391254081150658,
+        15.688258922595221
+      ],
+      "global_minimum_transmission_deg": 36.05550432769439,
+      "target_minimum_transmission_deg": 40.61829940822131,
+      "envelope_min_mm": [
+        45.64226364789798,
+        8.52972523364447
+      ],
+      "envelope_max_mm": [
+        508.28824120864175,
+        276.79928934165446
+      ],
+      "phase_progress_deg": [
+        0.0,
+        66.19726810432398,
+        145.38079630075902
+      ],
+      "checks": {
+        "mean_position": false,
+        "maximum_position": false,
+        "orientation": false,
+        "target_assembly": true,
+        "target_order": true,
+        "full_cycle_assembly": true,
+        "grashof": true,
+        "crank_shortest": true,
+        "target_transmission": true,
+        "global_transmission": true,
+        "panel_fit": false,
+        "pivot_clearance": true
+      },
+      "failed_checks": [
+        "mean_position",
+        "maximum_position",
+        "orientation",
+        "panel_fit"
+      ],
+      "engine_selection_eligible": false,
+      "brief_passed": false,
+      "pose_tolerance_ratio": 1.8960863075317416,
+      "engine_selected": false
+    },
+    {
+      "id": "negative-variable_005",
+      "direction": "negative",
+      "branch": -1,
+      "parameters_mm": [
+        272.93735086833937,
+        60.731576995538944,
+        299.4245398713836,
+        282.1652509635295,
+        0.1293692757900668,
+        6.149497094597907,
+        122.76899303199455,
+        75.61165268887837,
+        5.384395903754029
+      ],
+      "phases_rad": [
+        3.813121779626667,
+        2.4965485341129217,
+        1.2227846815225798
+      ],
+      "position_errors_mm": [
+        1.6921161921193064,
+        0.48971435308427497,
+        1.743504407078813
+      ],
+      "orientation_errors_deg": [
+        19.012809964696856,
+        4.280884644305132,
+        14.029686692021215
+      ],
+      "mean_position_error_mm": 1.3084449840941315,
+      "maximum_position_error_mm": 1.743504407078813,
+      "maximum_orientation_error_deg": 19.012809964696856,
+      "achieved_points_mm": [
+        [
+          100.89370704483838,
+          101.43685243697416
+        ],
+        [
+          160.21899850999594,
+          139.56198196357192
+        ],
+        [
+          219.4134872626723,
+          98.35810766904294
+        ]
+      ],
+      "achieved_orientations_deg": [
+        9.012809964696853,
+        -4.280884644305125,
+        -4.029686692021205
+      ],
+      "global_minimum_transmission_deg": 42.67037168683636,
+      "target_minimum_transmission_deg": 52.70068976705507,
+      "envelope_min_mm": [
+        62.037416128851866,
+        -137.98197175830296
+      ],
+      "envelope_max_mm": [
+        482.88802398601763,
+        146.41431318539722
+      ],
+      "phase_progress_deg": [
+        0.0,
+        75.43409038777875,
+        148.41538323752928
+      ],
+      "checks": {
+        "mean_position": false,
+        "maximum_position": false,
+        "orientation": false,
+        "target_assembly": true,
+        "target_order": true,
+        "full_cycle_assembly": true,
+        "grashof": true,
+        "crank_shortest": true,
+        "target_transmission": true,
+        "global_transmission": true,
+        "panel_fit": false,
+        "pivot_clearance": false
+      },
+      "failed_checks": [
+        "mean_position",
+        "maximum_position",
+        "orientation",
+        "panel_fit",
+        "pivot_clearance"
+      ],
+      "engine_selection_eligible": false,
+      "brief_passed": false,
+      "pose_tolerance_ratio": 6.337603321565619,
+      "engine_selected": false
+    },
+    {
+      "id": "negative-variable_006",
+      "direction": "negative",
+      "branch": 1,
+      "parameters_mm": [
+        271.2617664229004,
+        63.43285600819834,
+        345.94124132805285,
+        240.84446615208174,
+        0.14019548940165233,
+        4.213356710631203,
+        110.44374878622702,
+        76.41203095919047,
+        0.8524345534479973
+      ],
+      "phases_rad": [
+        1.9064605677584017,
+        0.7040443898422011,
+        5.555656238830243
+      ],
+      "position_errors_mm": [
+        0.7201707173582267,
+        0.5931772734366172,
+        1.7617110545429564
+      ],
+      "orientation_errors_deg": [
+        4.134857729955996,
+        5.471978811439925,
+        5.6083050298741455
+      ],
+      "mean_position_error_mm": 1.0250196817792667,
+      "maximum_position_error_mm": 1.7617110545429564,
+      "maximum_orientation_error_deg": 5.6083050298741455,
+      "achieved_points_mm": [
+        [
+          100.27564924893036,
+          99.33467049238412
+        ],
+        [
+          160.0320790953068,
+          139.4076907823054
+        ],
+        [
+          218.95970155177196,
+          101.42176122408553
+        ]
+      ],
+      "achieved_orientations_deg": [
+        -5.865142270043992,
+        -5.471978811439929,
+        15.60830502987416
+      ],
+      "global_minimum_transmission_deg": 36.18844185261709,
+      "target_minimum_transmission_deg": 40.713990903478674,
+      "envelope_min_mm": [
+        47.0108935776963,
+        12.97917575065975
+      ],
+      "envelope_max_mm": [
+        506.95659528963483,
+        280.6409300654757
+      ],
+      "phase_progress_deg": [
+        0.0,
+        68.8933722128498,
+        150.91648943017333
+      ],
+      "checks": {
+        "mean_position": false,
+        "maximum_position": false,
+        "orientation": false,
+        "target_assembly": true,
+        "target_order": true,
+        "full_cycle_assembly": true,
+        "grashof": true,
+        "crank_shortest": true,
+        "target_transmission": true,
+        "global_transmission": true,
+        "panel_fit": false,
+        "pivot_clearance": true
+      },
+      "failed_checks": [
+        "mean_position",
+        "maximum_position",
+        "orientation",
+        "panel_fit"
+      ],
+      "engine_selection_eligible": false,
+      "brief_passed": false,
+      "pose_tolerance_ratio": 1.8694350099580486,
+      "engine_selected": false
+    },
+    {
+      "id": "negative-bridge_trust_001",
+      "direction": "negative",
+      "branch": 1,
+      "parameters_mm": [
+        206.62174570722314,
+        63.70427575275697,
+        335.16200005194645,
+        287.59268177681093,
+        0.11522628609111779,
+        3.327108502688322,
+        119.41878209528136,
+        78.96231749259151,
+        1.064906683862281
+      ],
+      "phases_rad": [
+        1.6389441353897498,
+        0.45157283401168224,
+        5.305372167981018
+      ],
+      "position_errors_mm": [
+        0.02306395180193853,
+        1.5892301530434132,
+        1.7394490487726038
+      ],
+      "orientation_errors_deg": [
+        3.7954330270725336,
+        8.364070744590663,
+        9.106266918576239
+      ],
+      "mean_position_error_mm": 1.1172477178726519,
+      "maximum_position_error_mm": 1.7394490487726038,
+      "maximum_orientation_error_deg": 9.106266918576239,
+      "achieved_points_mm": [
+        [
+          100.01990314907873,
+          99.98834622252349
+        ],
+        [
+          161.569969801086,
+          140.24667246100935
+        ],
+        [
+          218.28461574454917,
+          100.28833981588973
+        ]
+      ],
+      "achieved_orientations_deg": [
+        -13.795433027072523,
+        -8.36407074459065,
+        19.10626691857625
+      ],
+      "global_minimum_transmission_deg": 25.070620507277816,
+      "target_minimum_transmission_deg": 26.86191898438236,
+      "envelope_min_mm": [
+        55.71450842737995,
+        15.258043824690091
+      ],
+      "envelope_max_mm": [
+        500.3024870157927,
+        259.703390369927
+      ],
+      "phase_progress_deg": [
+        0.0,
+        68.03136428391937,
+        149.92914784406648
+      ],
+      "checks": {
+        "mean_position": false,
+        "maximum_position": false,
+        "orientation": false,
+        "target_assembly": true,
+        "target_order": true,
+        "full_cycle_assembly": true,
+        "grashof": true,
+        "crank_shortest": true,
+        "target_transmission": true,
+        "global_transmission": true,
+        "panel_fit": false,
+        "pivot_clearance": true
+      },
+      "failed_checks": [
+        "mean_position",
+        "maximum_position",
+        "orientation",
+        "panel_fit"
+      ],
+      "engine_selection_eligible": false,
+      "brief_passed": false,
+      "pose_tolerance_ratio": 3.0354223061920798,
+      "engine_selected": false
+    },
+    {
+      "id": "negative-bridge_trust_002",
+      "direction": "negative",
+      "branch": -1,
+      "parameters_mm": [
+        193.28256372144455,
+        60.191765108658096,
+        326.0022452995271,
+        315.6977632420465,
+        0.16271101158094586,
+        6.121552738067666,
+        111.24622718387474,
+        67.71858054522488,
+        5.174870734342997
+      ],
+      "phases_rad": [
+        3.874591983002857,
+        2.7311019870727673,
+        1.711719455904091
+      ],
+      "position_errors_mm": [
+        8.85933627047934,
+        9.94617589491633,
+        6.678877022827859
+      ],
+      "orientation_errors_deg": [
+        21.755832097164983,
+        4.078846080148594,
+        21.72686916151568
+      ],
+      "mean_position_error_mm": 8.49479639607451,
+      "maximum_position_error_mm": 9.94617589491633,
+      "maximum_orientation_error_deg": 21.755832097164983,
+      "achieved_points_mm": [
+        [
+          105.92861013997842,
+          106.58326825836346
+        ],
+        [
+          161.46342275541082,
+          130.16207294337062
+        ],
+        [
+          213.98980635301183,
+          97.08710271177287
+        ]
+      ],
+      "achieved_orientations_deg": [
+        11.755832097164983,
+        -4.078846080148583,
+        -11.72686916151568
+      ],
+      "global_minimum_transmission_deg": 23.870662584430878,
+      "target_minimum_transmission_deg": 38.22913135542058,
+      "envelope_min_mm": [
+        51.05446210320934,
+        -105.25925734803903
+      ],
+      "envelope_max_mm": [
+        492.6106876877955,
+        166.59595884167638
+      ],
+      "phase_progress_deg": [
+        0.0,
+        65.51715068222582,
+        123.92346742755407
+      ],
+      "checks": {
+        "mean_position": false,
+        "maximum_position": false,
+        "orientation": false,
+        "target_assembly": true,
+        "target_order": true,
+        "full_cycle_assembly": true,
+        "grashof": true,
+        "crank_shortest": true,
+        "target_transmission": true,
+        "global_transmission": true,
+        "panel_fit": false,
+        "pivot_clearance": false
+      },
+      "failed_checks": [
+        "mean_position",
+        "maximum_position",
+        "orientation",
+        "panel_fit",
+        "pivot_clearance"
+      ],
+      "engine_selection_eligible": false,
+      "brief_passed": false,
+      "pose_tolerance_ratio": 8.49479639607451,
+      "engine_selected": false
+    },
+    {
+      "id": "negative-bridge_trust_003",
+      "direction": "negative",
+      "branch": -1,
+      "parameters_mm": [
+        207.94611757672354,
+        60.47114225580226,
+        320.48360359504585,
+        297.66222046910485,
+        0.11451820278099639,
+        8.515144899515063,
+        126.63781895005994,
+        71.89520657306828,
+        5.295456054571362
+      ],
+      "phases_rad": [
+        3.9122361892757165,
+        2.619236645754022,
+        1.4107110977490034
+      ],
+      "position_errors_mm": [
+        2.34568568994138,
+        0.9900460833210482,
+        0.7993854128315517
+      ],
+      "orientation_errors_deg": [
+        23.978301570198113,
+        2.7328055845818824,
+        18.77439492311055
+      ],
+      "mean_position_error_mm": 1.37837239536466,
+      "maximum_position_error_mm": 2.34568568994138,
+      "maximum_orientation_error_deg": 23.978301570198113,
+      "achieved_points_mm": [
+        [
+          101.14349019877224,
+          102.04808972491627
+        ],
+        [
+          160.03426201752814,
+          139.0105469383269
+        ],
+        [
+          219.35019437715619,
+          99.53441467938902
+        ]
+      ],
+      "achieved_orientations_deg": [
+        13.978301570198122,
+        -2.7328055845818797,
+        -8.774394923110536
+      ],
+      "global_minimum_transmission_deg": 27.28503024393919,
+      "target_minimum_transmission_deg": 38.92833734324995,
+      "envelope_min_mm": [
+        66.1666771827264,
+        -101.693614317979
+      ],
+      "envelope_max_mm": [
+        505.7615344266617,
+        167.3421374061378
+      ],
+      "phase_progress_deg": [
+        0.0,
+        74.0834167561351,
+        143.32683009055765
+      ],
+      "checks": {
+        "mean_position": false,
+        "maximum_position": false,
+        "orientation": false,
+        "target_assembly": true,
+        "target_order": true,
+        "full_cycle_assembly": true,
+        "grashof": true,
+        "crank_shortest": true,
+        "target_transmission": true,
+        "global_transmission": true,
+        "panel_fit": false,
+        "pivot_clearance": false
+      },
+      "failed_checks": [
+        "mean_position",
+        "maximum_position",
+        "orientation",
+        "panel_fit",
+        "pivot_clearance"
+      ],
+      "engine_selection_eligible": false,
+      "brief_passed": false,
+      "pose_tolerance_ratio": 7.992767190066037,
+      "engine_selected": false
+    },
+    {
+      "id": "negative-bridge_release_001",
+      "direction": "negative",
+      "branch": -1,
+      "parameters_mm": [
+        257.44192910917195,
+        60.73186028062529,
+        298.94886521684197,
+        274.0194098384439,
+        0.08708984703294213,
+        9.543298761450357,
+        135.20516113484052,
+        71.57546831378355,
+        5.399463347342461
+      ],
+      "phases_rad": [
+        3.745494493348342,
+        2.477707388736899,
+        1.2089877926506591
+      ],
+      "position_errors_mm": [
+        2.2012657527421715,
+        0.4257906452522094,
+        1.6213992443738894
+      ],
+      "orientation_errors_deg": [
+        19.280256018494214,
+        3.9268316301215975,
+        14.456462296513592
+      ],
+      "mean_position_error_mm": 1.4161518807894236,
+      "maximum_position_error_mm": 2.2012657527421715,
+      "maximum_orientation_error_deg": 19.280256018494214,
+      "achieved_points_mm": [
+        [
+          100.99111282159632,
+          101.9655193433449
+        ],
+        [
+          160.42480706038438,
+          140.02892464402328
+        ],
+        [
+          219.45082170558663,
+          98.4744382311419
+        ]
+      ],
+      "achieved_orientations_deg": [
+        9.280256018494207,
+        -3.9268316301215918,
+        -4.456462296513598
+      ],
+      "global_minimum_transmission_deg": 39.860042503733766,
+      "target_minimum_transmission_deg": 49.886073410867574,
+      "envelope_min_mm": [
+        72.16165240980116,
+        -127.45417065551192
+      ],
+      "envelope_max_mm": [
+        494.80027875798174,
+        146.74067332410337
+      ],
+      "phase_progress_deg": [
+        0.0,
+        72.63885041534627,
+        145.33112865663034
+      ],
+      "checks": {
+        "mean_position": false,
+        "maximum_position": false,
+        "orientation": false,
+        "target_assembly": true,
+        "target_order": true,
+        "full_cycle_assembly": true,
+        "grashof": true,
+        "crank_shortest": true,
+        "target_transmission": true,
+        "global_transmission": true,
+        "panel_fit": false,
+        "pivot_clearance": false
+      },
+      "failed_checks": [
+        "mean_position",
+        "maximum_position",
+        "orientation",
+        "panel_fit",
+        "pivot_clearance"
+      ],
+      "engine_selection_eligible": false,
+      "brief_passed": false,
+      "pose_tolerance_ratio": 6.426752006164738,
+      "engine_selected": false
+    },
+    {
+      "id": "negative-bridge_release_002",
+      "direction": "negative",
+      "branch": 1,
+      "parameters_mm": [
+        252.72015377042507,
+        63.47849335120073,
+        336.34399227182837,
+        287.7694982809729,
+        0.10622575404747683,
+        3.2353690990190955,
+        122.4925009927523,
+        76.56347301226691,
+        1.0617073480749621
+      ],
+      "phases_rad": [
+        1.6673802345912176,
+        0.4623885905311518,
+        5.394856446165327
+      ],
+      "position_errors_mm": [
+        0.16149658843809872,
+        1.418832702458907,
+        1.577616786649858
+      ],
+      "orientation_errors_deg": [
+        1.532000892670169,
+        5.931327197550502,
+        5.943028712418254
+      ],
+      "mean_position_error_mm": 1.0526486925156213,
+      "maximum_position_error_mm": 1.577616786649858,
+      "maximum_orientation_error_deg": 5.943028712418254,
+      "achieved_points_mm": [
+        [
+          100.15394507258964,
+          99.95119362026828
+        ],
+        [
+          161.3273461994563,
+          139.49876322525597
+        ],
+        [
+          218.484713425367,
+          100.43906869878919
+        ]
+      ],
+      "achieved_orientations_deg": [
+        -8.467999107329833,
+        -5.931327197550509,
+        15.94302871241824
+      ],
+      "global_minimum_transmission_deg": 34.18911965790229,
+      "target_minimum_transmission_deg": 35.9253199973195,
+      "envelope_min_mm": [
+        59.014011004369095,
+        13.084983023883709
+      ],
+      "envelope_max_mm": [
+        508.615620602497,
+        297.2359023691347
+      ],
+      "phase_progress_deg": [
+        0.0,
+        69.0409355531721,
+        146.43134484139046
+      ],
+      "checks": {
+        "mean_position": false,
+        "maximum_position": false,
+        "orientation": false,
+        "target_assembly": true,
+        "target_order": true,
+        "full_cycle_assembly": true,
+        "grashof": true,
+        "crank_shortest": true,
+        "target_transmission": true,
+        "global_transmission": true,
+        "panel_fit": false,
+        "pivot_clearance": false
+      },
+      "failed_checks": [
+        "mean_position",
+        "maximum_position",
+        "orientation",
+        "panel_fit",
+        "pivot_clearance"
+      ],
+      "engine_selection_eligible": false,
+      "brief_passed": false,
+      "pose_tolerance_ratio": 1.9810095708060846,
+      "engine_selected": false
+    },
+    {
+      "id": "negative-bridge_release_003",
+      "direction": "negative",
+      "branch": -1,
+      "parameters_mm": [
+        246.1657784592356,
+        60.66894798740438,
+        318.6636333767244,
+        301.95956774422876,
+        0.118268490184793,
+        6.606266333517689,
+        124.50872940937828,
+        74.42327515705156,
+        5.311179910624312
+      ],
+      "phases_rad": [
+        3.893310348787693,
+        2.5827904675598674,
+        1.345063561058333
+      ],
+      "position_errors_mm": [
+        1.850970196817197,
+        0.6463101148503853,
+        1.331953009215348
+      ],
+      "orientation_errors_deg": [
+        21.37196096189939,
+        3.4626088664473116,
+        16.336223619613264
+      ],
+      "mean_position_error_mm": 1.2764111069609767,
+      "maximum_position_error_mm": 1.850970196817197,
+      "maximum_orientation_error_deg": 21.37196096189939,
+      "achieved_points_mm": [
+        [
+          100.95123214702265,
+          101.58784384370006
+        ],
+        [
+          160.10136534136,
+          139.3616882954787
+        ],
+        [
+          219.19142300273887,
+          98.94155677608197
+        ]
+      ],
+      "achieved_orientations_deg": [
+        11.371960961899392,
+        -3.4626088664473205,
+        -6.336223619613268
+      ],
+      "global_minimum_transmission_deg": 34.64881465584535,
+      "target_minimum_transmission_deg": 45.397559819584046,
+      "envelope_min_mm": [
+        63.839782042255834,
+        -128.91401587693676
+      ],
+      "envelope_max_mm": [
+        503.3056681606121,
+        153.5198518846239
+      ],
+      "phase_progress_deg": [
+        0.0,
+        75.08725816234033,
+        146.00378609466168
+      ],
+      "checks": {
+        "mean_position": false,
+        "maximum_position": false,
+        "orientation": false,
+        "target_assembly": true,
+        "target_order": true,
+        "full_cycle_assembly": true,
+        "grashof": true,
+        "crank_shortest": true,
+        "target_transmission": true,
+        "global_transmission": true,
+        "panel_fit": false,
+        "pivot_clearance": false
+      },
+      "failed_checks": [
+        "mean_position",
+        "maximum_position",
+        "orientation",
+        "panel_fit",
+        "pivot_clearance"
+      ],
+      "engine_selection_eligible": false,
+      "brief_passed": false,
+      "pose_tolerance_ratio": 7.123986987299797,
+      "engine_selected": false
+    },
+    {
+      "id": "negative-pose_tolerance_seed_001",
+      "direction": "negative",
+      "branch": -1,
+      "parameters_mm": [
+        284.10556113703734,
+        66.43099281028165,
+        242.4001693725586,
+        110.22728425501171,
+        0.2971525155191263,
+        9.985751040000004,
+        85.55472275531517,
+        67.34420104363014,
+        6.1046322488064275
+      ],
+      "phases_rad": [
+        2.8192309374391433,
+        1.719297595692717,
+        0.30489714987349137
+      ],
+      "position_errors_mm": [
+        5.684341886080802e-14,
+        1.2710574864626038e-13,
+        9.947598300641403e-14
+      ],
+      "orientation_errors_deg": [
+        2.701101217544135,
+        2.958494231923197,
+        1.6163380403077383
+      ],
+      "mean_position_error_mm": 9.44750501711608e-14,
+      "maximum_position_error_mm": 1.2710574864626038e-13,
+      "maximum_orientation_error_deg": 2.958494231923197,
+      "achieved_points_mm": [
+        [
+          100.0,
+          99.99999999999994
+        ],
+        [
+          160.00000000000006,
+          139.9999999999999
+        ],
+        [
+          220.0,
+          99.9999999999999
+        ]
+      ],
+      "achieved_orientations_deg": [
+        -7.298898782455878,
+        -2.958494231923185,
+        11.61633804030774
+      ],
+      "global_minimum_transmission_deg": 13.471232226938488,
+      "target_minimum_transmission_deg": 20.593066601063786,
+      "envelope_min_mm": [
+        19.123733857132933,
+        0.9132121454478863
+      ],
+      "envelope_max_mm": [
+        389.05305369475093,
+        146.35198949761238
+      ],
+      "phase_progress_deg": [
+        0.0,
+        63.02153822779107,
+        144.06071431465477
+      ],
+      "checks": {
+        "mean_position": true,
+        "maximum_position": true,
+        "orientation": true,
+        "target_assembly": true,
+        "target_order": true,
+        "full_cycle_assembly": true,
+        "grashof": true,
+        "crank_shortest": true,
+        "target_transmission": true,
+        "global_transmission": true,
+        "panel_fit": true,
+        "pivot_clearance": true
+      },
+      "failed_checks": [],
+      "engine_selection_eligible": true,
+      "brief_passed": true,
+      "pose_tolerance_ratio": 0.986164743974399,
+      "engine_selected": true
+    },
+    {
+      "id": "negative-pose_tolerance_refined_001",
+      "direction": "negative",
+      "branch": -1,
+      "parameters_mm": [
+        284.10556113703734,
+        66.43099281028165,
+        242.4001693725586,
+        110.22728425501171,
+        0.2971525155191263,
+        9.985751040000004,
+        85.55472275531517,
+        67.34420104363014,
+        6.1046322488064275
+      ],
+      "phases_rad": [
+        2.8192309374391433,
+        1.719297595692717,
+        0.30489714987349137
+      ],
+      "position_errors_mm": [
+        5.684341886080802e-14,
+        1.2710574864626038e-13,
+        9.947598300641403e-14
+      ],
+      "orientation_errors_deg": [
+        2.701101217544135,
+        2.958494231923197,
+        1.6163380403077383
+      ],
+      "mean_position_error_mm": 9.44750501711608e-14,
+      "maximum_position_error_mm": 1.2710574864626038e-13,
+      "maximum_orientation_error_deg": 2.958494231923197,
+      "achieved_points_mm": [
+        [
+          100.0,
+          99.99999999999994
+        ],
+        [
+          160.00000000000006,
+          139.9999999999999
+        ],
+        [
+          220.0,
+          99.9999999999999
+        ]
+      ],
+      "achieved_orientations_deg": [
+        -7.298898782455878,
+        -2.958494231923185,
+        11.61633804030774
+      ],
+      "global_minimum_transmission_deg": 13.471232226938488,
+      "target_minimum_transmission_deg": 20.593066601063786,
+      "envelope_min_mm": [
+        19.123733857132933,
+        0.9132121454478863
+      ],
+      "envelope_max_mm": [
+        389.05305369475093,
+        146.35198949761238
+      ],
+      "phase_progress_deg": [
+        0.0,
+        63.02153822779107,
+        144.06071431465477
+      ],
+      "checks": {
+        "mean_position": true,
+        "maximum_position": true,
+        "orientation": true,
+        "target_assembly": true,
+        "target_order": true,
+        "full_cycle_assembly": true,
+        "grashof": true,
+        "crank_shortest": true,
+        "target_transmission": true,
+        "global_transmission": true,
+        "panel_fit": true,
+        "pivot_clearance": true
+      },
+      "failed_checks": [],
+      "engine_selection_eligible": true,
+      "brief_passed": true,
+      "pose_tolerance_ratio": 0.986164743974399,
+      "engine_selected": false
+    },
+    {
+      "id": "positive-fixed_001",
+      "direction": "positive",
+      "branch": -1,
+      "parameters_mm": [
+        180.0,
+        30.481103866132393,
+        326.08920908541097,
+        317.5594190665291,
+        0.2714131065801846,
+        6.0953462317178255,
+        72.98034555348804,
+        100.30641170796946,
+        5.077277508187027
+      ],
+      "phases_rad": [
+        3.9455896395386554,
+        5.147429773782255,
+        1.2108751409203737
+      ],
+      "position_errors_mm": [
+        42.87908385606109,
+        43.42804957781595,
+        28.2316513323698
+      ],
+      "orientation_errors_deg": [
+        16.533199130689184,
+        12.269247077046884,
+        16.85448516293482
+      ],
+      "mean_position_error_mm": 38.17959492208228,
+      "maximum_position_error_mm": 43.42804957781595,
+      "maximum_orientation_error_deg": 16.85448516293482,
+      "achieved_points_mm": [
+        [
+          132.16474326519506,
+          128.35568942944622
+        ],
+        [
+          136.93052714474112,
+          103.2060478840107
+        ],
+        [
+          192.06083514680685,
+          95.94670451871637
+        ]
+      ],
+      "achieved_orientations_deg": [
+        6.533199130689181,
+        12.269247077046872,
+        -6.85448516293482
+      ],
+      "global_minimum_transmission_deg": 26.82274635848188,
+      "target_minimum_transmission_deg": 30.48602494691062,
+      "envelope_min_mm": [
+        42.49924188791114,
+        -67.84302644300033
+      ],
+      "envelope_max_mm": [
+        427.3939576862525,
+        154.96078343639866
+      ],
+      "phase_progress_deg": [
+        0.0,
+        68.86036734159454,
+        203.31240105593747
+      ],
+      "checks": {
+        "mean_position": false,
+        "maximum_position": false,
+        "orientation": false,
+        "target_assembly": true,
+        "target_order": true,
+        "full_cycle_assembly": true,
+        "grashof": true,
+        "crank_shortest": true,
+        "target_transmission": true,
+        "global_transmission": true,
+        "panel_fit": false,
+        "pivot_clearance": false
+      },
+      "failed_checks": [
+        "mean_position",
+        "maximum_position",
+        "orientation",
+        "panel_fit",
+        "pivot_clearance"
+      ],
+      "engine_selection_eligible": false,
+      "brief_passed": false,
+      "pose_tolerance_ratio": 38.17959492208228,
+      "engine_selected": false
+    },
+    {
+      "id": "positive-fixed_002",
+      "direction": "positive",
+      "branch": 1,
+      "parameters_mm": [
+        180.0,
+        52.52862868946314,
+        346.58390839776104,
+        256.12091877322433,
+        0.23678272848517112,
+        5.2673546894986325,
+        98.9269082658981,
+        134.81027813936856,
+        0.42485794370408314
+      ],
+      "phases_rad": [
+        2.097304597150303,
+        2.221667611857426,
+        5.11967267007707
+      ],
+      "position_errors_mm": [
+        34.10674464979733,
+        42.714742787612295,
+        0.07290614276386014
+      ],
+      "orientation_errors_deg": [
+        25.451349333144947,
+        34.30219856595153,
+        13.335236785696594
+      ],
+      "mean_position_error_mm": 25.63146452672449,
+      "maximum_position_error_mm": 42.714742787612295,
+      "maximum_orientation_error_deg": 34.30219856595153,
+      "achieved_points_mm": [
+        [
+          126.06362737522586,
+          121.99903085710494
+        ],
+        [
+          123.46554247497971,
+          117.86896602586393
+        ],
+        [
+          219.99779175812398,
+          99.9271273074429
+        ]
+      ],
+      "achieved_orientations_deg": [
+        -35.45134933314493,
+        -34.302198565951535,
+        -3.3352367856965857
+      ],
+      "global_minimum_transmission_deg": 17.33671638236193,
+      "target_minimum_transmission_deg": 27.095728659719587,
+      "envelope_min_mm": [
+        46.39828001845429,
+        -35.715758871826125
+      ],
+      "envelope_max_mm": [
+        496.913814876988,
+        209.00472272259546
+      ],
+      "phase_progress_deg": [
+        0.0,
+        7.125475870241551,
+        173.16893471379154
+      ],
+      "checks": {
+        "mean_position": false,
+        "maximum_position": false,
+        "orientation": false,
+        "target_assembly": true,
+        "target_order": true,
+        "full_cycle_assembly": true,
+        "grashof": true,
+        "crank_shortest": true,
+        "target_transmission": true,
+        "global_transmission": true,
+        "panel_fit": false,
+        "pivot_clearance": true
+      },
+      "failed_checks": [
+        "mean_position",
+        "maximum_position",
+        "orientation",
+        "panel_fit"
+      ],
+      "engine_selection_eligible": false,
+      "brief_passed": false,
+      "pose_tolerance_ratio": 28.47649519174153,
+      "engine_selected": false
+    },
+    {
+      "id": "positive-fixed_003",
+      "direction": "positive",
+      "branch": -1,
+      "parameters_mm": [
+        180.0,
+        30.68536271068094,
+        326.0326211119251,
+        317.43253397186334,
+        0.27408348070350597,
+        6.176058080712337,
+        72.25182544381943,
+        101.01927191639194,
+        5.086460324293458
+      ],
+      "phases_rad": [
+        3.936742685210258,
+        5.15383388270379,
+        1.2085170663206908
+      ],
+      "position_errors_mm": [
+        43.83780728252886,
+        42.27194982054129,
+        27.68307369559992
+      ],
+      "orientation_errors_deg": [
+        16.986391187200837,
+        12.835126902189984,
+        16.4091766028815
+      ],
+      "mean_position_error_mm": 37.930943599556684,
+      "maximum_position_error_mm": 43.83780728252886,
+      "maximum_orientation_error_deg": 16.986391187200837,
+      "achieved_points_mm": [
+        [
+          131.95303617836254,
+          130.0126111214002
+        ],
+        [
+          136.97259157208424,
+          104.55065300002954
+        ],
+        [
+          192.4261357359376,
+          97.54346203304752
+        ]
+      ],
+      "achieved_orientations_deg": [
+        6.986391187200829,
+        12.835126902189993,
+        -6.40917660288149
+      ],
+      "global_minimum_transmission_deg": 26.792380114417156,
+      "target_minimum_transmission_deg": 30.449255761878305,
+      "envelope_min_mm": [
+        41.56646413042036,
+        -66.53325321530485
+      ],
+      "envelope_max_mm": [
+        427.10580045450575,
+        158.44589365602963
+      ],
+      "phase_progress_deg": [
+        0.0,
+        69.73418889890273,
+        203.6841864781608
+      ],
+      "checks": {
+        "mean_position": false,
+        "maximum_position": false,
+        "orientation": false,
+        "target_assembly": true,
+        "target_order": true,
+        "full_cycle_assembly": true,
+        "grashof": true,
+        "crank_shortest": true,
+        "target_transmission": true,
+        "global_transmission": true,
+        "panel_fit": false,
+        "pivot_clearance": false
+      },
+      "failed_checks": [
+        "mean_position",
+        "maximum_position",
+        "orientation",
+        "panel_fit",
+        "pivot_clearance"
+      ],
+      "engine_selection_eligible": false,
+      "brief_passed": false,
+      "pose_tolerance_ratio": 37.930943599556684,
+      "engine_selected": false
+    },
+    {
+      "id": "positive-fixed_004",
+      "direction": "positive",
+      "branch": 1,
+      "parameters_mm": [
+        180.0,
+        44.83303717576088,
+        340.8121781367893,
+        279.83077128361356,
+        0.2670244442652782,
+        4.214579755116562,
+        99.22553938706548,
+        155.54269271820556,
+        0.45504891385208524
+      ],
+      "phases_rad": [
+        2.1635799497054364,
+        2.501996615871121,
+        4.914462844878694
+      ],
+      "position_errors_mm": [
+        40.927971015047355,
+        38.86379791335585,
+        4.430253130647233
+      ],
+      "orientation_errors_deg": [
+        29.303999380253003,
+        35.931914932701375,
+        24.527065123211656
+      ],
+      "mean_position_error_mm": 28.07400735301681,
+      "maximum_position_error_mm": 40.927971015047355,
+      "maximum_orientation_error_deg": 35.931914932701375,
+      "achieved_points_mm": [
+        [
+          133.47387161813762,
+          123.54991996379175
+        ],
+        [
+          131.31525757318704,
+          113.77824681380821
+        ],
+        [
+          215.76426482208984,
+          101.29834136659971
+        ]
+      ],
+      "achieved_orientations_deg": [
+        -39.30399938025301,
+        -35.931914932701375,
+        -14.527065123211646
+      ],
+      "global_minimum_transmission_deg": 22.52526062294258,
+      "target_minimum_transmission_deg": 31.121178976686778,
+      "envelope_min_mm": [
+        54.39250563212147,
+        -38.20644591301348
+      ],
+      "envelope_max_mm": [
+        469.6586419609132,
+        234.6538178418981
+      ],
+      "phase_progress_deg": [
+        0.0,
+        19.389846688181443,
+        157.6139798281565
+      ],
+      "checks": {
+        "mean_position": false,
+        "maximum_position": false,
+        "orientation": false,
+        "target_assembly": true,
+        "target_order": true,
+        "full_cycle_assembly": true,
+        "grashof": true,
+        "crank_shortest": true,
+        "target_transmission": true,
+        "global_transmission": true,
+        "panel_fit": false,
+        "pivot_clearance": true
+      },
+      "failed_checks": [
+        "mean_position",
+        "maximum_position",
+        "orientation",
+        "panel_fit"
+      ],
+      "engine_selection_eligible": false,
+      "brief_passed": false,
+      "pose_tolerance_ratio": 28.07400735301681,
+      "engine_selected": false
+    },
+    {
+      "id": "positive-fixed_005",
+      "direction": "positive",
+      "branch": -1,
+      "parameters_mm": [
+        180.0,
+        31.74462613996281,
+        324.33952651887535,
+        320.1306095091271,
+        0.28220031184498684,
+        5.1991999470763615,
+        71.19041023390591,
+        99.17664622191943,
+        5.0695116217779255
+      ],
+      "phases_rad": [
+        3.904270049994435,
+        5.0866384883648745,
+        1.3079285449109506
+      ],
+      "position_errors_mm": [
+        44.06248088752175,
+        43.13046242423975,
+        25.91047560140684
+      ],
+      "orientation_errors_deg": [
+        17.0459863610279,
+        13.674161154643059,
+        16.69100225173301
+      ],
+      "mean_position_error_mm": 37.70113963772278,
+      "maximum_position_error_mm": 44.06248088752175,
+      "maximum_orientation_error_deg": 17.0459863610279,
+      "achieved_points_mm": [
+        [
+          132.81955196414452,
+          129.40032705321553
+        ],
+        [
+          135.26951661797528,
+          104.66389975364915
+        ],
+        [
+          194.30522474340972,
+          96.66364414301842
+        ]
+      ],
+      "achieved_orientations_deg": [
+        7.045986361027895,
+        13.674161154643057,
+        -6.691002251733022
+      ],
+      "global_minimum_transmission_deg": 26.588780419131208,
+      "target_minimum_transmission_deg": 30.75876949525526,
+      "envelope_min_mm": [
+        39.44578474679731,
+        -69.4665359000005
+      ],
+      "envelope_max_mm": [
+        425.4542040254921,
+        159.93204530316135
+      ],
+      "phase_progress_deg": [
+        0.0,
+        67.74472134810016,
+        211.24058958407235
+      ],
+      "checks": {
+        "mean_position": false,
+        "maximum_position": false,
+        "orientation": false,
+        "target_assembly": true,
+        "target_order": true,
+        "full_cycle_assembly": true,
+        "grashof": true,
+        "crank_shortest": true,
+        "target_transmission": true,
+        "global_transmission": true,
+        "panel_fit": false,
+        "pivot_clearance": false
+      },
+      "failed_checks": [
+        "mean_position",
+        "maximum_position",
+        "orientation",
+        "panel_fit",
+        "pivot_clearance"
+      ],
+      "engine_selection_eligible": false,
+      "brief_passed": false,
+      "pose_tolerance_ratio": 37.70113963772278,
+      "engine_selected": false
+    },
+    {
+      "id": "positive-fixed_006",
+      "direction": "positive",
+      "branch": 1,
+      "parameters_mm": [
+        180.0,
+        49.88324471295359,
+        345.2085474845991,
+        257.24625871696753,
+        0.245065606913225,
+        4.673132237528511,
+        95.03800651893425,
+        139.72973193361534,
+        0.3220511115586717
+      ],
+      "phases_rad": [
+        2.0351281838986823,
+        2.188088843161932,
+        5.350413105484037
+      ],
+      "position_errors_mm": [
+        33.93220257143795,
+        44.01266830715495,
+        0.11021996031119932
+      ],
+      "orientation_errors_deg": [
+        31.869144697353164,
+        40.58475083781306,
+        20.666499158767124
+      ],
+      "mean_position_error_mm": 26.01836361296803,
+      "maximum_position_error_mm": 44.01266830715495,
+      "maximum_orientation_error_deg": 40.58475083781306,
+      "achieved_points_mm": [
+        [
+          125.84773950863394,
+          121.98382891224603
+        ],
+        [
+          122.06196521265974,
+          117.68810882085067
+        ],
+        [
+          219.9060283711782,
+          100.0576001096143
+        ]
+      ],
+      "achieved_orientations_deg": [
+        -41.86914469735316,
+        -40.58475083781306,
+        -10.666499158767138
+      ],
+      "global_minimum_transmission_deg": 18.515156921017123,
+      "target_minimum_transmission_deg": 24.85812085820859,
+      "envelope_min_mm": [
+        45.1547618417401,
+        -55.462818279521514
+      ],
+      "envelope_max_mm": [
+        481.16310020359805,
+        196.7020512856563
+      ],
+      "phase_progress_deg": [
+        0.0,
+        8.764000207322859,
+        189.9518338902009
+      ],
+      "checks": {
+        "mean_position": false,
+        "maximum_position": false,
+        "orientation": false,
+        "target_assembly": true,
+        "target_order": true,
+        "full_cycle_assembly": true,
+        "grashof": true,
+        "crank_shortest": true,
+        "target_transmission": true,
+        "global_transmission": true,
+        "panel_fit": false,
+        "pivot_clearance": true
+      },
+      "failed_checks": [
+        "mean_position",
+        "maximum_position",
+        "orientation",
+        "panel_fit"
+      ],
+      "engine_selection_eligible": false,
+      "brief_passed": false,
+      "pose_tolerance_ratio": 29.34177887143663,
+      "engine_selected": false
+    },
+    {
+      "id": "positive-variable_001",
+      "direction": "positive",
+      "branch": -1,
+      "parameters_mm": [
+        220.06556930490746,
+        31.3613948848521,
+        324.45009677976384,
+        319.42049703980416,
+        0.2760910754254097,
+        6.144537439512483,
+        72.12068157438432,
+        104.09782717997243,
+        5.111045703778489
+      ],
+      "phases_rad": [
+        3.942232839213302,
+        5.124856982033251,
+        1.0990746522399046
+      ],
+      "position_errors_mm": [
+        43.07766401374808,
+        42.758543857143955,
+        26.829810647206124
+      ],
+      "orientation_errors_deg": [
+        14.895823925516368,
+        10.443062815187176,
+        15.015987462415808
+      ],
+      "mean_position_error_mm": 37.555339506032716,
+      "maximum_position_error_mm": 43.07766401374808,
+      "maximum_orientation_error_deg": 15.015987462415808,
+      "achieved_points_mm": [
+        [
+          131.62518501850974,
+          129.24949246442395
+        ],
+        [
+          137.50282833019634,
+          103.63833970178635
+        ],
+        [
+          193.17036591319203,
+          100.09733515771198
+        ]
+      ],
+      "achieved_orientations_deg": [
+        4.895823925516369,
+        10.443062815187163,
+        -5.015987462415795
+      ],
+      "global_minimum_transmission_deg": 34.07321095678434,
+      "target_minimum_transmission_deg": 37.62813660245405,
+      "envelope_min_mm": [
+        40.75928704711841,
+        -98.71091746558633
+      ],
+      "envelope_max_mm": [
+        426.60861563007876,
+        146.61163124710495
+      ],
+      "phase_progress_deg": [
+        0.0,
+        67.75937213385974,
+        197.09903539835733
+      ],
+      "checks": {
+        "mean_position": false,
+        "maximum_position": false,
+        "orientation": false,
+        "target_assembly": true,
+        "target_order": true,
+        "full_cycle_assembly": true,
+        "grashof": true,
+        "crank_shortest": true,
+        "target_transmission": true,
+        "global_transmission": true,
+        "panel_fit": false,
+        "pivot_clearance": false
+      },
+      "failed_checks": [
+        "mean_position",
+        "maximum_position",
+        "orientation",
+        "panel_fit",
+        "pivot_clearance"
+      ],
+      "engine_selection_eligible": false,
+      "brief_passed": false,
+      "pose_tolerance_ratio": 37.555339506032716,
+      "engine_selected": false
+    },
+    {
+      "id": "positive-variable_002",
+      "direction": "positive",
+      "branch": 1,
+      "parameters_mm": [
+        263.61784219162723,
+        46.63664381316128,
+        341.3801201457811,
+        269.7773795243129,
+        0.2858917616986897,
+        4.199292422481355,
+        81.43524406445601,
+        145.84066530582982,
+        0.5251373933120087
+      ],
+      "phases_rad": [
+        2.4170559470817765,
+        2.5216141164539723,
+        5.1975905323823905
+      ],
+      "position_errors_mm": [
+        31.31429375373852,
+        42.827742155905085,
+        5.746778727169602
+      ],
+      "orientation_errors_deg": [
+        15.044293271669176,
+        24.11465342727942,
+        21.873331097198587
+      ],
+      "mean_position_error_mm": 26.629604878937737,
+      "maximum_position_error_mm": 42.827742155905085,
+      "maximum_orientation_error_deg": 24.11465342727942,
+      "achieved_points_mm": [
+        [
+          125.9220109871747,
+          117.56799190790517
+        ],
+        [
+          125.80424646577137,
+          114.21500555751506
+        ],
+        [
+          217.31068918201828,
+          105.07868812424385
+        ]
+      ],
+      "achieved_orientations_deg": [
+        -25.044293271669183,
+        -24.11465342727941,
+        -11.873331097198587
+      ],
+      "global_minimum_transmission_deg": 39.44552625261571,
+      "target_minimum_transmission_deg": 45.49308313725149,
+      "envelope_min_mm": [
+        34.798601247678704,
+        10.32998778623812
+      ],
+      "envelope_max_mm": [
+        458.1434614920996,
+        278.0006962811798
+      ],
+      "phase_progress_deg": [
+        0.0,
+        5.990741818640845,
+        159.31289652788377
+      ],
+      "checks": {
+        "mean_position": false,
+        "maximum_position": false,
+        "orientation": false,
+        "target_assembly": true,
+        "target_order": true,
+        "full_cycle_assembly": true,
+        "grashof": true,
+        "crank_shortest": true,
+        "target_transmission": true,
+        "global_transmission": true,
+        "panel_fit": false,
+        "pivot_clearance": true
+      },
+      "failed_checks": [
+        "mean_position",
+        "maximum_position",
+        "orientation",
+        "panel_fit"
+      ],
+      "engine_selection_eligible": false,
+      "brief_passed": false,
+      "pose_tolerance_ratio": 28.551828103936725,
+      "engine_selected": false
+    },
+    {
+      "id": "positive-variable_003",
+      "direction": "positive",
+      "branch": -1,
+      "parameters_mm": [
+        218.12248825661374,
+        31.644623725602884,
+        324.21515549125206,
+        319.74995948122927,
+        0.27421933686167715,
+        6.191044132411692,
+        72.75486958911966,
+        102.85720506803054,
+        5.108872317421528
+      ],
+      "phases_rad": [
+        3.9156233232234454,
+        5.1290207186755445,
+        1.0908899069911007
+      ],
+      "position_errors_mm": [
+        42.93677447375832,
+        43.81251670685396,
+        26.629463300286137
+      ],
+      "orientation_errors_deg": [
+        14.93790944713328,
+        10.792249699639996,
+        14.916356557260599
+      ],
+      "mean_position_error_mm": 37.79291816029947,
+      "maximum_position_error_mm": 43.81251670685396,
+      "maximum_orientation_error_deg": 14.93790944713328,
+      "achieved_points_mm": [
+        [
+          131.65491570369548,
+          129.00918671735417
+        ],
+        [
+          137.1817371769804,
+          102.59861630998181
+        ],
+        [
+          193.39899211561115,
+          98.76927046189327
+        ]
+      ],
+      "achieved_orientations_deg": [
+        4.937909447133284,
+        10.792249699639992,
+        -4.916356557260603
+      ],
+      "global_minimum_transmission_deg": 33.65623014904892,
+      "target_minimum_transmission_deg": 37.19938412149451,
+      "envelope_min_mm": [
+        41.11024722738583,
+        -98.3443763925232
+      ],
+      "envelope_max_mm": [
+        427.31183964252733,
+        147.06153343557537
+      ],
+      "phase_progress_deg": [
+        0.0,
+        69.52254963157183,
+        198.1546970003158
+      ],
+      "checks": {
+        "mean_position": false,
+        "maximum_position": false,
+        "orientation": false,
+        "target_assembly": true,
+        "target_order": true,
+        "full_cycle_assembly": true,
+        "grashof": true,
+        "crank_shortest": true,
+        "target_transmission": true,
+        "global_transmission": true,
+        "panel_fit": false,
+        "pivot_clearance": false
+      },
+      "failed_checks": [
+        "mean_position",
+        "maximum_position",
+        "orientation",
+        "panel_fit",
+        "pivot_clearance"
+      ],
+      "engine_selection_eligible": false,
+      "brief_passed": false,
+      "pose_tolerance_ratio": 37.79291816029947,
+      "engine_selected": false
+    },
+    {
+      "id": "positive-variable_004",
+      "direction": "positive",
+      "branch": 1,
+      "parameters_mm": [
+        272.7746731207757,
+        44.22635506501739,
+        341.3244897040382,
+        262.6563359726102,
+        0.3631413370591105,
+        4.226258293606565,
+        58.66749348603386,
+        156.30842849387733,
+        0.4204615003760983
+      ],
+      "phases_rad": [
+        2.424694237444601,
+        2.4695299267837525,
+        5.363181946920676
+      ],
+      "position_errors_mm": [
+        30.189400982787703,
+        43.26126702769696,
+        3.479614574158769
+      ],
+      "orientation_errors_deg": [
+        18.73845615730528,
+        28.370612142861575,
+        27.66975458904568
+      ],
+      "mean_position_error_mm": 25.643427528214477,
+      "maximum_position_error_mm": 43.26126702769696,
+      "maximum_orientation_error_deg": 28.370612142861575,
+      "achieved_points_mm": [
+        [
+          127.08362032527943,
+          113.33707020959454
+        ],
+        [
+          126.90361988387556,
+          112.14022885860864
+        ],
+        [
+          216.87362274029422,
+          101.52757416012864
+        ]
+      ],
+      "achieved_orientations_deg": [
+        -28.73845615730527,
+        -28.370612142861585,
+        -17.66975458904567
+      ],
+      "global_minimum_transmission_deg": 41.99569621031543,
+      "target_minimum_transmission_deg": 46.35784274169136,
+      "envelope_min_mm": [
+        14.441139007456002,
+        5.079535076954272
+      ],
+      "envelope_max_mm": [
+        423.6167300252745,
+        267.65008570212535
+      ],
+      "phase_progress_deg": [
+        0.0,
+        2.56889577069308,
+        168.3629439040435
+      ],
+      "checks": {
+        "mean_position": false,
+        "maximum_position": false,
+        "orientation": false,
+        "target_assembly": true,
+        "target_order": true,
+        "full_cycle_assembly": true,
+        "grashof": true,
+        "crank_shortest": true,
+        "target_transmission": true,
+        "global_transmission": true,
+        "panel_fit": false,
+        "pivot_clearance": true
+      },
+      "failed_checks": [
+        "mean_position",
+        "maximum_position",
+        "orientation",
+        "panel_fit"
+      ],
+      "engine_selection_eligible": false,
+      "brief_passed": false,
+      "pose_tolerance_ratio": 28.840844685131305,
+      "engine_selected": false
+    },
+    {
+      "id": "positive-variable_005",
+      "direction": "positive",
+      "branch": -1,
+      "parameters_mm": [
+        215.80066769731178,
+        32.72812821144132,
+        322.2025373907471,
+        322.43696027881793,
+        0.2837754954452872,
+        5.235796436631218,
+        71.85054278718573,
+        102.4090143978509,
+        5.101766309466079
+      ],
+      "phases_rad": [
+        3.8805611475677466,
+        5.049867525202361,
+        1.1914748394511312
+      ],
+      "position_errors_mm": [
+        44.84732280548192,
+        42.56881735779742,
+        23.873329541819498
+      ],
+      "orientation_errors_deg": [
+        15.65563936721918,
+        12.183275903139531,
+        14.748266072427555
+      ],
+      "mean_position_error_mm": 37.09648990169962,
+      "maximum_position_error_mm": 44.84732280548192,
+      "maximum_orientation_error_deg": 15.65563936721918,
+      "achieved_points_mm": [
+        [
+          132.74608300578228,
+          130.64272198414358
+        ],
+        [
+          135.66280257125194,
+          105.07429266921493
+        ],
+        [
+          196.12981201896477,
+          100.38728434302553
+        ]
+      ],
+      "achieved_orientations_deg": [
+        5.655639367219175,
+        12.183275903139538,
+        -4.7482660724275565
+      ],
+      "global_minimum_transmission_deg": 32.99719912484729,
+      "target_minimum_transmission_deg": 37.26082304970401,
+      "envelope_min_mm": [
+        39.12241504259804,
+        -97.23802656362814
+      ],
+      "envelope_max_mm": [
+        425.7888346183212,
+        153.22747189239647
+      ],
+      "phase_progress_deg": [
+        0.0,
+        66.99632039619382,
+        205.92670379850185
+      ],
+      "checks": {
+        "mean_position": false,
+        "maximum_position": false,
+        "orientation": false,
+        "target_assembly": true,
+        "target_order": true,
+        "full_cycle_assembly": true,
+        "grashof": true,
+        "crank_shortest": true,
+        "target_transmission": true,
+        "global_transmission": true,
+        "panel_fit": false,
+        "pivot_clearance": false
+      },
+      "failed_checks": [
+        "mean_position",
+        "maximum_position",
+        "orientation",
+        "panel_fit",
+        "pivot_clearance"
+      ],
+      "engine_selection_eligible": false,
+      "brief_passed": false,
+      "pose_tolerance_ratio": 37.09648990169962,
+      "engine_selected": false
+    },
+    {
+      "id": "positive-variable_006",
+      "direction": "positive",
+      "branch": 1,
+      "parameters_mm": [
+        222.17468126316726,
+        40.833664759372624,
+        341.88908375339105,
+        271.08169666770357,
+        0.3076250942807191,
+        3.9545094900366755,
+        80.38596260904524,
+        155.1265224432713,
+        0.3914265408369717
+      ],
+      "phases_rad": [
+        2.0501071300848683,
+        2.2424119797447037,
+        5.4731999454085525
+      ],
+      "position_errors_mm": [
+        39.692599447074116,
+        37.72702234846761,
+        4.953468117644534
+      ],
+      "orientation_errors_deg": [
+        28.034549838762956,
+        36.660586954378516,
+        31.284120534730448
+      ],
+      "mean_position_error_mm": 27.457696637728755,
+      "maximum_position_error_mm": 39.692599447074116,
+      "maximum_orientation_error_deg": 36.660586954378516,
+      "achieved_points_mm": [
+        [
+          134.4316382408193,
+          119.74752488083554
+        ],
+        [
+          131.43395645492603,
+          115.35635231012438
+        ],
+        [
+          217.13010943684176,
+          104.03739700153653
+        ]
+      ],
+      "achieved_orientations_deg": [
+        -38.034549838762956,
+        -36.660586954378516,
+        -21.284120534730462
+      ],
+      "global_minimum_transmission_deg": 31.827574136932363,
+      "target_minimum_transmission_deg": 34.99063447577826,
+      "envelope_min_mm": [
+        39.55230111434456,
+        -29.221380051778084
+      ],
+      "envelope_max_mm": [
+        436.32320574105154,
+        239.88781818546954
+      ],
+      "phase_progress_deg": [
+        0.0,
+        11.018256265406373,
+        196.12877119960203
+      ],
+      "checks": {
+        "mean_position": false,
+        "maximum_position": false,
+        "orientation": false,
+        "target_assembly": true,
+        "target_order": true,
+        "full_cycle_assembly": true,
+        "grashof": true,
+        "crank_shortest": true,
+        "target_transmission": true,
+        "global_transmission": true,
+        "panel_fit": false,
+        "pivot_clearance": true
+      },
+      "failed_checks": [
+        "mean_position",
+        "maximum_position",
+        "orientation",
+        "panel_fit"
+      ],
+      "engine_selection_eligible": false,
+      "brief_passed": false,
+      "pose_tolerance_ratio": 27.457696637728755,
+      "engine_selected": false
+    },
+    {
+      "id": "positive-bridge_trust_001",
+      "direction": "positive",
+      "branch": 1,
+      "parameters_mm": [
+        195.75477291036566,
+        48.881600712124666,
+        349.1958745096175,
+        235.73897626085716,
+        0.23809080904993787,
+        5.0180376043110995,
+        99.33561626850857,
+        118.59325461306537,
+        0.7825770499813165
+      ],
+      "phases_rad": [
+        2.3307851042612255,
+        2.390444964337331,
+        4.5335983713288535
+      ],
+      "position_errors_mm": [
+        37.365620289310264,
+        36.94353386831173,
+        16.57787213224226
+      ],
+      "orientation_errors_deg": [
+        3.9386888629324517,
+        5.530029669466813,
+        6.943847607887221
+      ],
+      "mean_position_error_mm": 30.295675429954755,
+      "maximum_position_error_mm": 37.365620289310264,
+      "maximum_orientation_error_deg": 6.943847607887221,
+      "achieved_points_mm": [
+        [
+          133.6788903292092,
+          116.18400215638933
+        ],
+        [
+          133.71511059272598,
+          114.03985201262385
+        ],
+        [
+          205.1576525693083,
+          107.38448151054726
+        ]
+      ],
+      "achieved_orientations_deg": [
+        -6.06131113706754,
+        -5.530029669466818,
+        16.943847607887207
+      ],
+      "global_minimum_transmission_deg": 18.708745071814782,
+      "target_minimum_transmission_deg": 35.87976009897353,
+      "envelope_min_mm": [
+        50.45401656475137,
+        69.71165490930817
+      ],
+      "envelope_max_mm": [
+        473.8631477815178,
+        256.6217345018007
+      ],
+      "phase_progress_deg": [
+        0.0,
+        3.4182581887018753,
+        126.21190325839933
+      ],
+      "checks": {
+        "mean_position": false,
+        "maximum_position": false,
+        "orientation": false,
+        "target_assembly": true,
+        "target_order": true,
+        "full_cycle_assembly": true,
+        "grashof": true,
+        "crank_shortest": true,
+        "target_transmission": true,
+        "global_transmission": true,
+        "panel_fit": false,
+        "pivot_clearance": true
+      },
+      "failed_checks": [
+        "mean_position",
+        "maximum_position",
+        "orientation",
+        "panel_fit"
+      ],
+      "engine_selection_eligible": false,
+      "brief_passed": false,
+      "pose_tolerance_ratio": 30.295675429954755,
+      "engine_selected": false
+    },
+    {
+      "id": "positive-bridge_trust_002",
+      "direction": "positive",
+      "branch": 1,
+      "parameters_mm": [
+        187.8063264425445,
+        44.88381872474106,
+        344.88952959354214,
+        259.57262803424203,
+        0.2574356714847726,
+        4.075951562131611,
+        88.29747127847352,
+        136.60339143406162,
+        0.8051777018201903
+      ],
+      "phases_rad": [
+        2.497886776278697,
+        2.8102074702636215,
+        4.510359661842226
+      ],
+      "position_errors_mm": [
+        37.25064659024559,
+        37.435270422493666,
+        27.62871957120098
+      ],
+      "orientation_errors_deg": [
+        0.45032353847329887,
+        6.307792078346296,
+        0.26370588490379987
+      ],
+      "mean_position_error_mm": 34.10487886131341,
+      "maximum_position_error_mm": 37.435270422493666,
+      "maximum_orientation_error_deg": 6.307792078346296,
+      "achieved_points_mm": [
+        [
+          132.23019574380862,
+          118.67686145226642
+        ],
+        [
+          137.05503764324305,
+          110.42081518952499
+        ],
+        [
+          200.3971459125386,
+          119.46982939755154
+        ]
+      ],
+      "achieved_orientations_deg": [
+        -9.549676461526701,
+        -6.307792078346297,
+        10.263705884903796
+      ],
+      "global_minimum_transmission_deg": 22.0940327181901,
+      "target_minimum_transmission_deg": 35.5591822998517,
+      "envelope_min_mm": [
+        43.41365446391778,
+        69.37072412870387
+      ],
+      "envelope_max_mm": [
+        470.83410198526326,
+        272.00307591122066
+      ],
+      "phase_progress_deg": [
+        0.0,
+        17.89465761993308,
+        115.30620272730448
+      ],
+      "checks": {
+        "mean_position": false,
+        "maximum_position": false,
+        "orientation": false,
+        "target_assembly": true,
+        "target_order": true,
+        "full_cycle_assembly": true,
+        "grashof": true,
+        "crank_shortest": true,
+        "target_transmission": true,
+        "global_transmission": true,
+        "panel_fit": false,
+        "pivot_clearance": true
+      },
+      "failed_checks": [
+        "mean_position",
+        "maximum_position",
+        "orientation",
+        "panel_fit"
+      ],
+      "engine_selection_eligible": false,
+      "brief_passed": false,
+      "pose_tolerance_ratio": 34.10487886131341,
+      "engine_selected": false
+    },
+    {
+      "id": "positive-bridge_trust_003",
+      "direction": "positive",
+      "branch": -1,
+      "parameters_mm": [
+        187.76224084256512,
+        29.97954491275323,
+        328.93390465410334,
+        314.84035930628136,
+        0.2760204072689844,
+        6.283615642089918,
+        72.59349242687682,
+        103.30779778443457,
+        5.093108815956703
+      ],
+      "phases_rad": [
+        4.314655418805681,
+        4.780271741191455,
+        1.0889340680211248
+      ],
+      "position_errors_mm": [
+        38.756128750750214,
+        38.167398418813036,
+        27.11953180075869
+      ],
+      "orientation_errors_deg": [
+        17.714184238250425,
+        9.906925047716328,
+        17.102391271514875
+      ],
+      "mean_position_error_mm": 34.68101965677398,
+      "maximum_position_error_mm": 38.756128750750214,
+      "maximum_orientation_error_deg": 17.714184238250425,
+      "achieved_points_mm": [
+        [
+          131.74562565723124,
+          122.23179631464063
+        ],
+        [
+          133.93783959441015,
+          112.11606023077591
+        ],
+        [
+          193.29254979369153,
+          95.29031757228623
+        ]
+      ],
+      "achieved_orientations_deg": [
+        7.7141842382504215,
+        9.90692504771633,
+        -7.1023912715148905
+      ],
+      "global_minimum_transmission_deg": 28.26545060756591,
+      "target_minimum_transmission_deg": 31.614077151722483,
+      "envelope_min_mm": [
+        42.6139483636227,
+        -71.01017716483778
+      ],
+      "envelope_max_mm": [
+        428.8354255055609,
+        148.4388146212515
+      ],
+      "phase_progress_deg": [
+        0.0,
+        26.67785014510756,
+        175.179780714806
+      ],
+      "checks": {
+        "mean_position": false,
+        "maximum_position": false,
+        "orientation": false,
+        "target_assembly": true,
+        "target_order": true,
+        "full_cycle_assembly": true,
+        "grashof": true,
+        "crank_shortest": true,
+        "target_transmission": true,
+        "global_transmission": true,
+        "panel_fit": false,
+        "pivot_clearance": false
+      },
+      "failed_checks": [
+        "mean_position",
+        "maximum_position",
+        "orientation",
+        "panel_fit",
+        "pivot_clearance"
+      ],
+      "engine_selection_eligible": false,
+      "brief_passed": false,
+      "pose_tolerance_ratio": 34.68101965677398,
+      "engine_selected": false
+    },
+    {
+      "id": "positive-bridge_release_001",
+      "direction": "positive",
+      "branch": 1,
+      "parameters_mm": [
+        227.6191849854859,
+        57.44684159119766,
+        347.8950330721001,
+        240.28500296091838,
+        0.23463379362522158,
+        4.8904395985956635,
+        106.3696818089272,
+        123.64158692218683,
+        0.7343276879788857
+      ],
+      "phases_rad": [
+        2.2973441161416828,
+        2.3199560439655764,
+        4.638519848111219
+      ],
+      "position_errors_mm": [
+        36.201688582176295,
+        36.545103658692476,
+        0.5956057670640863
+      ],
+      "orientation_errors_deg": [
+        0.6497305941770151,
+        10.42162632486054,
+        2.3501993404424866
+      ],
+      "mean_position_error_mm": 24.447466002644287,
+      "maximum_position_error_mm": 36.545103658692476,
+      "maximum_orientation_error_deg": 10.42162632486054,
+      "achieved_points_mm": [
+        [
+          130.39523530879083,
+          119.6644838916283
+        ],
+        [
+          130.30762585109858,
+          118.69489453613926
+        ],
+        [
+          220.30506004113317,
+          100.51155117150078
+        ]
+      ],
+      "achieved_orientations_deg": [
+        -10.649730594177013,
+        -10.42162632486053,
+        12.350199340442472
+      ],
+      "global_minimum_transmission_deg": 26.356013297629154,
+      "target_minimum_transmission_deg": 43.273848469724754,
+      "envelope_min_mm": [
+        48.922845206130454,
+        65.52567254165348
+      ],
+      "envelope_max_mm": [
+        503.9950676759547,
+        276.16653107539344
+      ],
+      "phase_progress_deg": [
+        0.0,
+        1.295568030963542,
+        134.13948854030568
+      ],
+      "checks": {
+        "mean_position": false,
+        "maximum_position": false,
+        "orientation": false,
+        "target_assembly": true,
+        "target_order": true,
+        "full_cycle_assembly": true,
+        "grashof": true,
+        "crank_shortest": true,
+        "target_transmission": true,
+        "global_transmission": true,
+        "panel_fit": false,
+        "pivot_clearance": true
+      },
+      "failed_checks": [
+        "mean_position",
+        "maximum_position",
+        "orientation",
+        "panel_fit"
+      ],
+      "engine_selection_eligible": false,
+      "brief_passed": false,
+      "pose_tolerance_ratio": 24.447466002644287,
+      "engine_selected": false
+    },
+    {
+      "id": "positive-bridge_release_002",
+      "direction": "positive",
+      "branch": -1,
+      "parameters_mm": [
+        201.80138512494227,
+        32.15195226796942,
+        329.62645678085113,
+        314.0557502590418,
+        0.2773152028512845,
+        6.480230356033861,
+        74.41796641673386,
+        105.33336248073999,
+        5.09493262783166
+      ],
+      "phases_rad": [
+        4.389502494989423,
+        4.649485463794528,
+        1.0040305602563109
+      ],
+      "position_errors_mm": [
+        38.35899804889825,
+        36.75775978383138,
+        23.469577007984608
+      ],
+      "orientation_errors_deg": [
+        16.78204710062147,
+        8.118009842970054,
+        17.816606652902692
+      ],
+      "mean_position_error_mm": 32.862111613571415,
+      "maximum_position_error_mm": 38.35899804889825,
+      "maximum_orientation_error_deg": 17.816606652902692,
+      "achieved_points_mm": [
+        [
+          132.32873119211854,
+          120.64620717766635
+        ],
+        [
+          133.47390084407587,
+          114.55399898027329
+        ],
+        [
+          197.46829018588613,
+          93.43165943435599
+        ]
+      ],
+      "achieved_orientations_deg": [
+        6.782047100621471,
+        8.118009842970055,
+        -7.816606652902699
+      ],
+      "global_minimum_transmission_deg": 30.43990611442555,
+      "target_minimum_transmission_deg": 33.577752253027555,
+      "envelope_min_mm": [
+        42.266015759551024,
+        -81.88144345816923
+      ],
+      "envelope_max_mm": [
+        432.615717096853,
+        143.40069065027328
+      ],
+      "phase_progress_deg": [
+        0.0,
+        14.89592685781388,
+        166.02674647980336
+      ],
+      "checks": {
+        "mean_position": false,
+        "maximum_position": false,
+        "orientation": false,
+        "target_assembly": true,
+        "target_order": true,
+        "full_cycle_assembly": true,
+        "grashof": true,
+        "crank_shortest": true,
+        "target_transmission": true,
+        "global_transmission": true,
+        "panel_fit": false,
+        "pivot_clearance": false
+      },
+      "failed_checks": [
+        "mean_position",
+        "maximum_position",
+        "orientation",
+        "panel_fit",
+        "pivot_clearance"
+      ],
+      "engine_selection_eligible": false,
+      "brief_passed": false,
+      "pose_tolerance_ratio": 32.862111613571415,
+      "engine_selected": false
+    },
+    {
+      "id": "positive-bridge_release_003",
+      "direction": "positive",
+      "branch": 1,
+      "parameters_mm": [
+        213.00683018736157,
+        49.13706027667041,
+        344.4314843107904,
+        260.6380729637674,
+        0.2557443984134487,
+        4.032355203462968,
+        93.38943984030982,
+        138.8125156032869,
+        0.8001379243405726
+      ],
+      "phases_rad": [
+        2.636639347296956,
+        2.906297835493474,
+        4.49979060922787
+      ],
+      "position_errors_mm": [
+        37.680077974556696,
+        37.42761069707458,
+        20.10923606931778
+      ],
+      "orientation_errors_deg": [
+        1.8015973269855294,
+        5.302364718866301,
+        1.1908966341634084
+      ],
+      "mean_position_error_mm": 31.738974913649685,
+      "maximum_position_error_mm": 37.680077974556696,
+      "maximum_orientation_error_deg": 5.302364718866301,
+      "achieved_points_mm": [
+        [
+          134.13885055649433,
+          115.94763803357786
+        ],
+        [
+          139.96683925139547,
+          108.3851535997351
+        ],
+        [
+          207.05667672196873,
+          115.38998888277457
+        ]
+      ],
+      "achieved_orientations_deg": [
+        -8.198402673014458,
+        -5.302364718866289,
+        8.80910336583659
+      ],
+      "global_minimum_transmission_deg": 27.184181649293997,
+      "target_minimum_transmission_deg": 41.55219647809174,
+      "envelope_min_mm": [
+        44.252379787887484,
+        71.19744057187353
+      ],
+      "envelope_max_mm": [
+        483.16284453827586,
+        291.6347296135416
+      ],
+      "phase_progress_deg": [
+        0.0,
+        15.45029328353881,
+        106.75070390311474
+      ],
+      "checks": {
+        "mean_position": false,
+        "maximum_position": false,
+        "orientation": false,
+        "target_assembly": true,
+        "target_order": true,
+        "full_cycle_assembly": true,
+        "grashof": true,
+        "crank_shortest": true,
+        "target_transmission": true,
+        "global_transmission": true,
+        "panel_fit": false,
+        "pivot_clearance": false
+      },
+      "failed_checks": [
+        "mean_position",
+        "maximum_position",
+        "orientation",
+        "panel_fit",
+        "pivot_clearance"
+      ],
+      "engine_selection_eligible": false,
+      "brief_passed": false,
+      "pose_tolerance_ratio": 31.738974913649685,
+      "engine_selected": false
+    }
+  ],
+  "passing_candidates": 2,
+  "diagnostic_rejected_candidates": [
+    {
+      "id": "positive-bridge_release_001",
+      "direction": "positive",
+      "branch": 1,
+      "parameters_mm": [
+        227.6191849854859,
+        57.44684159119766,
+        347.8950330721001,
+        240.28500296091838,
+        0.23463379362522158,
+        4.8904395985956635,
+        106.3696818089272,
+        123.64158692218683,
+        0.7343276879788857
+      ],
+      "phases_rad": [
+        2.2973441161416828,
+        2.3199560439655764,
+        4.638519848111219
+      ],
+      "position_errors_mm": [
+        36.201688582176295,
+        36.545103658692476,
+        0.5956057670640863
+      ],
+      "orientation_errors_deg": [
+        0.6497305941770151,
+        10.42162632486054,
+        2.3501993404424866
+      ],
+      "mean_position_error_mm": 24.447466002644287,
+      "maximum_position_error_mm": 36.545103658692476,
+      "maximum_orientation_error_deg": 10.42162632486054,
+      "achieved_points_mm": [
+        [
+          130.39523530879083,
+          119.6644838916283
+        ],
+        [
+          130.30762585109858,
+          118.69489453613926
+        ],
+        [
+          220.30506004113317,
+          100.51155117150078
+        ]
+      ],
+      "achieved_orientations_deg": [
+        -10.649730594177013,
+        -10.42162632486053,
+        12.350199340442472
+      ],
+      "global_minimum_transmission_deg": 26.356013297629154,
+      "target_minimum_transmission_deg": 43.273848469724754,
+      "envelope_min_mm": [
+        48.922845206130454,
+        65.52567254165348
+      ],
+      "envelope_max_mm": [
+        503.9950676759547,
+        276.16653107539344
+      ],
+      "phase_progress_deg": [
+        0.0,
+        1.295568030963542,
+        134.13948854030568
+      ],
+      "checks": {
+        "mean_position": false,
+        "maximum_position": false,
+        "orientation": false,
+        "target_assembly": true,
+        "target_order": true,
+        "full_cycle_assembly": true,
+        "grashof": true,
+        "crank_shortest": true,
+        "target_transmission": true,
+        "global_transmission": true,
+        "panel_fit": false,
+        "pivot_clearance": true
+      },
+      "failed_checks": [
+        "mean_position",
+        "maximum_position",
+        "orientation",
+        "panel_fit"
+      ],
+      "engine_selection_eligible": false,
+      "brief_passed": false,
+      "pose_tolerance_ratio": 24.447466002644287,
+      "engine_selected": false
+    },
+    {
+      "id": "negative-variable_006",
+      "direction": "negative",
+      "branch": 1,
+      "parameters_mm": [
+        271.2617664229004,
+        63.43285600819834,
+        345.94124132805285,
+        240.84446615208174,
+        0.14019548940165233,
+        4.213356710631203,
+        110.44374878622702,
+        76.41203095919047,
+        0.8524345534479973
+      ],
+      "phases_rad": [
+        1.9064605677584017,
+        0.7040443898422011,
+        5.555656238830243
+      ],
+      "position_errors_mm": [
+        0.7201707173582267,
+        0.5931772734366172,
+        1.7617110545429564
+      ],
+      "orientation_errors_deg": [
+        4.134857729955996,
+        5.471978811439925,
+        5.6083050298741455
+      ],
+      "mean_position_error_mm": 1.0250196817792667,
+      "maximum_position_error_mm": 1.7617110545429564,
+      "maximum_orientation_error_deg": 5.6083050298741455,
+      "achieved_points_mm": [
+        [
+          100.27564924893036,
+          99.33467049238412
+        ],
+        [
+          160.0320790953068,
+          139.4076907823054
+        ],
+        [
+          218.95970155177196,
+          101.42176122408553
+        ]
+      ],
+      "achieved_orientations_deg": [
+        -5.865142270043992,
+        -5.471978811439929,
+        15.60830502987416
+      ],
+      "global_minimum_transmission_deg": 36.18844185261709,
+      "target_minimum_transmission_deg": 40.713990903478674,
+      "envelope_min_mm": [
+        47.0108935776963,
+        12.97917575065975
+      ],
+      "envelope_max_mm": [
+        506.95659528963483,
+        280.6409300654757
+      ],
+      "phase_progress_deg": [
+        0.0,
+        68.8933722128498,
+        150.91648943017333
+      ],
+      "checks": {
+        "mean_position": false,
+        "maximum_position": false,
+        "orientation": false,
+        "target_assembly": true,
+        "target_order": true,
+        "full_cycle_assembly": true,
+        "grashof": true,
+        "crank_shortest": true,
+        "target_transmission": true,
+        "global_transmission": true,
+        "panel_fit": false,
+        "pivot_clearance": true
+      },
+      "failed_checks": [
+        "mean_position",
+        "maximum_position",
+        "orientation",
+        "panel_fit"
+      ],
+      "engine_selection_eligible": false,
+      "brief_passed": false,
+      "pose_tolerance_ratio": 1.8694350099580486,
+      "engine_selected": false
+    }
+  ],
+  "diagnostic_selection_rule": "Smallest worst pose-tolerance ratio per direction: max(mean position / 1 mm, maximum position / 1.5 mm, maximum angle / 3 deg). Excludes panel fit from ranking; does not qualify candidates.",
+  "limitations": [
+    "Panel fit samples 7201 phases; it is not analytic continuous containment.",
+    "Link centrelines and carrier corners only; no thickness, bearings, collisions, loads or manufacturing checks.",
+    "Orientation is constrained at three target phases only. No timing, dwell or speed requirement."
+  ]
+}

@@ -88,8 +88,12 @@ def build_parser() -> argparse.ArgumentParser:
         help="Deterministic geometric samples for pose tasks only; zero disables this additional branch",
     )
     parser.add_argument(
+        "--pose_tolerance_samples", type=int, default=65536,
+        help="Additional deterministic samples within the requested angular tolerances (0 to 262144)",
+    )
+    parser.add_argument(
         "--pose_dyad_seed_count", type=int, default=6,
-        help="Maximum geometric pose seeds (0 to 6); each exact seed is retained alongside a refined child",
+        help="Maximum seeds per nominal/tolerance branch (0 to 6); retain each seed alongside a refined child",
     )
     parser.add_argument(
         "--portfolio_fixed_seed_count",
@@ -165,8 +169,8 @@ def build_parser() -> argparse.ArgumentParser:
 
 def validate_args(parser: argparse.ArgumentParser, args: argparse.Namespace) -> None:
     ENGINE.validate_args(parser, args)
-    if args.pose_dyad_samples < 0:
-        parser.error("--pose_dyad_samples must be non-negative")
+    if not 0 <= args.pose_dyad_samples <= 262144 or not 0 <= args.pose_tolerance_samples <= 262144:
+        parser.error("Pose sample budgets must be between 0 and 262144 per branch")
     if not 0 <= args.pose_dyad_seed_count <= 6:
         parser.error("--pose_dyad_seed_count must be between 0 and 6")
     integer_nonnegative = (
@@ -320,6 +324,29 @@ def run_pose_geometry(
     output_dir: Path,
     lineage_by_id: Dict[str, Dict[str, str]],
 ) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]], Dict[str, Any]]:
+    """Keep separate seed slots for nominal poses and poses within tolerances."""
+    exact, refined, diagnostics = _run_pose_geometry_branch(target, args, shared_reference, output_dir, lineage_by_id)
+    samples = getattr(args, "pose_tolerance_samples", 0)
+    if not samples:
+        return exact, refined, diagnostics
+    tolerant, children, extra = _run_pose_geometry_branch(
+        target, args, shared_reference, output_dir, lineage_by_id, tolerance_aware=True)
+    combined = {key: value + extra[key] if isinstance(value, (int, float)) and not isinstance(value, bool) else value
+                for key, value in diagnostics.items()}
+    combined.update(method="three_pose_dyad_v2", enabled=diagnostics["enabled"] or extra["enabled"],
+                    nominal_samples=args.pose_dyad_samples, tolerance_samples=samples,
+                    nominal_returned_seeds=len(exact), tolerance_returned_seeds=len(tolerant))
+    return [*exact, *tolerant], [*refined, *children], combined
+
+
+def _run_pose_geometry_branch(
+    target: torch.Tensor,
+    args: argparse.Namespace,
+    shared_reference: Dict[str, Any],
+    output_dir: Path,
+    lineage_by_id: Dict[str, Dict[str, str]],
+    *, tolerance_aware: bool = False,
+) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]], Dict[str, Any]]:
     """Add exact pose candidates and their children without changing neural runs.
 
     The exact candidates are evaluated and retained before any optimization.
@@ -330,7 +357,8 @@ def run_pose_geometry(
 
     seeds, diagnostics = pose_seeds.generate_pose_seeds(
         target.detach().cpu().reshape(3, 2).numpy(), args.target_orientations_deg, args,
-        sample_count=args.pose_dyad_samples, max_seeds=args.pose_dyad_seed_count,
+        sample_count=args.pose_tolerance_samples if tolerance_aware else args.pose_dyad_samples,
+        max_seeds=args.pose_dyad_seed_count, tolerance_aware=tolerance_aware,
     )
     diagnostics.update(
         source_sha256=sha256_file(Path(pose_seeds.__file__)),
@@ -348,11 +376,12 @@ def run_pose_geometry(
         params = torch.tensor(seed["parameters"], dtype=target.dtype, device=target.device)
         phases = torch.tensor(seed["phases_rad"], dtype=target.dtype, device=target.device)
         raw = ENGINE.encode_refinement_variables(params, phases, target, args.phase_mode, args)
-        candidate_id = f"pose_seed_{index:03d}"
+        prefix = "pose_tolerance" if tolerance_aware else "pose"
+        candidate_id = f"{prefix}_seed_{index:03d}"
         profile = tuple(ENGINE.PROFILES)[(index - 1) % len(ENGINE.PROFILES)]
         start = ENGINE.StartSpec(
             candidate_id=candidate_id, model_role="pose_geometry", profile=profile,
-            checkpoint_variant="three-pose-dyad-v1", checkpoint_epoch=None,
+            checkpoint_variant=diagnostics["method"], checkpoint_epoch=None,
             branch_sign=float(seed["branch_sign"]), perturbation_index=0,
             raw_initial=raw, initial_params=params, initial_phases=phases,
         )
@@ -368,16 +397,16 @@ def run_pose_geometry(
         candidate = ENGINE.evaluate_selected_candidate(optimized, target, args)
         candidate.update(
             acquired_mean_error=candidate["mean_error"],
-            proposal_source=pose_seeds.METHOD,
+            proposal_source=diagnostics["method"],
             generator_sample_index=int(seed["sample_index"]),
         )
         for target_index in (1, 2, 3):
             candidate[f"acquired_error_{target_index}"] = candidate[f"error_{target_index}"]
-        lineage = f"pose_seed:halton_sample={seed['sample_index']}"
+        lineage = f"{prefix}_seed:halton_sample={seed['sample_index']}"
         set_candidate_origin(candidate, "pose_seed", lineage=lineage)
         lineage_by_id[candidate_id] = {"origin": "pose_seed", "parent_candidate_id": "", "lineage": lineage}
         ENGINE.write_csv(history_path, [{
-            "candidate_id": candidate_id, "stage": "exact_pose_seed", "step": 0,
+            "candidate_id": candidate_id, "stage": f"{prefix}_seed", "step": 0,
             "mean_error": candidate["mean_error"], "max_error": candidate["max_error"],
             "max_orientation_error_deg": candidate["max_orientation_error_deg"],
             "physical_feasible": candidate["physical_feasible"],
@@ -385,7 +414,7 @@ def run_pose_geometry(
         }])
         exact.append(candidate)
         child = copy.deepcopy(start)
-        child.candidate_id = f"pose_refined_{index:03d}"
+        child.candidate_id = f"{prefix}_refined_{index:03d}"
         refinement_starts.append(child)
         sample_by_id[child.candidate_id] = int(seed["sample_index"])
         lineage_by_id[child.candidate_id] = {
@@ -401,7 +430,7 @@ def run_pose_geometry(
         "POSE GEOMETRY", lineage_by_id,
     )
     for candidate in refined:
-        candidate["proposal_source"] = pose_seeds.METHOD
+        candidate["proposal_source"] = diagnostics["method"]
         candidate["generator_sample_index"] = sample_by_id[candidate["candidate_id"]]
     diagnostics["refined_candidate_count"] = len(refined)
     diagnostics["refinement_runtime_seconds"] = time.perf_counter() - refinement_started
@@ -846,6 +875,7 @@ def run_search(args) -> int:
         "engine_sha256": sha256_file(ENGINE_PATH),
         "orientation_sha256": sha256_file(ENGINE_PATH.with_name("orientation.py")),
         "pose_initialization_sha256": sha256_file(ENGINE_PATH.with_name("pose_seeds.py")),
+        "panel_screening_sha256": sha256_file(ENGINE_PATH.with_name("panel.py")),
         "arguments": vars(args),
         "models": [
             {
@@ -1195,6 +1225,11 @@ def run_search(args) -> int:
                 for rank, candidate in enumerate(selected, start=1)
             ],
         }
+        from . import panel
+        panel_config = panel.configuration(args)
+        if panel_config:
+            target_manifest.update(panel=panel_config,
+                                   panel_acceptable_count=sum(bool(c.get("panel_acceptable", False)) for c in all_candidates))
         if ENGINE.has_pose_targets(args):
             target_manifest.update(
                 pose_initialization=pose_initialization,

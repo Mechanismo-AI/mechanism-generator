@@ -1,6 +1,6 @@
 {
   "implementation": "r2.5c-public-alpha",
-  "adapter_version": "0.1.0a6",
+  "adapter_version": "0.1.0a7",
   "status": "draft_with_packaged_engine",
   "omts_versions": [
     "0.1",
@@ -31,7 +31,9 @@
     "compactness_metrics",
     "swept_envelope_metrics",
     "candidate_lineage",
-    "target_orientation"
+    "target_orientation",
+    "sampled_panel_containment",
+    "tolerance_aware_pose_initialization"
   ],
   "unsupported": [
     "spatial_3d",
@@ -63,7 +65,8 @@
     "Fixed representative reservation is disabled so rejected reference designs cannot bypass selected eligibility.",
     "Three planar target orientations: tool frame at P with directed +x parallel to coupler A-to-B in world XY; default 5 degree tolerance per target, individually configurable.",
     "Orientation is constrained only at the same three selected target phases; no mounting-angle variable, intermediate orientation path, timing or dwell.",
-    "Pose tasks additionally attempt 4096 deterministic three-pose dyad samples and retain up to six seeds; ordinary final qualification remains required."
+    "Pose tasks attempt 4096 nominal and 65536 angular-tolerance dyad samples by default, each bounded at 262144; each branch retains up to six seeds and their refined children. Budgets are configurable, including zero to disable a branch.",
+    "Optional rectangular panel screening includes fixed pivots, link centrelines and a rectangular carrier centred on P, width along A-to-B. Checks sample the complete crank turn before seed truncation and at final qualification. No continuous containment, collision, thickness or manufacturing guarantee."
   ],
   "expected_artifacts": {
     "balanced.safetensors": "72a20f1f6828686c18100b3f5c7f913161b6042cfd9ea3baac15042d1b9fa8a0",
@@ -77,8 +80,9 @@
     "models.py": "80b145876288d53ea1e96c59543923ec03b1c9266a06b0253753e3c65b333e5f",
     "orientation.py": "cb7443226549e536f1c46f7f58bb01fb5016627227c293efb81e2ce1dce5786a",
     "provenance.py": "1d84d20d1f730fc692c2e5826c269a5efeb808c4b063e8871b79331883190670",
-    "r25b.py": "af8ad32cfa432e602684f7c3c6890ac93bdc07ebe11995e51ace9f8d77042ae2",
-    "r25c.py": "0ee321559d151849a356a4e401aeebe0ff1c7630b03249eba2a6e53c7b641bd5",
-    "pose_seeds.py": "5397d52a3bb856c1e6261a0b7ce892ff3b1e77a31947b4d0e20dc8d55433da52"
+    "r25b.py": "fd802f5e8d879e742ba09a5d4f880f77f8c7376a4680da744a630d7301477f33",
+    "r25c.py": "750b19a8d89d09fc6d774b7572f0c495678b831d5b96a49cccaac2e2cce0bd1c",
+    "pose_seeds.py": "5011ad2ef1d4dc4e4277093b30c0e6bb906a19456bdb673084f0d0bac2c50e7a",
+    "panel.py": "cb2cb38dbdf085253acef4210a063386e932718b3d97f5973f4ea0ed902b214f"
   }
 }
