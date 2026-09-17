@@ -1,0 +1,55 @@
+{
+  "id": "tabletop-transfer-v1",
+  "status": "frozen before search",
+  "description": "50 x 10 mm carrier on a tabletop demonstrator with a vertical mounting panel. Carrier centre P and directed long axis are the tool frame.",
+  "targets_mm": [
+    [
+      100.0,
+      100.0
+    ],
+    [
+      160.0,
+      140.0
+    ],
+    [
+      220.0,
+      100.0
+    ]
+  ],
+  "orientations_deg": [
+    -10.0,
+    0.0,
+    10.0
+  ],
+  "mean_position_tolerance_mm": 1.0,
+  "maximum_position_tolerance_mm": 1.5,
+  "orientation_tolerance_deg": 3.0,
+  "crank_direction": "either",
+  "target_order": [
+    "pickup",
+    "raised midpoint",
+    "placement"
+  ],
+  "panel_bounds_mm": {
+    "x": [
+      0.0,
+      400.0
+    ],
+    "y": [
+      0.0,
+      300.0
+    ]
+  },
+  "carrier_size_mm": [
+    50.0,
+    10.0
+  ],
+  "scale_mm_per_normalized_unit": 30.0,
+  "origin_offset_mm": [
+    250.0,
+    40.0
+  ],
+  "mapping": "physical_xy_mm = normalized_xy * 30 + [250,40]; lengths multiply by 30; angles and S_ratio unchanged.",
+  "panel_screen": "Post-search check of link centreline endpoints and all four carrier corners over 7201 input phases. Ground pivots require 10 mm edge clearance. Not a solver-enforced constraint or collision check.",
+  "scope": "Three target poses and full-cycle kinematic assembly. No specified cycle duration, dwell, payload, torque, structure, bearing clearance, collision avoidance, continuous levelness, or manufactured tolerances."
+}

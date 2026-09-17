@@ -347,14 +347,42 @@ function verifyInvalidInput() {
   assert.ok(ui.element("section-choices").textContent.includes("required outcome"));
 }
 
+async function verifyPanelReviewFlow() {
+  const local = structuredClone(fixture);
+  local.schema_version = "0.5";
+  Object.assign(local.core.tasks[0], {panel_required: true, panel_acceptable_count: 1, crank_direction: "negative"});
+  local.task[0].panel = {method: "sampled_full_cycle_panel_v1", bounds: [0,400,0,300],
+    carrier_size: [50,10], pivot_clearance: 10, steps: 7201, carrier_frame: "coupler_A_to_B"};
+  local.task[0].pose_initialization = {method: "three_pose_dyad_v2", nominal_samples: 4096, tolerance_samples: 262144};
+  local.candidates[0].items.forEach((item, index) => Object.assign(item, {
+    panel_required: true, panel_acceptable: index === 0, panel_steps: 7201,
+    panel_x_max: 400, carrier_width: 50, proposal_source: "three_pose_tolerance_dyad_v1"
+  }));
+  const ui = makeHarness(local);
+  assert.equal(ui.element("error").hidden, true);
+  assert.deepEqual(ui.preview().task, local.task);
+  const stats = Object.fromEntries(ui.element("run-summary").children.map(stat => [stat.children[0].textContent,stat.children[1].textContent]));
+  assert.equal(stats["Sampled panel screen passed"], "1");
+  ui.change("include-task", false);
+  assert.deepEqual(ui.preview().candidates, local.candidates, "Candidate geometry retains its own panel requirements");
+  ui.change("include-candidates", false);
+  assert.deepEqual(ui.preview().core, local.core, "Panel outcome remains when dimensions are excluded");
+  assert.equal(JSON.stringify(ui.preview()).includes("carrier_width"), false);
+  ui.agree();
+  ui.element("download").click();
+  assert.deepEqual(JSON.parse(await ui.downloads[0].text()).core, local.core);
+  assert.equal(ui.openings.length, 0);
+}
+
 (async () => {
   verifyHashVectors();
   await verifyReviewFlow();
   await verifyPoseReviewFlow();
   await verifyPoseReviewFlow("0.3");
   await verifyPoseReviewFlow("0.4");
+  await verifyPanelReviewFlow();
   verifyInvalidInput();
-  console.log("Offline contribution review checks passed: schemas 0.1/0.2/0.3/0.4, crank direction, pose and geometric provenance retention, diagnostics exclusions, digest vectors, consent gates, all section exclusions, Unicode and hostile text, exact download, fixed GitHub URL, changed-file re-export, and invalid-input handling.");
+  console.log("Offline contribution review checks passed: schemas 0.1/0.2/0.3/0.4/0.5, panel constraints and counts, crank direction, pose and geometric provenance retention, diagnostics exclusions, digest vectors, consent gates, all section exclusions, Unicode and hostile text, exact download, fixed GitHub URL, changed-file re-export, and invalid-input handling.");
 })().catch(error => {
   console.error(error);
   process.exitCode = 1;

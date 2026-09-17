@@ -36,6 +36,8 @@ your own input annotations and generated results before sharing them.
 | Transmission | Soft `worst_target` goals plus separately mapped practical selection floors; degrees only |
 | Assembly/class | Full-cycle assembly, Grashof, crank-shortest; optional follower-not-longest |
 | Compactness | Report-only request; no custom thresholds or weights in this adapter |
+| Panel | Optional hard sampled full-turn rectangle containment for link centrelines and a carrier centred on P; fixed-pivot edge clearance |
+| Pose initialization | Separate nominal/tolerance sample budgets, each 0–262144, and 0–6 retained seeds per branch |
 | Search | Per-task seed, top_k, perturbations, parameter noise, phase noise, continuation options |
 | Outputs | JSON + CSV + NPZ together, optional PNG; histories and lineage included |
 
@@ -43,6 +45,11 @@ Each independent task gets its own command and CSV. Different requirements and
 search settings across tasks are preserved. A global `outputs.top_k` and per-task
 `search.top_k`, if both supplied, must agree. Omit the global field for different
 per-task values. `top_k` limits the final selected portfolio, not diagnostic files.
+
+See the [tolerance and panel guide](tolerance-and-panel.md) for the new
+`search.pose_initialization` and `requirements.panel` fields, units, defaults,
+limitations and a complete example. Other workspace/obstacle fields remain
+unsupported; sampled panel containment does not implement collision constraints.
 
 R2.5c evaluates three proposal roles: balanced, path, and transmission. Adapter
 defaults are explicit in every generated argument array: fixed L1 seed 6, trust

@@ -1,0 +1,22 @@
+{
+  "id": "tabletop-transfer-screening-diagnosis-v1",
+  "date": "2026-09-16",
+  "brief_sha256": "89306bb105b71df4ad74562ce3d4cd0daf2534b4ca5f10fc4dac0bb56eaaa383",
+  "purpose": "Isolate reasons exact-pose seeds are rejected, then test the smallest evidence-led search or representation change.",
+  "frozen_requirements": "Original tabletop-transfer-v1 positions, tilts, tolerances, full-cycle assembly and panel requirements remain the acceptance reference.",
+  "stage_1": {
+    "samples": 65536,
+    "sampling": "Same deterministic radical-inverse sequence, bounds and attachment representation as released pose_seeds.py",
+    "measurements": [
+      "Reproduce the original cumulative counters",
+      "Count each geometric screen independently among in-bounds finite samples",
+      "Separate actual full-cycle assembly and strict class conditions from robustness margins",
+      "Count one-screen removals and removal of robustness margins",
+      "Check branch and target-order consistency and target/global transmission separately",
+      "Independently verify representative dyads, including rejected candidates"
+    ]
+  },
+  "stage_2": "Record controlled follow-up settings before execution, guided by stage-1 findings. Label changed search representation separately from relaxed design requirements. Do not promote a relaxed result as an original-brief success.",
+  "budget": "Local CPU numerical work. No model training. Bound each additional sampling or optimization comparison and retain unsuccessful outcomes.",
+  "decision": "Recommend the smallest justified next change; a bounded failure does not prove infeasibility. This case remains development data."
+}

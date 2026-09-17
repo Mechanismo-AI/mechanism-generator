@@ -78,6 +78,8 @@ def test_solver_gets_only_requested_poses_and_explicit_initializer_controls(tmp_
     enhanced = corpus.solver_command(case, args, tmp_path / "out")
     assert enhanced[:len(command)] == command
     assert enhanced[-4:] == ["--pose_dyad_samples", "4096", "--pose_dyad_seed_count", "6"]
+    args.tolerance_samples = 65536
+    assert corpus.solver_command(case, args, tmp_path / "out")[-2:] == ["--pose_tolerance_samples", "65536"]
 
 
 def test_failed_and_empty_runs_remain_in_denominator():

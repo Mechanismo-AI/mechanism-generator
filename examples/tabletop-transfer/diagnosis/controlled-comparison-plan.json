@@ -1,0 +1,17 @@
+{
+  "id": "tabletop-transfer-controlled-comparisons-v1",
+  "frozen_before_execution": true,
+  "basis": "Stage 1: zero in-bounds exact nominal-pose dyads permit full input rotation, even at zero robustness margins.",
+  "samples_per_configuration": 65536,
+  "experiments": [
+    {"id": "baseline", "change": "None; reproduce original samples."},
+    {"id": "allowed_tilt_tolerance", "change": "Construct dyads at angles within the original plus/minus 3 degree tolerances; same exact position targets and all geometry bounds. Three additional radical-inverse coordinates use bases 7, 11 and 13.", "brief_relaxed": false},
+    {"id": "opposite_attachment_side", "change": "Negate the perpendicular carrier offset at the same sampled magnitude; all other bounds unchanged.", "brief_relaxed": false, "released_representation_supported": false},
+    {"id": "attachment_before_A", "change": "Sample attachment fraction over [-1,0.01] instead of [0.01,0.99]; all other bounds unchanged.", "brief_relaxed": false, "released_representation_supported": false},
+    {"id": "attachment_beyond_B", "change": "Sample attachment fraction over [0.99,2] instead of [0.01,0.99]; all other bounds unchanged.", "brief_relaxed": false, "released_representation_supported": false},
+    {"id": "limited_reversing_input", "change": "Use baseline exact-pose geometry but allow a monotonic working arc and return by reversing. Remove full-turn and rotating-crank class requirements together; retain branch consistency, original poses, at least 15 degree target and 10 degree working-arc transmission. This is a diagnostic mode, not an original-brief solution.", "brief_relaxed": true}
+  ],
+  "verification": "Reproduce baseline source counters; independently evaluate 64 representative geometries per sampling configuration. For surviving candidates verify same branch and ordered target phases. Use analytic full-turn or working-arc assembly and transmission checks; sample carrier corners and link endpoints at 7201 phases for shortlisted panel screens.",
+  "panel_shortlist_budget": "For each mode and direction, screen at most 128 candidates with fixed pivots inside the panel, ranked by smallest sum of link lengths. Retain full survivor counts; do not imply all survivors were panel-screened.",
+  "limits": "No learned-model training; no published engine changes. Bounded diagnostics on a known development case are not a feasibility proof or general performance evaluation."
+}

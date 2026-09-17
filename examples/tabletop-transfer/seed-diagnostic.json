@@ -1,0 +1,41 @@
+{
+  "purpose": "Post-result diagnostic; unchanged task, bounds and filters. Not a second optimizer run or an infeasibility proof.",
+  "results": [
+    {
+      "direction": "negative",
+      "counters": {
+        "method": "three_pose_dyad_v1",
+        "enabled": true,
+        "requested_samples": 65536,
+        "requested_seed_count": 6,
+        "attempted_samples": 65536,
+        "finite_dyads": 65536,
+        "within_search_bounds": 38453,
+        "full_cycle_robust_crank_shortest": 0,
+        "branch_and_order_consistent": 0,
+        "transmission_selection_floors": 0,
+        "returned_seeds": 0,
+        "generation_runtime_seconds": 0.11255729998811148
+      },
+      "seeds": []
+    },
+    {
+      "direction": "positive",
+      "counters": {
+        "method": "three_pose_dyad_v1",
+        "enabled": true,
+        "requested_samples": 65536,
+        "requested_seed_count": 6,
+        "attempted_samples": 65536,
+        "finite_dyads": 65536,
+        "within_search_bounds": 38453,
+        "full_cycle_robust_crank_shortest": 0,
+        "branch_and_order_consistent": 0,
+        "transmission_selection_floors": 0,
+        "returned_seeds": 0,
+        "generation_runtime_seconds": 0.10596320001059212
+      },
+      "seeds": []
+    }
+  ]
+}

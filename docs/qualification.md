@@ -55,3 +55,12 @@ speed, or dwell.
 
 Fewer than `top_k` results, including none, is a valid outcome. An exported plan or
 nonempty result directory does not establish success.
+
+When a panel is specified, both selection and preferred engineering acceptance
+also require `panel_acceptable`. Failed or missing screening cannot qualify.
+`path_acceptable` and `pose_acceptable` retain their position/angle meanings.
+Panel failure after a position pass is reported as
+`path_acceptable_but_panel_failed` unless an orientation failure takes precedence.
+Read [the sampled panel definition](tolerance-and-panel.md): a passing result
+does not certify continuous containment, clearance between moving links, thickness
+or physical safety.

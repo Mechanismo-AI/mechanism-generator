@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.1.0a7 — tolerance-aware initialization and sampled panel screening
+
+- Preserve nominal pose seeds and add a separate deterministic branch sampling
+  within requested angular tolerances. Budgets are bounded and configurable.
+- Screen optional rectangular panel/carrier containment before seed truncation
+  and during final qualification for all candidates, including refined children.
+- Add OMTS panel requirements and initializer budgets, panel-aware CSV/JSON/NPZ
+  exports, source fingerprints, and contribution schema 0.5 with offline review.
+  Contributions using schemas 0.1–0.4 remain readable.
+- Preserve the original tabletop brief and failed a6 baseline. The integrated
+  example recovers one selected design meeting its original hard kinematic limits.
+- Record an 8/8 frozen development-corpus regression, separate from the tabletop
+  result. No general success-rate or equal-compute improvement is claimed.
+
+Panel containment is sampled, not continuous collision or hardware validation.
+The tabletop design has tight margins and misses preferred transmission goals.
+Published model weights are unchanged. Regenerate OMTS plans after upgrading.
+
 ## 0.1.0a6 — explicit crank direction
 
 - Add positive (default), negative, and either input-crank direction controls.

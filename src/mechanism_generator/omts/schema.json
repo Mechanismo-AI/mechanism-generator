@@ -1343,6 +1343,48 @@
         "extensions": {
           "type": "object",
           "additionalProperties": true
+        },
+        "panel": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "bounds": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 4,
+              "maxItems": 4
+            },
+            "carrier_size": {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              "minItems": 2,
+              "maxItems": 2
+            },
+            "pivot_clearance": {
+              "type": "number",
+              "minimum": 0
+            },
+            "steps": {
+              "type": "integer",
+              "minimum": 361,
+              "maximum": 72001
+            },
+            "carrier_frame": {
+              "const": "coupler_A_to_B"
+            },
+            "mode": {
+              "const": "hard"
+            }
+          },
+          "required": [
+            "bounds",
+            "carrier_size"
+          ]
         }
       }
     },
@@ -1449,6 +1491,28 @@
         "extensions": {
           "type": "object",
           "additionalProperties": true
+        },
+        "pose_initialization": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "nominal_samples": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 262144
+            },
+            "tolerance_samples": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 262144
+            },
+            "seeds_per_branch": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 6
+            }
+          },
+          "required": []
         }
       }
     },

@@ -37,9 +37,17 @@ released models let designers work without running training themselves.
 7. **Released: explicit crank direction.** Positive remains the default; negative
    and either-direction requests preserve target order and report actual direction
    in candidate and contribution exports. Assembly branch is independent.
-8. **Next: a practical design example and more discriminating evaluation.** Define
-   one dimensioned task, compare candidate motions, and use observed failures to
-   guide evaluation of precision, diversity, runtime, and dimensional sensitivity.
+8. **Evaluated: a dimensioned practical design brief.** The
+   [tabletop-transfer case study](../examples/tabletop-transfer/README.md) produced
+   no qualifying design from 36 candidates in two crank directions. Independent
+   checks expose position, orientation and panel-envelope failures. A subsequent
+   [controlled diagnosis](../examples/tabletop-transfer/Diagnosis.md) found one
+   candidate within the original hard limits by sampling the allowed angle
+   tolerances. Release v0.1.0a7 integrates
+   [tolerance-aware initialization and sampled panel screening](tolerance-and-panel.md)
+   with bounded budgets, preserved nominal seeds and final qualification gates.
+   Next assess precision, diversity,
+   runtime and dimensional sensitivity before generalizing gains.
 9. **Broader design capabilities.** Use measured failure cases to prioritize richer
    trajectories and orientation requirements, prescribed timing and dwell,
    additional mechanism types, dynamics, collisions, and synchronized tasks.

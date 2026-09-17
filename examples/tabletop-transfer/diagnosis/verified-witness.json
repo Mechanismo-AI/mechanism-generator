@@ -1,0 +1,49 @@
+{
+  "sample_index": 208725,
+  "original_brief_sha256": "89306bb105b71df4ad74562ce3d4cd0daf2534b4ca5f10fc4dac0bb56eaaa383",
+  "original_hard_brief_passed": true,
+  "source": "Private deterministic tolerance-aware geometry search; not a standard released solver run.",
+  "released_engine_check": {
+    "candidate_id": "tolerance_sample_208725",
+    "physical_feasible": true,
+    "selection_eligible": true,
+    "pose_acceptable": true,
+    "engineering_acceptable": false,
+    "qualification_level": "selection_acceptable",
+    "orientation_acceptable": true,
+    "max_orientation_error_deg": 2.9584942319309766,
+    "mean_error": 1.2425080005041124e-12,
+    "max_error": 2.0929973457924692e-12,
+    "assembly_margin_ratio": 0.01742416400209601,
+    "grashof_margin_ratio": 0.017424164002095566,
+    "crank_margin_ratio": 0.3649690953727539,
+    "target_angle_min_deg": 20.5930666012324,
+    "global_angle_min_deg": 13.471645094212974,
+    "target_transmission_acceptable": false,
+    "global_transmission_acceptable": false
+  },
+  "independent_full_cycle_check": {
+    "full_cycle_assembly": true,
+    "global_minimum_transmission_deg": 13.471232226939007,
+    "grashof": true,
+    "crank_is_strictly_shortest": true
+  },
+  "panel_phases": 72001,
+  "envelope_min_mm": [
+    19.12372994618032,
+    0.9132082344954142
+  ],
+  "envelope_max_mm": [
+    389.05305425298263,
+    146.35198983071572
+  ],
+  "minimum_panel_edge_clearance_mm": 0.9132082344954142,
+  "minimum_fixed_pivot_clearance_mm": 16.885399289746736,
+  "orientation_margin_deg": 0.04150576807680295,
+  "limitations": [
+    "Sampled panel containment, not continuous analytic containment.",
+    "No link thickness, bearing, collision, force, dynamics or manufacturing validation.",
+    "Only 0.913 mm sampled panel-edge clearance and 0.042 deg minimum tilt margin.",
+    "Preferred 35/15 deg target/global transmission goals are not met; hard 15/10 deg floors are met."
+  ]
+}

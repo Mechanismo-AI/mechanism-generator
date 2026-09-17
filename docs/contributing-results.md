@@ -103,7 +103,7 @@ The command below validates either a local bundle or a reviewed submission:
 mechanism-contribute validate path/to/reviewed-contribution.json
 ```
 
-Validation runs locally and does not submit the file. New bundles use the version 0.3
+Validation runs locally and does not submit the file. New bundles use the version 0.5
 [contribution schema](../src/mechanism_generator/contributions/schema.json)
 with explicit pose requirements, qualification counts, and geometric initialization
 provenance. Existing versions remain supported using the unchanged
@@ -113,6 +113,13 @@ Reviewing a bundle preserves its schema version. Validation checks count and
 qualification consistency, including the pose gate when candidate details are
 included. Valid structure does not establish correct results, ownership,
 or suitability for training.
+
+Version 0.5 adds panel requirements and acceptance counts, the sampled envelope
+and clearances, and separate nominal/tolerance initialization budgets and origins.
+Outcome-only sharing retains whether panel containment was required and how many
+candidates passed. Either optional Task or Candidate section can disclose panel
+and carrier dimensions; inspect both before sharing. The unchanged 0.3 and 0.4
+schemas are also bundled for reading historical results.
 
 ## How submissions become useful
 

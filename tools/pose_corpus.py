@@ -33,6 +33,8 @@ INITIALIZER_FIELDS = (
     "within_search_bounds", "full_cycle_robust_crank_shortest", "branch_and_order_consistent",
     "transmission_selection_floors", "returned_seeds", "evaluated_seed_count", "refined_candidate_count",
     "generation_runtime_seconds", "verification_runtime_seconds", "refinement_runtime_seconds", "source_sha256",
+    "nominal_samples", "tolerance_samples", "nominal_returned_seeds", "tolerance_returned_seeds",
+    "panel_pivot_pass_count", "panel_screened_count", "panel_passing_count",
 )
 DEFAULT_CORPUS = Path(__file__).resolve().parents[1] / "examples" / "benchmarks" / CORPUS_VERSION
 PROTOCOL = {
@@ -206,6 +208,8 @@ def solver_command(case, args, output):
         command.extend(["--pose_dyad_samples", str(args.initializer_samples)])
     if args.initializer_seeds is not None:
         command.extend(["--pose_dyad_seed_count", str(args.initializer_seeds)])
+    if getattr(args, "tolerance_samples", None) is not None:
+        command.extend(["--pose_tolerance_samples", str(args.tolerance_samples)])
     return command
 
 
@@ -238,8 +242,8 @@ def run_one(case, args, output):
             "all_candidates_diagnostic": benchmark.summarize_scores(scores),
             "all_candidate_scores": scores, "selected_candidate_scores": selected,
             "model_identity": [{key: model[key] for key in ("role", "sha256")} for model in manifest["models"]],
-            "engine_identity": {key: manifest[key] for key in ("variant", "script_sha256", "engine_sha256", "orientation_sha256", "pose_initialization_sha256") if key in manifest},
-            "effective_initializer_arguments": {key: manifest["arguments"][key] for key in ("pose_dyad_samples", "pose_dyad_seed_count") if key in manifest["arguments"]},
+            "engine_identity": {key: manifest[key] for key in ("variant", "script_sha256", "engine_sha256", "orientation_sha256", "pose_initialization_sha256", "panel_screening_sha256") if key in manifest},
+            "effective_initializer_arguments": {key: manifest["arguments"][key] for key in ("pose_dyad_samples", "pose_dyad_seed_count", "pose_tolerance_samples") if key in manifest["arguments"]},
             "initializer_diagnostics": {key: initializer[key] for key in INITIALIZER_FIELDS if key in initializer} if initializer is not None else None,
         })
     except subprocess.TimeoutExpired:
@@ -275,7 +279,8 @@ def run_corpus(args):
         "case_hashes": manifest["splits"][args.split]["cases"], "split": args.split,
         "engine_label": args.label, "run_status": "partial", "seed": args.seed,
         "budget": args.budget, "optimizer_budget_settings": benchmark.BUDGETS[args.budget],
-        "requested_initializer_settings": {"pose_dyad_samples": args.initializer_samples, "pose_dyad_seed_count": args.initializer_seeds},
+        "requested_initializer_settings": {"pose_dyad_samples": args.initializer_samples, "pose_dyad_seed_count": args.initializer_seeds,
+                                           "pose_tolerance_samples": getattr(args, "tolerance_samples", None)},
         "success_thresholds": PROTOCOL["tolerances"],
         "success_definition": "At least one selected, engine-eligible candidate independently meets both position and orientation tolerances and has full-cycle assembly",
         "common_configuration": {"model_roles": ["balanced", "path", "transmission"], "profile_matrix": "paired", "branches": "both", "phase_mode": "ordered", "device": "cpu", "dtype": "float64", "strict_qualification": True, "portfolio_guarantee_fixed_count": 0},
@@ -365,6 +370,7 @@ def main(argv=None):
     run.add_argument("--timeout", type=float, default=900., help="Maximum seconds per task")
     run.add_argument("--initializer-samples", type=int, help="Explicit source-engine dyad sample count; omitted for a4")
     run.add_argument("--initializer-seeds", type=int, help="Explicit source-engine dyad seed count; omitted for a4")
+    run.add_argument("--tolerance-samples", type=int, help="Explicit angular-tolerance dyad sample count; omitted for older engines")
     compare = commands.add_parser("compare", help="Compare two completed runs against the same frozen task split")
     compare.add_argument("baseline", type=Path)
     compare.add_argument("candidate", type=Path)
@@ -378,7 +384,7 @@ def main(argv=None):
         if args.command == "run":
             if not math.isfinite(args.timeout) or args.timeout <= 0:
                 parser.error("--timeout must be positive and finite")
-            if any(value is not None and value < 0 for value in (args.initializer_samples, args.initializer_seeds)):
+            if any(value is not None and value < 0 for value in (args.initializer_samples, args.initializer_seeds, args.tolerance_samples)):
                 parser.error("Initializer counts must be nonnegative")
             return run_corpus(args)
         result = compare_reports(json.loads(args.baseline.read_text()), json.loads(args.candidate.read_text()))
