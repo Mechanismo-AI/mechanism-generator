@@ -146,3 +146,7 @@ the three public model-weight exports are licensed under [Apache-2.0](LICENSE),
 copyright 2026 Mechanismo-AI contributors. Training datasets are not included.
 See [releases](https://github.com/Mechanismo-AI/mechanism-generator/releases) for
 versioned model assets and checksums.
+
+## Optional geometric position starts
+
+Version 0.1.0a8 adds `--position_geometry` for unordered position tasks. It replaces up to four variable-ground starts within the existing start budget and retains learned proposals elsewhere in the hybrid search. Base spacing remains adjustable. Pose, ordered-motion and panel initialization remain unchanged. The option is off by default; model weights are unchanged. See [usage and validation](docs/geometric-position-starts.md).
