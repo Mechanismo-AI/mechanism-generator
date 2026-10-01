@@ -374,6 +374,25 @@ async function verifyPanelReviewFlow() {
   assert.equal(ui.openings.length, 0);
 }
 
+async function verifyPositionGeometryReview() {
+  const local = JSON.parse(JSON.stringify(fixture));
+  local.schema_version = "0.6";
+  local.settings.position_geometry = true;
+  local.provenance.position_initialization_sha256 = "d".repeat(64);
+  local.task[0].position_initialization = {method: "coupled_position_seed_v1", enabled: true,
+    status: "allocated", replaced: 4, attempts: 12, source_sha256: "d".repeat(64)};
+  const ui = makeHarness(local);
+  assert.equal(ui.element("error").hidden, true);
+  assert.deepEqual(ui.preview().task, local.task);
+  assert.equal(ui.preview().settings.position_geometry, true);
+  ui.change("include-task", false);
+  assert.equal(JSON.stringify(ui.preview()).includes("coupled_position_seed_v1"), false);
+  ui.agree();
+  ui.element("download").click();
+  assert.equal(JSON.parse(await ui.downloads[0].text()).schema_version, "0.6");
+  assert.equal(ui.openings.length, 0);
+}
+
 (async () => {
   verifyHashVectors();
   await verifyReviewFlow();
@@ -381,6 +400,7 @@ async function verifyPanelReviewFlow() {
   await verifyPoseReviewFlow("0.3");
   await verifyPoseReviewFlow("0.4");
   await verifyPanelReviewFlow();
+  await verifyPositionGeometryReview();
   verifyInvalidInput();
   console.log("Offline contribution review checks passed: schemas 0.1/0.2/0.3/0.4/0.5, panel constraints and counts, crank direction, pose and geometric provenance retention, diagnostics exclusions, digest vectors, consent gates, all section exclusions, Unicode and hostile text, exact download, fixed GitHub URL, changed-file re-export, and invalid-input handling.");
 })().catch(error => {

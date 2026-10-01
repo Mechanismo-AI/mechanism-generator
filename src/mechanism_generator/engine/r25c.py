@@ -74,6 +74,8 @@ def sha256_file(path: Path) -> str:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = ENGINE.build_parser()
+    parser.add_argument('--position_geometry', action='store_true',
+                        help='Opt-in geometric replacements within the existing variable-start budget for unordered position tasks')
     parser.prog = Path(__file__).name
     parser.description = (
         f"{VARIANT}: combine fixed-L1, variable-L1, and fixed-to-variable "
@@ -933,8 +935,14 @@ def run_search(args) -> int:
             "fixed",
             lineage_by_id,
         )
+        from . import position_seeds
+        variable_initial = ENGINE.build_starts(models, target, variable_args, target_index)
+        variable_initial, position_initialization = position_seeds.allocate(
+            variable_initial, target, variable_args, target_index)
+        position_initialization['source_sha256'] = sha256_file(Path(position_seeds.__file__))
+        ENGINE.write_json(target_dir / 'position_initialization.json', position_initialization)
         variable_starts = prefix_starts(
-            ENGINE.build_starts(models, target, variable_args, target_index),
+            variable_initial,
             "variable",
             lineage_by_id,
         )
@@ -1206,6 +1214,7 @@ def run_search(args) -> int:
         )
 
         target_manifest = {
+            'position_initialization': position_initialization,
             "label": target_label,
             "directory": str(target_dir),
             "target_values": target_values.tolist(),

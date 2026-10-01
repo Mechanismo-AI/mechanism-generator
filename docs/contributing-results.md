@@ -146,3 +146,5 @@ even when optional geometry and candidate details are excluded. Task, candidate,
 and settings directions must agree. Either-direction searches produce two separate
 run bundles; inspect each direction's review page. Previous schemas remain supported
 for historical results. The three published inference weight files are unchanged.
+
+Version 0.1.0a8 writes contribution schema 0.6. Optional position-geometry settings, initializer counts and source fingerprints survive review when their sections are included. Schemas 0.1–0.5 remain readable; sharing remains voluntary and requires review.

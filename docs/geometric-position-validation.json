@@ -1,0 +1,57 @@
+{
+  "cases": 24,
+  "baseline": 18,
+  "candidate": 22,
+  "gains": [
+    "p00",
+    "p02",
+    "p05",
+    "p06"
+  ],
+  "losses": [],
+  "unsupported_numeric_parity": true,
+  "timing_seconds": {
+    "baseline": 799.8877237000124,
+    "candidate": 804.4640131999768
+  },
+  "runtime_ratio": 1.0057211648139766,
+  "tests_pass": true,
+  "release_gate_passed": true,
+  "strata": {
+    "position": {
+      "cases": 16,
+      "baseline": 12,
+      "candidate": 16
+    },
+    "ordered": {
+      "cases": 2,
+      "baseline": 2,
+      "candidate": 2
+    },
+    "pose": {
+      "cases": 2,
+      "baseline": 2,
+      "candidate": 2
+    },
+    "ordered_pose": {
+      "cases": 2,
+      "baseline": 2,
+      "candidate": 2
+    },
+    "panel": {
+      "cases": 2,
+      "baseline": 0,
+      "candidate": 0
+    }
+  },
+  "position_sizes": {
+    "compact": {
+      "baseline": 4,
+      "candidate": 8
+    },
+    "ordinary": {
+      "baseline": 8,
+      "candidate": 8
+    }
+  }
+}

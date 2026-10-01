@@ -1,12 +1,12 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/Mechanismo-AI/mechanism-generator/blob/main/src/mechanism_generator/contributions/schema.json",
-  "title": "Mechanism Generator community contribution 0.6",
+  "title": "Mechanism Generator community contribution 0.5",
   "type": "object",
   "additionalProperties": false,
   "properties": {
     "schema_version": {
-      "const": "0.6"
+      "const": "0.5"
     },
     "kind": {
       "enum": [
@@ -385,52 +385,6 @@
               "carrier_frame",
               "method"
             ]
-          },
-          "position_initialization": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": [
-              "method",
-              "enabled",
-              "status",
-              "replaced",
-              "attempts",
-              "source_sha256"
-            ],
-            "properties": {
-              "method": {
-                "const": "coupled_position_seed_v1"
-              },
-              "enabled": {
-                "type": "boolean"
-              },
-              "status": {
-                "enum": [
-                  "disabled",
-                  "unsupported_task",
-                  "allocated",
-                  "unchanged"
-                ]
-              },
-              "replaced": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 4
-              },
-              "attempts": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 20000
-              },
-              "source_sha256": {
-                "type": "string",
-                "pattern": "^[0-9a-f]{64}$"
-              },
-              "generation_seconds": {
-                "type": "number",
-                "minimum": 0
-              }
-            }
           }
         },
         "required": [
@@ -812,8 +766,7 @@
                     "balanced",
                     "path",
                     "transmission",
-                    "pose_geometry",
-                    "geometric_position"
+                    "pose_geometry"
                   ]
                 },
                 "profile": {
@@ -1215,10 +1168,6 @@
         "panel_screening_sha256": {
           "type": "string",
           "pattern": "^[0-9a-f]{64}$"
-        },
-        "position_initialization_sha256": {
-          "type": "string",
-          "pattern": "^[0-9a-f]{64}$"
         }
       },
       "required": [
@@ -1561,9 +1510,6 @@
           "type": "integer",
           "minimum": 361,
           "maximum": 72001
-        },
-        "position_geometry": {
-          "type": "boolean"
         }
       },
       "required": []

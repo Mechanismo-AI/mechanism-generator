@@ -1,5 +1,28 @@
 # Changelog
 
+## 0.1.0a8 — Optional geometric position starts
+
+Add `--position_geometry` to give unordered position tasks alternative geometric
+starting points while keeping the configured number of refinement starts unchanged.
+The option is off by default. Base spacing remains adjustable; published model
+weights are unchanged.
+
+- Replace up to four non-balanced variable-stage starts, preserving their profiles
+  and assembly branches. Retain balanced-model starts and the other hybrid stages.
+- Pose, ordered-motion and panel tasks retain their existing initialization.
+- Preserve initializer provenance in run manifests and voluntary local contribution
+  schema 0.6. Older contribution schemas remain readable; nothing uploads automatically.
+- A fresh constructed full-pipeline comparison passed 22/24 tasks with the option
+  versus 18/24 baseline, with four gains and no losses. Eight constraint-regression
+  tasks retained identical numerical candidates. Configured budgets were matched;
+  actual work and runtime can differ. Both versions failed the two panel cases;
+  these remain unresolved. This is not a general success-rate guarantee.
+
+Validation includes local Python tests, offline contribution review, real bundle
+checks, a packaged engine smoke run, and wheel/source archive checks. CI must pass
+before release publication. The project remains a kinematic research alpha.
+
+
 ## 0.1.0a7 — tolerance-aware initialization and sampled panel screening
 
 - Preserve nominal pose seeds and add a separate deterministic branch sampling

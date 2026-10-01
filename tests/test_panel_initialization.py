@@ -156,7 +156,7 @@ def test_preserved_parent_final_gate_exports_and_contribution_round_trip(recover
     manifest=dict(variant="R2.5c",run_status="completed",targets=[task],arguments=vars(args),models=[])
     (tmp_path/"run_manifest.json").write_text(json.dumps(manifest))
     bundle=contributions.build_bundle(tmp_path)
-    assert bundle["schema_version"] == "0.5"
+    assert bundle["schema_version"] == "0.6"
     assert bundle["task"][0]["panel"] == task["panel"]
     assert bundle["candidates"][0]["items"][0]["proposal_source"] == pose_seeds.TOLERANCE_METHOD
     for section, key in (("task","panel"),("candidates","panel_required")):
