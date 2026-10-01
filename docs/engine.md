@@ -154,3 +154,7 @@ and [model card](../MODEL_CARD.md) for the setup check and reproduction limits.
 ## Optional geometric position starts
 
 Version 0.1.0a8 adds `--position_geometry` for unordered position tasks. It replaces up to four variable-ground starts within the existing start budget and retains learned proposals elsewhere in the hybrid search. Base spacing remains adjustable. Pose, ordered-motion and panel initialization remain unchanged. The option is off by default; model weights are unchanged. See [usage and validation](geometric-position-starts.md).
+
+## Optional panel-position geometry
+
+The a9 candidate adds `--panel_position_geometry` for unordered position-only panel tasks. It retains up to six screened analytic parents alongside the existing search and adds bounded compute. The option is off by default; base spacing remains adjustable and weights unchanged. See [usage and validation](panel-position-starts.md).

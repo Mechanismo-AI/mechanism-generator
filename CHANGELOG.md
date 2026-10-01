@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.1.0a9 (unreleased) — Optional panel-position geometry
+
+Add `--panel_position_geometry` to construct and retain panel-screened analytic
+parents for unordered position-only tasks. It is off by default and adds bounded
+compute alongside the unchanged learned search. Ordinary final qualification,
+selection and export still apply. Pose, ordered and non-panel tasks bypass it.
+
+The frozen fresh full-pipeline comparison solved 11/12 panel tasks versus
+0/12 baseline, with no losses and identical numerical candidates for four
+unsupported controls. This constructed sample is not a general success guarantee.
+Local contribution schema 0.7 records the new origin and diagnostics and reads
+older schemas. Base spacing remains adjustable; model weights are unchanged.
+
+
 ## 0.1.0a8 — Optional geometric position starts
 
 Add `--position_geometry` to give unordered position tasks alternative geometric

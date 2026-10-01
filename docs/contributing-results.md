@@ -148,3 +148,5 @@ run bundles; inspect each direction's review page. Previous schemas remain suppo
 for historical results. The three published inference weight files are unchanged.
 
 Version 0.1.0a8 writes contribution schema 0.6. Optional position-geometry settings, initializer counts and source fingerprints survive review when their sections are included. Schemas 0.1–0.5 remain readable; sharing remains voluntary and requires review.
+
+The a9 candidate writes schema 0.7, adding panel-position initialization counts, setting, source fingerprint and candidate origin. Schemas 0.1–0.6 remain readable. Nothing uploads automatically.

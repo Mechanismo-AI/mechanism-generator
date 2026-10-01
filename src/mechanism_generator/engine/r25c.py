@@ -76,6 +76,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser = ENGINE.build_parser()
     parser.add_argument('--position_geometry', action='store_true',
                         help='Opt-in geometric replacements within the existing variable-start budget for unordered position tasks')
+    parser.add_argument('--panel_position_geometry', action='store_true',
+                        help='Add up to six panel-screened analytic parents for unordered panel-position tasks; extra compute, no new weights')
     parser.prog = Path(__file__).name
     parser.description = (
         f"{VARIANT}: combine fixed-L1, variable-L1, and fixed-to-variable "
@@ -437,6 +439,55 @@ def _run_pose_geometry_branch(
     diagnostics["refined_candidate_count"] = len(refined)
     diagnostics["refinement_runtime_seconds"] = time.perf_counter() - refinement_started
     return exact, refined, diagnostics
+
+
+
+def run_panel_position_geometry(target, args, shared_reference, output_dir, lineage_by_id):
+    """Retain panel-screened analytic parents; never refine or overwrite them.
+
+    Unsupported tasks bypass without sampling, changing random state, or changing
+    the existing portfolio. Every parent still enters ordinary final qualification.
+    """
+    from . import panel_position_seeds
+    diagnostics = dict(method=panel_position_seeds.METHOD,
+                       enabled=bool(getattr(args, "panel_position_geometry", False)),
+                       status="disabled", source_sha256=sha256_file(Path(panel_position_seeds.__file__)))
+    if not diagnostics["enabled"]:
+        return [], diagnostics
+    if (args.ground_link_mode != "optimize" or args.phase_mode != "unordered"
+            or ENGINE.has_pose_targets(args) or getattr(args, "panel_bounds", None) is None):
+        diagnostics["status"] = "unsupported_task"
+        return [], diagnostics
+    seeds, counts = panel_position_seeds.generate(target.detach().cpu().reshape(3, 2).numpy(), args)
+    diagnostics.update(counts, status="sampled", evaluated_seed_count=0)
+    candidates = []
+    began = time.perf_counter()
+    for index, seed in enumerate(seeds, 1):
+        output_dir.mkdir(parents=True, exist_ok=True)
+        params = torch.tensor(seed["parameters"], dtype=target.dtype, device=target.device)
+        phases = torch.tensor(seed["phases_rad"], dtype=target.dtype, device=target.device)
+        raw = ENGINE.encode_refinement_variables(params, phases, target, args.phase_mode, args)
+        candidate_id = f"panel_position_seed_{index:03d}"
+        start = ENGINE.StartSpec(candidate_id, "panel_geometry", "balanced", panel_position_seeds.METHOD,
+                                 None, float(seed["branch_sign"]), 0, raw, params, phases)
+        history_path = output_dir / f"history_{candidate_id}.csv"
+        candidate = ENGINE.evaluate_selected_candidate(dict(
+            start=start, raw_selected=raw, mean_budget=shared_reference["shared_mean_budget"],
+            point_budget=shared_reference["shared_point_budgets"], selection_reason="preserved_geometric_seed",
+            acquired_mean_error=0., acquired_errors=[0., 0., 0.], history_path=str(history_path)), target, args)
+        candidate.update(acquired_mean_error=candidate["mean_error"], proposal_source=panel_position_seeds.METHOD,
+                         generator_sample_index=int(seed["sample_index"]))
+        for i in (1, 2, 3):
+            candidate[f"acquired_error_{i}"] = candidate[f"error_{i}"]
+        lineage = f"panel_position_seed:halton_sample={seed['sample_index']}"
+        set_candidate_origin(candidate, "panel_position_seed", lineage=lineage)
+        lineage_by_id[candidate_id] = dict(origin="panel_position_seed", parent_candidate_id="", lineage=lineage)
+        ENGINE.write_csv(history_path, [dict(candidate_id=candidate_id, stage="panel_position_seed", step=0,
+            mean_error=candidate["mean_error"], max_error=candidate["max_error"],
+            physical_feasible=candidate["physical_feasible"], panel_acceptable=candidate["panel_acceptable"])])
+        candidates.append(candidate)
+    diagnostics.update(evaluated_seed_count=len(candidates), verification_runtime_seconds=time.perf_counter()-began)
+    return candidates, diagnostics
 
 
 def candidate_pool_by_tier(candidates: Sequence[Dict[str, Any]]) -> List[Dict[str, Any]]:
@@ -1087,6 +1138,10 @@ def run_search(args) -> int:
                 f"exact={len(pose_exact)} refined={len(pose_refined)}"
             )
 
+        panel_parents, panel_position_initialization = run_panel_position_geometry(
+            target, variable_args, shared_reference, target_dir / "06_panel_position_geometry", lineage_by_id)
+        ENGINE.write_json(target_dir / "panel_position_initialization.json", panel_position_initialization)
+
         all_candidates = [
             *fixed_candidates,
             *variable_candidates,
@@ -1094,6 +1149,7 @@ def run_search(args) -> int:
             *release_candidates,
             *pose_exact,
             *pose_refined,
+            *panel_parents,
         ]
         portfolio_args = copy.deepcopy(args)
         portfolio_args.ground_link_mode = "portfolio"
@@ -1142,6 +1198,8 @@ def run_search(args) -> int:
         origin_names = ("fixed", "variable", "bridge_trust", "bridge_release")
         if pose_initialization is not None:
             origin_names += ("pose_seed", "pose_refined")
+        if panel_parents:
+            origin_names += ("panel_position_seed",)
         origin_rows = [summarize_origin(name, all_candidates) for name in origin_names]
         ENGINE.write_json(target_dir / "selection_reference.json", qualification)
         ENGINE.write_json(target_dir / "portfolio_lineage.json", lineage_by_id)
@@ -1192,6 +1250,8 @@ def run_search(args) -> int:
         ]
         if pose_initialization is not None:
             stage_candidates.extend([("pose_seed", pose_exact), ("pose_refined", pose_refined)])
+        if panel_parents:
+            stage_candidates.append(("panel_position_seed", panel_parents))
         for origin, candidates in stage_candidates:
             stage_args = portfolio_args
             champions = choose_diverse_champions(
@@ -1215,6 +1275,7 @@ def run_search(args) -> int:
 
         target_manifest = {
             'position_initialization': position_initialization,
+            'panel_position_initialization': panel_position_initialization,
             "label": target_label,
             "directory": str(target_dir),
             "target_values": target_values.tolist(),
