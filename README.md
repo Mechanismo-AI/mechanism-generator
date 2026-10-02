@@ -157,4 +157,4 @@ Version 0.1.0a9 adds `--panel_position_geometry` for unordered position-only pan
 
 ## Adaptive panel fallback
 
-The a10 candidate adds opt-in `--panel_position_adaptive`. It enables standard panel geometry, then spends additional local compute only on unresolved tasks: larger sampling first, bounded panel-aware refinement last. Existing qualifying designs are retained. See [usage and budgets](docs/adaptive-panel-search.md).
+Release v0.1.0a10 adds opt-in `--panel_position_adaptive`. It enables standard panel geometry, then spends additional local compute only on unresolved tasks: larger sampling first, bounded panel-aware refinement last. Existing qualifying designs are retained. See [usage and budgets](docs/adaptive-panel-search.md).

@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.0a10 (unreleased) — Adaptive panel search
+## 0.1.0a10 — Adaptive panel search
 
 Add optional `--panel_position_adaptive`: retain the standard portfolio, try larger
 analytic sampling only on unresolved panel-position tasks, then bounded refinement

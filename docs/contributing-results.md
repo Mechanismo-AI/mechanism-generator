@@ -151,4 +151,4 @@ Version 0.1.0a8 writes contribution schema 0.6. Optional position-geometry setti
 
 Version 0.1.0a9 writes schema 0.7, adding panel-position initialization counts, setting, source fingerprint and candidate origin. Schemas 0.1–0.6 remain readable. Nothing uploads automatically.
 
-The a10 candidate writes schema 0.8 with adaptive stopping stages, actual sample/optimizer counts, combined source fingerprint, option and parent/child provenance. Schemas 0.1–0.7 remain readable. Sharing stays local and voluntary.
+Release v0.1.0a10 writes schema 0.8 with adaptive stopping stages, actual sample/optimizer counts, combined source fingerprint, option and parent/child provenance. Schemas 0.1–0.7 remain readable. Sharing stays local and voluntary.
