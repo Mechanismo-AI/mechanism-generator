@@ -157,4 +157,4 @@ Version 0.1.0a8 adds `--position_geometry` for unordered position tasks. It repl
 
 ## Optional panel-position geometry
 
-The a9 candidate adds `--panel_position_geometry` for unordered position-only panel tasks. It retains up to six screened analytic parents alongside the existing search and adds bounded compute. The option is off by default; base spacing remains adjustable and weights unchanged. See [usage and validation](panel-position-starts.md).
+Version 0.1.0a9 adds `--panel_position_geometry` for unordered position-only panel tasks. It retains up to six screened analytic parents alongside the existing search and adds bounded compute. The option is off by default; base spacing remains adjustable and weights unchanged. See [usage and validation](panel-position-starts.md).

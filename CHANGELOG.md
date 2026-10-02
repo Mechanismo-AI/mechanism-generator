@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.0a9 (unreleased) — Optional panel-position geometry
+## 0.1.0a9 — Optional panel-position geometry
 
 Add `--panel_position_geometry` to construct and retain panel-screened analytic
 parents for unordered position-only tasks. It is off by default and adds bounded
