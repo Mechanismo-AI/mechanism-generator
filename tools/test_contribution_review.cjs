@@ -374,22 +374,29 @@ async function verifyPanelReviewFlow() {
   assert.equal(ui.openings.length, 0);
 }
 
-async function verifyPositionGeometryReview() {
+async function verifyPositionGeometryReview(version = "0.6") {
   const local = JSON.parse(JSON.stringify(fixture));
-  local.schema_version = "0.6";
+  local.schema_version = version;
   local.settings.position_geometry = true;
   local.provenance.position_initialization_sha256 = "d".repeat(64);
   local.task[0].position_initialization = {method: "coupled_position_seed_v1", enabled: true,
     status: "allocated", replaced: 4, attempts: 12, source_sha256: "d".repeat(64)};
+  if (version === "0.7") {
+    local.settings.panel_position_geometry = true;
+    local.provenance.panel_position_initialization_sha256 = "e".repeat(64);
+    local.task[0].panel_position_initialization = {method: "panel_position_free_angle_dyad_v1",
+      enabled: true, status: "sampled", returned_seeds: 3, source_sha256: "e".repeat(64)};
+  }
   const ui = makeHarness(local);
   assert.equal(ui.element("error").hidden, true);
   assert.deepEqual(ui.preview().task, local.task);
   assert.equal(ui.preview().settings.position_geometry, true);
   ui.change("include-task", false);
   assert.equal(JSON.stringify(ui.preview()).includes("coupled_position_seed_v1"), false);
+  assert.equal(JSON.stringify(ui.preview()).includes("panel_position_free_angle_dyad_v1"), false);
   ui.agree();
   ui.element("download").click();
-  assert.equal(JSON.parse(await ui.downloads[0].text()).schema_version, "0.6");
+  assert.equal(JSON.parse(await ui.downloads[0].text()).schema_version, version);
   assert.equal(ui.openings.length, 0);
 }
 
@@ -401,6 +408,7 @@ async function verifyPositionGeometryReview() {
   await verifyPoseReviewFlow("0.4");
   await verifyPanelReviewFlow();
   await verifyPositionGeometryReview();
+  await verifyPositionGeometryReview("0.7");
   verifyInvalidInput();
   console.log("Offline contribution review checks passed: schemas 0.1/0.2/0.3/0.4/0.5, panel constraints and counts, crank direction, pose and geometric provenance retention, diagnostics exclusions, digest vectors, consent gates, all section exclusions, Unicode and hostile text, exact download, fixed GitHub URL, changed-file re-export, and invalid-input handling.");
 })().catch(error => {

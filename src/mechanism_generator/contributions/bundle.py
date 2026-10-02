@@ -32,10 +32,10 @@ POSE_CANDIDATE_FIELDS = (
 )
 
 
-def schema(version: str = "0.6") -> dict:
-    if version not in ("0.1", "0.2", "0.3", "0.4", "0.5", "0.6"):
+def schema(version: str = "0.7") -> dict:
+    if version not in ("0.1", "0.2", "0.3", "0.4", "0.5", "0.6", "0.7"):
         raise ValueError("Unsupported contribution schema version")
-    name = f"schema-v{version}.json" if version != "0.6" else "schema.json"
+    name = f"schema-v{version}.json" if version != "0.7" else "schema.json"
     return json.loads(files(__package__).joinpath(name).read_text(encoding="utf-8"))
 
 
@@ -91,7 +91,7 @@ def validate_bundle(bundle: dict) -> None:
                 raise ValueError("Selected or qualified count exceeds pose acceptance")
         elif any(key in task for key in POSE_COUNTS):
             raise ValueError("Pose outcome counts require an orientation task")
-    if version in ("0.4", "0.5", "0.6"):
+    if version in ("0.4", "0.5", "0.6", "0.7"):
         settings_direction = bundle.get("settings", {}).get("crank_direction")
         if settings_direction and any(task["crank_direction"] != settings_direction for task in tasks):
             raise ValueError("Settings crank direction disagrees with outcome")
@@ -103,7 +103,7 @@ def validate_bundle(bundle: dict) -> None:
                 raise ValueError("Candidate crank direction disagrees with outcome")
     task_details = {task["task_id"]: task for task in bundle.get("task", [])}
     settings_panel = None
-    if version in ("0.5", "0.6"):
+    if version in ("0.5", "0.6", "0.7"):
         settings = bundle.get("settings", {})
         if "panel_bounds" in settings or "carrier_size" in settings:
             if not all(key in settings for key in ("panel_bounds", "carrier_size", "panel_pivot_clearance", "panel_steps")):
@@ -132,12 +132,36 @@ def validate_bundle(bundle: dict) -> None:
                     raise ValueError("Included pose task must retain its orientation requirements")
                 if not pose_required and any(key in task for key in POSE_TASK_FIELDS):
                     raise ValueError("Orientation requirements contradict the recorded task type")
-                if version in ("0.5", "0.6") and ("panel" in task) != by_id[identity]["panel_required"]:
+                if version in ("0.5", "0.6", "0.7") and ("panel" in task) != by_id[identity]["panel_required"]:
                     raise ValueError("Included task must retain its panel requirements")
                 if "panel" in task:
                     _validate_panel_geometry(task["panel"])
                     if settings_panel and any(task["panel"][key] != value for key, value in settings_panel.items()):
                         raise ValueError("Task and settings panel requirements disagree")
+                if "panel_position_initialization" in task:
+                    d = task["panel_position_initialization"]
+                    keys = ("requested_samples", "attempted_samples", "finite_dyads", "within_search_bounds",
+                            "full_cycle_robust_crank_shortest", "branch_and_order_consistent",
+                            "transmission_selection_floors", "panel_pivot_pass_count", "panel_screened_count",
+                            "panel_passing_count", "returned_seeds", "evaluated_seed_count")
+                    if d["status"] == "sampled":
+                        if not d["enabled"] or pose_required or not by_id[identity].get("panel_required", False):
+                            raise ValueError("Panel-position sampling requires a position-only panel task")
+                        if not all(k in d for k in (*keys, "requested_seed_count")):
+                            raise ValueError("Panel-position sampling diagnostics missing")
+                        counts = [d[k] for k in keys]
+                        if any(b > a for a, b in zip(counts, counts[1:])) or d["returned_seeds"] > d["requested_seed_count"]:
+                            raise ValueError("Panel-position counts inconsistent")
+                    elif any(d.get(k, 0) for k in keys):
+                        raise ValueError("Bypassed panel-position search reports sampled work")
+                    if (d["status"] == "disabled") == d["enabled"]:
+                        raise ValueError("Panel-position status and setting disagree")
+                    setting = bundle.get("settings", {}).get("panel_position_geometry")
+                    if setting is not None and setting != d["enabled"]:
+                        raise ValueError("Panel-position setting and diagnostics disagree")
+                    fingerprint = bundle.get("provenance", {}).get("panel_position_initialization_sha256")
+                    if fingerprint is not None and fingerprint != d["source_sha256"]:
+                        raise ValueError("Panel-position source fingerprints disagree")
                 if "position_initialization" in task:
                     d = task["position_initialization"]
                     if (not d["enabled"] and (d["attempts"] or d["replaced"])) or d["replaced"] > d["attempts"]:
@@ -289,7 +313,7 @@ def build_bundle(run_directory: Path) -> dict:
         raise ValueError("Only R2.5c run manifests are supported")
     props = schema()["properties"]
     bundle = {
-        "schema_version": "0.6", "kind": "local",
+        "schema_version": "0.7", "kind": "local",
         "core": {"generator_version": __version__, "engine": "r2.5c",
                  "run_status": manifest.get("run_status", "unknown"),
                  "validation_status": "unreviewed", "tasks": []},
@@ -305,6 +329,9 @@ def build_bundle(run_directory: Path) -> dict:
                 "orientation_required": pose_required, "crank_direction": direction,
                 "panel_required": "panel" in target}
         task_record = {"task_id": identity, "target_values": target["target_values"], "crank_direction": direction}
+        if "panel_position_initialization" in target:
+            rules = props["task"]["items"]["properties"]["panel_position_initialization"]["properties"]
+            task_record["panel_position_initialization"] = _project(target["panel_position_initialization"], rules)
         if "position_initialization" in target:
             rules = props["task"]["items"]["properties"]["position_initialization"]["properties"]
             task_record["position_initialization"] = _project(target["position_initialization"], rules)
@@ -347,6 +374,12 @@ def build_bundle(run_directory: Path) -> dict:
         "orientation_sha256": manifest.get("orientation_sha256"),
         "pose_initialization_sha256": manifest.get("pose_initialization_sha256"),
         "panel_screening_sha256": manifest.get("panel_screening_sha256")}, provenance))
+    panel_fingerprints = {target["panel_position_initialization"]["source_sha256"] for target in manifest["targets"]
+                          if "panel_position_initialization" in target}
+    if len(panel_fingerprints) > 1:
+        raise ValueError("Panel-position source fingerprints disagree across targets")
+    if panel_fingerprints:
+        bundle["provenance"]["panel_position_initialization_sha256"] = panel_fingerprints.pop()
     fingerprints = {target["position_initialization"]["source_sha256"] for target in manifest["targets"]
                     if "position_initialization" in target}
     if len(fingerprints) > 1:

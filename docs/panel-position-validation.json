@@ -1,0 +1,32 @@
+{
+  "cases": 16,
+  "panel_cases": 12,
+  "baseline_panel_successes": 0,
+  "candidate_panel_successes": 11,
+  "baseline_successes": 4,
+  "candidate_successes": 15,
+  "gains": [
+    "p00",
+    "p01",
+    "p02",
+    "p03",
+    "p04",
+    "p05",
+    "p07",
+    "p08",
+    "p09",
+    "p10",
+    "p11"
+  ],
+  "losses": [],
+  "unsupported_numeric_parity": true,
+  "unsupported_cases": 4,
+  "all_witnesses_pass": true,
+  "baseline_seconds": 586.0221398999565,
+  "candidate_seconds": 593.1196030999708,
+  "runtime_ratio": 1.0121112543652804,
+  "automatic_bundles_validated": 32,
+  "tests_passed_before_metadata_update": 333,
+  "tests_skipped": 5,
+  "gate_pass": true
+}

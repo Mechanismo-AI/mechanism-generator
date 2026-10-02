@@ -17,7 +17,7 @@ def add_position(run):
 
 def test_local_bundle_preserves_position_origin_and_diagnostics(recorded_run):
     add_position(recorded_run);bundle=B.build_bundle(recorded_run)
-    assert bundle['schema_version']=='0.6'
+    assert bundle['schema_version']=='0.7'
     assert bundle['settings']['position_geometry'] is True
     assert bundle['task'][0]['position_initialization']['replaced']==2
     assert 'replacements' not in bundle['task'][0]['position_initialization']
@@ -31,6 +31,7 @@ def test_inconsistent_position_metadata_rejected(recorded_run,field,value):
     bundle['task'][0]['position_initialization'][field]=value
     with pytest.raises(ValueError):B.validate_bundle(bundle)
 
-def test_previous_schema_still_valid(recorded_run):
-    bundle=B.build_bundle(recorded_run);bundle['schema_version']='0.5'
+@pytest.mark.parametrize('version',['0.5','0.6'])
+def test_previous_schema_still_valid(recorded_run,version):
+    bundle=B.build_bundle(recorded_run);bundle['schema_version']=version
     B.validate_bundle(bundle)
