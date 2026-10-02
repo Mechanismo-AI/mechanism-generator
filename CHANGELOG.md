@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.1.0a10 (unreleased) — Adaptive panel search
+
+Add optional `--panel_position_adaptive`: retain the standard portfolio, try larger
+analytic sampling only on unresolved panel-position tasks, then bounded refinement
+only when needed. Preserve parents and qualify every new candidate normally.
+Record stopping stages, work budgets and lineage in contribution schema 0.8;
+older schemas remain readable. Numerical optimizer failure preserves snapshots.
+
+Fresh full-pipeline validation selected solutions for 20/20 panel tasks versus
+16/20 baseline, with no losses and unchanged unsupported-task numerical records.
+The option is off by default. Model weights and adjustable base spacing are unchanged.
+
+
 ## 0.1.0a9 — Optional panel-position geometry
 
 Add `--panel_position_geometry` to construct and retain panel-screened analytic

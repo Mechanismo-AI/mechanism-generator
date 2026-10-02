@@ -40,7 +40,7 @@ def test_preserved_parents_qualify_select_and_export(tmp_path):
         task[field+'_count']=sum(c[field] for c in parents)
     (tmp_path/'run_manifest.json').write_text(json.dumps(dict(variant='R2.5c',run_status='completed',targets=[task],arguments=vars(args),models=[])),encoding='utf-8')
     bundle=B.build_bundle(tmp_path)
-    assert bundle['schema_version']=='0.7'
+    assert bundle['schema_version']=='0.8'
     assert bundle['task'][0]['panel_position_initialization']['evaluated_seed_count']==6
     assert all(c['model_role']=='panel_geometry' for c in bundle['candidates'][0]['items'])
     for field,value in [('enabled',False),('panel_passing_count',0),('source_sha256','f'*64),('status','unsupported_task')]:

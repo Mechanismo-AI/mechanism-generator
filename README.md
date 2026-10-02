@@ -154,3 +154,7 @@ Version 0.1.0a8 adds `--position_geometry` for unordered position tasks. It repl
 ## Optional panel-position geometry
 
 Version 0.1.0a9 adds `--panel_position_geometry` for unordered position-only panel tasks. It retains up to six screened analytic parents alongside the existing search and adds bounded compute. The option is off by default; base spacing remains adjustable and weights unchanged. See [usage and validation](docs/panel-position-starts.md).
+
+## Adaptive panel fallback
+
+The a10 candidate adds opt-in `--panel_position_adaptive`. It enables standard panel geometry, then spends additional local compute only on unresolved tasks: larger sampling first, bounded panel-aware refinement last. Existing qualifying designs are retained. See [usage and budgets](docs/adaptive-panel-search.md).

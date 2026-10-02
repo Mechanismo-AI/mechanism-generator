@@ -1,12 +1,12 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/Mechanismo-AI/mechanism-generator/blob/main/src/mechanism_generator/contributions/schema.json",
-  "title": "Mechanism Generator community contribution 0.8",
+  "title": "Mechanism Generator community contribution 0.7",
   "type": "object",
   "additionalProperties": false,
   "properties": {
     "schema_version": {
-      "const": "0.8"
+      "const": "0.7"
     },
     "kind": {
       "enum": [
@@ -542,98 +542,6 @@
                 }
               }
             ]
-          },
-          "panel_adaptive_initialization": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "method": {
-                "const": "adaptive_panel_position_v1"
-              },
-              "enabled": {
-                "type": "boolean"
-              },
-              "status": {
-                "enum": [
-                  "disabled",
-                  "unsupported_task",
-                  "existing_qualified",
-                  "larger_qualified",
-                  "near_qualified",
-                  "refined_qualified",
-                  "exhausted"
-                ]
-              },
-              "source_sha256": {
-                "type": "string",
-                "pattern": "^[0-9a-f]{64}$"
-              },
-              "runtime_seconds": {
-                "type": "number",
-                "minimum": 0
-              },
-              "larger_samples": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 262144
-              },
-              "larger_candidates": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 6
-              },
-              "near_samples": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 65536
-              },
-              "near_candidates": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 6
-              },
-              "refinement_starts": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 6
-              },
-              "refined_candidates": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 6
-              },
-              "adam_steps": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 2400
-              },
-              "lbfgs_evaluations": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 900
-              },
-              "optimizer_failures": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 6
-              }
-            },
-            "required": [
-              "method",
-              "enabled",
-              "status",
-              "source_sha256",
-              "runtime_seconds",
-              "larger_samples",
-              "larger_candidates",
-              "near_samples",
-              "near_candidates",
-              "refinement_starts",
-              "refined_candidates",
-              "adam_steps",
-              "lbfgs_evaluations",
-              "optimizer_failures"
-            ]
           }
         },
         "required": [
@@ -1035,10 +943,7 @@
                     "bridge_release",
                     "pose_seed",
                     "pose_refined",
-                    "panel_position_seed",
-                    "panel_position_larger",
-                    "panel_position_near_miss",
-                    "panel_position_refined"
+                    "panel_position_seed"
                   ]
                 },
                 "ground_link_mode": {
@@ -1140,10 +1045,7 @@
                   "enum": [
                     "three_pose_dyad_v1",
                     "three_pose_tolerance_dyad_v1",
-                    "panel_position_free_angle_dyad_v1",
-                    "panel_position_larger_dyad_v1",
-                    "panel_position_near_miss_v1",
-                    "panel_position_refinement_v1"
+                    "panel_position_free_angle_dyad_v1"
                   ]
                 },
                 "generator_sample_index": {
@@ -1360,85 +1262,6 @@
                             "const": true
                           }
                         }
-                      },
-                      {
-                        "required": [
-                          "model_role",
-                          "portfolio_origin",
-                          "proposal_source",
-                          "generator_sample_index",
-                          "panel_required"
-                        ],
-                        "properties": {
-                          "model_role": {
-                            "const": "panel_geometry"
-                          },
-                          "portfolio_origin": {
-                            "const": "panel_position_larger"
-                          },
-                          "orientation_required": {
-                            "const": false
-                          },
-                          "proposal_source": {
-                            "const": "panel_position_larger_dyad_v1"
-                          },
-                          "panel_required": {
-                            "const": true
-                          }
-                        }
-                      },
-                      {
-                        "required": [
-                          "model_role",
-                          "portfolio_origin",
-                          "proposal_source",
-                          "generator_sample_index",
-                          "panel_required"
-                        ],
-                        "properties": {
-                          "model_role": {
-                            "const": "panel_geometry"
-                          },
-                          "portfolio_origin": {
-                            "const": "panel_position_near_miss"
-                          },
-                          "orientation_required": {
-                            "const": false
-                          },
-                          "proposal_source": {
-                            "const": "panel_position_near_miss_v1"
-                          },
-                          "panel_required": {
-                            "const": true
-                          }
-                        }
-                      },
-                      {
-                        "required": [
-                          "model_role",
-                          "portfolio_origin",
-                          "proposal_source",
-                          "generator_sample_index",
-                          "panel_required",
-                          "portfolio_parent_candidate_id"
-                        ],
-                        "properties": {
-                          "model_role": {
-                            "const": "panel_geometry"
-                          },
-                          "portfolio_origin": {
-                            "const": "panel_position_refined"
-                          },
-                          "orientation_required": {
-                            "const": false
-                          },
-                          "proposal_source": {
-                            "const": "panel_position_refinement_v1"
-                          },
-                          "panel_required": {
-                            "const": true
-                          }
-                        }
                       }
                     ]
                   }
@@ -1568,10 +1391,6 @@
           "pattern": "^[0-9a-f]{64}$"
         },
         "panel_position_initialization_sha256": {
-          "type": "string",
-          "pattern": "^[0-9a-f]{64}$"
-        },
-        "panel_adaptive_initialization_sha256": {
           "type": "string",
           "pattern": "^[0-9a-f]{64}$"
         }
@@ -1921,9 +1740,6 @@
           "type": "boolean"
         },
         "panel_position_geometry": {
-          "type": "boolean"
-        },
-        "panel_position_adaptive": {
           "type": "boolean"
         }
       },

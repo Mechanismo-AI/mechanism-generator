@@ -192,7 +192,7 @@ def test_legacy_position_bundle_and_submission_still_validate(recorded_run):
 
 def test_new_position_bundle_identifies_no_orientation_requirement(recorded_run):
     bundle = contributions.build_bundle(recorded_run)
-    assert bundle["schema_version"] == "0.7"
+    assert bundle["schema_version"] == "0.8"
     assert bundle["core"]["tasks"][0]["orientation_required"] is False
     assert "orientation_acceptable_count" not in bundle["core"]["tasks"][0]
 

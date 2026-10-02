@@ -1,6 +1,6 @@
 {
   "implementation": "r2.5c-public-alpha",
-  "adapter_version": "0.1.0a9",
+  "adapter_version": "0.1.0a10",
   "status": "draft_with_packaged_engine",
   "omts_versions": [
     "0.1",
@@ -81,10 +81,13 @@
     "orientation.py": "cb7443226549e536f1c46f7f58bb01fb5016627227c293efb81e2ce1dce5786a",
     "provenance.py": "1d84d20d1f730fc692c2e5826c269a5efeb808c4b063e8871b79331883190670",
     "r25b.py": "fd802f5e8d879e742ba09a5d4f880f77f8c7376a4680da744a630d7301477f33",
-    "r25c.py": "5d6d41e625e6e32295e0befee509cdc7c109272372429b14584120d9097d37cf",
+    "r25c.py": "992578d2866172bea543f0079fa2bb08dda28deb442d73ea55e6bafab5cc748f",
     "pose_seeds.py": "5011ad2ef1d4dc4e4277093b30c0e6bb906a19456bdb673084f0d0bac2c50e7a",
     "panel.py": "cb2cb38dbdf085253acef4210a063386e932718b3d97f5973f4ea0ed902b214f",
     "position_seeds.py": "81832f56c2ef447bdfb71ce940d0f09949e1afa37b52d8fa46ea03bb7036d200",
-    "panel_position_seeds.py": "2e1b698134cbbc716dd55d5d597ad9eb7d668b199f1521e9d1bde34de674bc7b"
+    "panel_position_seeds.py": "2e1b698134cbbc716dd55d5d597ad9eb7d668b199f1521e9d1bde34de674bc7b",
+    "panel_adaptive.py": "88d103413d2cf4562c3a0dac776a3e4216d5525ac15707f9d8599b100ec7f06b",
+    "panel_near_seeds.py": "e023eaec8151d78713089b50ad4f06b897bc05e72be3483bcada01d301f0822f",
+    "panel_refinement.py": "81293dd8c0f0c3097a23766057adb05925dac487e147b7c258c76c2bfe4678a4"
   }
 }

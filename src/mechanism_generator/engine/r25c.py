@@ -78,6 +78,8 @@ def build_parser() -> argparse.ArgumentParser:
                         help='Opt-in geometric replacements within the existing variable-start budget for unordered position tasks')
     parser.add_argument('--panel_position_geometry', action='store_true',
                         help='Add up to six panel-screened analytic parents for unordered panel-position tasks; extra compute, no new weights')
+    parser.add_argument('--panel_position_adaptive', action='store_true',
+                        help='Enable panel geometry, then larger sampling and bounded refinement only if no qualifying result exists')
     parser.prog = Path(__file__).name
     parser.description = (
         f"{VARIANT}: combine fixed-L1, variable-L1, and fixed-to-variable "
@@ -172,6 +174,8 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def validate_args(parser: argparse.ArgumentParser, args: argparse.Namespace) -> None:
+    if args.panel_position_adaptive:
+        args.panel_position_geometry = True
     ENGINE.validate_args(parser, args)
     if not 0 <= args.pose_dyad_samples <= 262144 or not 0 <= args.pose_tolerance_samples <= 262144:
         parser.error("Pose sample budgets must be between 0 and 262144 per branch")
@@ -1156,6 +1160,14 @@ def run_search(args) -> int:
         qualification = ENGINE.apply_shared_candidate_qualification(
             all_candidates, portfolio_args, shared_reference
         )
+        from . import panel_adaptive
+        adaptive_candidates, panel_adaptive_initialization = panel_adaptive.run(
+            target, variable_args, shared_reference, all_candidates,
+            target_dir / '07_panel_adaptive', lineage_by_id)
+        ENGINE.write_json(target_dir / 'panel_adaptive_initialization.json', panel_adaptive_initialization)
+        if adaptive_candidates:
+            all_candidates.extend(adaptive_candidates)
+            qualification = ENGINE.apply_shared_candidate_qualification(all_candidates, portfolio_args, shared_reference)
         qualification["stage_a_shared_reference"] = shared_reference
         qualification["portfolio_fixed_ground_link_value"] = float(
             args.fixed_ground_link_value
@@ -1200,6 +1212,8 @@ def run_search(args) -> int:
             origin_names += ("pose_seed", "pose_refined")
         if panel_parents:
             origin_names += ("panel_position_seed",)
+        if adaptive_candidates:
+            origin_names += ('panel_position_larger', 'panel_position_near_miss', 'panel_position_refined')
         origin_rows = [summarize_origin(name, all_candidates) for name in origin_names]
         ENGINE.write_json(target_dir / "selection_reference.json", qualification)
         ENGINE.write_json(target_dir / "portfolio_lineage.json", lineage_by_id)
@@ -1252,6 +1266,8 @@ def run_search(args) -> int:
             stage_candidates.extend([("pose_seed", pose_exact), ("pose_refined", pose_refined)])
         if panel_parents:
             stage_candidates.append(("panel_position_seed", panel_parents))
+        for origin in ('panel_position_larger', 'panel_position_near_miss', 'panel_position_refined'):
+            stage_candidates.append((origin, [c for c in adaptive_candidates if c['portfolio_origin'] == origin]))
         for origin, candidates in stage_candidates:
             stage_args = portfolio_args
             champions = choose_diverse_champions(
@@ -1276,6 +1292,7 @@ def run_search(args) -> int:
         target_manifest = {
             'position_initialization': position_initialization,
             'panel_position_initialization': panel_position_initialization,
+            'panel_adaptive_initialization': panel_adaptive_initialization,
             "label": target_label,
             "directory": str(target_dir),
             "target_values": target_values.tolist(),
