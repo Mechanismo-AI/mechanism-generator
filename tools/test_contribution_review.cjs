@@ -381,11 +381,17 @@ async function verifyPositionGeometryReview(version = "0.6") {
   local.provenance.position_initialization_sha256 = "d".repeat(64);
   local.task[0].position_initialization = {method: "coupled_position_seed_v1", enabled: true,
     status: "allocated", replaced: 4, attempts: 12, source_sha256: "d".repeat(64)};
-  if (version === "0.7") {
+  if (version === "0.7" || version === "0.8") {
     local.settings.panel_position_geometry = true;
     local.provenance.panel_position_initialization_sha256 = "e".repeat(64);
     local.task[0].panel_position_initialization = {method: "panel_position_free_angle_dyad_v1",
       enabled: true, status: "sampled", returned_seeds: 3, source_sha256: "e".repeat(64)};
+  }
+  if (version === "0.8") {
+    local.settings.panel_position_adaptive = true;
+    local.provenance.panel_adaptive_initialization_sha256 = "f".repeat(64);
+    local.task[0].panel_adaptive_initialization = {method: "adaptive_panel_position_v1",
+      enabled: true, status: "refined_qualified", refinement_starts: 2, source_sha256: "f".repeat(64)};
   }
   const ui = makeHarness(local);
   assert.equal(ui.element("error").hidden, true);
@@ -394,6 +400,7 @@ async function verifyPositionGeometryReview(version = "0.6") {
   ui.change("include-task", false);
   assert.equal(JSON.stringify(ui.preview()).includes("coupled_position_seed_v1"), false);
   assert.equal(JSON.stringify(ui.preview()).includes("panel_position_free_angle_dyad_v1"), false);
+  assert.equal(JSON.stringify(ui.preview()).includes("adaptive_panel_position_v1"), false);
   ui.agree();
   ui.element("download").click();
   assert.equal(JSON.parse(await ui.downloads[0].text()).schema_version, version);
@@ -409,6 +416,7 @@ async function verifyPositionGeometryReview(version = "0.6") {
   await verifyPanelReviewFlow();
   await verifyPositionGeometryReview();
   await verifyPositionGeometryReview("0.7");
+  await verifyPositionGeometryReview("0.8");
   verifyInvalidInput();
   console.log("Offline contribution review checks passed: schemas 0.1/0.2/0.3/0.4/0.5, panel constraints and counts, crank direction, pose and geometric provenance retention, diagnostics exclusions, digest vectors, consent gates, all section exclusions, Unicode and hostile text, exact download, fixed GitHub URL, changed-file re-export, and invalid-input handling.");
 })().catch(error => {

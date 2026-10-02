@@ -4,3 +4,4 @@ examples/tabletop-transfer/*.json -text
 examples/tabletop-transfer/diagnosis/*.json -text
 examples/tabletop-transfer/integration/*.json -text
 examples/benchmarks/panel-position-v1/*.json -text
+examples/benchmarks/adaptive-panel-v1/*.json -text

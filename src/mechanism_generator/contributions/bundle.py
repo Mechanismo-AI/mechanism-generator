@@ -32,10 +32,10 @@ POSE_CANDIDATE_FIELDS = (
 )
 
 
-def schema(version: str = "0.7") -> dict:
-    if version not in ("0.1", "0.2", "0.3", "0.4", "0.5", "0.6", "0.7"):
+def schema(version: str = "0.8") -> dict:
+    if version not in ("0.1", "0.2", "0.3", "0.4", "0.5", "0.6", "0.7", "0.8"):
         raise ValueError("Unsupported contribution schema version")
-    name = f"schema-v{version}.json" if version != "0.7" else "schema.json"
+    name = f"schema-v{version}.json" if version != "0.8" else "schema.json"
     return json.loads(files(__package__).joinpath(name).read_text(encoding="utf-8"))
 
 
@@ -91,7 +91,7 @@ def validate_bundle(bundle: dict) -> None:
                 raise ValueError("Selected or qualified count exceeds pose acceptance")
         elif any(key in task for key in POSE_COUNTS):
             raise ValueError("Pose outcome counts require an orientation task")
-    if version in ("0.4", "0.5", "0.6", "0.7"):
+    if version in ("0.4", "0.5", "0.6", "0.7", "0.8"):
         settings_direction = bundle.get("settings", {}).get("crank_direction")
         if settings_direction and any(task["crank_direction"] != settings_direction for task in tasks):
             raise ValueError("Settings crank direction disagrees with outcome")
@@ -103,7 +103,7 @@ def validate_bundle(bundle: dict) -> None:
                 raise ValueError("Candidate crank direction disagrees with outcome")
     task_details = {task["task_id"]: task for task in bundle.get("task", [])}
     settings_panel = None
-    if version in ("0.5", "0.6", "0.7"):
+    if version in ("0.5", "0.6", "0.7", "0.8"):
         settings = bundle.get("settings", {})
         if "panel_bounds" in settings or "carrier_size" in settings:
             if not all(key in settings for key in ("panel_bounds", "carrier_size", "panel_pivot_clearance", "panel_steps")):
@@ -132,12 +132,42 @@ def validate_bundle(bundle: dict) -> None:
                     raise ValueError("Included pose task must retain its orientation requirements")
                 if not pose_required and any(key in task for key in POSE_TASK_FIELDS):
                     raise ValueError("Orientation requirements contradict the recorded task type")
-                if version in ("0.5", "0.6", "0.7") and ("panel" in task) != by_id[identity]["panel_required"]:
+                if version in ("0.5", "0.6", "0.7", "0.8") and ("panel" in task) != by_id[identity]["panel_required"]:
                     raise ValueError("Included task must retain its panel requirements")
                 if "panel" in task:
                     _validate_panel_geometry(task["panel"])
                     if settings_panel and any(task["panel"][key] != value for key, value in settings_panel.items()):
                         raise ValueError("Task and settings panel requirements disagree")
+                if "panel_adaptive_initialization" in task:
+                    d = task["panel_adaptive_initialization"]
+                    bypass = d["status"] in ("disabled", "unsupported_task", "existing_qualified")
+                    counts = ("larger_samples", "larger_candidates", "near_samples", "near_candidates",
+                              "refinement_starts", "refined_candidates", "adam_steps", "lbfgs_evaluations", "optimizer_failures")
+                    if bypass and any(d[k] for k in counts):
+                        raise ValueError("Bypassed adaptive search reports work")
+                    if (d["status"] == "disabled") == d["enabled"]:
+                        raise ValueError("Adaptive status and setting disagree")
+                    if not bypass:
+                        if not d["enabled"] or pose_required or not by_id[identity].get("panel_required", False) or d["larger_samples"] != 262144:
+                            raise ValueError("Adaptive work requires a panel-position task and larger sampling")
+                        if d["status"] == "larger_qualified" and (not d["larger_candidates"] or d["near_samples"]):
+                            raise ValueError("Larger-sampling outcome contradicts work")
+                        if d["status"] != "larger_qualified" and d["near_samples"] != 65536:
+                            raise ValueError("Adaptive fallback is missing near-miss sampling")
+                        if d["status"] == "near_qualified" and (not d["near_candidates"] or d["refinement_starts"]):
+                            raise ValueError("Near-miss outcome contradicts work")
+                        if d["status"] == "refined_qualified" and not d["refined_candidates"]:
+                            raise ValueError("Refined outcome has no refined candidates")
+                    n = d["refinement_starts"]
+                    if (n > d["near_candidates"] or d["refined_candidates"] != n or d["optimizer_failures"] > n
+                            or d["adam_steps"] > 400*n or d["lbfgs_evaluations"] > 150*n):
+                        raise ValueError("Adaptive work exceeds its bounds")
+                    setting = bundle.get("settings", {}).get("panel_position_adaptive")
+                    if setting is not None and setting != d["enabled"]:
+                        raise ValueError("Adaptive setting and diagnostics disagree")
+                    fingerprint = bundle.get("provenance", {}).get("panel_adaptive_initialization_sha256")
+                    if fingerprint is not None and fingerprint != d["source_sha256"]:
+                        raise ValueError("Adaptive source fingerprints disagree")
                 if "panel_position_initialization" in task:
                     d = task["panel_position_initialization"]
                     keys = ("requested_samples", "attempted_samples", "finite_dyads", "within_search_bounds",
@@ -313,7 +343,7 @@ def build_bundle(run_directory: Path) -> dict:
         raise ValueError("Only R2.5c run manifests are supported")
     props = schema()["properties"]
     bundle = {
-        "schema_version": "0.7", "kind": "local",
+        "schema_version": "0.8", "kind": "local",
         "core": {"generator_version": __version__, "engine": "r2.5c",
                  "run_status": manifest.get("run_status", "unknown"),
                  "validation_status": "unreviewed", "tasks": []},
@@ -329,6 +359,9 @@ def build_bundle(run_directory: Path) -> dict:
                 "orientation_required": pose_required, "crank_direction": direction,
                 "panel_required": "panel" in target}
         task_record = {"task_id": identity, "target_values": target["target_values"], "crank_direction": direction}
+        if "panel_adaptive_initialization" in target:
+            rules = props["task"]["items"]["properties"]["panel_adaptive_initialization"]["properties"]
+            task_record["panel_adaptive_initialization"] = _project(target["panel_adaptive_initialization"], rules)
         if "panel_position_initialization" in target:
             rules = props["task"]["items"]["properties"]["panel_position_initialization"]["properties"]
             task_record["panel_position_initialization"] = _project(target["panel_position_initialization"], rules)
@@ -374,6 +407,12 @@ def build_bundle(run_directory: Path) -> dict:
         "orientation_sha256": manifest.get("orientation_sha256"),
         "pose_initialization_sha256": manifest.get("pose_initialization_sha256"),
         "panel_screening_sha256": manifest.get("panel_screening_sha256")}, provenance))
+    adaptive_fingerprints = {target["panel_adaptive_initialization"]["source_sha256"] for target in manifest["targets"]
+                             if "panel_adaptive_initialization" in target}
+    if len(adaptive_fingerprints) > 1:
+        raise ValueError("Adaptive source fingerprints disagree across targets")
+    if adaptive_fingerprints:
+        bundle["provenance"]["panel_adaptive_initialization_sha256"] = adaptive_fingerprints.pop()
     panel_fingerprints = {target["panel_position_initialization"]["source_sha256"] for target in manifest["targets"]
                           if "panel_position_initialization" in target}
     if len(panel_fingerprints) > 1:
