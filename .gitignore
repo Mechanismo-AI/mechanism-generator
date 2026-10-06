@@ -25,3 +25,6 @@ generated/
 htmlcov/
 *.safetensors
 *.npz
+
+# Reviewed inference-only asset for the separate experimental package.
+!experimental/motion/src/mechanism_motion/assets/proposal.pt

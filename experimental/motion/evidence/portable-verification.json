@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "tests": 5,
+  "clean_source_archive": true,
+  "installed_wheel": true,
+  "personal_path_scan": true,
+  "artifacts": {
+    "mechanism_motion_experimental-0.1.0.dev0.tar.gz": "10590295caa674b284ae65354a3c70ba245f7b684a58edb5d0b9240edf3e3a76",
+    "mechanism_motion_experimental-0.1.0.dev0-py3-none-any.whl": "d3d876b6e57c7c33dd22ea5ede7bfcc1209034bbab3c7082b57bf4e8ba6cd41c"
+  }
+}

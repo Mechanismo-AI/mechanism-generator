@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "files": {
+    "proposal.pt": "c90ed9b669bd78efab57a8b6f498c1eed65308e23fbc8587e4b6255dd6113aff",
+    "continuation.json": "5122929321492f2495a1aaeaae8600e378b4ce4938e5dbbc2872d8888b2e28c7",
+    "chooser.json": "1930b1436294d60d2ea85ab8538340cde411264915f819350d0c8a2d9949228a"
+  },
+  "proposal_source_sha256": "0b3f7e495696b8cd8578d6ed218620d607c8e2fd8182686cfdd048ccd9760e16",
+  "chooser_source_sha256": "6660db57cda4783a6b7887fd62dcce6ded5486eb23a1d5836cd7958c32594689",
+  "license": "Apache-2.0",
+  "status": "experimental",
+  "convention": "Twelve fixed phases, known branch signs, centered unit-bounding-box-diagonal target positions; derivatives with respect to increasing crank angle in radians."
+}

@@ -1,0 +1,81 @@
+{
+  "passed": {
+    "baseline": 74,
+    "chooser": 78
+  },
+  "cohorts": {
+    "control": {
+      "baseline": {
+        "passed": 16,
+        "evaluations": 900
+      },
+      "chooser": {
+        "passed": 16,
+        "evaluations": 900
+      }
+    },
+    "long_tool": {
+      "baseline": {
+        "passed": 15,
+        "evaluations": 1850
+      },
+      "chooser": {
+        "passed": 15,
+        "evaluations": 1850
+      }
+    },
+    "large_crank": {
+      "baseline": {
+        "passed": 16,
+        "evaluations": 900
+      },
+      "chooser": {
+        "passed": 16,
+        "evaluations": 900
+      }
+    },
+    "mounting_offset": {
+      "baseline": {
+        "passed": 15,
+        "evaluations": 1850
+      },
+      "chooser": {
+        "passed": 16,
+        "evaluations": 1800
+      }
+    },
+    "extreme_mounting": {
+      "baseline": {
+        "passed": 12,
+        "evaluations": 2800
+      },
+      "chooser": {
+        "passed": 15,
+        "evaluations": 2500
+      }
+    }
+  },
+  "gains": [
+    50,
+    69,
+    76,
+    79
+  ],
+  "losses": [],
+  "benefit_gate": true,
+  "stress_gate": true,
+  "eligible": true,
+  "first_attempt_parity": true,
+  "fallbacks": 17,
+  "fallback_choices": {
+    "offset+3": 3,
+    "offset-2": 1,
+    "offset-4": 3,
+    "random": 10
+  },
+  "max_evaluations": {
+    "baseline": 200,
+    "chooser": 200
+  },
+  "model_sha256": "1930b1436294d60d2ea85ab8538340cde411264915f819350d0c8a2d9949228a"
+}

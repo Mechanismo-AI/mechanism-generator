@@ -1,0 +1,5 @@
+include README.md MODEL-CARD.md LICENSE runtime-versions.json
+include RELEASE-NOTES.md extraction.json
+recursive-include evidence *.json *.md
+recursive-include tests *.py *.json *.md
+recursive-include examples *.json
