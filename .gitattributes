@@ -5,3 +5,6 @@ examples/tabletop-transfer/diagnosis/*.json -text
 examples/tabletop-transfer/integration/*.json -text
 examples/benchmarks/panel-position-v1/*.json -text
 examples/benchmarks/adaptive-panel-v1/*.json -text
+# Frozen inference checksums must survive cross-platform checkout unchanged.
+experimental/motion/src/mechanism_motion/assets/*.json -text
+experimental/motion/src/mechanism_motion/assets/*.pt binary

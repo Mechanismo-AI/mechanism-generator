@@ -1,0 +1,36 @@
+{
+  "sources": {
+    "weekend-derivatives/model.py": "ecd390aeeb62ab4e943249745f085ca94a7a0f4ce37202b0c2180e73a83e7dc2",
+    "weekend-derivatives/runner.py": "dc1ddea9181d3c99c992c6d738cd810732633a79e5df0bd1092f584483806e4a",
+    "weekend-derivatives/config.json": "247f963284c24300bab4b3dc521b8cfbefdf6e76144064e20cdcebda9e311f13",
+    "motion-derivatives/kinematics.py": "99501812ca0ddeb5500b12aa6476f53960fd7bb049ad206e664edee13135682f",
+    "sixbar-informed/informed.py": "736ccad73aff0c5a63e0f159d32115d7343b2d8753feed458edbdd2c95048c0c",
+    "sixbar-tolerance-repair/refine.py": "97db7cc3816335a487b8954918c15e3831a86056556a1833f3666563b2f571cf",
+    "sixbar-inverse/fitter.py": "77b6cb9dffc5f06fcfdd1211fe4b3037f094bda040307c1498457e0ebba9fab4",
+    "sixbar-study/sixbar.py": "421a2feba35a2cd2fc83bd03382ed92e6f4eb06c0fe8b1f6ddaa7f391ae91f84"
+  },
+  "config": {
+    "experiment": "sixbar-fixed-phase-derivative-conditioning-v1",
+    "maximum_hours": 48,
+    "seeds": [
+      101,
+      202,
+      303
+    ],
+    "training_cases_per_epoch": 256,
+    "validation_cases": 128,
+    "statistics_cases": 256,
+    "batch_size": 64,
+    "validate_every": 10,
+    "threads": 4,
+    "learning_rate": 0.001,
+    "patience_checks": 60,
+    "minimum_relative_improvement": 0.001,
+    "minimum_free_gb": 5,
+    "no_automatic_publication": true,
+    "capacity": "unrated",
+    "operating_speed": "unrated"
+  },
+  "fixed_data_sha256": "4faabc33c7900ead08b0d903a7f2efee68a50866d796c34831d0e760c22c64a3",
+  "initialization": "New experimental architecture; paired models initialized identically per seed. Released weights are neither loaded nor modified."
+}

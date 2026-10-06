@@ -1,0 +1,73 @@
+{
+  "passed": true,
+  "cases": [
+    {
+      "case": 0,
+      "qualified": true,
+      "selected_label": null,
+      "evaluations": 50,
+      "raw_metrics_scores_exact": true,
+      "baseline_exact": true
+    },
+    {
+      "case": 27,
+      "qualified": false,
+      "selected_label": null,
+      "evaluations": 200,
+      "raw_metrics_scores_exact": true,
+      "baseline_exact": true
+    },
+    {
+      "case": 50,
+      "qualified": true,
+      "selected_label": "offset-2",
+      "evaluations": 150,
+      "raw_metrics_scores_exact": true,
+      "baseline_exact": true
+    },
+    {
+      "case": 64,
+      "qualified": true,
+      "selected_label": "offset-4",
+      "evaluations": 150,
+      "raw_metrics_scores_exact": true,
+      "baseline_exact": true
+    },
+    {
+      "case": 69,
+      "qualified": true,
+      "selected_label": "offset-4",
+      "evaluations": 150,
+      "raw_metrics_scores_exact": true,
+      "baseline_exact": true
+    },
+    {
+      "case": 73,
+      "qualified": false,
+      "selected_label": "random",
+      "evaluations": 200,
+      "raw_metrics_scores_exact": true,
+      "baseline_exact": true
+    },
+    {
+      "case": 76,
+      "qualified": true,
+      "selected_label": "offset+3",
+      "evaluations": 150,
+      "raw_metrics_scores_exact": true,
+      "baseline_exact": true
+    },
+    {
+      "case": 79,
+      "qualified": true,
+      "selected_label": "offset+3",
+      "evaluations": 150,
+      "raw_metrics_scores_exact": true,
+      "baseline_exact": true
+    }
+  ],
+  "invalid_inputs_rejected": 11,
+  "clean_asset_tensor_parity": true,
+  "strict_witness_control": true,
+  "max_evaluations": 200
+}

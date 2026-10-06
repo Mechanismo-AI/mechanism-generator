@@ -1,0 +1,15 @@
+{
+  "source_sha256": {
+    "sixbar-study/sixbar.py": "421a2feba35a2cd2fc83bd03382ed92e6f4eb06c0fe8b1f6ddaa7f391ae91f84",
+    "sixbar-inverse/fitter.py": "77b6cb9dffc5f06fcfdd1211fe4b3037f094bda040307c1498457e0ebba9fab4",
+    "weekend-derivatives/model.py": "ecd390aeeb62ab4e943249745f085ca94a7a0f4ce37202b0c2180e73a83e7dc2",
+    "weekend-derivatives/refinement_trial.py": "de4117378a5eae28f74c53b975c5bfcf83413765833bfc51f380b293bd2c2a6c",
+    "weekend-derivatives/decision_selector.py": "4e4a13bf45499f27f3aab1582fe9666d3ded111c6937d8a73575465c32a5523e",
+    "weekend-derivatives/candidate_chooser.py": "6660db57cda4783a6b7887fd62dcce6ded5486eb23a1d5836cd7958c32594689",
+    "weekend-derivatives/adaptive_solver.py": "fc8536db42948591a60348480b5634788c670f99eebe1eb44ac6ee985037528b",
+    "weekend-derivatives/calibrated_proposal.py": "e5fc3b770b73776f0531ec0531f460fa8f2400fd627aee06e6e149d2ff8adad8"
+  },
+  "proposal_source_sha256": "0b3f7e495696b8cd8578d6ed218620d607c8e2fd8182686cfdd048ccd9760e16",
+  "chooser_model_sha256": "1930b1436294d60d2ea85ab8538340cde411264915f819350d0c8a2d9949228a",
+  "inference_only": true
+}

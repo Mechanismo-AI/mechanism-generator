@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mechanism-motion-experimental"
+version = "0.1.0.dev0"
+description = "Experimental fixed-phase six-bar pose and derivative synthesis"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = ["numpy>=2", "torch>=2.13"]
+license = "Apache-2.0"
+
+[project.urls]
+Repository = "https://github.com/Mechanismo-AI/mechanism-generator"
+Issues = "https://github.com/Mechanismo-AI/mechanism-generator/issues"
+
+[project.scripts]
+mechanism-motion = "mechanism_motion.__main__:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+mechanism_motion = ["assets/*.json", "assets/*.pt"]

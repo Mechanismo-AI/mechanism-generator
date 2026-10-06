@@ -12,6 +12,11 @@ orientation at each of three target phases. This is a planar kinematic research
 tool; prescribed timing/dwell, dynamics, collisions, and
 synchronization remain future work.
 
+A separate [experimental six-bar motion solver](docs/experimental-motion.md) accepts
+twelve fixed-phase pose, velocity and acceleration targets expressed as crank-angle
+derivatives. It has its own installation and model assets. It remains a synthetic
+research capability with unrated capacity, speed and collision clearance.
+
 ## Generate a mechanism
 
 After creating and activating a virtual environment, install from this checkout:
