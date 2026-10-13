@@ -108,6 +108,12 @@ def main() -> int:
     parser.add_argument("--models", type=Path, default=ROOT / "models")
     parser.add_argument("--output-dir", type=Path, default=ROOT / "runs" / "sync-corpus-01")
     args = parser.parse_args()
+    # Resolve path arguments to absolute paths. The engine subprocess runs
+    # with cwd=plan_dir, so a relative --output-dir would otherwise make the
+    # engine look for targets.csv relative to the plan directory instead of
+    # the repo root (FileNotFoundError on every variant).
+    args.output_dir = args.output_dir.resolve()
+    args.models = args.models.resolve()
     if not args.models.is_dir():
         parser.error(f"models directory not found: {args.models}; run mechanism-models download first.")
     base = load_yaml(BASE_DOCUMENT)
