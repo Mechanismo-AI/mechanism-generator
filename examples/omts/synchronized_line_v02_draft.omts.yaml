@@ -57,7 +57,7 @@ synchronization:
   events:
     - id: part_handoff
       type: handoff
-      participants: [transfer.place.reached, clamp.grasp.reached]
+      participants: [transfer.place.reached, clamp.closed.reached]
       window: {phase_range: [145, 155]}
       tolerance: {phase: 2}
       payload_ref: workpiece

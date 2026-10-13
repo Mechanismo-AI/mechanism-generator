@@ -239,6 +239,8 @@ def prepare_plan(data: dict) -> dict:
     _only(data, "spec version task_set_id name description capabilities_required unsupported_feature_policy units coordinate_system tasks outputs metadata", "$")
     _fixed(data, "unsupported_feature_policy", "error", "$")
     profile = capabilities()
+    if data.get("version") not in profile["omts_versions"]:
+        raise UnsupportedFeature(f"$.version: this adapter accepts OMTS versions {profile['omts_versions']}, received {data.get('version')!r}.")
     unknown = sorted(set(data.get("capabilities_required", [])) - set(profile["supports"]))
     if unknown:
         raise UnsupportedFeature(f"$.capabilities_required: unsupported capabilities: {', '.join(unknown)}")

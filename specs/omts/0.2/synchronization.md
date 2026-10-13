@@ -6,7 +6,8 @@
 > the current R2.5c adapter continues to reject synchronization fields under
 > `unsupported_feature_policy: error`.
 
-**Status:** Draft for review; not implemented
+**Status:** Draft; document validation (S2) is implemented — `omts validate` accepts
+v0.2 synchronization fields. No adapter implements or prepares them yet.
 
 **Depends on:** OMTS v0.1 (`specs/omts/0.1/specification.md`)
 
@@ -173,9 +174,9 @@ Downstream tooling can animate, collision-check, and export from it.
 ## 9. Implementation staging
 
 1. **S1 — Specification draft.** This document.
-2. **S2 — Document validation.** `omts validate` accepts v0.2
+2. **S2 — Document validation (implemented).** `omts validate` accepts v0.2
    synchronization fields, including ratios, unit objects, and event
-   references.
+   references, with the semantic checks of section 7.
 3. **S3 — Composed run plans.** The adapter prepares independent per-task runs
    plus a post-hoc timeline verification step. No joint optimization.
 4. **S4 — Timeline verifier.** Events and relations are checked against
