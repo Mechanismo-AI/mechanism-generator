@@ -231,6 +231,7 @@ def semantic_errors(data: dict) -> list[str]:
             errors.append(f"$.synchronization.participants[{i}].task: unknown task '{entry['task']}'.")
         else:
             ratios[entry["task"]] = tuple(entry.get("ratio", [1, 1]))
+    ratioed = {entry["task"] for entry in participants if "ratio" in entry}
     master_period = sync.get("period")
     if master_period:
         for i, task in enumerate(tasks):
@@ -288,9 +289,9 @@ def semantic_errors(data: dict) -> list[str]:
         index = relation.get("occurrence_index")
         if index is not None:
             bases = {str(relation[key]).split(".")[0] for key in ("from", "to")}
-            if not bases & set(ratios):
+            if not bases & ratioed:
                 errors.append(f"{rp}.occurrence_index: requires a ratioed participant task.")
-            for base in bases & set(ratios):
+            for base in bases & ratioed:
                 if not 0 <= index < ratios[base][0]:
                     errors.append(f"{rp}.occurrence_index: must be below the {ratios[base][0]} occurrence(s) of '{base}' per master cycle.")
         if rtype == "fixed_offset":

@@ -1,4 +1,3 @@
-import copy
 from pathlib import Path
 
 import pytest
@@ -153,17 +152,18 @@ def test_bare_tolerance_is_rejected_in_v02():
 
 def test_occurrence_index_requires_ratioed_task():
     document = _v02_document()
+    document["synchronization"]["participants"][1].pop("ratio")
+    document["tasks"][1]["motion"]["cycle"]["period"] = 1.0
     relation = document["synchronization"]["relations"][0]
     relation["occurrence_index"] = 0
     assert "requires a ratioed participant task" in _errors(document)
-    document["synchronization"]["participants"].append({"task": "alpha"})
-    errors = _errors(document)
-    assert "requires a ratioed participant task" not in errors
     document = _v02_document()
     document["synchronization"]["participants"][1] = {"task": "beta", "ratio": [2, 1]}
     document["tasks"][1]["motion"]["cycle"]["period"] = 0.5
-    document["synchronization"]["relations"][0]["to"] = "beta.second.reached"
-    document["synchronization"]["relations"][0]["occurrence_index"] = 2
+    relation = document["synchronization"]["relations"][0]
+    relation["occurrence_index"] = 1
+    assert validate_document(document) == []
+    relation["occurrence_index"] = 2
     assert "occurrence(s)" in _errors(document)
 
 
