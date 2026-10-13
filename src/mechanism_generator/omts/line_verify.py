@@ -25,6 +25,16 @@ Probe offsets are relative to the declared composition and deliberately move
 an anchored task's reference target away from its declared phase; they are
 feasibility targets for joint search and gear/crank phasing choices, never
 verified solutions, and probing never changes the baseline verdict of the run.
+
+The joint offset solver (`solve_offsets`; CLI: `omts propose-offsets`) is the
+S5 search step itself: it grid-searches per-task master-phase offsets jointly
+over the existing per-task results and reports the assignments that maximize
+the number of passing candidate combinations. Recommendations are absolute:
+they replace any declared `applied_offsets`, because the solver composes
+from raw achieved phases. The output is a proposal (`offsets_proposal.json`)
+only — it never writes a verdict, and a human must declare the chosen
+offsets in the document, then re-validate, re-adapt, and re-verify before a
+line can be called verified under them.
 """
 
 from __future__ import annotations
@@ -309,3 +319,267 @@ def _result(plan: dict, line: dict, combinations: list, status: str, note: str |
 
 def _write(plan_dir: Path, result: dict) -> None:
     (plan_dir / "line_result.json").write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
+
+
+def _window_mask(phase: float, low: float, high: float, tolerance: float, offsets: list[float]) -> set[int]:
+    """Grid indices whose offset keeps the composed phase inside the window."""
+    return {
+        index for index, offset in enumerate(offsets)
+        if low - tolerance <= (phase + offset) % 360.0 <= high + tolerance
+    }
+
+
+def _lead_holds(relation: dict, lead: float) -> bool:
+    if relation["type"] == "ordering":
+        return relation["min_lead_deg"] <= lead <= relation["max_lead_deg"]
+    offset = relation["offset_deg"] % 360.0
+    tolerance = relation.get("tolerance_deg", 0.0)
+    return _lead(offset, lead) <= tolerance or _lead(lead, offset) <= tolerance
+
+
+def _hard_margin(line: dict, anchored: dict) -> float | None:
+    """Minimum per-constraint slack over hard checks, or None if any fails.
+
+    Window slack is the distance to the tolerance-extended window boundary;
+    ordering slack is the distance to the nearer lead bound; fixed_offset
+    slack is the remaining tolerance to the target offset.
+    """
+    margin = None
+    for event in line["events"]:
+        if event.get("mode", "hard") != "hard":
+            continue
+        low, high = event["window_deg"]
+        tolerance = event.get("tolerance_deg") or 0.0
+        for participant in event["participants"]:
+            phase = anchored[participant["task"]][participant["target"]]
+            if not low - tolerance <= phase <= high + tolerance:
+                return None
+            slack = min(phase - (low - tolerance), (high + tolerance) - phase)
+            margin = slack if margin is None else min(margin, slack)
+    for relation in line["relations"]:
+        if relation.get("mode", "hard") != "hard":
+            continue
+        a = anchored[relation["from"]["task"]][relation["from"]["target"]]
+        b = anchored[relation["to"]["task"]][relation["to"]["target"]]
+        lead = _lead(a, b)
+        if relation["type"] == "ordering":
+            if not relation["min_lead_deg"] <= lead <= relation["max_lead_deg"]:
+                return None
+            slack = min(lead - relation["min_lead_deg"], relation["max_lead_deg"] - lead)
+        else:
+            offset = relation["offset_deg"] % 360.0
+            tolerance = relation.get("tolerance_deg", 0.0)
+            if not (_lead(offset, lead) <= tolerance or _lead(lead, offset) <= tolerance):
+                return None
+            slack = tolerance - min(_lead(offset, lead), _lead(lead, offset))
+        margin = slack if margin is None else min(margin, slack)
+    return margin
+
+
+def solve_offsets(plan_dir: str | Path, step_deg: float = 1.0, top: int = 5) -> dict:
+    """Joint master-phase offset search over existing results (S5).
+
+    Grid-searches constant per-task offsets (at `step_deg` increments) that
+    maximize the number of candidate combinations satisfying every hard event
+    and relation. Recommendations are absolute offsets: they are composed
+    from raw achieved phases and replace any declared `applied_offsets`.
+    Writes `offsets_proposal.json`; never writes or changes a verdict.
+    """
+    plan_dir = Path(plan_dir)
+    plan = _load_plan(plan_dir)
+    line = plan["line"]
+    participating = line["phase_reference"].keys() | {
+        participant["task"]
+        for event in line["events"]
+        for participant in event["participants"]
+    } | {
+        relation[key]["task"]
+        for relation in line["relations"]
+        for key in ("from", "to")
+    }
+    stray = set(line.get("applied_offsets") or {}) - participating
+    if stray:
+        raise LineVerificationError(f"applied_offsets name non-participating task(s): {', '.join(sorted(stray))}.")
+    if not participating:
+        raise LineVerificationError("The line has no participating tasks; there is nothing to solve.")
+    if len(participating) > 2:
+        raise LineVerificationError(
+            f"Offset solving supports up to two participating tasks; this line has {len(participating)}."
+        )
+    achieved = {
+        task: _achieved_candidates(plan, plan_dir, task, run_target_ids(plan, task))
+        for task in sorted(participating)
+    }
+    empty = [task for task, candidates in achieved.items() if not candidates]
+    if empty:
+        result = _proposal(plan, line, status="no_candidates", step_deg=float(step_deg),
+                           combination_count=0, best=0, maximizers=[], achieved=achieved,
+                           top=top,
+                           note=f"Zero selected candidates for: {', '.join(empty)}; a completed search selecting nothing is recorded, not treated as an error.")
+        _write_proposal(plan_dir, result)
+        return result
+
+    step = float(step_deg)
+    if not 0.0 < step <= 360.0:
+        raise LineVerificationError(f"Offset step must be in (0, 360] deg; got {step}.")
+    steps = int(round(360.0 / step))
+    if not 1 <= steps <= 3600:
+        raise LineVerificationError(f"Offset step {step} does not divide into a usable grid (1..3600 steps).")
+    offsets = [round(index * step, 6) % 360.0 for index in range(steps)]
+
+    # Absolute semantics: compose from raw phases; recommendations replace
+    # whatever the document declared.
+    base_line = {key: value for key, value in line.items() if key != "applied_offsets"}
+    hard_events = [event for event in base_line["events"] if event.get("mode", "hard") == "hard"]
+    hard_relations = [relation for relation in base_line["relations"]
+                       if relation.get("mode", "hard") == "hard"]
+    task_ids = sorted(achieved)
+    combination_count = 1
+    for task in task_ids:
+        combination_count *= len(achieved[task])
+
+    def raw_anchored(chosen: dict[str, str]) -> dict[str, dict[str, float]]:
+        return _anchored_map(achieved, base_line, chosen)
+
+    if len(task_ids) == 1:
+        counts = [0] * steps
+    else:
+        counts = [[0] * steps for _ in range(steps)]
+
+    for combination in itertools.product(*(sorted(achieved[task]) for task in task_ids)):
+        chosen = dict(zip(task_ids, combination))
+        anchored = raw_anchored(chosen)
+        # Per-task allowed offset indices from hard window events.
+        allowed: dict[str, set[int] | None] = {task: None for task in task_ids}
+        dead = False
+        for event in hard_events:
+            low, high = event["window_deg"]
+            tolerance = event.get("tolerance_deg") or 0.0
+            for participant in event["participants"]:
+                task = participant["task"]
+                mask = _window_mask(anchored[task][participant["target"]], low, high, tolerance, offsets)
+                allowed[task] = mask if allowed[task] is None else allowed[task] & mask
+                if not allowed[task]:
+                    dead = True
+        # Same-task relations are offset-invariant: constant per combination.
+        cross = []
+        for relation in hard_relations:
+            if relation["from"]["task"] == relation["to"]["task"]:
+                if _check_relation(relation, anchored)["status"] != "pass":
+                    dead = True
+            else:
+                cross.append(relation)
+        if dead:
+            continue
+        # Difference constraint sets for cross-task relations: which index gaps
+        # (offset_to - offset_from, in steps) satisfy the relation.
+        diff_sets = []
+        for relation in cross:
+            a = anchored[relation["from"]["task"]][relation["from"]["target"]]
+            b = anchored[relation["to"]["task"]][relation["to"]["target"]]
+            raw_lead = (b - a) % 360.0
+            diff_sets.append((
+                relation["from"]["task"],
+                {gap for gap in range(-(steps - 1), steps)
+                 if _lead_holds(relation, (raw_lead + gap * step) % 360.0)},
+            ))
+        first, second = (task_ids + [None])[:2]
+        first_allowed = allowed[first] if allowed[first] is not None else range(steps)
+        if second is None:
+            for index in first_allowed:
+                counts[index] += 1
+            continue
+        second_allowed = allowed[second] if allowed[second] is not None else range(steps)
+        for i in first_allowed:
+            row = counts[i]
+            for j in second_allowed:
+                ok = True
+                for from_task, gaps in diff_sets:
+                    gap = j - i if from_task == first else i - j
+                    if gap not in gaps:
+                        ok = False
+                        break
+                if ok:
+                    row[j] += 1
+
+    if len(task_ids) == 1:
+        best = max(counts, default=0)
+        maximizers = [(index,) for index, count in enumerate(counts) if count == best] if best else []
+    else:
+        best = max((max(row) for row in counts), default=0)
+        maximizers = [(i, j) for i, row in enumerate(counts) for j, count in enumerate(row)
+                      if count == best] if best else []
+
+    # Rank maximizers: deepest constraint margin first, then offsets ascending.
+    margins: dict[tuple[int, ...], float] = {}
+    for pair in maximizers:
+        deltas = {task: offsets[index] for task, index in zip(task_ids, pair)}
+        margin = None
+        for combination in itertools.product(*(sorted(achieved[task]) for task in task_ids)):
+            chosen = dict(zip(task_ids, combination))
+            anchored = raw_anchored(chosen)
+            shifted = {
+                task: {target: (phase + deltas[task]) % 360.0 for target, phase in phases.items()}
+                for task, phases in anchored.items()
+            }
+            slack = _hard_margin(base_line, shifted)
+            if slack is not None:
+                margin = slack if margin is None else max(margin, slack)
+        margins[pair] = margin if margin is not None else 0.0
+    ranked = sorted(maximizers, key=lambda pair: (-(margins[pair] or 0.0), pair))
+
+    result = _proposal(plan, line, status="solved" if best else "infeasible", step_deg=step,
+                       combination_count=combination_count, best=best, maximizers=ranked,
+                       achieved=achieved, top=top, margins=margins, note=None)
+    _write_proposal(plan_dir, result)
+    return result
+
+
+def _proposal(plan: dict, line: dict, status: str, step_deg: float, combination_count: int,
+              best: int, maximizers: list, achieved: dict, top: int,
+              margins: dict | None = None, note: str | None = None) -> dict:
+    task_ids = sorted(achieved)
+    steps = int(round(360.0 / step_deg)) if 0.0 < step_deg <= 360.0 else 0
+    offsets = [round(index * step_deg, 6) % 360.0 for index in range(steps)]
+    recommendations = []
+    for pair in maximizers[:max(int(top), 1)]:
+        deltas = {task: offsets[index] for task, index in zip(task_ids, pair)}
+        recommendations.append({
+            "offsets": deltas,
+            "passing_combinations": best,
+            "margin_deg": round((margins or {}).get(pair) or 0.0, 6),
+            "rank": len(recommendations) + 1,
+        })
+    example = None
+    if recommendations:
+        example = {task: {"phase": delta} for task, delta in recommendations[0]["offsets"].items()
+                   if delta != 0.0}
+    result = {
+        "offset_proposal_version": 1,
+        "task_set_id": plan["task_set_id"],
+        "master_cycle_id": line["master_cycle_id"],
+        "status": status,
+        "step_deg": step_deg,
+        "combination_count": combination_count,
+        "best_passing_count": best,
+        "assignments_with_best_count": len(maximizers),
+        **({"applied_offsets_example": example if example is not None else {}} if recommendations else {}),
+        **({"recommendations": recommendations} if recommendations else {}),
+        "note": note or (
+            "Joint offset proposal: per-task master-phase offsets chosen by grid search over the existing per-task results; "
+            "recommendations are absolute and replace any declared synchronization.applied_offsets. "
+            "This is a proposal only — a human declares the chosen offsets in the document, then re-validates, re-adapts, and re-verifies; "
+            "this file never changes the verdict of the run."
+        ),
+        "disclaimer": "Post-hoc offset search over kinematic results; not synchronization synthesis, dynamics, collision, or machinery certification.",
+    }
+    if note and status == "no_candidates":
+        result["note"] = (
+            f"{note} "
+            "This is a proposal only and never changes the verdict of the run."
+        )
+    return result
+
+
+def _write_proposal(plan_dir: Path, result: dict) -> None:
+    (plan_dir / "offsets_proposal.json").write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")

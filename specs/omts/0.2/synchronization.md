@@ -223,17 +223,29 @@ Downstream tooling can animate, collision-check, and export from it.
    declared), and tasks without a reference contribute raw phases (then
    rotated by any applied offset).
 5. **S5 — Joint search.** Free offsets and anchors become search variables.
-   This is a research step and needs engine work. Its first steps are
-   implemented: `omts verify-line --probe-anchors` rotates one task's
-   composed phases across the full master cycle at a configurable step and
-   reports, per task, the circular offset intervals where at least one
-   candidate combination satisfies every hard event and relation. It uses
-   already-computed results and never reruns the solver. Probe offsets are
-   feasibility targets, not verified solutions. `applied_offsets` (section 2)
-   is how a probe-chosen offset becomes first-class: declared offsets flow from
-   document validation through the plan to the verdict, and the probe's
-   feasible intervals become candidate values for them. The baseline verdict
-   of an undeclared-offset run is unchanged by probing.
+   Its first steps are implemented: `omts verify-line --probe-anchors`
+   rotates one task's composed phases across the full master cycle at a
+   configurable step and reports, per task, the circular offset intervals
+   where at least one candidate combination satisfies every hard event and
+   relation. It uses already-computed results and never reruns the solver.
+   Probe offsets are feasibility targets, not verified solutions.
+   `applied_offsets` (section 2) is how a probe-chosen offset becomes
+   first-class: declared offsets flow from document validation through the
+   plan to the verdict, and the probe's feasible intervals become candidate
+   values for them. The baseline verdict of an undeclared-offset run is
+   unchanged by probing.
+   The joint offset solver completes the staged step: `omts propose-offsets
+   <plan-dir> [--step-deg N] [--top K]` grid-searches per-task master-phase
+   offsets **jointly** (up to two participating tasks in this first version)
+   over the existing per-task results and writes `offsets_proposal.json` with
+   the assignments that maximize the number of passing candidate
+   combinations, ranked by a constraint margin (the distance from the
+   tightest constraint boundary) and with a document-ready
+   `applied_offsets_example`. Recommendations are absolute: they are composed
+   from raw achieved phases and replace any declared `applied_offsets`
+   wholesale. The output is a proposal only — it never writes a verdict; a
+   human declares the chosen offsets in the document, then re-validates,
+   re-adapts, and re-verifies before the line is verified under them.
 
 S3 and S4 require no new solver physics: each mechanism is still synthesized
 independently, and synchronization is verified compositionally. This upgrades
@@ -251,6 +263,16 @@ the synchronized-line example from rejected to preparable and verifiable.
    before S5 exists?
 5. Should the anchor probe's feasible intervals become an input to S5 joint
    search, or remain a human-facing diagnostic only?
+
+   **Resolution (answered in v0.2):** the probe remains a human-facing
+   diagnostic. The joint offset solver (`omts propose-offsets`) searches
+   directly over composed phases on the offset grid rather than consuming
+   probe intervals, because single-task probe intervals are an incomplete
+   guide: joint-only solutions exist where every task's probe intervals are
+   empty (both tasks must move together for the shared window event to
+   pass), so restricting S5 to probe interval candidates would silently
+   exclude solvable lines. Probe intervals are still useful to a human as a
+   cheap first look and as a cross-check when they are non-empty.
 6. Is verifying a line under declared `applied_offsets` sufficient for v0.2,
    or must the plan also record how the offset is physically realized (gear
    ratio and tooth index, crank keyway) before a line can be called verified?

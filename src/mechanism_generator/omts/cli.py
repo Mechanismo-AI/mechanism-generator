@@ -5,7 +5,7 @@ import json
 import sys
 
 from .adapter import capabilities, write_plan
-from .line_verify import LineVerificationError, verify_line
+from .line_verify import LineVerificationError, solve_offsets, verify_line
 from .validation import DocumentError, load_document, require_valid
 
 
@@ -24,6 +24,13 @@ def main(argv=None) -> int:
                         help="Diagnostic sweep: report per-task master-phase offsets that would satisfy every hard constraint (the verdict is unchanged)")
     verify.add_argument("--probe-step-deg", type=float, default=1.0,
                         help="Offset step in degrees for --probe-anchors (default: 1.0)")
+    propose = commands.add_parser("propose-offsets",
+                                  help="Joint master-phase offset search over existing results (S5; proposal only)")
+    propose.add_argument("plan_dir", help="A directory written by: omts adapt")
+    propose.add_argument("--step-deg", type=float, default=1.0,
+                         help="Offset grid step in degrees (default: 1.0)")
+    propose.add_argument("--top", type=int, default=5,
+                         help="Number of recommended offset assignments to report (default: 5)")
     args = parser.parse_args(argv)
     try:
         if args.command == "capabilities":
@@ -43,6 +50,19 @@ def main(argv=None) -> int:
                             for item in entry["feasible_intervals_deg"]
                         ) or "none"
                         print(f"  {entry['task']}: best {entry['best_passing_combinations']} passing combos; feasible offsets: {intervals}")
+        elif args.command == "propose-offsets":
+            proposal = solve_offsets(args.plan_dir, step_deg=args.step_deg, top=args.top)
+            print(f"OFFSETS PROPOSAL: {proposal['status']}; best {proposal['best_passing_count']} passing "
+                  f"of {proposal['combination_count']} combinations across {proposal['assignments_with_best_count']} "
+                  f"assignment(s) at {proposal['step_deg']:g} deg steps (offsets_proposal.json written)")
+            for entry in proposal.get("recommendations", []):
+                offsets = ", ".join(f"{task}: {value:g}" for task, value in entry["offsets"].items())
+                print(f"  {entry['rank']}. {{{offsets}}} -> {entry['passing_combinations']} passing, "
+                      f"margin {entry['margin_deg']:g} deg")
+            if proposal.get("status") == "no_candidates":
+                print("  (no candidate combinations to search)")
+            print("Proposal only: declare the chosen offsets in the document's synchronization.applied_offsets, "
+                  "then re-validate, re-adapt, and re-verify.")
         else:
             data = load_document(args.document)
             if args.command == "validate":
