@@ -6,8 +6,9 @@
 > the current R2.5c adapter continues to reject synchronization fields under
 > `unsupported_feature_policy: error`.
 
-**Status:** Draft; document validation (S2) is implemented — `omts validate` accepts
-v0.2 synchronization fields. No adapter implements or prepares them yet.
+**Status:** Draft; S2 (document validation), S3 (composed run plans), and S4
+(timeline verification) are implemented for the preparable subset described
+below. S5 (joint search) is future work.
 
 **Depends on:** OMTS v0.1 (`specs/omts/0.1/specification.md`)
 
@@ -190,7 +191,10 @@ Downstream tooling can animate, collision-check, and export from it.
    every event and relation on every combination of selected candidates. It
    writes `line_result.json` with per-combination statuses and achieved leads.
    Only positive-direction runs are verifiable in this first version;
-   zero-selection outcomes are recorded, not raised.
+   zero-selection outcomes are recorded, not raised. Composed-timeline rule:
+   every task's `phase_reference` target is aligned at master phase 0, and
+   tasks without a reference contribute raw achieved phases; a task's own
+   reference target is therefore always at phase 0.
 5. **S5 — Joint search.** Free offsets and anchors become search variables.
    This is a research step and needs engine work.
 

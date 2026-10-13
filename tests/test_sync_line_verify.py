@@ -42,10 +42,11 @@ def _write_plan(root: Path, line: dict) -> Path:
 
 
 def _line():
+    # gate is anchored at hold; catcher is unanchored (raw phases are master phases).
     return {
         "master_cycle_id": "line_shaft",
         "period": 1.2,
-        "phase_reference": {"gate": "hold", "catcher": "grab"},
+        "phase_reference": {"gate": "hold", "catcher": None},
         "events": [{
             "id": "handoff_window", "participants": [
                 {"task": "gate", "target": "release"}, {"task": "catcher", "target": "grab"}],
@@ -61,34 +62,36 @@ def _line():
 
 
 def test_passing_line(tmp_path):
-    # gate: hold at 30, release at 120, rest at 250. catcher: grab at 150, ...
-    _write_manifest(tmp_path, "gate", [{"id": "g1", "phases": [30, 120, 250]}])
-    _write_manifest(tmp_path, "catcher", [{"id": "c1", "phases": [150, 220, 20]}])
+    # gate anchored at hold: release = 130 - 30 = 100. catcher unanchored: grab = 120.
+    _write_manifest(tmp_path, "gate", [{"id": "g1", "phases": [30, 130, 250]}])
+    _write_manifest(tmp_path, "catcher", [{"id": "c1", "phases": [120, 220, 20]}])
     _write_plan(tmp_path, _line())
     result = verify_line(tmp_path)
     assert result["status"] == "verified"
     assert result["passing_combination_count"] == 1
-    # gate anchored: hold=0, release=90. catcher anchored: grab=0 (reference).
     combo = result["combinations"][0]
-    assert combo["relations"][0]["achieved_lead_deg"] == pytest.approx(90.0)
-    assert combo["events"][0]["participant_phases_deg"] == [90.0, 0.0]
+    # lead from release (100) to grab (120) is 20 deg, inside [10, 45].
+    assert combo["relations"][0]["achieved_lead_deg"] == pytest.approx(20.0)
+    assert combo["events"][0]["participant_phases_deg"] == [100.0, 120.0]
+    assert combo["events"][0]["status"] == "pass"
     assert (tmp_path / "line_result.json").exists()
 
 
 def test_failing_relation_and_event(tmp_path):
-    _write_manifest(tmp_path, "gate", [{"id": "g1", "phases": [30, 120, 250]}])
-    _write_manifest(tmp_path, "catcher", [{"id": "c1", "phases": [100, 220, 20]}])
+    # release anchored 100, grab at 160: lead 60 > 45 fails; grab outside [95, 145].
+    _write_manifest(tmp_path, "gate", [{"id": "g1", "phases": [30, 130, 250]}])
+    _write_manifest(tmp_path, "catcher", [{"id": "c1", "phases": [160, 220, 20]}])
     _write_plan(tmp_path, _line())
     result = verify_line(tmp_path)
     assert result["status"] == "failed"
     combo = result["combinations"][0]
-    assert combo["relations"][0]["status"] == "fail"  # lead 40... grab anchored 0, release 90 -> lead 90 > 45
-    assert combo["events"][0]["status"] == "pass"  # release 90 within 95..145? no: 90 < 95 -> fail
+    assert combo["relations"][0]["status"] == "fail"
+    assert combo["events"][0]["status"] == "fail"
 
 
 def test_multiple_candidates_best_combination_passes(tmp_path):
-    _write_manifest(tmp_path, "gate", [{"id": "g1", "phases": [30, 120, 250]}, {"id": "g2", "phases": [30, 100, 240]}])
-    _write_manifest(tmp_path, "catcher", [{"id": "c1", "phases": [150, 220, 20]}])
+    _write_manifest(tmp_path, "gate", [{"id": "g1", "phases": [30, 130, 250]}, {"id": "g2", "phases": [30, 90, 240]}])
+    _write_manifest(tmp_path, "catcher", [{"id": "c1", "phases": [120, 220, 20]}])
     _write_plan(tmp_path, _line())
     result = verify_line(tmp_path)
     assert result["combination_count"] == 2
@@ -97,7 +100,7 @@ def test_multiple_candidates_best_combination_passes(tmp_path):
 
 def test_zero_selected_candidates_is_recorded_not_raised(tmp_path):
     _write_manifest(tmp_path, "gate", [])
-    _write_manifest(tmp_path, "catcher", [{"id": "c1", "phases": [150, 220, 20]}])
+    _write_manifest(tmp_path, "catcher", [{"id": "c1", "phases": [120, 220, 20]}])
     _write_plan(tmp_path, _line())
     result = verify_line(tmp_path)
     assert result["status"] == "no_candidates"
@@ -105,15 +108,15 @@ def test_zero_selected_candidates_is_recorded_not_raised(tmp_path):
 
 
 def test_missing_manifest_raises(tmp_path):
-    _write_manifest(tmp_path, "gate", [{"id": "g1", "phases": [30, 120, 250]}])
+    _write_manifest(tmp_path, "gate", [{"id": "g1", "phases": [30, 130, 250]}])
     _write_plan(tmp_path, _line())
     with pytest.raises(LineVerificationError, match="catcher"):
         verify_line(tmp_path)
 
 
 def test_non_positive_direction_rejected(tmp_path):
-    _write_manifest(tmp_path, "gate", [{"id": "g1", "phases": [30, 120, 250]}], crank="negative")
-    _write_manifest(tmp_path, "catcher", [{"id": "c1", "phases": [150, 220, 20]}])
+    _write_manifest(tmp_path, "gate", [{"id": "g1", "phases": [30, 130, 250]}], crank="negative")
+    _write_manifest(tmp_path, "catcher", [{"id": "c1", "phases": [120, 220, 20]}])
     _write_plan(tmp_path, _line())
     with pytest.raises(LineVerificationError, match="positive"):
         verify_line(tmp_path)
@@ -135,16 +138,14 @@ def test_fixed_offset_with_tolerance(tmp_path):
         "offset_deg": 60, "tolerance_deg": 5, "mode": "hard",
     }]
     line["events"] = []
-    _write_manifest(tmp_path, "gate", [{"id": "g1", "phases": [30, 120, 250]}])
-    _write_manifest(tmp_path, "catcher", [{"id": "c1", "phases": [150, 220, 20]}])
+    _write_manifest(tmp_path, "gate", [{"id": "g1", "phases": [30, 130, 250]}])
+    _write_manifest(tmp_path, "catcher", [{"id": "c1", "phases": [120, 220, 20]}])
     _write_plan(tmp_path, line)
     result = verify_line(tmp_path)
-    # release anchored 90, grab anchored 0 -> lead 270; circular diff to 60 is 150 -> fail
+    # release anchored 100, grab 120 -> lead 20; circular distance to 60 is 40 > 5 -> fail
     assert result["combinations"][0]["relations"][0]["status"] == "fail"
-    _write_manifest(tmp_path, "gate", [{"id": "g1", "phases": [30, 60, 250]}])
+    _write_manifest(tmp_path, "catcher", [{"id": "c1", "phases": [160, 220, 20]}])
     result = verify_line(tmp_path)
-    # release anchored 30, grab anchored 0 -> lead 330 -> fail; use phases so lead ~60
-    _write_manifest(tmp_path, "gate", [{"id": "g1", "phases": [30, 90, 250]}])
-    result = verify_line(tmp_path)
+    # release anchored 100, grab 160 -> lead 60, exactly the offset -> pass
     assert result["combinations"][0]["relations"][0]["status"] == "pass"
     assert result["status"] == "verified"

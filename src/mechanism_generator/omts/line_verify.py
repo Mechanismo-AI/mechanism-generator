@@ -3,6 +3,11 @@
 Reads a prepared run plan's line section and the achieved results of each
 per-task R2.5c run, then checks every event and relation on the composed
 timeline. This verifier never runs a solver and never modifies results.
+
+Composed-timeline rule: every task's `phase_reference` target is aligned at
+master phase 0; tasks without a phase_reference contribute raw achieved
+phases. A task's reference target is therefore always at phase 0 and cannot
+itself sit inside a nonzero master-phase window.
 """
 
 from __future__ import annotations
@@ -65,7 +70,7 @@ def _lead(a: float, b: float) -> float:
     return (b - a) % 360.0
 
 
-def _check_event(event: dict, anchored: dict, combination: dict) -> dict:
+def _check_event(event: dict, anchored: dict) -> dict:
     phases = [anchored[participant["task"]][participant["target"]] for participant in event["participants"]]
     low, high = event["window_deg"]
     tolerance = event.get("tolerance_deg") or 0.0
@@ -136,7 +141,7 @@ def verify_line(plan_dir: str | Path) -> dict:
                 }
                 for task, candidate in chosen.items()
             }
-            events = [_check_event(event, anchored, chosen) for event in line["events"]]
+            events = [_check_event(event, anchored) for event in line["events"]]
             relations = [_check_relation(relation, anchored) for relation in line["relations"]]
             hard_ok = all(item["status"] == "pass" for item in events + relations if item["mode"] == "hard")
             soft_failed = [item["id"] for item in events + relations if item["mode"] == "soft" and item["status"] == "fail"]
