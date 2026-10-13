@@ -184,8 +184,13 @@ Downstream tooling can animate, collision-check, and export from it.
    `ordering` or `fixed_offset` relations between target-reached events with
    phase-quantified values. Ratioed participation, dwell/handoff references,
    and time-quantified values are rejected. No joint optimization.
-4. **S4 — Timeline verifier.** Events and relations are checked against
-   achieved per-task results; the adapter emits a line result and timeline.
+4. **S4 — Timeline verifier (implemented).** `omts verify-line <plan-dir>`
+   reads the plan line section and each task's completed run manifest,
+   anchors achieved target phases to each task's `phase_reference`, and checks
+   every event and relation on every combination of selected candidates. It
+   writes `line_result.json` with per-combination statuses and achieved leads.
+   Only positive-direction runs are verifiable in this first version;
+   zero-selection outcomes are recorded, not raised.
 5. **S5 — Joint search.** Free offsets and anchors become search variables.
    This is a research step and needs engine work.
 

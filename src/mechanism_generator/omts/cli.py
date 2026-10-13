@@ -5,6 +5,7 @@ import json
 import sys
 
 from .adapter import capabilities, write_plan
+from .line_verify import LineVerificationError, verify_line
 from .validation import DocumentError, load_document, require_valid
 
 
@@ -17,10 +18,15 @@ def main(argv=None) -> int:
     adapt.add_argument("document")
     adapt.add_argument("--output-dir", required=True, help="A new directory; existing paths are never overwritten")
     commands.add_parser("capabilities", help="Show the exact draft adapter capability profile")
+    verify = commands.add_parser("verify-line", help="Verify a prepared line against achieved per-task results")
+    verify.add_argument("plan_dir", help="A directory written by: omts adapt")
     args = parser.parse_args(argv)
     try:
         if args.command == "capabilities":
             print(json.dumps(capabilities(), indent=2))
+        elif args.command == "verify-line":
+            result = verify_line(args.plan_dir)
+            print(f"LINE {result['status'].upper()}: combinations={result['combination_count']} passing={result['passing_combination_count']} (line_result.json written)")
         else:
             data = load_document(args.document)
             if args.command == "validate":
@@ -29,7 +35,7 @@ def main(argv=None) -> int:
             else:
                 path = write_plan(data, args.output_dir)
                 print(f"PREPARED: {path} (not evaluated; run with the installed engine and downloaded weights)")
-    except (DocumentError, OSError, RecursionError) as exc:
+    except (DocumentError, LineVerificationError, OSError, RecursionError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 1
     return 0
