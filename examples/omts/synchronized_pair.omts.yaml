@@ -85,7 +85,6 @@ tasks:
       order_policy: unordered
       cycle:
         period: 1.2
-        phase_reference: grab
       targets:
         - id: grab
           position: [3.5, 1.5]

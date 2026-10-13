@@ -249,6 +249,10 @@ def _sync_quantity(value, path: str) -> float:
     return value["phase"]
 
 
+def data_task_reference(data: dict, task_id: str):
+    task = next((t for t in data["tasks"] if t["id"] == task_id), None)
+    return None if task is None else task["motion"].get("cycle", {}).get("phase_reference")
+
 def _line(data: dict) -> dict | None:
     """Record preparable v0.2 synchronization; reject everything this adapter cannot verify later."""
     sync = data.get("synchronization")
@@ -281,6 +285,15 @@ def _line(data: dict) -> dict | None:
         window = event.get("window")
         if not isinstance(window, dict) or set(window) != {"phase_range"} or len(window["phase_range"]) != 2:
             raise UnsupportedFeature(f"{ep}.window: a phase_range window is required.")
+        low, high = window["phase_range"]
+        tolerance = 0.0
+        if "tolerance" in event and isinstance(event["tolerance"], dict):
+            tolerance = float(event["tolerance"].get("phase", 0.0))
+        for participant in participants:
+            ref = _event_ref(participant, task_target_ids, f"{ep}.participants")
+            reference = data_task_reference(data, ref["task"])
+            if reference == ref["target"] and not (low - tolerance <= 0 <= high + tolerance):
+                raise UnsupportedFeature(f"{ep}: participant '{participant}' is task '{ref['task']}'s phase_reference target and is always at phase 0; it cannot appear in the window [{low}, {high}].")
         events.append({
             "id": event["id"],
             "participants": [_event_ref(p, task_target_ids, f"{ep}.participants") for p in participants],

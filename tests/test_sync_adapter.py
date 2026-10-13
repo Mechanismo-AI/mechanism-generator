@@ -25,7 +25,7 @@ def test_pair_example_prepares_with_line_section(pair_document):
     line = plan["line"]
     assert line["verification"] == "pending_timeline_verification"
     assert line["master_cycle_id"] == "line_shaft"
-    assert line["phase_reference"] == {"gate": "hold", "catcher": "grab"}
+    assert line["phase_reference"] == {"gate": "hold", "catcher": None}
     relation = line["relations"][0]
     assert relation["id"] == "release_before_grab"
     assert relation["from"] == {"task": "gate", "target": "release"}
@@ -85,3 +85,11 @@ def test_v01_synchronization_is_rejected(future_document):
 def test_v02_draft_example_remains_unadaptable(draft_document):
     with pytest.raises(UnsupportedFeature):
         prepare_plan(draft_document)
+
+
+def test_reference_target_in_nonzero_window_is_rejected(pair_document):
+    # Re-anchor the catcher at grab; the handoff window [100, 140] can never contain phase 0.
+    catcher = next(task for task in pair_document["tasks"] if task["id"] == "catcher")
+    catcher["motion"]["cycle"]["phase_reference"] = "grab"
+    with pytest.raises(UnsupportedFeature, match="phase_reference target and is always at phase 0"):
+        prepare_plan(pair_document)

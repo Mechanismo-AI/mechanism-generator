@@ -33,7 +33,7 @@ python jobs/sync-corpus-01/corpus_run.py --count 6             # overnight
 Output lands in `runs/sync-corpus-01/`:
 
 - `corpus_pair_NN/` — the variant document, prepared plan, per-task engine
-  results, and `line_result.json` from the S4 verifier;
+  results, and `plan/line_result.json` from the S4 verifier;
 - `summary.json` — one row per variant: status, selected-candidate counts,
   combination and passing-combination counts, wall-clock times, errors.
 
