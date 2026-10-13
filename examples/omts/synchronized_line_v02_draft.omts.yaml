@@ -183,6 +183,7 @@ tasks:
             type: planar_angle
             value: 0
           occurrence:
+            free: true
             order_index: 0
           tolerance:
             position: 0.5
