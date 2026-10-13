@@ -44,8 +44,9 @@ mechanism-models verify --directory models
    python runs/sync-pair-01/run_r25c.py --models-directory models
    ```
 
-   For a first pass, the prepared plan's arguments can be trimmed with
-   `--quick`; for the real run use the full prepared budget.
+   Note: `run_r25c.py` accepts no budget flags. For budget-controlled or
+   corpus runs, use the driver in `jobs/sync-corpus-01/corpus_run.py`,
+   which calls the engine directly per run.
 
 4. **Collect for S4** — from each run directory (`results/task-001` for gate,
    `results/task-002` for catcher), keep at minimum:
