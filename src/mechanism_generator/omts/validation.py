@@ -231,6 +231,9 @@ def semantic_errors(data: dict) -> list[str]:
             errors.append(f"$.synchronization.participants[{i}].task: unknown task '{entry['task']}'.")
         else:
             ratios[entry["task"]] = tuple(entry.get("ratio", [1, 1]))
+    for task_id in sync.get("applied_offsets", {}):
+        if task_id not in task_ids:
+            errors.append(f"$.synchronization.applied_offsets.{task_id}: unknown task '{task_id}'.")
     ratioed = {entry["task"] for entry in participants if "ratio" in entry}
     master_period = sync.get("period")
     if master_period:

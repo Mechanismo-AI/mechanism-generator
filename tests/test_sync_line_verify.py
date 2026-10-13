@@ -206,3 +206,28 @@ def test_anchor_probe_rejects_invalid_step(tmp_path):
     _write_plan(tmp_path, _line())
     with pytest.raises(LineVerificationError, match="Probe step"):
         verify_line(tmp_path, probe=True, probe_step_deg=0.0)
+
+
+def test_applied_offsets_are_composed_and_recorded(tmp_path):
+    # grab raw 160; a declared catcher offset of 325 deg (= -35) moves it to 125,
+    # inside [95, 145], with lead 25 in [10, 45]: verified under the declared phasing.
+    _write_manifest(tmp_path, "gate", [{"id": "g1", "phases": [30, 130, 250]}])
+    _write_manifest(tmp_path, "catcher", [{"id": "c1", "phases": [160, 220, 20]}])
+    line = _line()
+    line["applied_offsets"] = {"catcher": 325.0}
+    _write_plan(tmp_path, line)
+    result = verify_line(tmp_path)
+    assert result["status"] == "verified"
+    assert result["applied_offsets"] == {"catcher": 325.0}
+    assert result["combinations"][0]["events"][0]["participant_phases_deg"] == [100.0, 125.0]
+    assert result["combinations"][0]["relations"][0]["achieved_lead_deg"] == pytest.approx(25.0)
+
+
+def test_applied_offset_for_non_participating_task_is_rejected(tmp_path):
+    line = _line()
+    line["applied_offsets"] = {"ghost": 10.0}
+    _write_manifest(tmp_path, "gate", [{"id": "g1", "phases": [30, 130, 250]}])
+    _write_manifest(tmp_path, "catcher", [{"id": "c1", "phases": [120, 220, 20]}])
+    _write_plan(tmp_path, line)
+    with pytest.raises(LineVerificationError, match="non-participating"):
+        verify_line(tmp_path)

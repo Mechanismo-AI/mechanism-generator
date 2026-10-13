@@ -8,8 +8,8 @@
 
 **Status:** Draft; S2 (document validation), S3 (composed run plans), and S4
 (timeline verification) are implemented for the preparable subset described
-below, together with the anchor-probe diagnostic (the first S5 step). Full S5
-joint search is future work.
+below, together with the anchor-probe diagnostic and applied master-phase
+offsets (first S5 steps). Full S5 joint search is future work.
 
 **Depends on:** OMTS v0.1 (`specs/omts/0.1/specification.md`)
 
@@ -37,6 +37,29 @@ motion:
 
 `phase_reference` names a target whose occurrence defines that task's phase
 zero. If omitted, phase zero is the master's phase zero, as in v0.1.
+
+### Applied master-phase offsets (S5 v0.1)
+
+`synchronization.applied_offsets` declares a task's master-phase offset — the
+physical phasing of its input relative to the master shaft (a gear-tooth or
+crank set-screw choice), as a unit-quantified value per task:
+
+`yaml
+synchronization:
+  applied_offsets:
+    catcher: {phase: 25}
+`
+
+A positive offset rotates the task's events later in the master cycle. For an
+anchored task, the offset moves its `phase_reference` target to the stated
+phase, deliberately relaxing the composed-timeline rule; for an unanchored
+task, it rotates its raw phases. Documents validate with declared offsets, the
+adapter records them in the plan line section, and the timeline verifier
+composes with them — so a line can be legitimately verified under a declared
+phasing. The declared phasing is part of the build contract: a verified line is
+as-built only if the physical build realizes the offsets. The anchor probe
+(`--probe-anchors`) reports feasible offset intervals; `applied_offsets` is
+how a probe-chosen offset becomes first-class rather than diagnostic.
 
 ## 3. Ratioed participation
 
@@ -149,6 +172,7 @@ relations:
 - `ordering` requires `min_lead` not greater than `max_lead`.
 - `contains` requires both endpoints to be windows, not point events.
 - `phase_reference` targets must exist in the referenced task.
+- `applied_offsets` keys must name declared tasks.
 - A fixed-offset relation graph must not contain a cycle that makes the
   network over-constrained.
 - Phase or time quantities must match the document `independent_variable`, or
@@ -177,36 +201,39 @@ Downstream tooling can animate, collision-check, and export from it.
 
 1. **S1 — Specification draft.** This document.
 2. **S2 — Document validation (implemented).** `omts validate` accepts v0.2
-   synchronization fields, including ratios, unit objects, and event
-   references, with the semantic checks of section 7.
+   synchronization fields, including ratios, unit objects, event references,
+   and applied offsets, with the semantic checks of section 7.
 3. **S3 — Composed run plans (implemented).** The adapter prepares independent
    per-task runs and records preparable synchronization in a `line` plan
    section with `verification: pending_timeline_verification`. Preparable
-   means: 1:1 participants, `co_active` events with phase windows, and
-   `ordering` or `fixed_offset` relations between target-reached events with
-   phase-quantified values. Ratioed participation, dwell/handoff references,
-   and time-quantified values are rejected. No joint optimization.
+   means: 1:1 participants, `co_active` events with phase windows, `ordering`
+   or `fixed_offset` relations between target-reached events with
+   phase-quantified values, and phase-quantified `applied_offsets`. Ratioed
+   participation, dwell/handoff references, and time-quantified values are
+   rejected. No joint optimization.
 4. **S4 — Timeline verifier (implemented).** `omts verify-line <plan-dir>`
    reads the plan line section and each task's completed run manifest,
-   anchors achieved target phases to each task's `phase_reference`, and checks
-   every event and relation on every combination of selected candidates. It
-   writes `line_result.json` with per-combination statuses and achieved leads.
-   Only positive-direction runs are verifiable in this first version;
-   zero-selection outcomes are recorded, not raised. Composed-timeline rule:
-   every task's `phase_reference` target is aligned at master phase 0, and
-   tasks without a reference contribute raw achieved phases; a task's own
-   reference target is therefore always at phase 0.
+   anchors achieved target phases to each task's `phase_reference`, applies
+   declared `applied_offsets`, and checks every event and relation on every
+   combination of selected candidates. It writes `line_result.json` with
+   per-combination statuses and achieved leads. Only positive-direction runs
+   are verifiable in this first version; zero-selection outcomes are recorded,
+   not raised. Composed-timeline rule: every task's `phase_reference` target
+   is aligned at master phase 0 (then moved to its applied offset when one is
+   declared), and tasks without a reference contribute raw phases (then
+   rotated by any applied offset).
 5. **S5 — Joint search.** Free offsets and anchors become search variables.
-   This is a research step and needs engine work. Its first diagnostic step is
+   This is a research step and needs engine work. Its first steps are
    implemented: `omts verify-line --probe-anchors` rotates one task's
    composed phases across the full master cycle at a configurable step and
    reports, per task, the circular offset intervals where at least one
    candidate combination satisfies every hard event and relation. It uses
    already-computed results and never reruns the solver. Probe offsets are
-   feasibility targets for joint search and gear/crank phasing choices, not
-   verified solutions: an offset applied to an anchored task moves its
-   reference target away from master phase 0, which the composed-timeline rule
-   otherwise forbids. The baseline verdict of the run is unchanged by probing.
+   feasibility targets, not verified solutions. `applied_offsets` (section 2)
+   is how a probe-chosen offset becomes first-class: declared offsets flow from
+   document validation through the plan to the verdict, and the probe's
+   feasible intervals become candidate values for them. The baseline verdict
+   of an undeclared-offset run is unchanged by probing.
 
 S3 and S4 require no new solver physics: each mechanism is still synthesized
 independently, and synchronization is verified compositionally. This upgrades
@@ -224,3 +251,6 @@ the synchronized-line example from rejected to preparable and verifiable.
    before S5 exists?
 5. Should the anchor probe's feasible intervals become an input to S5 joint
    search, or remain a human-facing diagnostic only?
+6. Is verifying a line under declared `applied_offsets` sufficient for v0.2,
+   or must the plan also record how the offset is physically realized (gear
+   ratio and tooth index, crank keyway) before a line can be called verified?

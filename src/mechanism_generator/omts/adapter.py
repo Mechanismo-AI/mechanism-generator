@@ -259,7 +259,7 @@ def _line(data: dict) -> dict | None:
     if not sync:
         return None
     path = "$.synchronization"
-    _only(sync, "master_cycle_id period shared_input participants events relations", path)
+    _only(sync, "master_cycle_id period shared_input participants events relations applied_offsets", path)
     if not str(data.get("version", "")).startswith("0.2"):
         raise UnsupportedFeature(f"{path}: v0.1 synchronization fields are not supported; express the line in a 0.2 document.")
     if "phase_relations" in sync:
@@ -273,6 +273,12 @@ def _line(data: dict) -> dict | None:
             raise UnsupportedFeature(f"{pp}.ratio: ratioed participation cannot be prepared; each task shares the master cycle 1:1.")
         if entry["task"] not in task_target_ids:
             raise UnsupportedFeature(f"{pp}.task: unknown task '{entry['task']}'.")
+    applied_offsets = {}
+    for task_id, quantity in sync.get("applied_offsets", {}).items():
+        op = f"{path}.applied_offsets.{task_id}"
+        if task_id not in task_target_ids:
+            raise UnsupportedFeature(f"{op}: unknown task '{task_id}'.")
+        applied_offsets[task_id] = float(_sync_quantity(quantity, op))
     events = []
     for i, event in enumerate(sync.get("events", [])):
         ep = f"{path}.events[{i}]"
@@ -292,8 +298,10 @@ def _line(data: dict) -> dict | None:
         for participant in participants:
             ref = _event_ref(participant, task_target_ids, f"{ep}.participants")
             reference = data_task_reference(data, ref["task"])
-            if reference == ref["target"] and not (low - tolerance <= 0 <= high + tolerance):
-                raise UnsupportedFeature(f"{ep}: participant '{participant}' is task '{ref['task']}'s phase_reference target and is always at phase 0; it cannot appear in the window [{low}, {high}].")
+            if reference == ref["target"]:
+                offset = float(applied_offsets.get(ref["task"], 0.0)) % 360.0
+                if not (low - tolerance <= offset <= high + tolerance):
+                    raise UnsupportedFeature(f"{ep}: participant '{participant}' is task '{ref['task']}'s phase_reference target and is always at phase 0 plus its applied offset (here {offset:g}); it cannot appear in the window [{low}, {high}].")
         events.append({
             "id": event["id"],
             "participants": [_event_ref(p, task_target_ids, f"{ep}.participants") for p in participants],
@@ -322,7 +330,7 @@ def _line(data: dict) -> dict | None:
             if "tolerance" in relation:
                 record["tolerance_deg"] = _sync_quantity(relation["tolerance"], f"{rp}.tolerance")
         relations.append(record)
-    return {
+    line = {
         "master_cycle_id": sync.get("master_cycle_id"),
         "period": sync.get("period"),
         "phase_reference": {task["id"]: task["motion"].get("cycle", {}).get("phase_reference") for task in data["tasks"]},
@@ -330,6 +338,9 @@ def _line(data: dict) -> dict | None:
         "relations": relations,
         "verification": "pending_timeline_verification",
     }
+    if applied_offsets:
+        line["applied_offsets"] = applied_offsets
+    return line
 
 
 def prepare_plan(data: dict) -> dict:

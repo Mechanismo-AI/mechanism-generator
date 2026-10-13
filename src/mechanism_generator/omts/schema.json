@@ -1706,6 +1706,13 @@
           "items": {
             "$ref": "#/$defs/syncRelation"
           }
+        },
+        "applied_offsets": {
+          "type": "object",
+          "description": "Declared master-phase offsets per task (S5 v0.1), each unit-quantified: {task: {phase: deg}}. Positive rotates the task's events later in the master cycle.",
+          "additionalProperties": {
+            "$ref": "#/$defs/syncQuantity"
+          }
         }
       }
     },

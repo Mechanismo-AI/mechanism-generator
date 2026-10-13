@@ -9,15 +9,22 @@ master phase 0; tasks without a phase_reference contribute raw achieved
 phases. A task's reference target is therefore always at phase 0 and cannot
 itself sit inside a nonzero master-phase window.
 
+Applied master-phase offsets (S5 v0.1): a line may declare
+`applied_offsets` (per task, in degrees); they are recorded in the plan
+line section by the adapter and this verifier composes with them, so a line
+can be legitimately verified under a declared phasing. For an anchored task
+the offset moves its reference target to the stated phase; realization of
+the declared phasing (gear/crank choice) remains a build decision.
+
 The optional anchor probe (`probe=True`; CLI: `omts verify-line
 --probe-anchors`) is a diagnostic sweep toward S5: for each task in
 isolation, it asks which constant master-phase offsets would make at least
 one candidate combination satisfy every hard event and relation. It reuses
 the same checks on shifted composed phases and never reruns the solver.
-Probe offsets deliberately move an anchored task's reference target away
-from master phase 0; they are feasibility targets for joint search and
-gear/crank phasing choices, never verified solutions, and probing never
-changes the baseline verdict of the run.
+Probe offsets are relative to the declared composition and deliberately move
+an anchored task's reference target away from its declared phase; they are
+feasibility targets for joint search and gear/crank phasing choices, never
+verified solutions, and probing never changes the baseline verdict of the run.
 """
 
 from __future__ import annotations
@@ -117,10 +124,12 @@ def _check_relation(relation: dict, anchored: dict) -> dict:
 
 
 def _anchored_map(achieved: dict, line: dict, chosen: dict[str, str]) -> dict[str, dict[str, float]]:
-    """Composed (anchored) phases in deg for one candidate combination."""
+    """Composed (anchored, applied-offset) phases in deg for one candidate combination."""
+    offsets = line.get("applied_offsets") or {}
     return {
         task: {
-            target: _anchored(achieved[task][candidate], line["phase_reference"].get(task), target)
+            target: (_anchored(achieved[task][candidate], line["phase_reference"].get(task), target)
+                     + offsets.get(task, 0.0)) % 360.0
             for target in achieved[task][candidate]
         }
         for task, candidate in chosen.items()
@@ -206,7 +215,7 @@ def _probe_anchors(line: dict, achieved: dict, step_deg: float) -> dict:
         "step_deg": step_deg,
         "tasks": tasks,
         "note": (
-            "Diagnostic master-phasing sweep for S5: each task's composed phases are rotated by every offset while all other tasks stay fixed. Feasible intervals list offsets where at least one candidate combination satisfies every hard event and relation. Offsets are feasibility targets for joint search and gear/crank phasing, not verified solutions; an offset applied to an anchored task moves its reference target away from master phase 0, which the composed-timeline rule otherwise forbids. The baseline verdict is unchanged."
+            "Diagnostic master-phasing sweep for S5: each task's composed phases are rotated by every offset while all other tasks stay fixed. Feasible intervals list offsets where at least one candidate combination satisfies every hard event and relation. Offsets are feasibility targets for joint search and gear/crank phasing, not verified solutions; an offset applied to an anchored task moves its reference target away from its declared phase. The baseline verdict is unchanged."
         ),
     }
 
@@ -224,6 +233,9 @@ def verify_line(plan_dir: str | Path, probe: bool = False, probe_step_deg: float
         for relation in line["relations"]
         for key in ("from", "to")
     }
+    stray = set(line.get("applied_offsets") or {}) - participating
+    if stray:
+        raise LineVerificationError(f"applied_offsets name non-participating task(s): {', '.join(sorted(stray))}.")
     achieved = {
         task: _achieved_candidates(plan, plan_dir, task, run_target_ids(plan, task))
         for task in sorted(participating)
@@ -286,6 +298,7 @@ def _result(plan: dict, line: dict, combinations: list, status: str, note: str |
         "period": line["period"],
         "status": status,
         "phase_reference": line["phase_reference"],
+        **({"applied_offsets": line["applied_offsets"]} if line.get("applied_offsets") else {}),
         "combination_count": len(combinations),
         "passing_combination_count": sum(c["status"] == "pass" for c in combinations),
         "combinations": combinations,

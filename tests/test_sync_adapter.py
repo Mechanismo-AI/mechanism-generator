@@ -93,3 +93,30 @@ def test_reference_target_in_nonzero_window_is_rejected(pair_document):
     catcher["motion"]["cycle"]["phase_reference"] = "grab"
     with pytest.raises(UnsupportedFeature, match="phase_reference target and is always at phase 0"):
         prepare_plan(pair_document)
+
+
+def test_reference_target_in_window_passes_with_matching_offset(pair_document):
+    # A declared applied offset moves the reference target into the window.
+    catcher = next(task for task in pair_document["tasks"] if task["id"] == "catcher")
+    catcher["motion"]["cycle"]["phase_reference"] = "grab"
+    pair_document["synchronization"]["applied_offsets"] = {"catcher": {"phase": 120}}
+    line = prepare_plan(pair_document)["line"]
+    assert line["applied_offsets"] == {"catcher": 120.0}
+
+
+def test_applied_offsets_are_recorded_in_line(pair_document):
+    pair_document["synchronization"]["applied_offsets"] = {"catcher": {"phase": 25}}
+    line = prepare_plan(pair_document)["line"]
+    assert line["applied_offsets"] == {"catcher": 25.0}
+
+
+def test_applied_offsets_time_quantity_is_rejected(pair_document):
+    pair_document["synchronization"]["applied_offsets"] = {"catcher": {"time": 0.05}}
+    with pytest.raises(UnsupportedFeature, match="phase-quantified"):
+        prepare_plan(pair_document)
+
+
+def test_applied_offsets_unknown_task_is_rejected(pair_document):
+    pair_document["synchronization"]["applied_offsets"] = {"ghost": {"phase": 5}}
+    with pytest.raises(UnsupportedFeature, match="unknown task"):
+        prepare_plan(pair_document)

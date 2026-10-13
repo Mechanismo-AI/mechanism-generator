@@ -173,6 +173,24 @@ def test_unknown_event_kind_is_rejected():
     assert "event kind" in _errors(document)
 
 
+def test_applied_offsets_accept_known_task():
+    document = _v02_document()
+    document["synchronization"]["applied_offsets"] = {"alpha": {"phase": 15}}
+    assert validate_document(document) == []
+
+
+def test_applied_offsets_unknown_task_is_rejected():
+    document = _v02_document()
+    document["synchronization"]["applied_offsets"] = {"ghost": {"phase": 15}}
+    assert "unknown task" in _errors(document)
+
+
+def test_applied_offsets_must_be_quantified():
+    document = _v02_document()
+    document["synchronization"]["applied_offsets"] = {"alpha": 15}
+    assert "applied_offsets" in _errors(document)
+
+
 def test_v02_documents_cannot_be_adapted(v02_document):
     from mechanism_generator.omts.adapter import UnsupportedFeature, prepare_plan
     with pytest.raises(UnsupportedFeature):
