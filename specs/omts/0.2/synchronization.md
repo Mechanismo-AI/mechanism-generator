@@ -8,7 +8,8 @@
 
 **Status:** Draft; S2 (document validation), S3 (composed run plans), and S4
 (timeline verification) are implemented for the preparable subset described
-below. S5 (joint search) is future work.
+below, together with the anchor-probe diagnostic (the first S5 step). Full S5
+joint search is future work.
 
 **Depends on:** OMTS v0.1 (`specs/omts/0.1/specification.md`)
 
@@ -27,19 +28,19 @@ separate from document validation.
 
 Each task may declare what its phase zero is.
 
-```yaml
+`yaml
 motion:
   cycle:
     period: 1.2
     phase_reference: pick   # target id in the same task
-```
+`
 
 `phase_reference` names a target whose occurrence defines that task's phase
 zero. If omitted, phase zero is the master's phase zero, as in v0.1.
 
 ## 3. Ratioed participation
 
-```yaml
+`yaml
 synchronization:
   master_cycle_id: line_shaft
   period: 1.2
@@ -49,7 +50,7 @@ synchronization:
       ratio: [1, 4]           # one indexer cycle per four master cycles
     - task: feeder
       ratio: [2, 1]           # two feeder cycles per master cycle
-```
+`
 
 `ratio` is `[numerator, denominator]` — task cycles per master cycles —
 and both entries must be positive integers. Relations that reference a ratioed
@@ -60,10 +61,10 @@ means the relation applies to every occurrence.
 
 All synchronization offsets, tolerances, windows, and margins are objects:
 
-```yaml
+`yaml
 offset: {phase: 60}
 tolerance: {phase: 2}
-```
+`
 
 `phase` is in the document angle unit; `time` is in the document time unit.
 Adapters must reject bare numeric values. The sign convention is fixed: an
@@ -78,7 +79,7 @@ A task exposes named events:
 - `<task>.<target_id>.dwell` — the window event where the target declares a dwell;
 - handoff and region events declared under `synchronization.events`.
 
-```yaml
+`yaml
 events:
   - id: part_handoff
     type: handoff          # co_active | handoff | co_location
@@ -87,7 +88,7 @@ events:
     tolerance: {phase: 2}
     payload_ref: workpiece
     mode: hard
-```
+`
 
 `handoff` declares the payload being transferred and implies co-location and
 co-timing. Kinematic adapters report handoff as unsupported; the contract
@@ -98,7 +99,7 @@ states the physical intent and capability checking decides who can enforce it.
 `relations` replaces v0.1 `phase_relations`, which is deprecated in 0.2
 and removed in 1.0. Relations connect events, not tasks.
 
-```yaml
+`yaml
 relations:
   - id: transfer_leads_clamp
     from: transfer.pick.reached
@@ -129,14 +130,14 @@ relations:
     type: disjoint_windows
     clearance: {phase: 3}
     mode: hard
-```
+`
 
 - `fixed_offset`: the `to` event must occur at `offset` after the `from`
   event, within `tolerance`.
 - `ordering`: the `to` event must lead or lag the `from` event by between
   `min_lead` and `max_lead`; the exact value is a free design variable.
-- `contains`: the `from` window must fully contain the `to` window with at
-  least `margin` on both sides.
+- `contains`: the `from` window must fully contain the `to` window with
+  at least `margin` on both sides.
 - `disjoint_windows`: the two windows must not overlap, with at least
   `clearance` between them.
 
@@ -157,7 +158,7 @@ relations:
 
 A conforming composed result should include:
 
-```yaml
+`yaml
 line_result:
   master_cycle_id: line_shaft
   achieved_phase_zero: {transfer: pick, clamp: closed}
@@ -166,7 +167,7 @@ line_result:
   verified_events:
     - {id: part_handoff, status: pass, co_location_error: 0.3}
   timeline_artifact: timeline.json
-```
+`
 
 The timeline artifact is a machine-readable composed timeline: for sampled
 master phases, each participating mechanism's input phase and output pose.
@@ -196,7 +197,16 @@ Downstream tooling can animate, collision-check, and export from it.
    tasks without a reference contribute raw achieved phases; a task's own
    reference target is therefore always at phase 0.
 5. **S5 — Joint search.** Free offsets and anchors become search variables.
-   This is a research step and needs engine work.
+   This is a research step and needs engine work. Its first diagnostic step is
+   implemented: `omts verify-line --probe-anchors` rotates one task's
+   composed phases across the full master cycle at a configurable step and
+   reports, per task, the circular offset intervals where at least one
+   candidate combination satisfies every hard event and relation. It uses
+   already-computed results and never reruns the solver. Probe offsets are
+   feasibility targets for joint search and gear/crank phasing choices, not
+   verified solutions: an offset applied to an anchored task moves its
+   reference target away from master phase 0, which the composed-timeline rule
+   otherwise forbids. The baseline verdict of the run is unchanged by probing.
 
 S3 and S4 require no new solver physics: each mechanism is still synthesized
 independently, and synchronization is verified compositionally. This upgrades
@@ -212,3 +222,5 @@ the synchronized-line example from rejected to preparable and verifiable.
 4. For free `ordering` leads on fixed-timing tasks, does the existing ordered
    target-phase machinery leave the solver enough freedom for S4 to be useful
    before S5 exists?
+5. Should the anchor probe's feasible intervals become an input to S5 joint
+   search, or remain a human-facing diagnostic only?

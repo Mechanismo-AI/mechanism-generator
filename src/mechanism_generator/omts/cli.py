@@ -20,13 +20,29 @@ def main(argv=None) -> int:
     commands.add_parser("capabilities", help="Show the exact draft adapter capability profile")
     verify = commands.add_parser("verify-line", help="Verify a prepared line against achieved per-task results")
     verify.add_argument("plan_dir", help="A directory written by: omts adapt")
+    verify.add_argument("--probe-anchors", action="store_true",
+                        help="Diagnostic sweep: report per-task master-phase offsets that would satisfy every hard constraint (the verdict is unchanged)")
+    verify.add_argument("--probe-step-deg", type=float, default=1.0,
+                        help="Offset step in degrees for --probe-anchors (default: 1.0)")
     args = parser.parse_args(argv)
     try:
         if args.command == "capabilities":
             print(json.dumps(capabilities(), indent=2))
         elif args.command == "verify-line":
-            result = verify_line(args.plan_dir)
+            result = verify_line(args.plan_dir, probe=args.probe_anchors, probe_step_deg=args.probe_step_deg)
             print(f"LINE {result['status'].upper()}: combinations={result['combination_count']} passing={result['passing_combination_count']} (line_result.json written)")
+            probe = result.get("anchor_probe")
+            if probe is not None:
+                if probe.get("status") == "skipped":
+                    print("ANCHOR PROBE: skipped (no candidate combinations)")
+                else:
+                    print(f"ANCHOR PROBE (step {probe['step_deg']:g} deg; diagnostic, verdict unchanged):")
+                    for entry in probe["tasks"]:
+                        intervals = ", ".join(
+                            f"[{item['from_deg']:g}..{item['to_deg']:g}] x{item['max_passing_combinations']}"
+                            for item in entry["feasible_intervals_deg"]
+                        ) or "none"
+                        print(f"  {entry['task']}: best {entry['best_passing_combinations']} passing combos; feasible offsets: {intervals}")
         else:
             data = load_document(args.document)
             if args.command == "validate":

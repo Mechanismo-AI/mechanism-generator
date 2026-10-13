@@ -8,14 +8,24 @@ Composed-timeline rule: every task's `phase_reference` target is aligned at
 master phase 0; tasks without a phase_reference contribute raw achieved
 phases. A task's reference target is therefore always at phase 0 and cannot
 itself sit inside a nonzero master-phase window.
+
+The optional anchor probe (`probe=True`; CLI: `omts verify-line
+--probe-anchors`) is a diagnostic sweep toward S5: for each task in
+isolation, it asks which constant master-phase offsets would make at least
+one candidate combination satisfy every hard event and relation. It reuses
+the same checks on shifted composed phases and never reruns the solver.
+Probe offsets deliberately move an anchored task's reference target away
+from master phase 0; they are feasibility targets for joint search and
+gear/crank phasing choices, never verified solutions, and probing never
+changes the baseline verdict of the run.
 """
 
 from __future__ import annotations
 
+import itertools
 import json
 import math
 from pathlib import Path
-from typing import Any
 
 from .adapter import UnsupportedFeature
 
@@ -106,7 +116,102 @@ def _check_relation(relation: dict, anchored: dict) -> dict:
     }
 
 
-def verify_line(plan_dir: str | Path) -> dict:
+def _anchored_map(achieved: dict, line: dict, chosen: dict[str, str]) -> dict[str, dict[str, float]]:
+    """Composed (anchored) phases in deg for one candidate combination."""
+    return {
+        task: {
+            target: _anchored(achieved[task][candidate], line["phase_reference"].get(task), target)
+            for target in achieved[task][candidate]
+        }
+        for task, candidate in chosen.items()
+    }
+
+
+def _shifted(anchored: dict, task: str, offset_deg: float) -> dict:
+    """Copy of composed phases with one task rotated by offset_deg."""
+    if not offset_deg:
+        return anchored
+    shifted = {name: dict(phases) for name, phases in anchored.items()}
+    shifted[task] = {target: (phase + offset_deg) % 360.0 for target, phase in shifted[task].items()}
+    return shifted
+
+
+def _hard_pass(line: dict, anchored: dict) -> bool:
+    """True when every hard event and relation passes for these composed phases."""
+    for event in line["events"]:
+        if event.get("mode", "hard") == "hard" and _check_event(event, anchored)["status"] != "pass":
+            return False
+    for relation in line["relations"]:
+        if relation.get("mode", "hard") == "hard" and _check_relation(relation, anchored)["status"] != "pass":
+            return False
+    return True
+
+
+def _positive_intervals(offsets: list[float], counts: list[int]) -> list[dict]:
+    """Circular inclusive [from_deg, to_deg] intervals where counts are positive."""
+    n = len(counts)
+    runs: list[tuple[int, int]] = []
+    start = None
+    for index, count in enumerate(counts):
+        if count > 0 and start is None:
+            start = index
+        elif count == 0 and start is not None:
+            runs.append((start, index - 1))
+            start = None
+    if start is not None:
+        runs.append((start, n - 1))
+    if not runs:
+        return []
+    if len(runs) > 1 and runs[0][0] == 0 and runs[-1][1] == n - 1:
+        first = runs.pop(0)
+        last = runs.pop()
+        runs.insert(0, (last[0], first[1]))
+
+    def run_max(begin: int, end: int) -> int:
+        if begin <= end:
+            return max(counts[begin:end + 1])
+        return max(counts[begin:] + counts[:end + 1])
+
+    return [
+        {"from_deg": offsets[begin], "to_deg": offsets[end], "max_passing_combinations": run_max(begin, end)}
+        for begin, end in runs
+    ]
+
+
+def _probe_anchors(line: dict, achieved: dict, step_deg: float) -> dict:
+    """Sweep per-task master-phase offsets and report feasible intervals (diagnostic)."""
+    step_deg = float(step_deg)
+    steps = int(round(360.0 / step_deg))
+    offsets = [round(index * step_deg, 6) % 360.0 for index in range(steps)]
+    task_ids = sorted(achieved)
+    base = [
+        _anchored_map(achieved, line, dict(zip(task_ids, combination)))
+        for combination in itertools.product(*(sorted(achieved[task]) for task in task_ids))
+    ]
+    tasks = []
+    for task in task_ids:
+        counts = [
+            sum(1 for anchored in base if _hard_pass(line, _shifted(anchored, task, offset)))
+            for offset in offsets
+        ]
+        best = max(counts, default=0)
+        tasks.append({
+            "task": task,
+            "passing_offsets_count": sum(1 for count in counts if count > 0),
+            "best_passing_combinations": best,
+            "best_offsets_deg": [offsets[index] for index, count in enumerate(counts) if count == best] if best else [],
+            "feasible_intervals_deg": _positive_intervals(offsets, counts),
+        })
+    return {
+        "step_deg": step_deg,
+        "tasks": tasks,
+        "note": (
+            "Diagnostic master-phasing sweep for S5: each task's composed phases are rotated by every offset while all other tasks stay fixed. Feasible intervals list offsets where at least one candidate combination satisfies every hard event and relation. Offsets are feasibility targets for joint search and gear/crank phasing, not verified solutions; an offset applied to an anchored task moves its reference target away from master phase 0, which the composed-timeline rule otherwise forbids. The baseline verdict is unchanged."
+        ),
+    }
+
+
+def verify_line(plan_dir: str | Path, probe: bool = False, probe_step_deg: float = 1.0) -> dict:
     plan_dir = Path(plan_dir)
     plan = _load_plan(plan_dir)
     line = plan["line"]
@@ -127,6 +232,8 @@ def verify_line(plan_dir: str | Path) -> dict:
     if empty:
         result = _result(plan, line, combinations=[], status="no_candidates",
                          note=f"Zero selected candidates for: {', '.join(empty)}; a completed search selecting nothing is recorded, not treated as an error.")
+        if probe:
+            result["anchor_probe"] = {"status": "skipped", "note": "No candidate combinations to sweep."}
         _write(plan_dir, result)
         return result
 
@@ -134,13 +241,7 @@ def verify_line(plan_dir: str | Path) -> dict:
     combinations = []
     def walk(index: int, chosen: dict[str, str]) -> None:
         if index == len(task_ids):
-            anchored = {
-                task: {
-                    target: _anchored(achieved[task][candidate], line["phase_reference"].get(task), target)
-                    for target in achieved[task][candidate]
-                }
-                for task, candidate in chosen.items()
-            }
+            anchored = _anchored_map(achieved, line, chosen)
             events = [_check_event(event, anchored) for event in line["events"]]
             relations = [_check_relation(relation, anchored) for relation in line["relations"]]
             hard_ok = all(item["status"] == "pass" for item in events + relations if item["mode"] == "hard")
@@ -163,6 +264,11 @@ def verify_line(plan_dir: str | Path) -> dict:
     status = "verified" if passing else "failed"
     result = _result(plan, line, combinations, status,
                      note=None if passing else "No combination of selected candidates satisfies every hard event and relation.")
+    if probe:
+        step = float(probe_step_deg)
+        if not 0.0 < step <= 360.0:
+            raise LineVerificationError(f"Probe step must be in (0, 360] deg; got {step}.")
+        result["anchor_probe"] = _probe_anchors(line, achieved, step)
     _write(plan_dir, result)
     return result
 
