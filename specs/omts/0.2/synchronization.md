@@ -177,8 +177,13 @@ Downstream tooling can animate, collision-check, and export from it.
 2. **S2 — Document validation (implemented).** `omts validate` accepts v0.2
    synchronization fields, including ratios, unit objects, and event
    references, with the semantic checks of section 7.
-3. **S3 — Composed run plans.** The adapter prepares independent per-task runs
-   plus a post-hoc timeline verification step. No joint optimization.
+3. **S3 — Composed run plans (implemented).** The adapter prepares independent
+   per-task runs and records preparable synchronization in a `line` plan
+   section with `verification: pending_timeline_verification`. Preparable
+   means: 1:1 participants, `co_active` events with phase windows, and
+   `ordering` or `fixed_offset` relations between target-reached events with
+   phase-quantified values. Ratioed participation, dwell/handoff references,
+   and time-quantified values are rejected. No joint optimization.
 4. **S4 — Timeline verifier.** Events and relations are checked against
    achieved per-task results; the adapter emits a line result and timeline.
 5. **S5 — Joint search.** Free offsets and anchors become search variables.

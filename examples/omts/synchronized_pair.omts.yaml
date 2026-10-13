@@ -1,0 +1,106 @@
+spec: open-mechanism-task
+version: 0.2.0
+task_set_id: synchronized_pair
+name: Synchronized two-arm pair
+description: >-
+  Smallest OMTS v0.2 document whose synchronization the R2.5c adapter can
+  prepare: two independent three-target planar four-bar tasks composed by an
+  ordering relation and a co-active window between target-reached events.
+  Preparation records the line for post-hoc timeline verification; no
+  synchronized synthesis or verification is performed.
+capabilities_required:
+  - planar_2d
+  - cyclic_motion
+  - unordered_targets
+  - target_positions
+  - four_bar
+  - synchronized_run_preparation
+unsupported_feature_policy: error
+
+units:
+  length: normalized
+  angle: deg
+  time: s
+
+coordinate_system:
+  frame_id: world
+  dimension: 2
+  handedness: right
+
+synchronization:
+  master_cycle_id: line_shaft
+  period: 1.2
+  shared_input: true
+  participants:
+    - task: gate
+    - task: catcher
+  events:
+    - id: handoff_window
+      type: co_active
+      participants: [gate.release.reached, catcher.grab.reached]
+      window: {phase_range: [100, 140]}
+      tolerance: {phase: 5}
+      mode: hard
+  relations:
+    - id: release_before_grab
+      from: gate.release.reached
+      to: catcher.grab.reached
+      type: ordering
+      min_lead: {phase: 10}
+      max_lead: {phase: 45}
+      mode: hard
+
+tasks:
+  - id: gate
+    name: Feed gate
+    motion:
+      mode: cyclic
+      order_policy: unordered
+      cycle:
+        period: 1.2
+        phase_reference: hold
+      targets:
+        - id: hold
+          position: [0.0, 0.0]
+          occurrence: {free: true}
+        - id: release
+          position: [3.0, 1.0]
+          occurrence: {free: true}
+        - id: rest
+          position: [1.0, 3.0]
+          occurrence: {free: true}
+    mechanism_search:
+      allowed_topologies: [four_bar]
+      max_dof: 1
+      max_actuators: 1
+      ground_link: {mode: portfolio, fixed_values: [6.0], release: true}
+      assembly_branches: [open, crossed]
+      profiles: [accuracy, balanced, transmission]
+      profile_matrix: cross
+
+  - id: catcher
+    name: Receiving arm
+    motion:
+      mode: cyclic
+      order_policy: unordered
+      cycle:
+        period: 1.2
+        phase_reference: grab
+      targets:
+        - id: grab
+          position: [3.5, 1.5]
+          occurrence: {free: true}
+        - id: carry
+          position: [-1.0, 2.0]
+          occurrence: {free: true}
+        - id: park
+          position: [-2.0, 0.5]
+          occurrence: {free: true}
+    mechanism_search:
+      allowed_topologies: [four_bar]
+      max_dof: 1
+      max_actuators: 1
+      ground_link: {mode: portfolio, fixed_values: [6.0], release: true}
+      assembly_branches: [open, crossed]
+      profiles: [accuracy, balanced, transmission]
+      profile_matrix: cross

@@ -52,7 +52,7 @@ def _options(task: dict, index: int, outputs: dict) -> dict:
     _fixed(motion, "mode", "cyclic", path + ".motion")
     phase_mode = _choice(motion, "order_policy", "unordered", ("ordered", "unordered"), path + ".motion")
     cycle = motion.get("cycle", {})
-    _only(cycle, "phase_start phase_end direction independent_variable", path + ".motion.cycle")
+    _only(cycle, "phase_start phase_end direction independent_variable period phase_reference", path + ".motion.cycle")
     for key, value in dict(phase_start=0, phase_end=360, independent_variable="phase").items():
         _fixed(cycle, key, value, path + ".motion.cycle")
     crank_direction = _choice(cycle, "direction", "positive", ("positive", "negative", "either"), path + ".motion.cycle")
@@ -233,10 +233,96 @@ def _options(task: dict, index: int, outputs: dict) -> dict:
     }
 
 
+def _event_ref(value, task_target_ids: dict, path: str) -> dict:
+    parts = str(value).split(".")
+    if len(parts) != 3 or parts[2] != "reached":
+        raise UnsupportedFeature(f"{path}: only target-reached event references ('task.target.reached') are supported.")
+    task, target = parts[0], parts[1]
+    if target not in task_target_ids.get(task, set()):
+        raise UnsupportedFeature(f"{path}: unknown task or target '{value}'.")
+    return {"task": task, "target": target}
+
+
+def _sync_quantity(value, path: str) -> float:
+    if not isinstance(value, dict) or set(value) != {"phase"}:
+        raise UnsupportedFeature(f"{path}: only phase-quantified values such as {{'phase': 2}} are supported.")
+    return value["phase"]
+
+
+def _line(data: dict) -> dict | None:
+    """Record preparable v0.2 synchronization; reject everything this adapter cannot verify later."""
+    sync = data.get("synchronization")
+    if not sync:
+        return None
+    path = "$.synchronization"
+    _only(sync, "master_cycle_id period shared_input participants events relations", path)
+    if not str(data.get("version", "")).startswith("0.2"):
+        raise UnsupportedFeature(f"{path}: v0.1 synchronization fields are not supported; express the line in a 0.2 document.")
+    if "phase_relations" in sync:
+        raise UnsupportedFeature(f"{path}.phase_relations: deprecated; use relations with event references.")
+    _fixed(sync, "shared_input", True, path)
+    task_target_ids = {task["id"]: {t["id"] for t in task["motion"]["targets"]} for task in data["tasks"]}
+    for i, entry in enumerate(sync.get("participants", [])):
+        pp = f"{path}.participants[{i}]"
+        _only(entry, "task ratio", pp)
+        if "ratio" in entry and tuple(entry["ratio"]) != (1, 1):
+            raise UnsupportedFeature(f"{pp}.ratio: ratioed participation cannot be prepared; each task shares the master cycle 1:1.")
+        if entry["task"] not in task_target_ids:
+            raise UnsupportedFeature(f"{pp}.task: unknown task '{entry['task']}'.")
+    events = []
+    for i, event in enumerate(sync.get("events", [])):
+        ep = f"{path}.events[{i}]"
+        _only(event, "id type participants window tolerance mode", ep)
+        if event.get("type", "co_active") != "co_active":
+            raise UnsupportedFeature(f"{ep}.type: only co_active events are supported; handoff and co_location need unsupported payload and load handling.")
+        participants = event["participants"]
+        if len(participants) != 2:
+            raise UnsupportedFeature(f"{ep}.participants: exactly two reached-event references are supported.")
+        window = event.get("window")
+        if not isinstance(window, dict) or set(window) != {"phase_range"} or len(window["phase_range"]) != 2:
+            raise UnsupportedFeature(f"{ep}.window: a phase_range window is required.")
+        events.append({
+            "id": event["id"],
+            "participants": [_event_ref(p, task_target_ids, f"{ep}.participants") for p in participants],
+            "window_deg": window["phase_range"],
+            "tolerance_deg": _sync_quantity(event["tolerance"], f"{ep}.tolerance") if "tolerance" in event else None,
+            "mode": event.get("mode", "hard"),
+        })
+    relations = []
+    for i, relation in enumerate(sync.get("relations", [])):
+        rp = f"{path}.relations[{i}]"
+        _only(relation, "id from to type offset tolerance min_lead max_lead mode notes", rp)
+        if relation["type"] not in ("ordering", "fixed_offset"):
+            raise UnsupportedFeature(f"{rp}.type: only ordering and fixed_offset relations are supported; window relations need dwell support.")
+        record = {
+            "id": relation["id"],
+            "from": _event_ref(relation["from"], task_target_ids, f"{rp}.from"),
+            "to": _event_ref(relation["to"], task_target_ids, f"{rp}.to"),
+            "type": relation["type"],
+            "mode": relation.get("mode", "hard"),
+        }
+        if relation["type"] == "ordering":
+            record["min_lead_deg"] = _sync_quantity(relation["min_lead"], f"{rp}.min_lead")
+            record["max_lead_deg"] = _sync_quantity(relation["max_lead"], f"{rp}.max_lead")
+        else:
+            record["offset_deg"] = _sync_quantity(relation["offset"], f"{rp}.offset")
+            if "tolerance" in relation:
+                record["tolerance_deg"] = _sync_quantity(relation["tolerance"], f"{rp}.tolerance")
+        relations.append(record)
+    return {
+        "master_cycle_id": sync.get("master_cycle_id"),
+        "period": sync.get("period"),
+        "phase_reference": {task["id"]: task["motion"].get("cycle", {}).get("phase_reference") for task in data["tasks"]},
+        "events": events,
+        "relations": relations,
+        "verification": "pending_timeline_verification",
+    }
+
+
 def prepare_plan(data: dict) -> dict:
     """Validate the whole task set before preparing any output or command."""
     require_valid(data)
-    _only(data, "spec version task_set_id name description capabilities_required unsupported_feature_policy units coordinate_system tasks outputs metadata", "$")
+    _only(data, "spec version task_set_id name description capabilities_required unsupported_feature_policy units coordinate_system synchronization tasks outputs metadata", "$")
     _fixed(data, "unsupported_feature_policy", "error", "$")
     profile = capabilities()
     if data.get("version") not in profile["omts_versions"]:
@@ -265,11 +351,20 @@ def prepare_plan(data: dict) -> dict:
     _fixed(outputs, "include_histories", True, "$.outputs")
     _fixed(outputs, "requested_validation_level", "kinematic_candidate", "$.outputs")
     runs = [_options(task, i, outputs) for i, task in enumerate(data["tasks"])]
-    return {
+    line = _line(data)
+    notes = [
+        "One independent run per task; no synchronized synthesis.",
+        "Preparation does not establish feasibility or meet any requested validation level.",
+        "Interpret selection_eligible and qualification_level; raw candidate exports also include rejected designs.",
+        "Default R2.5c objectives and scale-relative search bounds remain active; see the adapter profile.",
+    ]
+    if line is not None:
+        notes.append("Synchronization metadata is recorded for post-hoc timeline verification; no joint optimization or verification is performed by this plan.")
+    plan = {
         "plan_version": 1,
         "status": "prepared_not_evaluated",
         "task_set_id": data["task_set_id"],
-        "omts_version": "0.1.0",
+        "omts_version": data["version"],
         "implementation": profile["implementation"],
         "adapter_version": profile["adapter_version"],
         "expected_artifacts": profile["expected_artifacts"],
@@ -277,13 +372,11 @@ def prepare_plan(data: dict) -> dict:
         "input_sha256": hashlib.sha256(json.dumps(data, sort_keys=True, separators=(",", ":"), ensure_ascii=True).encode()).hexdigest(),
         "input_hash_format": "canonical JSON: sorted keys, compact separators, ASCII escapes, UTF-8",
         "runs": runs,
-        "notes": [
-            "One independent run per task; no synchronized synthesis.",
-            "Preparation does not establish feasibility or meet any requested validation level.",
-            "Interpret selection_eligible and qualification_level; raw candidate exports also include rejected designs.",
-            "Default R2.5c objectives and scale-relative search bounds remain active; see the adapter profile.",
-        ],
+        "notes": notes,
     }
+    if line is not None:
+        plan["line"] = line
+    return plan
 
 
 def write_plan(data: dict, output: str | Path) -> Path:

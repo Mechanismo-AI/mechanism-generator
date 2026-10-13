@@ -123,6 +123,7 @@ during either command. The generated runner uses the installed engine and downlo
 | [Three-point four-bar](examples/omts/three_point.omts.yaml) | Passes | Prepares an independent cyclic four-bar run |
 | [Three-pose four-bar](examples/omts/three_pose.omts.yaml) | Passes | Prepares three ordered positions and directed orientations |
 | [Synchronized line](examples/omts/synchronized_line.omts.yaml) | Passes | Rejected: includes unsupported loads, dwell, and synchronization |
+| [Synchronized pair (v0.2)](examples/omts/synchronized_pair.omts.yaml) | Passes | Prepares two independent runs with a pending line verification |
 
 The adapter accepts normalized planar coordinates, exactly three target positions,
 optional orientations on all three targets, optional cyclic ordering, hybrid
