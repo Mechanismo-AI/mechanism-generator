@@ -103,6 +103,20 @@ def semantic_errors(data: dict) -> list[str]:
     angle_limit = 90 if data["units"]["angle"] == "deg" else math.pi / 2
     tasks = data["tasks"]
     task_ids = {task["id"] for task in tasks}
+    region_kinds = ("occupies_region", "enters_region", "exits_region")
+    reserved_segments = frozenset(region_kinds)
+    regions = data.get("regions", [])
+    region_ids = {region["id"] for region in regions}
+    is_v02 = str(data.get("version", "")).startswith("0.2")
+    _duplicates(regions, "$.regions", errors)
+    if regions and not is_v02:
+        errors.append("$.regions: regions are a v0.2 collision feature; v0.1 documents must not declare them.")
+    if regions and dimension != 2:
+        errors.append("$.regions: regions are planar; the document dimension must be 2.")
+    for region in regions:
+        if region["id"] in ("reached", "dwell"):
+            errors.append(f"$.regions: region id '{region["id"]}' collides with target event kinds; rename the region.")
+    collision_by_task = {}
     payloads = data.get("payloads", [])
     loads = data.get("load_cases", [])
     payload_ids = {item["id"] for item in payloads}
@@ -133,7 +147,7 @@ def semantic_errors(data: dict) -> list[str]:
                 if key in ("extensions", "metadata"):
                     continue
                 if key in ("position", "center_of_mass", "force", "moment", "application_point",
-                           "gravity", "axis", "vector", "envelope_min", "envelope_max", "min", "max"):
+                           "gravity", "axis", "vector", "envelope_min", "envelope_max", "min", "max", "center"):
                     if isinstance(child, list) and len(child) != dimension:
                         errors.append(f"{path}.{key}: expected {dimension} vector components.")
                 if key == "points":
@@ -168,6 +182,8 @@ def semantic_errors(data: dict) -> list[str]:
             tp = f"{path}.motion.targets[{j}]"
             reference(target, "payload_ref", payload_ids, tp)
             reference(target, "load_case_ref", load_ids, tp)
+            if any(part in reserved_segments for part in target["id"].split(".")):
+                errors.append(f"{tp}: target id '{target["id"]}' uses a reserved region-event segment; rename the target.")
             occurrence = target.get("occurrence", {})
             if motion["order_policy"] == "fixed_timing" and not any(k in occurrence for k in ("phase", "phase_range", "time", "time_range")):
                 errors.append(f"{tp}: fixed_timing requires a phase/time or window.")
@@ -213,11 +229,17 @@ def semantic_errors(data: dict) -> list[str]:
                 errors.append(f"{path}.requirements.panel: sampled rectangular panel requires a planar task.")
             if xmin >= xmax or ymin >= ymax or 2 * panel.get("pivot_clearance", 0) >= min(xmax - xmin, ymax - ymin):
                 errors.append(f"{path}.requirements.panel: bounds and fixed-pivot clearance must leave a usable interior.")
+        collision = task.get("requirements", {}).get("collision")
+        if collision is not None:
+            if not is_v02:
+                errors.append(f"{path}.requirements.collision: collision bodies are a v0.2 collision feature; v0.1 documents must not declare them.")
+            if dimension != 2:
+                errors.append(f"{path}.requirements.collision: collision bodies are planar; the document dimension must be 2.")
+            collision_by_task[task["id"]] = collision
         for key in ("min_at_targets", "min_global", "selection_min_at_targets", "selection_min_global"):
             if tx.get(key, 0) > angle_limit:
                 errors.append(f"{path}.requirements.transmission.{key}: exceeds {angle_limit:g} {data['units']['angle']}.")
     sync = data.get("synchronization", {})
-    is_v02 = str(data.get("version", "")).startswith("0.2")
     task_by_id = {task["id"]: task for task in tasks}
     task_targets = {task["id"]: {target["id"] for target in task["motion"]["targets"]} for task in tasks}
     ratios = {}
@@ -265,6 +287,16 @@ def semantic_errors(data: dict) -> list[str]:
             event = next(e for e in sync["events"] if e["id"] == ref)
             return "event", "window" in event or "phase_range" in event or "time_range" in event
         parts = str(ref).split(".")
+        if len(parts) == 3 and parts[1] in reserved_segments:
+            if parts[0] not in task_targets:
+                errors.append(f"{path}: unknown task '{parts[0]}'.")
+            elif parts[2] not in region_ids:
+                errors.append(f"{path}: unknown region '{parts[2]}'; declare it under 'regions'.")
+            elif parts[0] not in collision_by_task:
+                errors.append(f"{path}: task '{parts[0]}' declares no collision body model, so it contributes no region events.")
+            else:
+                return "region", parts[1] == "occupies_region"
+            return None, None
         if len(parts) == 3 and parts[0] in task_targets and parts[1] in task_targets[parts[0]]:
             if parts[2] not in ("reached", "dwell"):
                 errors.append(f"{path}: event kind must be 'reached' or 'dwell', received '{parts[2]}'.")
@@ -279,6 +311,8 @@ def semantic_errors(data: dict) -> list[str]:
 
     for i, event in enumerate(sync.get("events", [])):
         ep = f"$.synchronization.events[{i}]"
+        if any(part in reserved_segments for part in event["id"].split(".")):
+            errors.append(f"{ep}: event id '{event["id"]}' uses a reserved region-event segment; derived events are computed, not authored.")
         for participant in event["participants"]:
             if resolve_event(participant, f"{ep}.participants")[0] == "task" and is_v02:
                 errors.append(f"{ep}.participants: v0.2 events reference task events ('task.target.reached'), not bare task IDs.")
