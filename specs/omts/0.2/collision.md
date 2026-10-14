@@ -2,15 +2,17 @@
 
 > **Draft 0.2.0-collision.** This document grounds open questions 2 and 3 of
 > `synchronization.md` in a deliberately small collision model. It is a
-> specification draft for public review. Document validation has landed (G2): v0.2 documents may now declare
-> `regions` and `requirements.collision`, and validation checks them
-> fail-closed. Adapter and verifier support have not landed: the adapter
-> still rejects collision features and derived-event references at plan
-> time, and derived events are not yet computed (G3+).
+> specification draft for public review. Verifier wiring has landed (G3): the adapter
+> records `regions` and per-task collision body models in the plan's line
+> section, and `omts verify-line` reports sampled occupancy windows per
+> selected candidate as data in `line_result.json`; the verdict is
+> unchanged. The adapter still rejects relations over derived region
+> events until they gate the verdict (G5).
 
-**Status:** Draft; G1 and G2 of the staged plan in section 7 have landed
+**Status:** Draft; G1, G2, and G3 of the staged plan in section 7 have landed
 (spec text, a pure-stdlib geometry kernel parity-tested against the
-engine's independent NumPy panel screening, and document validation).
+engine's independent NumPy panel screening, document validation, and
+verifier wiring that reports sampled occupancy windows as data).
 
 **Depends on:** OMTS v0.1 (`specs/omts/0.1/specification.md`), OMTS v0.2
 synchronization (`synchronization.md`).
@@ -168,10 +170,12 @@ window of `to`, circularly.
 2. **G2 (landed):** document validation: regions and collision bodies,
    semantic checks, reserved id segments, fail-closed rejection of
    undeclared references and of region events on tasks without collision
-   bodies. The adapter still rejects collision features at plan time
-   until G3.
-3. **G3 (verifier wiring):** the kernel reads candidate geometry from run
-   manifests; derived windows are computed per selected candidate.
+   bodies. From G3 the adapter records collision features in the plan's
+   line section for post-hoc occupancy computation.
+3. **G3 (landed):** the kernel reads candidate geometry from run
+   manifests; derived windows are computed per selected candidate and
+   reported as data in `line_result.json` (raw and composed windows,
+   never gating the verdict).
 4. **G4:** the composed timeline artifact promised by section 8 of
    `synchronization.md`: per sampled master phase, each task's input
    phase and body poses -- the collision and animation substrate.
@@ -181,11 +185,12 @@ window of `to`, circularly.
 
 ## 8. Open questions of this draft
 
-1. Should enter/exit point events exist alongside window events, or only
-   windows? (The draft defines both; points are nearly free once windows
-   exist, and handoff events eventually want them.)
-2. Default `steps`: 720 (0.5 deg) is proposed; cost scales with the number
-   of candidate combinations.
+1. **Resolved (G3):** both window events and enter/exit point events are
+   computed for every declared region and modeled task; boundaries are
+   sampled phases, not certified instants.
+2. **Resolved (G3):** the schema default is 720 samples (0.5 deg); cost
+   scales with candidates, regions, and tasks, not with the number of
+   candidate combinations.
 3. Should the carrier default be undeclared (centerlines only) in the first
    examples? (Proposed: yes.)
 4. Does `path_constraints.keep_out_box` map to regions in a later adapter

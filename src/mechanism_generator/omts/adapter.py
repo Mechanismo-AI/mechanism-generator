@@ -124,7 +124,7 @@ def _options(task: dict, index: int, outputs: dict) -> dict:
 
     requirements = task.get("requirements", {})
     rp = path + ".requirements"
-    _only(requirements, "path transmission assembly classification compactness panel", rp)
+    _only(requirements, "path transmission assembly classification compactness panel collision", rp)
     path_req = requirements.get("path", {})
     _only(path_req, "max_mean_error max_point_error shared_mean_allowance shared_point_allowance mode", rp + ".path")
     _fixed(path_req, "mode", "hard", rp + ".path")
@@ -235,6 +235,8 @@ def _options(task: dict, index: int, outputs: dict) -> dict:
 
 def _event_ref(value, task_target_ids: dict, path: str) -> dict:
     parts = str(value).split(".")
+    if len(parts) == 3 and parts[1] in ("occupies_region", "enters_region", "exits_region"):
+        raise UnsupportedFeature(f"{path}: derived region events are computed by the timeline verifier, not authored; relations over them are supported from G5.")
     if len(parts) != 3 or parts[2] != "reached":
         raise UnsupportedFeature(f"{path}: only target-reached event references ('task.target.reached') are supported.")
     task, target = parts[0], parts[1]
@@ -253,7 +255,40 @@ def data_task_reference(data: dict, task_id: str):
     task = next((t for t in data["tasks"] if t["id"] == task_id), None)
     return None if task is None else task["motion"].get("cycle", {}).get("phase_reference")
 
-def _line(data: dict) -> dict | None:
+def _collision_model(task: dict, index: int) -> dict | None:
+    """Normalize a task's requirements.collision into a recordable body model."""
+    collision = task.get("requirements", {}).get("collision")
+    if collision is None:
+        return None
+    path = f"$.tasks[{index}].requirements.collision"
+    _only(collision, "bodies steps mode", path)
+    bodies = collision["bodies"]
+    _only(bodies, "links carrier", path + ".bodies")
+    links = bodies.get("links", {})
+    _only(links, "thickness", path + ".bodies.links")
+    model = {
+        "thickness": float(links.get("thickness", 0.0)),
+        "steps": collision.get("steps", 720),
+        "mode": collision.get("mode", "hard"),
+    }
+    carrier = bodies.get("carrier")
+    if carrier is not None:
+        _only(carrier, "width depth", path + ".bodies.carrier")
+        model["carrier"] = {"width": float(carrier["width"]), "depth": float(carrier["depth"])}
+    return model
+
+
+def _collision_models(data: dict) -> dict:
+    """Recorded collision body models keyed by task id (only tasks declaring one)."""
+    models = {}
+    for index, task in enumerate(data["tasks"]):
+        model = _collision_model(task, index)
+        if model is not None:
+            models[task["id"]] = model
+    return models
+
+
+def _line(data: dict, collision_models: dict | None = None) -> dict | None:
     """Record preparable v0.2 synchronization; reject everything this adapter cannot verify later."""
     sync = data.get("synchronization")
     if not sync:
@@ -325,7 +360,7 @@ def _line(data: dict) -> dict | None:
         rp = f"{path}.relations[{i}]"
         _only(relation, "id from to type offset tolerance min_lead max_lead mode notes", rp)
         if relation["type"] not in ("ordering", "fixed_offset"):
-            raise UnsupportedFeature(f"{rp}.type: only ordering and fixed_offset relations are supported; window relations need dwell support.")
+            raise UnsupportedFeature(f"{rp}.type: only ordering and fixed_offset relations are supported; contains and disjoint_windows over derived region events are verified from G5.")
         record = {
             "id": relation["id"],
             "from": _event_ref(relation["from"], task_target_ids, f"{rp}.from"),
@@ -353,13 +388,17 @@ def _line(data: dict) -> dict | None:
         line["applied_offsets"] = applied_offsets
     if offset_realization:
         line["offset_realization"] = offset_realization
+    if data.get("regions"):
+        line["regions"] = data["regions"]
+    if collision_models:
+        line["collision"] = collision_models
     return line
 
 
 def prepare_plan(data: dict) -> dict:
     """Validate the whole task set before preparing any output or command."""
     require_valid(data)
-    _only(data, "spec version task_set_id name description capabilities_required unsupported_feature_policy units coordinate_system synchronization tasks outputs metadata", "$")
+    _only(data, "spec version task_set_id name description capabilities_required unsupported_feature_policy units coordinate_system synchronization regions tasks outputs metadata", "$")
     _fixed(data, "unsupported_feature_policy", "error", "$")
     profile = capabilities()
     if data.get("version") not in profile["omts_versions"]:
@@ -387,8 +426,11 @@ def prepare_plan(data: dict) -> dict:
     _fixed(outputs, "include_lineage", True, "$.outputs")
     _fixed(outputs, "include_histories", True, "$.outputs")
     _fixed(outputs, "requested_validation_level", "kinematic_candidate", "$.outputs")
+    collision_models = _collision_models(data)
+    line = _line(data, collision_models)
+    if line is None and (data.get("regions") or collision_models):
+        raise UnsupportedFeature("$.regions and $.tasks[].requirements.collision are recorded for the synchronization line; declare 'synchronization' or remove the collision features.")
     runs = [_options(task, i, outputs) for i, task in enumerate(data["tasks"])]
-    line = _line(data)
     notes = [
         "One independent run per task; no synchronized synthesis.",
         "Preparation does not establish feasibility or meet any requested validation level.",
@@ -397,6 +439,8 @@ def prepare_plan(data: dict) -> dict:
     ]
     if line is not None:
         notes.append("Synchronization metadata is recorded for post-hoc timeline verification; no joint optimization or verification is performed by this plan.")
+        if line.get("collision") or line.get("regions"):
+            notes.append("Collision geometry (regions and per-task body models) is recorded for post-hoc sampled occupancy computation; the engine does not evaluate it.")
     plan = {
         "plan_version": 1,
         "status": "prepared_not_evaluated",
