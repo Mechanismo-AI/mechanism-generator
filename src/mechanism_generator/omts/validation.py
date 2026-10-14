@@ -115,7 +115,7 @@ def semantic_errors(data: dict) -> list[str]:
         errors.append("$.regions: regions are planar; the document dimension must be 2.")
     for region in regions:
         if region["id"] in ("reached", "dwell"):
-            errors.append(f"$.regions: region id '{region["id"]}' collides with target event kinds; rename the region.")
+            errors.append(f"$.regions: region id '{region['id']}' collides with target event kinds; rename the region.")
     collision_by_task = {}
     payloads = data.get("payloads", [])
     loads = data.get("load_cases", [])
@@ -183,7 +183,7 @@ def semantic_errors(data: dict) -> list[str]:
             reference(target, "payload_ref", payload_ids, tp)
             reference(target, "load_case_ref", load_ids, tp)
             if any(part in reserved_segments for part in target["id"].split(".")):
-                errors.append(f"{tp}: target id '{target["id"]}' uses a reserved region-event segment; rename the target.")
+                errors.append(f"{tp}: target id '{target['id']}' uses a reserved region-event segment; rename the target.")
             occurrence = target.get("occurrence", {})
             if motion["order_policy"] == "fixed_timing" and not any(k in occurrence for k in ("phase", "phase_range", "time", "time_range")):
                 errors.append(f"{tp}: fixed_timing requires a phase/time or window.")
@@ -312,7 +312,7 @@ def semantic_errors(data: dict) -> list[str]:
     for i, event in enumerate(sync.get("events", [])):
         ep = f"$.synchronization.events[{i}]"
         if any(part in reserved_segments for part in event["id"].split(".")):
-            errors.append(f"{ep}: event id '{event["id"]}' uses a reserved region-event segment; derived events are computed, not authored.")
+            errors.append(f"{ep}: event id '{event['id']}' uses a reserved region-event segment; derived events are computed, not authored.")
         for participant in event["participants"]:
             if resolve_event(participant, f"{ep}.participants")[0] == "task" and is_v02:
                 errors.append(f"{ep}.participants: v0.2 events reference task events ('task.target.reached'), not bare task IDs.")
