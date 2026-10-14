@@ -69,7 +69,7 @@ tabletop example. Published inference weights remain unchanged.
 
 ## Train and refine proposal models
 
-The full R2 â†’ R2.2 â†’ R2.3a â†’ R2.4 training sequence is packaged with historical
+The full R2 → R2.2 → R2.3a → R2.4 training sequence is packaged with historical
 recipes, a synthetic data generator and verified starting weights. Start with a
 small four-stage check:
 
@@ -149,7 +149,7 @@ including unsupported soft constraints. They are never silently discarded.
 - Focused regression tests and continuous integration for Windows and Linux
 
 The public engine runs the research pipeline:
-neural proposals Ã¢â€ â€™ local refinement Ã¢â€ â€™ physical/kinematic checks Ã¢â€ â€™ diverse designs.
+neural proposals → local refinement → physical/kinematic checks → diverse designs.
 Richer orientation paths, prescribed timing/dwell, dynamics, collision checks, and
 multi-mechanism synchronization are future capabilities. Reproducible training and
 broader evaluation support that development; released models remain ready to use.
