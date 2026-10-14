@@ -234,6 +234,12 @@ def semantic_errors(data: dict) -> list[str]:
     for task_id in sync.get("applied_offsets", {}):
         if task_id not in task_ids:
             errors.append(f"$.synchronization.applied_offsets.{task_id}: unknown task '{task_id}'.")
+    for task_id in sync.get("offset_realization", {}):
+        rp = f"$.synchronization.offset_realization.{task_id}"
+        if task_id not in task_ids:
+            errors.append(f"{rp}: unknown task '{task_id}'.")
+        elif task_id not in sync.get("applied_offsets", {}):
+            errors.append(f"{rp}: task '{task_id}' declares no applied offset, so there is nothing to realize.")
     ratioed = {entry["task"] for entry in participants if "ratio" in entry}
     master_period = sync.get("period")
     if master_period:

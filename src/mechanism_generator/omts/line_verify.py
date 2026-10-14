@@ -14,7 +14,10 @@ Applied master-phase offsets (S5 v0.1): a line may declare
 line section by the adapter and this verifier composes with them, so a line
 can be legitimately verified under a declared phasing. For an anchored task
 the offset moves its reference target to the stated phase; realization of
-the declared phasing (gear/crank choice) remains a build decision.
+the declared phasing (gear/crank choice) remains a build decision, recorded
+via the document's `offset_realization` and echoed in `line_result.json`
+(`recorded`, per-task records, `unrecorded_tasks`) — a build note that
+never changes the verdict.
 
 The optional anchor probe (`probe=True`; CLI: `omts verify-line
 --probe-anchors`) is a diagnostic sweep toward S5: for each task in
@@ -300,7 +303,22 @@ def run_target_ids(plan: dict, task_id: str) -> list[str]:
     return run["target_ids"]
 
 
+def _realization_summary(line: dict) -> dict | None:
+    """Visible build-record gap for declared offsets; never changes the verdict."""
+    offsets = line.get("applied_offsets") or {}
+    if not offsets:
+        return None
+    realization = line.get("offset_realization") or {}
+    unrecorded = sorted(set(offsets) - set(realization))
+    return {
+        "recorded": not unrecorded,
+        "tasks": {task: realization[task] for task in offsets if task in realization},
+        **({"unrecorded_tasks": unrecorded} if unrecorded else {}),
+    }
+
+
 def _result(plan: dict, line: dict, combinations: list, status: str, note: str | None) -> dict:
+    realization = _realization_summary(line)
     return {
         "line_verification_version": 1,
         "task_set_id": plan["task_set_id"],
@@ -309,6 +327,7 @@ def _result(plan: dict, line: dict, combinations: list, status: str, note: str |
         "status": status,
         "phase_reference": line["phase_reference"],
         **({"applied_offsets": line["applied_offsets"]} if line.get("applied_offsets") else {}),
+        **({"offset_realization": realization} if realization is not None else {}),
         "combination_count": len(combinations),
         "passing_combination_count": sum(c["status"] == "pass" for c in combinations),
         "combinations": combinations,

@@ -1713,6 +1713,25 @@
           "additionalProperties": {
             "$ref": "#/$defs/syncQuantity"
           }
+        },
+        "offset_realization": {
+          "type": "object",
+          "description": "How each declared applied offset is physically realized (build record, not a verification gate). Keys must name tasks that declare applied_offsets.",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "method": {
+                "enum": ["crank_phase", "gear_train", "coupling", "other"],
+                "description": "Physical realization method for the task's master-phase offset."
+              },
+              "detail": {
+                "type": "string",
+                "description": "Free-form build detail, e.g. gear ratio and tooth index, or crank keyway angle."
+              }
+            },
+            "required": ["method"]
+          }
         }
       }
     },
