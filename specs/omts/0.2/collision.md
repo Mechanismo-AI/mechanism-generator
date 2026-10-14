@@ -95,6 +95,34 @@ So `transfer.enters_region.north` is expressible once `north` is a declared
 region: authored event ids stay `task.event`, and the region layer supplies
 the path-fragment vocabulary.
 
+### Resolution (review, 2026-10-14): no authored path-fragment events
+
+Derived events are the sole source of boundary timing. The id segments
+`occupies_region`, `enters_region`, and `exits_region` are reserved for
+the derived namespace: authored event ids keep the `task.event` shape, and
+G2 validation rejects an authored event id that uses a reserved segment,
+fail-closed. Authored timing intent over a derived boundary is an ordinary
+relation with no new vocabulary: bounds on a boundary point are `ordering`
+leads against another event, window containment is `contains`, and
+keep-out is `disjoint_windows` (section 5).
+
+```yaml
+relations:
+  - id: transfer_enters_within_pick_lead
+    from: transfer.pick.reached
+    to: transfer.enters_region.north
+    type: ordering
+    min_lead: {phase: 30}
+    max_lead: {phase: 60}
+    mode: hard
+```
+
+An authored boundary time would either be trusted over the computed one --
+the document drifts from what the mechanism actually does -- or be checked
+against it, at which point it is a relation, not an event. Authoring stays
+for semantics (handoffs, payloads, design intent); geometry timing stays
+derived.
+
 ## 5. Sweep windows (open question 3, draft answer)
 
 A sweep window is an `occupies_region` window of a body in a region two
