@@ -324,8 +324,23 @@ the synchronized-line example from rejected to preparable and verifiable.
    first.
 2. Is the `task.event` dot notation sufficient, or are path-fragment events
    (for example `transfer.enters_region.north`) needed for collision windows?
+
+   **Draft answer (proposed in `collision.md`, not yet resolved):** path-fragment
+   events are needed, but derived, not authored. The collision geometry draft
+   introduces named region objects and has the timeline verifier derive
+   `occupies_region` window events plus `enters_region` / `exits_region`
+   boundary events from the sampled collision bodies (section 4 there). This
+   question closes when G2 validation and G5 verification land.
 3. Do sweep and collision windows belong in v0.2, or wait for standard
    collision-body geometry already planned for v0.2?
+
+   **Draft answer (proposed in `collision.md`, not yet resolved):** they belong
+   in v0.2, as a derived window layer over a deliberately small standard
+   collision-body model (link centerlines with optional thickness, optional
+   carrier rectangle, pivot discs; section 2 there). Sweep windows are
+   expressed through the existing `disjoint_windows` relation over
+   `occupies_region` events, with no new relation vocabulary (section 5
+   there). This question closes when G4 and G5 land.
 4. For free `ordering` leads on fixed-timing tasks, does the existing ordered
    target-phase machinery leave the solver enough freedom for S4 to be useful
    before S5 exists?
