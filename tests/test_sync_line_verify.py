@@ -213,3 +213,98 @@ def test_applied_offset_for_non_participating_task_is_rejected(tmp_path):
     _write_plan(tmp_path, line)
     with pytest.raises(LineVerificationError, match="non-participating"):
         verify_line(tmp_path)
+
+def test_ordering_feasibility_flags_unfixable_spread(tmp_path):
+    # Three catcher candidates: leads 60, 105, 140 -> spread 80 > band width 35;
+    # all grabs also sit outside the window, so the line fails outright.
+    _write_manifest(tmp_path, "gate", [{"id": "g1", "phases": [30, 130, 250]}])
+    _write_manifest(tmp_path, "catcher", [
+        {"id": "c1", "phases": [160, 220, 20]},
+        {"id": "c2", "phases": [205, 220, 20]},
+        {"id": "c3", "phases": [240, 220, 20]},
+    ])
+    _write_plan(tmp_path, _line())
+    result = verify_line(tmp_path)
+    assert result["status"] == "failed"
+    entry = result["ordering_feasibility"]["relations"][0]
+    assert entry["id"] == "release_before_grab"
+    assert entry["lead_spread_deg"] == pytest.approx(80.0)
+    assert entry["band_width_deg"] == pytest.approx(35.0)
+    assert entry["phasing_cannot_fix"] is True
+
+def test_ordering_feasibility_allows_fixable_spread(tmp_path):
+    # Leads 60 and 75: spread 15 <= 35, so a shared phasing could fix ordering.
+    _write_manifest(tmp_path, "gate", [{"id": "g1", "phases": [30, 130, 250]}])
+    _write_manifest(tmp_path, "catcher", [
+        {"id": "c1", "phases": [160, 220, 20]},
+        {"id": "c2", "phases": [175, 220, 20]},
+    ])
+    _write_plan(tmp_path, _line())
+    result = verify_line(tmp_path)
+    assert result["status"] == "failed"
+    entry = result["ordering_feasibility"]["relations"][0]
+    assert entry["lead_spread_deg"] == pytest.approx(15.0)
+    assert entry["phasing_cannot_fix"] is False
+
+def test_ordering_feasibility_spread_is_circular(tmp_path):
+    # Leads 359 and 3 sit 4 deg apart across zero; a naive max-min spread of
+    # 356 would wrongly claim phasing cannot fix them (shift by 11 deg works).
+    _write_manifest(tmp_path, "gate", [{"id": "g1", "phases": [30, 130, 250]}])
+    _write_manifest(tmp_path, "catcher", [
+        {"id": "c1", "phases": [99, 220, 20]},
+        {"id": "c2", "phases": [103, 220, 20]},
+    ])
+    _write_plan(tmp_path, _line())
+    result = verify_line(tmp_path)
+    assert result["status"] == "failed"
+    entry = result["ordering_feasibility"]["relations"][0]
+    assert entry["lead_spread_deg"] == pytest.approx(4.0)
+    assert entry["phasing_cannot_fix"] is False
+
+def test_ordering_feasibility_present_on_verified_line(tmp_path):
+    # A single passing combination: zero spread, phasing trivially not blocked.
+    _write_manifest(tmp_path, "gate", [{"id": "g1", "phases": [30, 130, 250]}])
+    _write_manifest(tmp_path, "catcher", [{"id": "c1", "phases": [120, 220, 20]}])
+    _write_plan(tmp_path, _line())
+    result = verify_line(tmp_path)
+    assert result["status"] == "verified"
+    entry = result["ordering_feasibility"]["relations"][0]
+    assert entry["lead_spread_deg"] == 0.0
+    assert entry["phasing_cannot_fix"] is False
+
+def test_ordering_feasibility_absent_without_cross_task_ordering(tmp_path):
+    line = _line()
+    line["events"] = []
+    line["relations"] = [{
+        "id": "fixed", "from": {"task": "gate", "target": "release"},
+        "to": {"task": "catcher", "target": "grab"}, "type": "fixed_offset",
+        "offset_deg": 20, "tolerance_deg": 5, "mode": "hard",
+    }]
+    _write_manifest(tmp_path, "gate", [{"id": "g1", "phases": [30, 130, 250]}])
+    _write_manifest(tmp_path, "catcher", [{"id": "c1", "phases": [120, 220, 20]}])
+    _write_plan(tmp_path, line)
+    result = verify_line(tmp_path)
+    assert "ordering_feasibility" not in result
+
+def test_ordering_feasibility_excludes_same_task_relations(tmp_path):
+    line = _line()
+    line["events"] = []
+    line["relations"] = [{
+        "id": "release_before_rest", "from": {"task": "gate", "target": "release"},
+        "to": {"task": "gate", "target": "rest"}, "type": "ordering",
+        "min_lead_deg": 10, "max_lead_deg": 45, "mode": "hard",
+    }]
+    _write_manifest(tmp_path, "gate", [{"id": "g1", "phases": [30, 130, 250]}])
+    _write_manifest(tmp_path, "catcher", [{"id": "c1", "phases": [120, 220, 20]}])
+    _write_plan(tmp_path, line)
+    result = verify_line(tmp_path)
+    assert result["status"] == "failed"  # rest leads release by 120 deg
+    assert "ordering_feasibility" not in result
+
+def test_ordering_feasibility_absent_without_candidates(tmp_path):
+    _write_manifest(tmp_path, "gate", [])
+    _write_manifest(tmp_path, "catcher", [{"id": "c1", "phases": [120, 220, 20]}])
+    _write_plan(tmp_path, _line())
+    result = verify_line(tmp_path)
+    assert result["status"] == "no_candidates"
+    assert "ordering_feasibility" not in result
