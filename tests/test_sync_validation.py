@@ -195,3 +195,24 @@ def test_v02_documents_cannot_be_adapted(v02_document):
     from mechanism_generator.omts.adapter import UnsupportedFeature, prepare_plan
     with pytest.raises(UnsupportedFeature):
         prepare_plan(v02_document)
+
+
+def test_phase_relations_rejected_in_v02():
+    document = _v02_document()
+    document["synchronization"]["phase_relations"] = [
+        {"from_task": "alpha", "to_task": "beta", "offset": 40, "tolerance": 2}
+    ]
+    errors = _errors(document)
+    assert "phase_relations" in errors
+    assert "'relations'" in errors
+
+
+def test_empty_phase_relations_declaration_rejected_in_v02():
+    document = _v02_document()
+    document["synchronization"]["phase_relations"] = []
+    assert "phase_relations" in _errors(document)
+
+
+def test_v01_phase_relations_example_still_validates():
+    document = load_document(ROOT / "examples/omts/synchronized_line.omts.yaml")
+    assert validate_document(document) == []

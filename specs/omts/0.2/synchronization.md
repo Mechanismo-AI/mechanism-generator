@@ -147,8 +147,14 @@ states the physical intent and capability checking decides who can enforce it.
 
 ## 6. Relations
 
-`relations` replaces v0.1 `phase_relations`, which is deprecated in 0.2
-and removed in 1.0. Relations connect events, not tasks.
+`relations` replaces v0.1 `phase_relations`. A v0.2 document MUST NOT
+declare `phase_relations`: validation rejects the field with an error
+naming `relations`. The two forms cannot coexist inside one version,
+because `phase_relations` carries bare numbers, which section 4 forbids
+in v0.2, and two vocabularies for the same fixed offset would need
+conflict rules no one should have to write. The field remains valid in
+v0.1 documents, which continue to validate unchanged; it is removed from
+the schema in 1.0. Relations connect events, not tasks.
 
 `yaml
 relations:
@@ -195,6 +201,8 @@ relations:
 ## 7. Semantic validation additions
 
 - Ratio entries must be positive integers.
+- A v0.2 document must not declare `phase_relations`; validation rejects
+  it with an error naming `relations` (section 6).
 - Every relation and event must reference existing tasks, targets, and events;
   unknown references are semantic errors.
 - `ordering` requires `min_lead` not greater than `max_lead`.
@@ -288,6 +296,21 @@ the synchronized-line example from rejected to preparable and verifiable.
 ## 10. Open questions for review
 
 1. Should `relations` fully deprecate `phase_relations`, or coexist until 1.0?
+
+   **Resolution (answered in v0.2):** fully deprecate. A v0.2 document
+   that declares `phase_relations` — even as an empty declaration —
+   fails validation with an error pointing to `relations`. Coexistence
+   was rejected for two reasons: `phase_relations` carries the bare
+   numbers that section 4 forbids in v0.2, and allowing both forms would
+   create two ways to state the same fixed pairwise offset with no rule
+   for a document that declares both. Versioned documents make the
+   deprecation cheap and honest: v0.1 documents (including the
+   synchronized-line example) validate unchanged, and 1.0 removes the
+   field from the schema entirely. A v0.2 author using the old field gets
+   a clear error naming the replacement, never silent acceptance. The
+   adapter already rejected the field for v0.2 documents; this resolution
+   moves the rejection to document validation, where the author sees it
+   first.
 2. Is the `task.event` dot notation sufficient, or are path-fragment events
    (for example `transfer.enters_region.north`) needed for collision windows?
 3. Do sweep and collision windows belong in v0.2, or wait for standard
