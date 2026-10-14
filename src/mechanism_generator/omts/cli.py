@@ -6,6 +6,7 @@ import sys
 
 from .adapter import capabilities, write_plan
 from .line_verify import LineVerificationError, solve_offsets, verify_line
+from .timeline import compose_timeline, write_timeline
 from .validation import DocumentError, load_document, require_valid
 
 
@@ -31,6 +32,11 @@ def main(argv=None) -> int:
                          help="Offset grid step in degrees (default: 1.0)")
     propose.add_argument("--top", type=int, default=5,
                          help="Number of recommended offset assignments to report (default: 5)")
+    timeline = commands.add_parser("timeline",
+                                   help="Write the composed timeline artifact (data-only; the verdict is unchanged)")
+    timeline.add_argument("plan_dir", help="A directory written by: omts adapt")
+    timeline.add_argument("--steps", type=int, default=720,
+                          help="Master-phase samples per cycle (default: 720; sampled, not certified)")
     args = parser.parse_args(argv)
     try:
         if args.command == "capabilities":
@@ -63,6 +69,12 @@ def main(argv=None) -> int:
                 print("  (no candidate combinations to search)")
             print("Proposal only: declare the chosen offsets in the document's synchronization.applied_offsets, "
                   "then re-validate, re-adapt, and re-verify.")
+        elif args.command == "timeline":
+            artifact = compose_timeline(args.plan_dir, steps=args.steps)
+            path = write_timeline(args.plan_dir, artifact)
+            candidates = sum(len(entry["candidates"]) for entry in artifact["tasks"].values())
+            print(f"TIMELINE WRITTEN: {path} ({len(artifact['tasks'])} tasks, {candidates} "
+                  f"candidates, {artifact['steps']} samples; data-only, never gates the verdict)")
         else:
             data = load_document(args.document)
             if args.command == "validate":

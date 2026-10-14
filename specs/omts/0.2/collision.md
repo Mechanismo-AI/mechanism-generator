@@ -2,17 +2,20 @@
 
 > **Draft 0.2.0-collision.** This document grounds open questions 2 and 3 of
 > `synchronization.md` in a deliberately small collision model. It is a
-> specification draft for public review. Verifier wiring has landed (G3): the adapter
-> records `regions` and per-task collision body models in the plan's line
-> section, and `omts verify-line` reports sampled occupancy windows per
-> selected candidate as data in `line_result.json`; the verdict is
-> unchanged. The adapter still rejects relations over derived region
-> events until they gate the verdict (G5).
+> specification draft for public review. Verifier wiring has landed (G3):
+> the adapter records `regions` and per-task collision body models in the
+> plan's line section, and `omts verify-line` reports sampled occupancy
+> windows per selected candidate as data in `line_result.json`. The composed
+> timeline artifact has landed (G4): `omts timeline` writes `timeline.json`
+> with, per sampled master phase, each participating task's input phase and
+> body poses. Neither artifact gates the verdict. The adapter still rejects
+> relations over derived region events until they gate the verdict (G5).
 
-**Status:** Draft; G1, G2, and G3 of the staged plan in section 7 have landed
+**Status:** Draft; G1 through G4 of the staged plan in section 7 have landed
 (spec text, a pure-stdlib geometry kernel parity-tested against the
-engine's independent NumPy panel screening, document validation, and
-verifier wiring that reports sampled occupancy windows as data).
+engine's independent NumPy panel screening, document validation, verifier
+wiring that reports sampled occupancy windows as data, and the composed
+timeline artifact).
 
 **Depends on:** OMTS v0.1 (`specs/omts/0.1/specification.md`), OMTS v0.2
 synchronization (`synchronization.md`).
@@ -176,9 +179,14 @@ window of `to`, circularly.
    manifests; derived windows are computed per selected candidate and
    reported as data in `line_result.json` (raw and composed windows,
    never gating the verdict).
-4. **G4:** the composed timeline artifact promised by section 8 of
-   `synchronization.md`: per sampled master phase, each task's input
-   phase and body poses -- the collision and animation substrate.
+4. **G4 (landed):** the composed timeline artifact promised by section 8 of
+   `synchronization.md`: `omts timeline <plan-dir> [--steps N]` writes
+   `timeline.json` -- per sampled master phase, each participating task's
+   input phase and body poses per selected candidate -- the collision and
+   animation substrate. Composition follows the verifier's anchoring and
+   applied-offset rule; the artifact is data-only and never gates the
+   verdict, and undefined assembly at a sampled phase is an error, never a
+   guessed pose.
 5. **G5:** line verification integration: derived windows feed events and
    relations; `disjoint_windows` gates; corpus rerun on the synchronized
    pair sharing one zone.
