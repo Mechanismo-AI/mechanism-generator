@@ -289,29 +289,36 @@ def test_adapter_records_regions_and_collision_models():
     assert any("post-hoc sampled occupancy" in note for note in plan["notes"])
 
 
-def test_adapter_rejects_ordering_over_derived_region_events():
+def test_adapter_accepts_ordering_over_derived_region_events():
     document = _document(relations=[{
         "id": "enter_after_release",
         "from": "gate.release.reached",
         "to": "gate.enters_region.shared_zone",
         "type": "ordering",
         "min_lead": {"phase": 10},
+        "max_lead": {"phase": 300},
         "mode": "hard",
     }])
-    with pytest.raises(UnsupportedFeature, match="derived region events") as excinfo:
-        prepare_plan(document)
-    assert "G5" in str(excinfo.value)
+    plan = prepare_plan(document)
+    relation = plan["line"]["relations"][0]
+    assert relation["type"] == "ordering"
+    assert relation["min_lead_deg"] == 10
+    assert relation["max_lead_deg"] == 300
+    assert relation["to"] == {"task": "gate", "region": "shared_zone", "kind": "enters_region"}
 
 
-def test_adapter_rejects_disjoint_windows_until_g5():
-    # Bare relation shape: no clearance key, so the adapter's own key
-    # whitelist is not the layer under test -- the relation type is.
+def test_adapter_accepts_disjoint_windows_over_region_windows():
+    # Bare relation shape: no clearance key, so the default clearance is the
+    # interesting part -- absent from the record, applied as 0 deg at check time.
     document = _document(relations=[{
         "id": "zone_keepout",
         "from": "gate.occupies_region.shared_zone",
         "to": "catcher.occupies_region.shared_zone",
         "type": "disjoint_windows",
     }])
-    with pytest.raises(UnsupportedFeature, match="ordering and fixed_offset") as excinfo:
-        prepare_plan(document)
-    assert "G5" in str(excinfo.value)
+    relation = prepare_plan(document)["line"]["relations"][0]
+    assert relation["from"] == {"task": "gate", "region": "shared_zone", "kind": "occupies_region"}
+    assert relation["to"] == {"task": "catcher", "region": "shared_zone", "kind": "occupies_region"}
+    assert "clearance_deg" not in relation
+    document["synchronization"]["relations"][0]["clearance"] = {"phase": 10}
+    assert prepare_plan(document)["line"]["relations"][0]["clearance_deg"] == 10.0

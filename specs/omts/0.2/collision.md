@@ -8,14 +8,18 @@
 > windows per selected candidate as data in `line_result.json`. The composed
 > timeline artifact has landed (G4): `omts timeline` writes `timeline.json`
 > with, per sampled master phase, each participating task's input phase and
-> body poses. Neither artifact gates the verdict. The adapter still rejects
-> relations over derived region events until they gate the verdict (G5).
+> body poses. Both artifacts remain data. Verification has landed (G5): the
+> adapter records relations over the derived region events, and `omts
+> verify-line` gates the line verdict on them -- `ordering` and
+> `fixed_offset` over enter/exit points, `contains` and `disjoint_windows`
+> over occupancy windows, under the semantics of section 6 (sampled
+> occupancy, never certified).
 
-**Status:** Draft; G1 through G4 of the staged plan in section 7 have landed
+**Status:** Draft; G1 through G5 of the staged plan in section 7 have landed
 (spec text, a pure-stdlib geometry kernel parity-tested against the
 engine's independent NumPy panel screening, document validation, verifier
-wiring that reports sampled occupancy windows as data, and the composed
-timeline artifact).
+wiring that reports sampled occupancy windows as data, the composed
+timeline artifact, and region-event relation gating in the line verifier).
 
 **Depends on:** OMTS v0.1 (`specs/omts/0.1/specification.md`), OMTS v0.2
 synchronization (`synchronization.md`).
@@ -83,7 +87,7 @@ must find it declared. Box bounds must increase componentwise; circle radii
 must be positive; all values finite. Regions are static in v0.2: a moving
 region is a mechanism body, not a region.
 
-## 4. Derived events (open question 2, draft answer)
+## 4. Derived events (open question 2, resolved)
 
 Path-fragment events are derived, not authored. For every declared region
 and every task with a collision body model, the timeline verifier computes
@@ -129,7 +133,7 @@ against it, at which point it is a relation, not an event. Authoring stays
 for semantics (handoffs, payloads, design intent); geometry timing stays
 derived.
 
-## 5. Sweep windows (open question 3, draft answer)
+## 5. Sweep windows (open question 3, resolved)
 
 A sweep window is an `occupies_region` window of a body in a region two
 mechanisms share. Collision timing uses the existing relation types, with no
@@ -155,6 +159,16 @@ window of `to`, circularly.
 - Derived-window relations are ordinary relations: hard mode gates the
   composed verdict, soft mode reports only. Undefined assembly at any sampled
   phase is an error, never a quiet pass -- occupancy is never guessed.
+- Point relations over derived boundary events are all-pairs: an `ordering`
+  or `fixed_offset` relation over `enters_region`/`exits_region` points must
+  hold for every occurrence pair of the two point sets, and a bound on an
+  event that never occurs (no windows, hence no boundary points) is an
+  error, never a quiet pass. Window relations are pairwise: `contains`
+  requires every `to` window to sit inside some `from` window with `margin`
+  on both sides (vacuously true when `to` has no windows; false when `from`
+  is empty and `to` is not), and `disjoint_windows` requires every window
+  pair to be disjoint by at least `clearance`, where touching counts as
+  overlap (vacuously true when either side has no windows).
 - The v0.1 per-task `path_constraints.keep_out_box` stays rejected by the
   adapter in this round. Mapping static obstacle boxes to regions, and
   engine-side search-time screening, are future work, taken up only if
@@ -187,9 +201,15 @@ window of `to`, circularly.
    applied-offset rule; the artifact is data-only and never gates the
    verdict, and undefined assembly at a sampled phase is an error, never a
    guessed pose.
-5. **G5:** line verification integration: derived windows feed events and
-   relations; `disjoint_windows` gates; corpus rerun on the synchronized
-   pair sharing one zone.
+5. **G5 (landed):** line verification integration: the adapter records
+   relations over derived region events (`ordering` and `fixed_offset` over
+   enter/exit points, `contains` and `disjoint_windows` over occupancy
+   windows), and `omts verify-line` gates the composed verdict on them with
+   the semantics of section 6; the anchor probe rotates a task's windows
+   and points along with its phases. The `omts propose-offsets` joint
+   search still excludes derived-event relations (fail-closed): offsets
+   for such lines are declared by hand and re-verified. The corpus rerun on
+   the synchronized pair sharing one zone remains the capstone exercise.
 
 ## 8. Open questions of this draft
 
