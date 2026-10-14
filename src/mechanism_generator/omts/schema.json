@@ -69,6 +69,13 @@
       },
       "default": []
     },
+    "regions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/region"
+      },
+      "default": []
+    },
     "tasks": {
       "type": "array",
       "minItems": 1,
@@ -1302,6 +1309,122 @@
         }
       }
     },
+    "region": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "shape"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "name": {
+          "type": "string"
+        },
+        "notes": {
+          "type": "string"
+        },
+        "shape": {
+          "type": "string",
+          "enum": [
+            "box",
+            "circle"
+          ]
+        },
+        "min": {
+          "$ref": "#/$defs/vector"
+        },
+        "max": {
+          "$ref": "#/$defs/vector"
+        },
+        "center": {
+          "$ref": "#/$defs/vector"
+        },
+        "radius": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      },
+      "oneOf": [
+        {
+          "properties": {
+            "shape": {
+              "const": "box"
+            }
+          },
+          "required": [
+            "min",
+            "max"
+          ]
+        },
+        {
+          "properties": {
+            "shape": {
+              "const": "circle"
+            }
+          },
+          "required": [
+            "center",
+            "radius"
+          ]
+        }
+      ]
+    },
+    "collisionRequirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "bodies"
+      ],
+      "properties": {
+        "bodies": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "links": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "thickness": {
+                  "type": "number",
+                  "minimum": 0,
+                  "default": 0
+                }
+              }
+            },
+            "carrier": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "width",
+                "depth"
+              ],
+              "properties": {
+                "width": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "depth": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                }
+              }
+            }
+          }
+        },
+        "steps": {
+          "type": "integer",
+          "minimum": 361,
+          "maximum": 72001,
+          "default": 720
+        },
+        "mode": {
+          "$ref": "#/$defs/constraintMode"
+        }
+      }
+    },
     "requirements": {
       "type": "object",
       "additionalProperties": false,
@@ -1388,6 +1511,9 @@
             "bounds",
             "carrier_size"
           ]
+        },
+        "collision": {
+          "$ref": "#/$defs/collisionRequirement"
         }
       }
     },

@@ -2,14 +2,15 @@
 
 > **Draft 0.2.0-collision.** This document grounds open questions 2 and 3 of
 > `synchronization.md` in a deliberately small collision model. It is a
-> specification draft for public review. No validation or adapter support
-> has landed yet: until stage G2 below is implemented, v0.2 documents MUST
-> NOT declare any field defined here, and validation rejects unknown
-> collision fields fail-closed.
+> specification draft for public review. Document validation has landed (G2): v0.2 documents may now declare
+> `regions` and `requirements.collision`, and validation checks them
+> fail-closed. Adapter and verifier support have not landed: the adapter
+> still rejects collision features and derived-event references at plan
+> time, and derived events are not yet computed (G3+).
 
-**Status:** Draft; G1 of the staged plan in section 7 (spec text plus a
-pure-stdlib geometry kernel, parity-tested against the engine's independent
-NumPy panel screening).
+**Status:** Draft; G1 and G2 of the staged plan in section 7 have landed
+(spec text, a pure-stdlib geometry kernel parity-tested against the
+engine's independent NumPy panel screening, and document validation).
 
 **Depends on:** OMTS v0.1 (`specs/omts/0.1/specification.md`), OMTS v0.2
 synchronization (`synchronization.md`).
@@ -160,12 +161,15 @@ window of `to`, circularly.
 
 ## 7. Staging (no new solver physics at any stage)
 
-1. **G1 (this draft):** spec text plus the pure-stdlib geometry kernel
+1. **G1 (landed):** spec text plus the pure-stdlib geometry kernel
    (`omts/geometry.py`): candidate parameters to per-phase world
    positions, region occupancy and window extraction, parity-tested against
    the engine's independent NumPy panel screening.
-2. **G2:** document validation: regions and collision bodies, semantic
-   checks, fail-closed rejection of undeclared references.
+2. **G2 (landed):** document validation: regions and collision bodies,
+   semantic checks, reserved id segments, fail-closed rejection of
+   undeclared references and of region events on tasks without collision
+   bodies. The adapter still rejects collision features at plan time
+   until G3.
 3. **G3 (verifier wiring):** the kernel reads candidate geometry from run
    manifests; derived windows are computed per selected candidate.
 4. **G4:** the composed timeline artifact promised by section 8 of
