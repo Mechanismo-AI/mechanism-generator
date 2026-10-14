@@ -4,6 +4,15 @@ Open tools for describing motion requirements and developing inspectable mechani
 designs. The long-term aim is to help designers create purpose-built, synchronized
 automation using open solvers, training code, and model weights.
 
+**In plain words.** A mechanism is the bar-and-joint geometry that turns one
+steady rotation into the motion a machine needs. You describe the motion you
+need in a written task document that a person can read and a program can
+check; the toolkit searches for four-bar linkages that satisfy it and records
+the evidence behind every candidate, so a result can be checked rather than
+trusted. The project's [community repository](https://github.com/Mechanismo-AI/mechanism-generator-community)
+states the mission, the timeline, and the standards contributions are
+reviewed against.
+
 **Current status: runnable four-bar research alpha with three-pose targets and OMTS v0.1 draft.**
 The package includes the R2.5c/R2.5b solver, task validation, and a strict OMTS
 adapter. Three Apache-2.0 proposal models are available as verified GitHub release
@@ -146,6 +155,9 @@ multi-mechanism synchronization are future capabilities. Reproducible training a
 broader evaluation support that development; released models remain ready to use.
 
 ## Contribute and license
+
+The [community repository](https://github.com/Mechanismo-AI/mechanism-generator-community)
+records the project's mission, its timeline, and its review standards.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md). Code, specification, schema, examples, and
 the three public model-weight exports are licensed under [Apache-2.0](LICENSE),
