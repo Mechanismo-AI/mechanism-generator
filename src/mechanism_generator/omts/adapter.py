@@ -259,7 +259,7 @@ def _line(data: dict) -> dict | None:
     if not sync:
         return None
     path = "$.synchronization"
-    _only(sync, "master_cycle_id period shared_input participants events relations applied_offsets", path)
+    _only(sync, "master_cycle_id period shared_input participants events relations applied_offsets offset_realization", path)
     if not str(data.get("version", "")).startswith("0.2"):
         raise UnsupportedFeature(f"{path}: v0.1 synchronization fields are not supported; express the line in a 0.2 document.")
     if "phase_relations" in sync:
@@ -279,6 +279,17 @@ def _line(data: dict) -> dict | None:
         if task_id not in task_target_ids:
             raise UnsupportedFeature(f"{op}: unknown task '{task_id}'.")
         applied_offsets[task_id] = float(_sync_quantity(quantity, op))
+    offset_realization = {}
+    for task_id, record in (sync.get("offset_realization") or {}).items():
+        rp = f"{path}.offset_realization.{task_id}"
+        if task_id not in task_target_ids:
+            raise UnsupportedFeature(f"{rp}: unknown task '{task_id}'.")
+        if task_id not in applied_offsets:
+            raise UnsupportedFeature(f"{rp}: task '{task_id}' declares no applied offset to realize.")
+        realization = {"method": record["method"]}
+        if "detail" in record:
+            realization["detail"] = str(record["detail"])
+        offset_realization[task_id] = realization
     events = []
     for i, event in enumerate(sync.get("events", [])):
         ep = f"{path}.events[{i}]"
@@ -340,6 +351,8 @@ def _line(data: dict) -> dict | None:
     }
     if applied_offsets:
         line["applied_offsets"] = applied_offsets
+    if offset_realization:
+        line["offset_realization"] = offset_realization
     return line
 
 

@@ -61,6 +61,34 @@ as-built only if the physical build realizes the offsets. The anchor probe
 (`--probe-anchors`) reports feasible offset intervals; `applied_offsets` is
 how a probe-chosen offset becomes first-class rather than diagnostic.
 
+### Physical realization record (v0.2)
+
+`synchronization.offset_realization` records how each declared offset is
+physically realized — the build fact behind the phase number:
+
+`yaml
+synchronization:
+  applied_offsets:
+    catcher: {phase: 25}
+  offset_realization:
+    catcher:
+      method: gear_train        # crank_phase | gear_train | coupling | other
+      detail: 60:12 spur pair, tooth index 7
+`
+
+Each entry names a task that declares an `applied_offsets` entry (there is
+nothing to realize otherwise) and carries a `method` from the fixed enum plus
+an optional free-form `detail` (gear ratio and tooth index, crank keyway
+angle, coupling orientation). The record is a build note, not a verification
+input: the verifier checks composed phases, not hardware. Verification under
+declared offsets is sufficient for v0.2, and a missing realization record
+never blocks or downgrades a `verified` verdict — but the gap is surfaced
+visibly: the adapter copies `offset_realization` into the plan line section,
+and `line_result.json` echoes an `offset_realization` summary
+(`recorded`, per-task records, and `unrecorded_tasks` when any declared
+offset lacks a realization) so a reviewer can see whether the as-built record
+exists before trusting the line as a build contract.
+
 ## 3. Ratioed participation
 
 `yaml
@@ -173,6 +201,9 @@ relations:
 - `contains` requires both endpoints to be windows, not point events.
 - `phase_reference` targets must exist in the referenced task.
 - `applied_offsets` keys must name declared tasks.
+- `offset_realization` keys must name tasks that declare `applied_offsets`, and
+  each `method` must be one of `crank_phase`, `gear_train`, `coupling`,
+  `other`.
 - A fixed-offset relation graph must not contain a cycle that makes the
   network over-constrained.
 - Phase or time quantities must match the document `independent_variable`, or
@@ -218,7 +249,10 @@ Downstream tooling can animate, collision-check, and export from it.
    combination of selected candidates. It writes `line_result.json` with
    per-combination statuses and achieved leads. Only positive-direction runs
    are verifiable in this first version; zero-selection outcomes are recorded,
-   not raised. Composed-timeline rule: every task's `phase_reference` target
+   not raised. The result also echoes the `offset_realization` build record
+   when offsets are declared (`offset_realization.recorded` and
+   `unrecorded_tasks` in `line_result.json`); the verdict itself never
+   depends on it. Composed-timeline rule: every task's `phase_reference` target
    is aligned at master phase 0 (then moved to its applied offset when one is
    declared), and tasks without a reference contribute raw phases (then
    rotated by any applied offset).
@@ -276,3 +310,17 @@ the synchronized-line example from rejected to preparable and verifiable.
 6. Is verifying a line under declared `applied_offsets` sufficient for v0.2,
    or must the plan also record how the offset is physically realized (gear
    ratio and tooth index, crank keyway) before a line can be called verified?
+
+   **Resolution (answered in v0.2):** verifying under declared
+   `applied_offsets` is sufficient, and the realization is recorded, not
+   gated. The verifier composes phases; it cannot inspect gears or keyways,
+   so making realization a gate would either fail-closed on unverifiable
+   claims or invite box-checking. Instead the document may declare
+   `synchronization.offset_realization` (section 2): a per-task `method`
+   (`crank_phase`, `gear_train`, `coupling`, `other`) plus free-form
+   `detail`. Validation requires realization keys to name tasks with
+   declared offsets; the adapter records them in the plan line section; and
+   `line_result.json` echoes an `offset_realization` summary whose
+   `unrecorded_tasks` makes any missing build record visible next to the
+   verdict. The verdict is unchanged either way — the record closes the
+   traceability gap without pretending the verifier can check hardware.
