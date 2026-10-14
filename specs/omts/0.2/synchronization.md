@@ -236,6 +236,20 @@ The timeline artifact is a machine-readable composed timeline: for sampled
 master phases, each participating mechanism's input phase and output pose.
 Downstream tooling can animate, collision-check, and export from it.
 
+The artifact has landed (G4 of the collision staging plan,
+`collision.md` section 7): `omts timeline <plan-dir> [--steps N]` writes
+`timeline.json` next to the plan. Per participating task and selected
+candidate it records the manifest geometry, assembly branch, anchoring
+shift, and, at every sampled master phase, the input crank phase and
+sampled body poses (ground pivots, crank pin, rocker pin, coupler point,
+and carrier corners when a carrier body is declared). Composition follows
+the same anchoring and applied-offset rule as `omts verify-line`: an
+anchored task's `phase_reference` target sits at master phase 0 (moved to
+its applied offset when one is declared), and tasks without a reference
+contribute raw phases (then rotated by any applied offset). The artifact is
+data-only and never gates the verdict; undefined assembly at a sampled
+phase is an error, never a guessed pose.
+
 When hard cross-task ordering relations exist, `line_result.json` also
 reports an `ordering_feasibility` block: per relation, the circular spread
 of the combinations' achieved leads against the ordering band width, with
@@ -303,6 +317,12 @@ every combination. It is a diagnostic; it never changes the verdict.
 S3 and S4 require no new solver physics: each mechanism is still synthesized
 independently, and synchronization is verified compositionally. This upgrades
 the synchronized-line example from rejected to preparable and verifiable.
+
+G4 of the collision staging plan (`collision.md` section 7) extends S4 with
+the composed timeline artifact: `omts timeline` writes `timeline.json`
+(section 8) from the same plan and run manifests, with the same anchoring
+and applied-offset rule as the verifier. It also requires no new solver
+physics, and it never gates the verdict.
 
 ## 10. Open questions for review
 
