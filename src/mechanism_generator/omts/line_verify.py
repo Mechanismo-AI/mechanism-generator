@@ -4,6 +4,17 @@ Reads a prepared run plan's line section and the achieved results of each
 per-task R2.5c run, then checks every event and relation on the composed
 timeline. This verifier never runs a solver and never modifies results.
 
+Collision occupancy (G3): when the plan's line section records regions and
+per-task collision body models, this verifier computes, for every selected
+candidate and declared region, the sampled phases where the declared bodies
+occupy the region -- raw windows in the task's own crank angle, plus composed
+windows under the same anchoring and applied-offset rule as the timeline.
+The section is data only: it is reported in `line_result.json` under
+`collision` with the sampled-geometry method tag, never gates the verdict,
+and its boundaries are sampled phases, not certified instants. Relations
+over the derived region events gate the verdict from G5; until then the
+adapter rejects them at plan time.
+
 Composed-timeline rule: every task's `phase_reference` target is aligned at
 master phase 0; tasks without a phase_reference contribute raw achieved
 phases. A task's reference target is therefore always at phase 0 and cannot
@@ -56,6 +67,7 @@ import math
 from pathlib import Path
 
 from .adapter import UnsupportedFeature
+from .geometry import METHOD as COLLISION_METHOD, PARAM_NAMES, occupancy_windows
 
 
 class LineVerificationError(ValueError):
@@ -70,8 +82,8 @@ def _load_plan(plan_dir: str | Path) -> dict:
     return plan
 
 
-def _achieved_candidates(plan: dict, plan_dir: Path, task_id: str, target_ids: list[str]) -> dict:
-    """Return {candidate_id: {target_id: anchored-unanchored achieved phase in deg}} for one task."""
+def _manifest_rows(plan: dict, plan_dir: Path, task_id: str) -> list[dict]:
+    """Selected candidate rows of a task's latest completed positive-direction run."""
     run = next((r for r in plan["runs"] if r["task_id"] == task_id), None)
     if run is None:
         raise LineVerificationError(f"Task '{task_id}' has no run in the plan.")
@@ -84,8 +96,13 @@ def _achieved_candidates(plan: dict, plan_dir: Path, task_id: str, target_ids: l
     direction = manifest["targets"][0].get("crank_direction", "positive")
     if direction != "positive":
         raise LineVerificationError(f"Task '{task_id}': crank_direction {direction!r} is not supported by the timeline verifier yet; use a positive-direction run.")
+    return manifest["targets"][0].get("selected", [])
+
+
+def _achieved_candidates(plan: dict, plan_dir: Path, task_id: str, target_ids: list[str]) -> dict:
+    """Return {candidate_id: {target_id: anchored-unanchored achieved phase in deg}} for one task."""
     candidates: dict[str, dict[str, float]] = {}
-    for row in manifest["targets"][0].get("selected", []):
+    for row in _manifest_rows(plan, plan_dir, task_id):
         phases = {}
         for index, target_id in enumerate(target_ids, start=1):
             phase = row.get(f"phase_{index}_deg")
@@ -94,6 +111,102 @@ def _achieved_candidates(plan: dict, plan_dir: Path, task_id: str, target_ids: l
             phases[target_id] = float(phase) % 360.0
         candidates[str(row["candidate_id"])] = phases
     return candidates
+
+
+def _candidate_geometry(row: dict, task_id: str) -> tuple[list[float], float]:
+    """Candidate parameter vector in PARAM_NAMES order plus its assembly branch sign."""
+    values = []
+    for name in PARAM_NAMES:
+        if name not in row:
+            raise LineVerificationError(f"Task '{task_id}': manifest row lacks '{name}'.")
+        values.append(float(row[name]))
+    if "branch_sign" not in row:
+        raise LineVerificationError(f"Task '{task_id}': manifest row lacks 'branch_sign'.")
+    return values, float(row["branch_sign"])
+
+
+def _collision_section(plan: dict, plan_dir: Path, line: dict, achieved: dict) -> dict | None:
+    """Sampled region occupancy per task, candidate, and region (data only).
+
+    Raw windows are computed in each task's own crank angle; composed windows
+    apply the same anchoring and applied-offset rule as the timeline. The
+    section never changes the verdict; relations over the derived events gate
+    from G5.
+    """
+    regions = line.get("regions")
+    if not regions:
+        return None
+    models = line.get("collision") or {}
+    offsets = line.get("applied_offsets") or {}
+    notes = []
+    if not models:
+        notes.append("No task declares a collision body model; no occupancy windows were computed.")
+    unreported = sorted(set(models) - set(achieved))
+    if unreported:
+        notes.append("No achieved results for the task(s) with collision body models: " + ", ".join(unreported) + ".")
+    tasks = {}
+    for task in sorted(set(models) & set(achieved)):
+        model = models[task]
+        reference = line["phase_reference"].get(task)
+        target_ids = run_target_ids(plan, task)
+        if reference is not None and reference not in target_ids:
+            raise LineVerificationError(f"Task '{task}': phase_reference target '{reference}' is not one of its recorded run targets.")
+        reference_index = target_ids.index(reference) + 1 if reference is not None else None
+        carrier = (model["carrier"]["width"], model["carrier"]["depth"]) if "carrier" in model else None
+        candidates = []
+        for row in _manifest_rows(plan, plan_dir, task):
+            candidate_id = str(row["candidate_id"])
+            if candidate_id not in achieved[task]:
+                continue
+            params, branch_sign = _candidate_geometry(row, task)
+            if reference is not None:
+                shift = offsets.get(task, 0.0) - float(row[f"phase_{reference_index}_deg"])
+            else:
+                shift = offsets.get(task, 0.0)
+            region_entries = {}
+            for region in regions:
+                region_id = region["id"]
+                try:
+                    windows = occupancy_windows(params, branch_sign, region, model["steps"],
+                                                thickness=model["thickness"], carrier=carrier)
+                except ValueError as exc:
+                    raise LineVerificationError(f"Task '{task}': candidate '{candidate_id}' region '{region_id}': {exc}") from exc
+                region_entries[region_id] = {
+                    "windows": windows,
+                    "enters_deg": [window["start_deg"] for window in windows],
+                    "exits_deg": [window["end_deg"] for window in windows],
+                    "composed_windows": [
+                        {"start_deg": (window["start_deg"] + shift) % 360.0,
+                         "end_deg": (window["end_deg"] + shift) % 360.0}
+                        for window in windows
+                    ],
+                    "composed_enters_deg": [(window["start_deg"] + shift) % 360.0 for window in windows],
+                    "composed_exits_deg": [(window["end_deg"] + shift) % 360.0 for window in windows],
+                }
+            candidates.append({"id": candidate_id, "regions": region_entries})
+        tasks[task] = {
+            "steps": model["steps"],
+            "mode": model["mode"],
+            "thickness": model["thickness"],
+            **({"carrier": model["carrier"]} if "carrier" in model else {}),
+            "candidates": candidates,
+        }
+    section = {
+        "method": COLLISION_METHOD,
+        "regions": [region["id"] for region in regions],
+        "tasks": tasks,
+        "note": (
+            "Data-only sampled occupancy (G3): raw windows are in each task's own crank angle; "
+            "composed windows apply the same anchoring and applied-offset rule as the timeline. "
+            "Relations over these derived events gate the verdict from G5; until then this section "
+            "reports data and never changes the verdict. Window boundaries are sampled phases, "
+            "not certified instants."
+        ),
+        "disclaimer": "Sampled occupancy, not certified: nothing is proven between samples; not collision, thickness, or machinery certification.",
+    }
+    if notes:
+        section["notes"] = notes
+    return section
 
 
 def _anchored(phases: dict[str, float], reference: str | None, target: str) -> float:
@@ -270,6 +383,7 @@ def verify_line(plan_dir: str | Path, probe: bool = False, probe_step_deg: float
         _write(plan_dir, result)
         return result
 
+    collision = _collision_section(plan, plan_dir, line, achieved)
     task_ids = sorted(achieved)
     combinations = []
     def walk(index: int, chosen: dict[str, str]) -> None:
@@ -296,7 +410,8 @@ def verify_line(plan_dir: str | Path, probe: bool = False, probe_step_deg: float
     passing = [c for c in combinations if c["status"] == "pass"]
     status = "verified" if passing else "failed"
     result = _result(plan, line, combinations, status,
-                     note=None if passing else "No combination of selected candidates satisfies every hard event and relation.")
+                     note=None if passing else "No combination of selected candidates satisfies every hard event and relation.",
+                     collision=collision)
     if probe:
         step = float(probe_step_deg)
         if not 0.0 < step <= 360.0:
@@ -383,7 +498,8 @@ def _ordering_feasibility(line: dict, combinations: list) -> dict | None:
     }
 
 
-def _result(plan: dict, line: dict, combinations: list, status: str, note: str | None) -> dict:
+def _result(plan: dict, line: dict, combinations: list, status: str, note: str | None,
+            collision: dict | None = None) -> dict:
     realization = _realization_summary(line)
     feasibility = _ordering_feasibility(line, combinations)
     return {
@@ -396,6 +512,7 @@ def _result(plan: dict, line: dict, combinations: list, status: str, note: str |
         **({"applied_offsets": line["applied_offsets"]} if line.get("applied_offsets") else {}),
         **({"offset_realization": realization} if realization is not None else {}),
         **({"ordering_feasibility": feasibility} if feasibility is not None else {}),
+        **({"collision": collision} if collision is not None else {}),
         "combination_count": len(combinations),
         "passing_combination_count": sum(c["status"] == "pass" for c in combinations),
         "combinations": combinations,

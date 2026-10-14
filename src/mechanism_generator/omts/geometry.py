@@ -29,6 +29,7 @@ import math
 
 METHOD = "sampled_collision_geometry_v1"
 PARAM_COUNT = 9
+PARAM_NAMES = ("l1", "l2", "l3", "l4", "S_ratio", "bar_length", "base_x", "base_y", "base_angle")
 MIN_STEPS = 361
 MAX_STEPS = 72001
 

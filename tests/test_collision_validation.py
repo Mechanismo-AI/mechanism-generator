@@ -190,9 +190,10 @@ def test_collision_steps_below_minimum():
     assert any("steps" in error for error in errors)
 
 
-def test_adapter_still_rejects_collision_features():
+def test_adapter_rejects_collision_features_without_synchronization():
     document = _collision_document()
     document.pop("synchronization")
     with pytest.raises(UnsupportedFeature) as excinfo:
         prepare_plan(document)
     assert "regions" in str(excinfo.value)
+    assert "synchronization line" in str(excinfo.value)
