@@ -13,10 +13,8 @@ from mechanism_generator.omts import DocumentError, validate_document
 from mechanism_generator.omts.adapter import UnsupportedFeature, prepare_plan, write_plan
 from mechanism_generator.omts.cli import main
 
-
 def option(run, flag):
     return run["arguments"][run["arguments"].index(flag) + 1]
-
 
 def test_independent_tasks_retain_different_requirements(task_document):
     second = copy.deepcopy(task_document["tasks"][0])
@@ -33,7 +31,6 @@ def test_independent_tasks_retain_different_requirements(task_document):
     assert option(runs[1], "--portfolio_bridge_perturbations") == "2"
     assert runs[0]["targets_file"] != runs[1]["targets_file"]
 
-
 def test_ordered_indices_control_csv_position_order(task_document, tmp_path):
     motion = task_document["tasks"][0]["motion"]
     motion["order_policy"] = "ordered"
@@ -49,18 +46,15 @@ def test_ordered_indices_control_csv_position_order(task_document, tmp_path):
         rows = list(csv.reader(stream))
     assert [float(value) for value in rows[1][1:]] == [0.5, 3.5, -6, 2, -2, 6]
 
-
 def test_stricter_equal_target_tolerance_is_enforced(task_document):
     for target in task_document["tasks"][0]["motion"]["targets"]:
         target["tolerance"]["position"] = 0.01
     assert float(option(prepare_plan(task_document)["runs"][0], "--max_point_error")) == 0.01
 
-
 def test_unequal_target_tolerances_are_rejected(task_document):
     task_document["tasks"][0]["motion"]["targets"][1]["tolerance"]["position"] = 0.01
     with pytest.raises(UnsupportedFeature, match="identical"):
         prepare_plan(task_document)
-
 
 @pytest.mark.parametrize("field,value", [
     ("max_mean_error", 0), ("max_point_error", 0)
@@ -69,7 +63,6 @@ def test_exact_path_requests_cannot_disable_checks(task_document, field, value):
     task_document["tasks"][0]["requirements"]["path"][field] = value
     with pytest.raises(UnsupportedFeature, match="disable checks"):
         prepare_plan(task_document)
-
 
 def test_semantic_validation_is_also_used_by_adapter(task_document, tmp_path):
     task_document["tasks"].append(copy.deepcopy(task_document["tasks"][0]))
@@ -99,7 +92,9 @@ def test_ground_constraints_are_never_silently_weakened(task_document, replaceme
     ("mechanism_search", "max_actuators", 0),
     ("mechanism_search", "bounds", {"l2": [1, 4]}),
     ("mechanism_search", "profiles", ["accuracy"]),
-    ("motion", "cycle", {"period": 1.2}),
+    # Not ("motion", "cycle", {"period": 1.2}): cycle.period is a whitelisted
+    # annotation the adapter accepts and the engine does not consume, so the
+    # adapter must not reject it.
     ("motion", "cycle", {"direction": "bidirectional"}),
     ("requirements", "compactness", {"mode": "hard", "max_link_ratio": 2}),
     ("requirements", "path", {"mode": "soft", "weight": 5}),
@@ -130,7 +125,6 @@ def test_units_and_outputs_are_checked(task_document, section, key, value):
     with pytest.raises(DocumentError):
         prepare_plan(task_document)
 
-
 def test_capabilities_policy_and_extensions_checked(task_document):
     for key, value in (("capabilities_required", ["dwell"]), ("unsupported_feature_policy", "ignore"), ("extensions", {"vendor.constraint": 1})):
         document = copy.deepcopy(task_document)
@@ -138,14 +132,12 @@ def test_capabilities_policy_and_extensions_checked(task_document):
         with pytest.raises(UnsupportedFeature):
             prepare_plan(document)
 
-
 def test_future_example_is_valid_but_cannot_be_adapted(future_document, tmp_path):
     assert validate_document(future_document) == []
     output = tmp_path / "plan"
     with pytest.raises(UnsupportedFeature):
         write_plan(future_document, output)
     assert not output.exists()
-
 
 def test_continuation_noise_and_output_flags_are_propagated(task_document):
     task = task_document["tasks"][0]
@@ -164,7 +156,6 @@ def test_continuation_noise_and_output_flags_are_propagated(task_document):
     assert "--portfolio_skip_release" in run["arguments"]
     assert "--enforce_follower_not_longest" in run["arguments"]
 
-
 def test_qualification_and_conflicting_controls(task_document):
     run = prepare_plan(task_document)["runs"][0]
     assert option(run, "--portfolio_guarantee_fixed_count") == "0"
@@ -179,7 +170,6 @@ def test_qualification_and_conflicting_controls(task_document):
     with pytest.raises(UnsupportedFeature, match="top_k conflicts"):
         prepare_plan(task_document)
 
-
 def test_plan_is_deterministic_portable_and_never_overwritten(task_document, tmp_path):
     before = copy.deepcopy(task_document)
     assert prepare_plan(task_document) == prepare_plan(copy.deepcopy(task_document))
@@ -192,7 +182,6 @@ def test_plan_is_deterministic_portable_and_never_overwritten(task_document, tmp
     with pytest.raises(FileExistsError):
         write_plan(task_document, output)
     assert plan_path.read_bytes() == original
-
 
 def test_generated_runner_uses_argument_arrays_and_anchored_paths(task_document, tmp_path):
     output = tmp_path / "plan with spaces $()"
@@ -230,7 +219,6 @@ def test_generated_runner_uses_argument_arrays_and_anchored_paths(task_document,
     result = subprocess.run([sys.executable, str(output / "run_r25c.py"), "--models-directory", str(models)], capture_output=True, text=True, env=env)
     assert result.returncode != 0
     assert "mismatched engine artifact" in result.stderr
-
 
 def test_cli_distinguishes_validation_from_adaptation(tmp_path, future_document, capsys):
     source = tmp_path / "future.json"

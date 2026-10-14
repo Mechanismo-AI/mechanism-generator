@@ -19,7 +19,7 @@
     },
     "version": {
       "type": "string",
-      "pattern": "^0\\.1(?:\\.0)?$"
+      "pattern": "^0\\.(?:1(?:\\.0)?|2(?:\\.0)?)$"
     },
     "task_set_id": {
       "$ref": "#/$defs/identifier"
@@ -815,6 +815,9 @@
         },
         "speed_profile_ref": {
           "$ref": "#/$defs/identifier"
+        },
+        "phase_reference": {
+          "$ref": "#/$defs/identifier"
         }
       }
     },
@@ -1594,14 +1597,44 @@
           "$ref": "#/$defs/numericRange"
         },
         "tolerance": {
-          "type": "number",
-          "minimum": 0
+          "oneOf": [
+            {
+              "type": "number",
+              "minimum": 0
+            },
+            {
+              "$ref": "#/$defs/syncQuantity"
+            }
+          ]
         },
         "mode": {
           "$ref": "#/$defs/constraintMode"
         },
         "notes": {
           "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "co_active",
+            "handoff",
+            "co_location"
+          ]
+        },
+        "window": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "phase_range": {
+              "$ref": "#/$defs/numericRange"
+            },
+            "time_range": {
+              "$ref": "#/$defs/numericRange"
+            }
+          }
+        },
+        "payload_ref": {
+          "$ref": "#/$defs/identifier"
         }
       }
     },
@@ -1661,6 +1694,25 @@
         "extensions": {
           "type": "object",
           "additionalProperties": true
+        },
+        "participants": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/syncParticipant"
+          }
+        },
+        "relations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/syncRelation"
+          }
+        },
+        "applied_offsets": {
+          "type": "object",
+          "description": "Declared master-phase offsets per task (S5 v0.1), each unit-quantified: {task: {phase: deg}}. Positive rotates the task's events later in the master cycle.",
+          "additionalProperties": {
+            "$ref": "#/$defs/syncQuantity"
+          }
         }
       }
     },
@@ -1725,6 +1777,118 @@
             "structurally_evaluated",
             "prototype_validated"
           ]
+        }
+      }
+    },
+    "syncQuantity": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "phase": {
+          "type": "number"
+        },
+        "time": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "oneOf": [
+        {
+          "required": [
+            "phase"
+          ]
+        },
+        {
+          "required": [
+            "time"
+          ]
+        }
+      ]
+    },
+    "syncParticipant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "task"
+      ],
+      "properties": {
+        "task": {
+          "$ref": "#/$defs/identifier"
+        },
+        "ratio": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "prefixItems": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "type": "integer",
+              "minimum": 1
+            }
+          ]
+        }
+      }
+    },
+    "syncRelation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "from",
+        "to",
+        "type"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "from": {
+          "type": "string",
+          "minLength": 1
+        },
+        "to": {
+          "type": "string",
+          "minLength": 1
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "fixed_offset",
+            "ordering",
+            "contains",
+            "disjoint_windows"
+          ]
+        },
+        "offset": {
+          "$ref": "#/$defs/syncQuantity"
+        },
+        "tolerance": {
+          "$ref": "#/$defs/syncQuantity"
+        },
+        "min_lead": {
+          "$ref": "#/$defs/syncQuantity"
+        },
+        "max_lead": {
+          "$ref": "#/$defs/syncQuantity"
+        },
+        "margin": {
+          "$ref": "#/$defs/syncQuantity"
+        },
+        "clearance": {
+          "$ref": "#/$defs/syncQuantity"
+        },
+        "occurrence_index": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "mode": {
+          "$ref": "#/$defs/constraintMode"
+        },
+        "notes": {
+          "type": "string"
         }
       }
     }

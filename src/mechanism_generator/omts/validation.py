@@ -161,6 +161,9 @@ def semantic_errors(data: dict) -> list[str]:
         targets = motion["targets"]
         _duplicates(targets, path + ".motion.targets", errors)
         target_ids = {target["id"] for target in targets}
+        cycle = motion.get("cycle", {})
+        if "phase_reference" in cycle and cycle["phase_reference"] not in target_ids:
+            errors.append(f"{path}.motion.cycle.phase_reference: unknown target '{cycle['phase_reference']}'.")
         for j, target in enumerate(targets):
             tp = f"{path}.motion.targets[{j}]"
             reference(target, "payload_ref", payload_ids, tp)
@@ -214,11 +217,102 @@ def semantic_errors(data: dict) -> list[str]:
             if tx.get(key, 0) > angle_limit:
                 errors.append(f"{path}.requirements.transmission.{key}: exceeds {angle_limit:g} {data['units']['angle']}.")
     sync = data.get("synchronization", {})
+    is_v02 = str(data.get("version", "")).startswith("0.2")
+    task_by_id = {task["id"]: task for task in tasks}
+    task_targets = {task["id"]: {target["id"] for target in task["motion"]["targets"]} for task in tasks}
+    ratios = {}
     _duplicates(sync.get("events", []), "$.synchronization.events", errors)
+    _duplicates(sync.get("relations", []), "$.synchronization.relations", errors)
+    participants = sync.get("participants", [])
+    if len({entry["task"] for entry in participants}) != len(participants):
+        errors.append("$.synchronization.participants: each task may appear at most once.")
+    for i, entry in enumerate(participants):
+        if entry["task"] not in task_ids:
+            errors.append(f"$.synchronization.participants[{i}].task: unknown task '{entry['task']}'.")
+        else:
+            ratios[entry["task"]] = tuple(entry.get("ratio", [1, 1]))
+    for task_id in sync.get("applied_offsets", {}):
+        if task_id not in task_ids:
+            errors.append(f"$.synchronization.applied_offsets.{task_id}: unknown task '{task_id}'.")
+    ratioed = {entry["task"] for entry in participants if "ratio" in entry}
+    master_period = sync.get("period")
+    if master_period:
+        for i, task in enumerate(tasks):
+            period = task["motion"].get("cycle", {}).get("period")
+            if period is None:
+                continue
+            numerator, denominator = ratios.get(task["id"], (1, 1))
+            if not math.isclose(period, master_period * denominator / numerator, rel_tol=1e-9, abs_tol=1e-9):
+                errors.append(f"$.tasks[{i}].motion.cycle.period: {period} does not match the master period under ratio [{numerator}, {denominator}].")
+    sync_event_ids = {event["id"] for event in sync.get("events", [])}
+
+    def resolve_event(ref, path):
+        """Classify an event reference as (kind, is_window); records errors for unknown refs."""
+        if ref in task_ids:
+            return "task", None
+        if ref in sync_event_ids:
+            event = next(e for e in sync["events"] if e["id"] == ref)
+            return "event", "window" in event or "phase_range" in event or "time_range" in event
+        parts = str(ref).split(".")
+        if len(parts) == 3 and parts[0] in task_targets and parts[1] in task_targets[parts[0]]:
+            if parts[2] not in ("reached", "dwell"):
+                errors.append(f"{path}: event kind must be 'reached' or 'dwell', received '{parts[2]}'.")
+                return None, None
+            target = next(t for t in task_by_id[parts[0]]["motion"]["targets"] if t["id"] == parts[1])
+            if parts[2] == "dwell" and "dwell" not in target:
+                errors.append(f"{path}: target '{parts[0]}.{parts[1]}' declares no dwell.")
+                return None, None
+            return "target", parts[2] == "dwell"
+        errors.append(f"{path}: unknown task, target, or event '{ref}'.")
+        return None, None
+
     for i, event in enumerate(sync.get("events", [])):
+        ep = f"$.synchronization.events[{i}]"
         for participant in event["participants"]:
-            if participant not in task_ids:
-                errors.append(f"$.synchronization.events[{i}]: unknown task '{participant}'.")
+            if resolve_event(participant, f"{ep}.participants")[0] == "task" and is_v02:
+                errors.append(f"{ep}.participants: v0.2 events reference task events ('task.target.reached'), not bare task IDs.")
+        if "payload_ref" in event:
+            reference(event, "payload_ref", payload_ids, ep)
+        tolerance = event.get("tolerance")
+        if is_v02 and isinstance(tolerance, (int, float)) and not isinstance(tolerance, bool):
+            errors.append(f"{ep}.tolerance: v0.2 requires a unit-quantified value such as {{'phase': 2}}.")
+    offset_graph: dict[str, list[str]] = {}
+    for i, relation in enumerate(sync.get("relations", [])):
+        rp = f"$.synchronization.relations[{i}]"
+        rtype = relation["type"]
+        for key in ("from", "to"):
+            is_window = resolve_event(relation[key], f"{rp}.{key}")[1]
+            if rtype in ("contains", "disjoint_windows") and is_window is not True:
+                errors.append(f"{rp}.{key}: {rtype} requires a window event (a dwell or an event window).")
+        if rtype == "ordering":
+            low, high = relation.get("min_lead", {}), relation.get("max_lead", {})
+            for unit in ("phase", "time"):
+                if unit in low and unit in high and low[unit] > high[unit]:
+                    errors.append(f"{rp}: min_lead must not exceed max_lead.")
+        index = relation.get("occurrence_index")
+        if index is not None:
+            bases = {str(relation[key]).split(".")[0] for key in ("from", "to")}
+            if not bases & ratioed:
+                errors.append(f"{rp}.occurrence_index: requires a ratioed participant task.")
+            for base in bases & ratioed:
+                if not 0 <= index < ratios[base][0]:
+                    errors.append(f"{rp}.occurrence_index: must be below the {ratios[base][0]} occurrence(s) of '{base}' per master cycle.")
+        if rtype == "fixed_offset":
+            offset_graph.setdefault(str(relation["from"]), []).append(str(relation["to"]))
+
+    def reaches_start(start):
+        visited, stack = {start}, [start]
+        while stack:
+            for nxt in offset_graph.get(stack.pop(), []):
+                if nxt == start:
+                    return True
+                if nxt not in visited:
+                    visited.add(nxt)
+                    stack.append(nxt)
+        return False
+
+    if any(reaches_start(node) for node in offset_graph):
+        errors.append("$.synchronization.relations: fixed_offset relations must not form a cycle.")
     for i, relation in enumerate(sync.get("phase_relations", [])):
         for key in ("from_task", "to_task"):
             reference(relation, key, task_ids, f"$.synchronization.phase_relations[{i}]")

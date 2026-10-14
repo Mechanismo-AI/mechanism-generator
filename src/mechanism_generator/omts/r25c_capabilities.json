@@ -4,7 +4,9 @@
   "status": "draft_with_packaged_engine",
   "omts_versions": [
     "0.1",
-    "0.1.0"
+    "0.1.0",
+    "0.2",
+    "0.2.0"
   ],
   "supports": [
     "planar_2d",
@@ -33,7 +35,8 @@
     "candidate_lineage",
     "target_orientation",
     "sampled_panel_containment",
-    "tolerance_aware_pose_initialization"
+    "tolerance_aware_pose_initialization",
+    "synchronized_run_preparation"
   ],
   "unsupported": [
     "spatial_3d",
@@ -66,7 +69,8 @@
     "Three planar target orientations: tool frame at P with directed +x parallel to coupler A-to-B in world XY; default 5 degree tolerance per target, individually configurable.",
     "Orientation is constrained only at the same three selected target phases; no mounting-angle variable, intermediate orientation path, timing or dwell.",
     "Pose tasks attempt 4096 nominal and 65536 angular-tolerance dyad samples by default, each bounded at 262144; each branch retains up to six seeds and their refined children. Budgets are configurable, including zero to disable a branch.",
-    "Optional rectangular panel screening includes fixed pivots, link centrelines and a rectangular carrier centred on P, width along A-to-B. Checks sample the complete crank turn before seed truncation and at final qualification. No continuous containment, collision, thickness or manufacturing guarantee."
+    "Optional rectangular panel screening includes fixed pivots, link centrelines and a rectangular carrier centred on P, width along A-to-B. Checks sample the complete crank turn before seed truncation and at final qualification. No continuous containment, collision, thickness or manufacturing guarantee.",
+    "v0.2 documents adapt only when every task fits the R2.5c profile and synchronization is preparable: 1:1 participants, co_active events with phase windows, and ordering or fixed_offset relations between target-reached events with phase-quantified values. The line is recorded for post-hoc timeline verification; ratioed participation, dwell windows, handoffs, and time-quantified values are rejected."
   ],
   "expected_artifacts": {
     "balanced.safetensors": "72a20f1f6828686c18100b3f5c7f913161b6042cfd9ea3baac15042d1b9fa8a0",

@@ -1,0 +1,196 @@
+spec: open-mechanism-task
+version: 0.2.0
+task_set_id: synchronized_line_v02_draft
+name: Synchronized line, v0.2 draft fields
+description: >-
+  Illustrative forward-looking OMTS v0.2 example exercising the draft
+  synchronization extension: ratioed participation, event-level relations
+  with free ordering, dwell containment, and a payload handoff. This file
+  targets the v0.2 draft specification and is rejected by the current v0.1
+  validator and R2.5c adapter. It is a future task contract, not a runnable
+  demo.
+capabilities_required:
+  - planar_2d
+  - cyclic_motion
+  - ordered_targets
+  - target_orientation
+  - dwell
+  - synchronized_tasks
+  - ratioed_synchronization
+  - event_relations
+  - payload_loads
+unsupported_feature_policy: error
+
+units:
+  length: mm
+  angle: deg
+  time: s
+  mass: kg
+  force: N
+  torque: N_m
+
+coordinate_system:
+  frame_id: line_frame
+  dimension: 2
+  handedness: right
+  axes:
+    x: conveyor_direction
+    y: up
+  origin_description: Lower-left corner of the tabletop machine base.
+  gravity: [0.0, -9806.65]
+
+payloads:
+  - id: workpiece
+    name: Demonstration workpiece
+    mass: 0.25
+    center_of_mass: [0.0, 0.0]
+    interface_description: Two-pin nest with passive retention.
+
+synchronization:
+  master_cycle_id: line_shaft
+  period: 1.2
+  participants:
+    - task: transfer
+    - task: clamp
+    - task: indexer
+      ratio: [1, 4]
+  events:
+    - id: part_handoff
+      type: handoff
+      participants: [transfer.place.reached, clamp.closed.reached]
+      window: {phase_range: [145, 155]}
+      tolerance: {phase: 2}
+      payload_ref: workpiece
+      mode: hard
+  relations:
+    - id: clamp_before_transfer_pick
+      from: clamp.closed.reached
+      to: transfer.pick.reached
+      type: ordering
+      min_lead: {phase: 15}
+      max_lead: {phase: 90}
+      mode: hard
+    - id: clamp_holds_during_place
+      from: clamp.closed.dwell
+      to: transfer.place.dwell
+      type: contains
+      margin: {phase: 5}
+      mode: hard
+    - id: indexer_after_handoff
+      from: part_handoff
+      to: indexer.index.reached
+      type: ordering
+      min_lead: {phase: 20}
+      max_lead: {phase: 120}
+      mode: soft
+      occurrence_index: 0
+
+tasks:
+  - id: transfer
+    name: Pick-transfer-place arm
+    motion:
+      mode: cyclic
+      order_policy: fixed_timing
+      cycle:
+        period: 1.2
+        phase_reference: pick
+      targets:
+        - id: pick
+          position: [120.0, 70.0]
+          orientation:
+            type: planar_angle
+            value: 0
+          occurrence:
+            phase: 70
+            order_index: 0
+          tolerance:
+            position: 0.5
+            orientation: 2
+        - id: place
+          position: [410.0, 80.0]
+          orientation:
+            type: planar_angle
+            value: 0
+          occurrence:
+            phase_range: [245, 265]
+            order_index: 1
+          tolerance:
+            position: 0.5
+            orientation: 2
+          dwell:
+            phase_span: 25
+            max_position_drift: 0.35
+            max_orientation_drift: 1.5
+            mode: hard
+          payload_ref: workpiece
+    mechanism_search:
+      allowed_topologies: [four_bar]
+      max_dof: 1
+      max_actuators: 1
+      assembly_branches: [open, crossed]
+      profiles: [accuracy, balanced, transmission]
+
+  - id: clamp
+    name: Holding clamp
+    motion:
+      mode: cyclic
+      order_policy: fixed_timing
+      cycle:
+        period: 1.2
+        phase_reference: closed
+      targets:
+        - id: closed
+          position: [415.0, 78.0]
+          orientation:
+            type: planar_angle
+            value: 90
+          occurrence:
+            phase_range: [130, 150]
+            order_index: 0
+          tolerance:
+            position: 0.5
+            orientation: 3
+          dwell:
+            phase_span: 120
+            max_position_drift: 0.25
+            max_orientation_drift: 1.0
+            mode: hard
+        - id: open
+          position: [415.0, 95.0]
+          occurrence:
+            phase: 290
+            order_index: 1
+          tolerance:
+            position: 0.5
+    mechanism_search:
+      allowed_topologies: [four_bar, slider_crank]
+      max_dof: 1
+      max_actuators: 1
+      assembly_branches: [open]
+      profiles: [accuracy, transmission]
+
+  - id: indexer
+    name: Line indexer (every fourth cycle)
+    motion:
+      mode: cyclic
+      order_policy: ordered
+      cycle:
+        period: 4.8
+      targets:
+        - id: index
+          position: [60.0, 40.0]
+          orientation:
+            type: planar_angle
+            value: 0
+          occurrence:
+            free: true
+            order_index: 0
+          tolerance:
+            position: 0.5
+            orientation: 2
+    mechanism_search:
+      allowed_topologies: [four_bar]
+      max_dof: 1
+      max_actuators: 1
+      assembly_branches: [open, crossed]
+      profiles: [accuracy, balanced]
