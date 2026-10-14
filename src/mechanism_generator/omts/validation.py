@@ -223,6 +223,11 @@ def semantic_errors(data: dict) -> list[str]:
     ratios = {}
     _duplicates(sync.get("events", []), "$.synchronization.events", errors)
     _duplicates(sync.get("relations", []), "$.synchronization.relations", errors)
+    if is_v02 and "phase_relations" in sync:
+        errors.append(
+            "$.synchronization.phase_relations: v0.2 documents must use 'relations'; "
+            "'phase_relations' is deprecated in v0.2 and removed in 1.0."
+        )
     participants = sync.get("participants", [])
     if len({entry["task"] for entry in participants}) != len(participants):
         errors.append("$.synchronization.participants: each task may appear at most once.")
