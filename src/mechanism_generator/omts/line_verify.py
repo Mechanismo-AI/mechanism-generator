@@ -19,6 +19,14 @@ via the document's `offset_realization` and echoed in `line_result.json`
 (`recorded`, per-task records, `unrecorded_tasks`) — a build note that
 never changes the verdict.
 
+Ordering feasibility precheck: `line_result.json` reports, for each hard
+cross-task ordering relation, the circular spread of the combinations'
+achieved leads against the relation's band width, with `phasing_cannot_fix`
+marking relations that no shared phasing can satisfy for every combination
+(constant phasing shifts every combination's lead by the same amount, so the
+family is rigid and slide-only). The precheck is a necessary-condition
+diagnostic that never changes the verdict.
+
 The optional anchor probe (`probe=True`; CLI: `omts verify-line
 --probe-anchors`) is a diagnostic sweep toward S5: for each task in
 isolation, it asks which constant master-phase offsets would make at least
@@ -317,8 +325,67 @@ def _realization_summary(line: dict) -> dict | None:
     }
 
 
+def _circular_spread(values: list[float]) -> float:
+    """Shortest arc (deg) containing every value; 0.0 for fewer than two distinct values."""
+    points = sorted({value % 360.0 for value in values})
+    if len(points) <= 1:
+        return 0.0
+    gaps = [b - a for a, b in zip(points, points[1:])]
+    gaps.append(points[0] + 360.0 - points[-1])
+    return 360.0 - max(gaps)
+
+
+def _ordering_feasibility(line: dict, combinations: list) -> dict | None:
+    """Per-relation phasing feasibility for hard cross-task ordering relations.
+
+    A constant per-task phasing shifts every candidate combination's achieved
+    lead for a cross-task ordering relation by the same amount (the offset
+    difference), so the lead family is rigid and slide-only: a shared phasing
+    can satisfy the relation for every combination only when the combinations'
+    leads fit inside one ordering band. The spread is measured circularly.
+    `phasing_cannot_fix` is a necessary condition, not a sufficient one, and
+    never changes the verdict. Same-task ordering relations are excluded:
+    their leads are phasing-invariant and their per-combination statuses
+    already report the exact outcome.
+    """
+    cross = [
+        relation for relation in line["relations"]
+        if relation["type"] == "ordering" and relation.get("mode", "hard") == "hard"
+        and relation["from"]["task"] != relation["to"]["task"]
+    ]
+    if not cross or not combinations:
+        return None
+    entries = []
+    for relation in cross:
+        leads = [
+            next(item["achieved_lead_deg"] for item in combo["relations"] if item["id"] == relation["id"])
+            for combo in combinations
+        ]
+        band = relation["max_lead_deg"] - relation["min_lead_deg"]
+        spread = _circular_spread(leads)
+        entries.append({
+            "id": relation["id"],
+            "lead_spread_deg": round(spread, 6),
+            "band_width_deg": round(band, 6),
+            "phasing_cannot_fix": spread > band,
+        })
+    return {
+        "relations": entries,
+        "note": (
+            "Per-relation phasing feasibility for hard cross-task ordering relations: constant "
+            "per-task phasing shifts every combination's achieved lead by the same amount, so a "
+            "shared phasing can satisfy the relation for every combination only when the leads' "
+            "circular spread fits the ordering band. phasing_cannot_fix=true marks relations no "
+            "offset assignment can satisfy for every combination (candidate-level change needed). "
+            "A necessary-condition diagnostic that never changes the verdict; the authoritative "
+            "search remains `omts propose-offsets`."
+        ),
+    }
+
+
 def _result(plan: dict, line: dict, combinations: list, status: str, note: str | None) -> dict:
     realization = _realization_summary(line)
+    feasibility = _ordering_feasibility(line, combinations)
     return {
         "line_verification_version": 1,
         "task_set_id": plan["task_set_id"],
@@ -328,6 +395,7 @@ def _result(plan: dict, line: dict, combinations: list, status: str, note: str |
         "phase_reference": line["phase_reference"],
         **({"applied_offsets": line["applied_offsets"]} if line.get("applied_offsets") else {}),
         **({"offset_realization": realization} if realization is not None else {}),
+        **({"ordering_feasibility": feasibility} if feasibility is not None else {}),
         "combination_count": len(combinations),
         "passing_combination_count": sum(c["status"] == "pass" for c in combinations),
         "combinations": combinations,

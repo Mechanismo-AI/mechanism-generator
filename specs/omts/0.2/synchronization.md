@@ -236,6 +236,12 @@ The timeline artifact is a machine-readable composed timeline: for sampled
 master phases, each participating mechanism's input phase and output pose.
 Downstream tooling can animate, collision-check, and export from it.
 
+When hard cross-task ordering relations exist, `line_result.json` also
+reports an `ordering_feasibility` block: per relation, the circular spread
+of the combinations' achieved leads against the ordering band width, with
+`phasing_cannot_fix` marking relations no shared phasing can satisfy for
+every combination. It is a diagnostic; it never changes the verdict.
+
 ## 9. Implementation staging
 
 1. **S1 — Specification draft.** This document.
@@ -263,7 +269,12 @@ Downstream tooling can animate, collision-check, and export from it.
    depends on it. Composed-timeline rule: every task's `phase_reference` target
    is aligned at master phase 0 (then moved to its applied offset when one is
    declared), and tasks without a reference contribute raw phases (then
-   rotated by any applied offset).
+   rotated by any applied offset). The result also reports an ordering
+   feasibility precheck (`ordering_feasibility`): for each hard cross-task
+   ordering relation, the circular spread of the combinations' achieved
+   leads against the relation's band width, with `phasing_cannot_fix` when
+   no shared phasing can satisfy it for every combination — a diagnostic
+   that never changes the verdict.
 5. **S5 — Joint search.** Free offsets and anchors become search variables.
    Its first steps are implemented: `omts verify-line --probe-anchors`
    rotates one task's composed phases across the full master cycle at a
@@ -318,6 +329,32 @@ the synchronized-line example from rejected to preparable and verifiable.
 4. For free `ordering` leads on fixed-timing tasks, does the existing ordered
    target-phase machinery leave the solver enough freedom for S4 to be useful
    before S5 exists?
+
+   **Resolution (answered in v0.2):** yes — with evidence, not new
+   machinery. The question asked whether S4 was useful before S5 existed;
+   S5 now exists (declared `applied_offsets`, the anchor probe, and the
+   joint offset solver), and the corpus studies behind this extension
+   show that ordering freedom on fixed-timing tasks comes almost
+   entirely from phasing: a constant per-task offset shifts every
+   candidate combination's achieved lead for a cross-task ordering
+   relation by the same amount (the offset difference), so the lead
+   family is rigid and slide-only. That freedom is real — lines with
+   near-miss ordering failures verify under a phasing alone, and joint
+   search reaches solutions single-task probes cannot — but bounded:
+   when the combinations' achieved leads are spread wider than the
+   ordering band, no shared phasing can satisfy the relation for every
+   combination, and the honest response is data, not more ordering
+   machinery. S4 therefore gains no new ordering machinery; instead
+   `line_result.json` reports a per-relation ordering feasibility
+   precheck (`ordering_feasibility`): for each hard cross-task ordering
+   relation, the circular spread of the combinations' achieved leads
+   against the relation's band width, with `phasing_cannot_fix` marking
+   relations that no offset assignment can satisfy for every
+   combination. The precheck is a necessary-condition diagnostic that
+   never changes the verdict; the authoritative search remains `omts
+   propose-offsets`. Same-task ordering relations are excluded: their
+   leads are phasing-invariant, and their per-combination statuses
+   already report the exact outcome.
 5. Should the anchor probe's feasible intervals become an input to S5 joint
    search, or remain a human-facing diagnostic only?
 
