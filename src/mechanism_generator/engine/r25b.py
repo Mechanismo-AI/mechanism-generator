@@ -353,6 +353,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--panel_pivot_clearance", type=float, default=0.)
     parser.add_argument("--panel_steps", type=int, default=7201,
                         help="Full-turn sampled panel containment phases (361 to 72001); not a collision certificate")
+    parser.add_argument("--zone_screen", type=str, default=None,
+                        help="Path to a zone screen sidecar JSON; sampled per-candidate occupancy screening at qualification (361 to 72001 phases); not a collision certificate")
     parser.add_argument("--top_k", type=int, default=5)
     parser.add_argument("--dedup_parameter_threshold", type=float, default=0.025)
     parser.add_argument("--dedup_curve_threshold", type=float, default=0.025)
@@ -372,6 +374,11 @@ def validate_args(parser: argparse.ArgumentParser, args: argparse.Namespace) -> 
     from . import panel
     try:
         panel.configuration(args)
+    except ValueError as error:
+        parser.error(str(error))
+    from . import zone_screen
+    try:
+        zone_screen.configuration(args)
     except ValueError as error:
         parser.error(str(error))
     if args.target_orientations_deg is None:
@@ -2184,6 +2191,10 @@ def evaluate_selected_candidate(
     panel_config = panel.configuration(args)
     if panel_config:
         record.update(panel.screen(params_np, start.branch_sign, panel_config))
+    from . import zone_screen
+    zone_config = zone_screen.configuration(args)
+    if zone_config:
+        record.update(zone_screen.screen(params_np, start.branch_sign, zone_config))
     return record
 
 def flat_candidate_row(candidate: Dict[str, Any]) -> Dict[str, Any]:
@@ -2323,6 +2334,7 @@ def apply_shared_candidate_qualification(
         )
         orientation_ok = (not has_pose_targets(args)) or bool(candidate.get("orientation_acceptable", False))
         panel_ok = getattr(args, "panel_bounds", None) is None or bool(candidate.get("panel_acceptable", False))
+        zone_ok = getattr(args, "zone_screen", None) is None or bool(candidate.get("zone_screen_acceptable", False))
         engineering_ok = bool(path_ok and orientation_ok and panel_ok and target_tx_ok and global_tx_ok and robustness_ok and compactness_ok)
         target_selection_ok = bool(
             args.minimum_target_transmission <= 0.0
@@ -2332,7 +2344,7 @@ def apply_shared_candidate_qualification(
             args.minimum_global_transmission <= 0.0
             or candidate["global_angle_min_deg"] + 1e-12 >= args.minimum_global_transmission
         )
-        selection_ok = bool(path_ok and orientation_ok and panel_ok and target_selection_ok and global_selection_ok and robustness_ok and compactness_ok)
+        selection_ok = bool(path_ok and orientation_ok and panel_ok and zone_ok and target_selection_ok and global_selection_ok and robustness_ok and compactness_ok)
         if engineering_ok:
             level = "engineering_acceptable"
         elif selection_ok:
@@ -2341,6 +2353,8 @@ def apply_shared_candidate_qualification(
             level = "path_acceptable_but_orientation_failed"
         elif path_ok and not panel_ok:
             level = "path_acceptable_but_panel_failed"
+        elif path_ok and not zone_ok:
+            level = "path_acceptable_but_zone_screen_failed"
         elif path_ok and not robustness_ok:
             level = "path_acceptable_but_robustness_failed"
         elif path_ok and not compactness_ok:
@@ -2525,7 +2539,7 @@ def save_candidate_artifacts(
         crank_direction=np.asarray(candidate.get("crank_direction", "positive")),
         phases_rad=np.asarray(candidate["phases_rad"], dtype=float),
         theta=np.asarray(candidate["dense_theta"], dtype=float),
-        **{key: np.asarray(value) for key, value in candidate.items() if key.startswith(("panel_", "carrier_"))},
+        **{key: np.asarray(value) for key, value in candidate.items() if key.startswith(("panel_", "carrier_", "zone_screen_"))},
         **{f"dense_{key}": value for key, value in dense.items()},
         **{f"phase_{key}": value for key, value in phase.items()},
     )
