@@ -8,8 +8,10 @@
 
 **Status:** Draft; S2 (document validation), S3 (composed run plans), and S4
 (timeline verification) are implemented for the preparable subset described
-below, together with the anchor-probe diagnostic and applied master-phase
-offsets (first S5 steps). Full S5 joint search is future work.
+below, together with S5: the anchor-probe diagnostic, applied master-phase
+offsets, and the joint offset search (`omts propose-offsets`). From G5 of the
+collision staging plan (`collision.md`), relations over derived region events
+gate the S4 verdict; section 10 records the resolved open questions.
 
 **Depends on:** OMTS v0.1 (`specs/omts/0.1/specification.md`)
 
@@ -266,8 +268,11 @@ every combination. It is a diagnostic; it never changes the verdict.
    per-task runs and records preparable synchronization in a `line` plan
    section with `verification: pending_timeline_verification`. Preparable
    means: 1:1 participants, `co_active` events with phase windows, `ordering`
-   or `fixed_offset` relations between target-reached events with
-   phase-quantified values, and phase-quantified `applied_offsets`. Ratioed
+   or `fixed_offset` relations between point events (target-reached or,
+   from G5, derived `enters_region`/`exits_region` boundary points) and
+   `contains` or `disjoint_windows` relations between derived
+   `occupies_region` windows, all with phase-quantified values, and
+   phase-quantified `applied_offsets`. Ratioed
    participation, dwell/handoff references, and time-quantified values are
    rejected. No joint optimization.
 4. **S4 — Timeline verifier (implemented).** `omts verify-line <plan-dir>`
@@ -288,7 +293,18 @@ every combination. It is a diagnostic; it never changes the verdict.
    ordering relation, the circular spread of the combinations' achieved
    leads against the relation's band width, with `phasing_cannot_fix` when
    no shared phasing can satisfy it for every combination — a diagnostic
-   that never changes the verdict.
+   that never changes the verdict. From G5 (`collision.md`), relations over
+   derived region events are checked and gate the verdict like any other
+   hard relation: `ordering` and `fixed_offset` over derived boundary
+   points are all-pairs over every occurrence pair of the two point sets
+   (a bound on an event that never occurs is an error, never a quiet
+   pass), `contains` requires every `to` window inside some `from` window
+   with margin on both sides (vacuously true when `to` is empty, false
+   when `from` is empty and `to` is not), and `disjoint_windows` requires
+   every window pair disjoint by at least the clearance, with touching
+   counting as overlap (vacuously true when either side is empty). These
+   are sampled-occupancy verdicts: window boundaries are sampled phases,
+   never certified instants.
 5. **S5 — Joint search.** Free offsets and anchors become search variables.
    Its first steps are implemented: `omts verify-line --probe-anchors`
    rotates one task's composed phases across the full master cycle at a
@@ -324,6 +340,16 @@ the composed timeline artifact: `omts timeline` writes `timeline.json`
 and applied-offset rule as the verifier. It also requires no new solver
 physics, and it never gates the verdict.
 
+G5 of the collision staging plan completes the integration: the adapter
+records relations over derived region events in the plan line section, and
+the S4 verifier gates the composed verdict on them with the semantics above
+(all-pairs for point relations, pairwise for window relations,
+sampled-occupancy honesty). The `omts propose-offsets` joint search
+excludes lines with derived-event relations, fail-closed; the anchor probe
+rotates a task's windows and points along with its phases. This, too,
+requires no new solver physics; the corpus rerun on a synchronized pair
+sharing one zone is the capstone exercise.
+
 ## 10. Open questions for review
 
 1. Should `relations` fully deprecate `phase_relations`, or coexist until 1.0?
@@ -345,22 +371,33 @@ physics, and it never gates the verdict.
 2. Is the `task.event` dot notation sufficient, or are path-fragment events
    (for example `transfer.enters_region.north`) needed for collision windows?
 
-   **Draft answer (proposed in `collision.md`, not yet resolved):** path-fragment
-   events are needed, but derived, not authored. The collision geometry draft
-   introduces named region objects and has the timeline verifier derive
-   `occupies_region` window events plus `enters_region` / `exits_region`
-   boundary events from the sampled collision bodies (section 4 there). This
-   question closes when G2 validation and G5 verification land.
+   **Resolution (answered 2026-10-14):** path-fragment events are needed,
+   but derived, not authored. `collision.md` section 4 reserves the id
+   segments `occupies_region`, `enters_region`, and `exits_region` for the
+   derived namespace: the timeline verifier derives `occupies_region`
+   window events plus `enters_region` / `exits_region` boundary events
+   from the sampled collision bodies of every task with a declared body
+   model. G2 validation rejects authored event ids that use a reserved
+   segment fail-closed, and G5 verification closed the loop -- relations
+   over the derived events are recorded by the adapter and gate the line
+   verdict in `omts verify-line`, with all-pairs semantics for point
+   relations and pairwise semantics for window relations (`collision.md`
+   sections 5 and 6). Authored events keep the `task.event` shape;
+   boundary timing is never authored, only derived and related to.
 3. Do sweep and collision windows belong in v0.2, or wait for standard
    collision-body geometry already planned for v0.2?
 
-   **Draft answer (proposed in `collision.md`, not yet resolved):** they belong
-   in v0.2, as a derived window layer over a deliberately small standard
-   collision-body model (link centerlines with optional thickness, optional
-   carrier rectangle, pivot discs; section 2 there). Sweep windows are
-   expressed through the existing `disjoint_windows` relation over
-   `occupies_region` events, with no new relation vocabulary (section 5
-   there). This question closes when G4 and G5 land.
+   **Resolution (answered 2026-10-14):** they belong in v0.2, and the
+   window layer has landed. Regions and the standard collision-body model
+   (link centerlines with optional thickness, optional carrier rectangle,
+   pivot discs) are document features since G2 (`collision.md` section 2);
+   sweep and collision windows are `occupies_region` events derived by the
+   verifier (G3), composed into `timeline.json` (G4), and gated through
+   the existing `disjoint_windows` and `contains` relations with no new
+   relation vocabulary (G5, `collision.md` section 5). Sampling honesty
+   carries through every artifact: `method: sampled_collision_geometry_v1`,
+   boundaries are sampled phases, and no between-sample behavior is
+   claimed anywhere.
 4. For free `ordering` leads on fixed-timing tasks, does the existing ordered
    target-phase machinery leave the solver enough freedom for S4 to be useful
    before S5 exists?

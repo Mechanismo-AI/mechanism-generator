@@ -58,9 +58,12 @@ def test_handoff_events_are_rejected(pair_document):
 def test_window_relations_are_rejected(pair_document):
     # Build a *valid* contains relation first: both references are window
     # events (the semantic layer requires that), so the adapter itself must be
-    # the layer that rejects the unsupported relation type. Dwell windows are
-    # no alternative here: task-level dwell is itself outside the adapter's
-    # target whitelist, which would fail the test for the wrong reason.
+    # the layer that rejects it. From G5 the adapter supports contains and
+    # disjoint_windows -- but only over derived region windows; authored
+    # co_active event windows are still outside the supported reference set.
+    # Dwell windows are no alternative here: task-level dwell is itself
+    # outside the adapter's target whitelist, which would fail the test for
+    # the wrong reason.
     sync = pair_document["synchronization"]
     sync["events"].append({
         "id": "carry_window",
@@ -76,7 +79,7 @@ def test_window_relations_are_rejected(pair_document):
     relation["type"] = "contains"
     relation["from"] = "carry_window"
     relation["to"] = "handoff_window"
-    with pytest.raises(UnsupportedFeature, match="ordering and fixed_offset"):
+    with pytest.raises(UnsupportedFeature, match="only target-reached"):
         prepare_plan(pair_document)
 
 def test_time_quantities_are_rejected(pair_document):

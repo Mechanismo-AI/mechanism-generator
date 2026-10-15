@@ -233,12 +233,22 @@ def _options(task: dict, index: int, outputs: dict) -> dict:
     }
 
 
-def _event_ref(value, task_target_ids: dict, path: str) -> dict:
+def _event_ref(value, task_target_ids: dict, path: str,
+               collision_models: dict | None = None, region_ids: set | None = None) -> dict:
+    """Resolve a relation/event reference: target-reached points and derived
+    region points/windows (G5), with fail-closed existence checks."""
     parts = str(value).split(".")
     if len(parts) == 3 and parts[1] in ("occupies_region", "enters_region", "exits_region"):
-        raise UnsupportedFeature(f"{path}: derived region events are computed by the timeline verifier, not authored; relations over them are supported from G5.")
+        task, kind, region = parts
+        if task not in task_target_ids:
+            raise UnsupportedFeature(f"{path}: unknown task '{task}'.")
+        if not collision_models or task not in collision_models:
+            raise UnsupportedFeature(f"{path}: task '{task}' declares no collision body model, so it contributes no region events.")
+        if region_ids is not None and region not in region_ids:
+            raise UnsupportedFeature(f"{path}: unknown region '{region}'; declare it under 'regions'.")
+        return {"task": task, "region": region, "kind": kind}
     if len(parts) != 3 or parts[2] != "reached":
-        raise UnsupportedFeature(f"{path}: only target-reached event references ('task.target.reached') are supported.")
+        raise UnsupportedFeature(f"{path}: only target-reached ('task.target.reached') and derived region ('task.occupies_region.<region>', 'task.enters_region.<region>', 'task.exits_region.<region>') references are supported.")
     task, target = parts[0], parts[1]
     if target not in task_target_ids.get(task, set()):
         raise UnsupportedFeature(f"{path}: unknown task or target '{value}'.")
@@ -301,6 +311,7 @@ def _line(data: dict, collision_models: dict | None = None) -> dict | None:
         raise UnsupportedFeature(f"{path}.phase_relations: deprecated; use relations with event references.")
     _fixed(sync, "shared_input", True, path)
     task_target_ids = {task["id"]: {t["id"] for t in task["motion"]["targets"]} for task in data["tasks"]}
+    region_ids = {region["id"] for region in data.get("regions", [])}
     for i, entry in enumerate(sync.get("participants", [])):
         pp = f"{path}.participants[{i}]"
         _only(entry, "task ratio", pp)
@@ -342,7 +353,9 @@ def _line(data: dict, collision_models: dict | None = None) -> dict | None:
         if "tolerance" in event and isinstance(event["tolerance"], dict):
             tolerance = float(event["tolerance"].get("phase", 0.0))
         for participant in participants:
-            ref = _event_ref(participant, task_target_ids, f"{ep}.participants")
+            ref = _event_ref(participant, task_target_ids, f"{ep}.participants", collision_models, region_ids)
+            if "region" in ref:
+                raise UnsupportedFeature(f"{ep}.participants: derived region events cannot be event participants; state relations over them instead.")
             reference = data_task_reference(data, ref["task"])
             if reference == ref["target"]:
                 offset = float(applied_offsets.get(ref["task"], 0.0)) % 360.0
@@ -350,7 +363,7 @@ def _line(data: dict, collision_models: dict | None = None) -> dict | None:
                     raise UnsupportedFeature(f"{ep}: participant '{participant}' is task '{ref['task']}'s phase_reference target and is always at phase 0 plus its applied offset (here {offset:g}); it cannot appear in the window [{low}, {high}].")
         events.append({
             "id": event["id"],
-            "participants": [_event_ref(p, task_target_ids, f"{ep}.participants") for p in participants],
+            "participants": [_event_ref(p, task_target_ids, f"{ep}.participants", collision_models, region_ids) for p in participants],
             "window_deg": window["phase_range"],
             "tolerance_deg": _sync_quantity(event["tolerance"], f"{ep}.tolerance") if "tolerance" in event else None,
             "mode": event.get("mode", "hard"),
@@ -358,23 +371,38 @@ def _line(data: dict, collision_models: dict | None = None) -> dict | None:
     relations = []
     for i, relation in enumerate(sync.get("relations", [])):
         rp = f"{path}.relations[{i}]"
-        _only(relation, "id from to type offset tolerance min_lead max_lead mode notes", rp)
-        if relation["type"] not in ("ordering", "fixed_offset"):
-            raise UnsupportedFeature(f"{rp}.type: only ordering and fixed_offset relations are supported; contains and disjoint_windows over derived region events are verified from G5.")
+        _only(relation, "id from to type offset tolerance min_lead max_lead margin clearance mode notes", rp)
+        relation_type = relation["type"]
+        if relation_type not in ("ordering", "fixed_offset", "contains", "disjoint_windows"):
+            raise UnsupportedFeature(f"{rp}.type: supported relation types are ('ordering', 'fixed_offset', 'contains', 'disjoint_windows').")
         record = {
             "id": relation["id"],
-            "from": _event_ref(relation["from"], task_target_ids, f"{rp}.from"),
-            "to": _event_ref(relation["to"], task_target_ids, f"{rp}.to"),
-            "type": relation["type"],
+            "from": _event_ref(relation["from"], task_target_ids, f"{rp}.from", collision_models, region_ids),
+            "to": _event_ref(relation["to"], task_target_ids, f"{rp}.to", collision_models, region_ids),
+            "type": relation_type,
             "mode": relation.get("mode", "hard"),
         }
-        if relation["type"] == "ordering":
+        if relation_type in ("ordering", "fixed_offset"):
+            for side in ("from", "to"):
+                if record[side].get("kind") == "occupies_region":
+                    raise UnsupportedFeature(f"{rp}.{side}: ordering and fixed_offset bound point events (target-reached or enters/exits_region); '{relation[side]}' is an occupancy window; use contains or disjoint_windows instead.")
+        else:
+            for side in ("from", "to"):
+                if record[side].get("kind") != "occupies_region":
+                    raise UnsupportedFeature(f"{rp}.{side}: contains and disjoint_windows bound occupancy windows ('task.occupies_region.<region>'); '{relation[side]}' is a point reference; use ordering or fixed_offset instead.")
+        if relation_type == "ordering":
             record["min_lead_deg"] = _sync_quantity(relation["min_lead"], f"{rp}.min_lead")
             record["max_lead_deg"] = _sync_quantity(relation["max_lead"], f"{rp}.max_lead")
-        else:
+        elif relation_type == "fixed_offset":
             record["offset_deg"] = _sync_quantity(relation["offset"], f"{rp}.offset")
             if "tolerance" in relation:
                 record["tolerance_deg"] = _sync_quantity(relation["tolerance"], f"{rp}.tolerance")
+        elif relation_type == "contains":
+            if "margin" in relation:
+                record["margin_deg"] = _sync_quantity(relation["margin"], f"{rp}.margin")
+        else:
+            if "clearance" in relation:
+                record["clearance_deg"] = _sync_quantity(relation["clearance"], f"{rp}.clearance")
         relations.append(record)
     line = {
         "master_cycle_id": sync.get("master_cycle_id"),
@@ -440,7 +468,7 @@ def prepare_plan(data: dict) -> dict:
     if line is not None:
         notes.append("Synchronization metadata is recorded for post-hoc timeline verification; no joint optimization or verification is performed by this plan.")
         if line.get("collision") or line.get("regions"):
-            notes.append("Collision geometry (regions and per-task body models) is recorded for post-hoc sampled occupancy computation; the engine does not evaluate it.")
+            notes.append("Collision geometry (regions and per-task body models) is recorded for post-hoc sampled occupancy computation; the engine does not evaluate it. From G5, relations over derived region events gate the line verdict in omts verify-line (sampled occupancy, never certified).")
     plan = {
         "plan_version": 1,
         "status": "prepared_not_evaluated",

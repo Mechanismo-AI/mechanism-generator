@@ -10,10 +10,18 @@ candidate and declared region, the sampled phases where the declared bodies
 occupy the region -- raw windows in the task's own crank angle, plus composed
 windows under the same anchoring and applied-offset rule as the timeline.
 The section is data only: it is reported in `line_result.json` under
-`collision` with the sampled-geometry method tag, never gates the verdict,
-and its boundaries are sampled phases, not certified instants. Relations
-over the derived region events gate the verdict from G5; until then the
-adapter rejects them at plan time.
+`collision` with the sampled-geometry method tag, and its boundaries are
+sampled phases, not certified instants. From G5, relations over the derived
+region events gate the line verdict on the composed windows and points:
+ordering and fixed_offset compare every occurrence pair of the two point
+sets (a bound on an event that never happens cannot be satisfied), contains
+requires each `to` window to sit inside some `from` window with margin on
+both sides (vacuously true when `to` has no windows, false when `from` is
+empty and `to` is not), and disjoint_windows requires every window pair to
+be disjoint by at least the declared clearance (touching is overlap;
+vacuously true when either side is empty). These are sampled-occupancy
+verdicts, computed from sampled windows rather than certified instants,
+and the result records that distinction.
 
 Composed-timeline rule: every task's `phase_reference` target is aligned at
 master phase 0; tasks without a phase_reference contribute raw achieved
@@ -125,17 +133,18 @@ def _candidate_geometry(row: dict, task_id: str) -> tuple[list[float], float]:
     return values, float(row["branch_sign"])
 
 
-def _collision_section(plan: dict, plan_dir: Path, line: dict, achieved: dict) -> dict | None:
-    """Sampled region occupancy per task, candidate, and region (data only).
+def _collision_data(plan: dict, plan_dir: Path, line: dict, achieved: dict) -> tuple[dict | None, dict]:
+    """Sampled region occupancy per task, candidate, and region.
 
     Raw windows are computed in each task's own crank angle; composed windows
-    apply the same anchoring and applied-offset rule as the timeline. The
-    section never changes the verdict; relations over the derived events gate
-    from G5.
+    apply the same anchoring and applied-offset rule as the timeline. Returns
+    the data-only report section and, built from the same composed values in
+    one pass, the G5 gating context: {task: {candidate_id: {region_id:
+    {"windows", "enters_deg", "exits_deg"}}}} in composed master phase.
     """
     regions = line.get("regions")
     if not regions:
-        return None
+        return None, {}
     models = line.get("collision") or {}
     offsets = line.get("applied_offsets") or {}
     notes = []
@@ -145,6 +154,7 @@ def _collision_section(plan: dict, plan_dir: Path, line: dict, achieved: dict) -
     if unreported:
         notes.append("No achieved results for the task(s) with collision body models: " + ", ".join(unreported) + ".")
     tasks = {}
+    context: dict = {}
     for task in sorted(set(models) & set(achieved)):
         model = models[task]
         reference = line["phase_reference"].get(task)
@@ -154,6 +164,7 @@ def _collision_section(plan: dict, plan_dir: Path, line: dict, achieved: dict) -
         reference_index = target_ids.index(reference) + 1 if reference is not None else None
         carrier = (model["carrier"]["width"], model["carrier"]["depth"]) if "carrier" in model else None
         candidates = []
+        context_candidates: dict = {}
         for row in _manifest_rows(plan, plan_dir, task):
             candidate_id = str(row["candidate_id"])
             if candidate_id not in achieved[task]:
@@ -184,6 +195,14 @@ def _collision_section(plan: dict, plan_dir: Path, line: dict, achieved: dict) -
                     "composed_exits_deg": [(window["end_deg"] + shift) % 360.0 for window in windows],
                 }
             candidates.append({"id": candidate_id, "regions": region_entries})
+            context_candidates[candidate_id] = {
+                region_id: {
+                    "windows": entry["composed_windows"],
+                    "enters_deg": entry["composed_enters_deg"],
+                    "exits_deg": entry["composed_exits_deg"],
+                }
+                for region_id, entry in region_entries.items()
+            }
         tasks[task] = {
             "steps": model["steps"],
             "mode": model["mode"],
@@ -191,22 +210,23 @@ def _collision_section(plan: dict, plan_dir: Path, line: dict, achieved: dict) -
             **({"carrier": model["carrier"]} if "carrier" in model else {}),
             "candidates": candidates,
         }
+        context[task] = context_candidates
     section = {
         "method": COLLISION_METHOD,
         "regions": [region["id"] for region in regions],
         "tasks": tasks,
         "note": (
-            "Data-only sampled occupancy (G3): raw windows are in each task's own crank angle; "
+            "Sampled occupancy: raw windows are in each task's own crank angle; "
             "composed windows apply the same anchoring and applied-offset rule as the timeline. "
-            "Relations over these derived events gate the verdict from G5; until then this section "
-            "reports data and never changes the verdict. Window boundaries are sampled phases, "
-            "not certified instants."
+            "From G5, relations over these derived events gate the line verdict on the composed "
+            "windows and points; window boundaries remain sampled phases, not certified instants, "
+            "so a gated relation is a sampled-occupancy verdict, never a certification."
         ),
         "disclaimer": "Sampled occupancy, not certified: nothing is proven between samples; not collision, thickness, or machinery certification.",
     }
     if notes:
         section["notes"] = notes
-    return section
+    return section, context
 
 
 def _anchored(phases: dict[str, float], reference: str | None, target: str) -> float:
@@ -221,21 +241,184 @@ def _lead(a: float, b: float) -> float:
     return (b - a) % 360.0
 
 
-def _check_event(event: dict, anchored: dict) -> dict:
-    phases = [anchored[participant["task"]][participant["target"]] for participant in event["participants"]]
-    low, high = event["window_deg"]
-    tolerance = event.get("tolerance_deg") or 0.0
-    inside = all(low - tolerance <= phase <= high + tolerance for phase in phases)
+def _window_span(window: dict) -> float:
+    """Arc length (deg) of a window; a single-sample window has span 0."""
+    return (window["end_deg"] - window["start_deg"]) % 360.0
+
+
+def _contained(outer: dict, inner: dict, margin: float, epsilon: float = 1e-6) -> bool:
+    """True when the inner window sits inside the outer window with margin on both sides."""
+    span_outer = _window_span(outer)
+    span_inner = _window_span(inner)
+    o1 = _lead(outer["start_deg"], inner["start_deg"])
+    o2 = _lead(outer["start_deg"], inner["end_deg"])
+    if o2 < o1:
+        o2 += 360.0
+    return (o1 >= margin
+            and abs(o2 - o1 - span_inner) <= epsilon
+            and o2 <= span_outer - margin)
+
+
+def _window_pair_disjoint(first: dict, second: dict) -> bool:
+    """True when two windows do not overlap; touching counts as overlap."""
+    return (_lead(first["start_deg"], second["start_deg"]) > _window_span(first)
+            and _lead(second["start_deg"], first["start_deg"]) > _window_span(second))
+
+
+def _window_gap(first: dict, second: dict) -> float:
+    """Circular gap (deg) between two windows, measured end to start."""
+    return min(_lead(first["end_deg"], second["start_deg"]),
+               _lead(second["end_deg"], first["start_deg"]))
+
+
+def _describe_ref(ref: dict) -> str:
+    if "target" in ref:
+        return f"{ref['task']}.{ref['target']}.reached"
+    return f"{ref['task']}.{ref['kind']}.{ref['region']}"
+
+
+def _region_entry(ref: dict, relation_id: str, context: dict | None, chosen: dict | None) -> dict:
+    """Composed occupancy data of a derived region reference for one combination."""
+    if context is None or chosen is None:
+        raise LineVerificationError(
+            f"Relation '{relation_id}' bounds derived region events, but no sampled occupancy "
+            "context is available; the verdict is never guessed.")
+    task = ref["task"]
+    candidate = chosen.get(task)
+    if task not in context or candidate not in context[task]:
+        raise LineVerificationError(
+            f"Relation '{relation_id}': no sampled occupancy for task '{task}' candidate '{candidate}'.")
+    entries = context[task][candidate]
+    if ref["region"] not in entries:
+        raise LineVerificationError(
+            f"Relation '{relation_id}': unknown region '{ref['region']}' in the sampled occupancy context.")
+    return entries[ref["region"]]
+
+
+def _region_points(ref: dict, relation_id: str, anchored: dict,
+                   context: dict | None, chosen: dict | None) -> list[float]:
+    """Occurrence phases (composed, deg) of a point reference: reached, enters, or exits."""
+    if "target" in ref:
+        return [anchored[ref["task"]][ref["target"]]]
+    entry = _region_entry(ref, relation_id, context, chosen)
+    if ref["kind"] == "occupies_region":
+        raise LineVerificationError(
+            f"Relation '{relation_id}': ordering and fixed_offset bound point events; "
+            f"{_describe_ref(ref)} is an occupancy window; use contains or disjoint_windows instead.")
+    points = entry["enters_deg"] if ref["kind"] == "enters_region" else entry["exits_deg"]
+    if not points:
+        raise LineVerificationError(
+            f"Relation '{relation_id}': {_describe_ref(ref)} never occurs for this combination; "
+            "a bound on an event that never happens cannot be satisfied.")
+    return points
+
+
+def _check_region_relation(relation: dict, anchored: dict,
+                           context: dict | None, chosen: dict | None) -> dict:
+    """G5 semantics for relations whose endpoints include derived region events.
+
+    Point relations (ordering, fixed_offset) require every occurrence pair of
+    the two point sets to satisfy the bound. Window relations (contains,
+    disjoint_windows) are checked pairwise with the vacuous semantics
+    described in the module docstring. Mirrors the adapter's fail-closed
+    rules so a hand-edited plan is rejected, never guessed.
+    """
+    relation_id = relation["id"]
+    if relation["type"] in ("ordering", "fixed_offset"):
+        from_points = _region_points(relation["from"], relation_id, anchored, context, chosen)
+        to_points = _region_points(relation["to"], relation_id, anchored, context, chosen)
+        leads = [_lead(a, b) for a, b in itertools.product(from_points, to_points)]
+        if relation["type"] == "ordering":
+            ok = all(relation["min_lead_deg"] <= lead <= relation["max_lead_deg"] for lead in leads)
+            detail = {"min_lead_deg": relation["min_lead_deg"], "max_lead_deg": relation["max_lead_deg"]}
+        else:
+            offset = relation["offset_deg"] % 360.0
+            tolerance = relation.get("tolerance_deg", 0.0)
+            ok = all(_lead(offset, lead) <= tolerance or _lead(lead, offset) <= tolerance for lead in leads)
+            detail = {"offset_deg": offset, "tolerance_deg": tolerance}
+        record = {
+            "id": relation_id,
+            "type": relation["type"],
+            "mode": relation.get("mode", "hard"),
+            "achieved_leads_deg": [round(lead, 6) for lead in leads],
+            **detail,
+            "status": "pass" if ok else "fail",
+        }
+        if len(leads) == 1:
+            record["achieved_lead_deg"] = round(leads[0], 6)
+        return record
+
+    def windows(side: str) -> list[dict]:
+        ref = relation[side]
+        if "target" in ref:
+            raise LineVerificationError(
+                f"Relation '{relation_id}': contains and disjoint_windows bound occupancy windows; "
+                f"{_describe_ref(ref)} is a point reference; use ordering or fixed_offset instead.")
+        entry = _region_entry(ref, relation_id, context, chosen)
+        if ref["kind"] != "occupies_region":
+            raise LineVerificationError(
+                f"Relation '{relation_id}': contains and disjoint_windows bound occupancy windows; "
+                f"{_describe_ref(ref)} is a point event; use ordering or fixed_offset instead.")
+        return entry["windows"]
+
+    from_windows = windows("from")
+    to_windows = windows("to")
+    if relation["type"] == "contains":
+        margin = float(relation.get("margin_deg", 0.0))
+        if not to_windows:
+            ok = True
+        elif not from_windows:
+            ok = False
+        else:
+            ok = all(any(_contained(fw, tw, margin) for fw in from_windows) for tw in to_windows)
+        return {
+            "id": relation_id,
+            "type": "contains",
+            "mode": relation.get("mode", "hard"),
+            "margin_deg": margin,
+            "from_window_count": len(from_windows),
+            "to_window_count": len(to_windows),
+            "status": "pass" if ok else "fail",
+        }
+    clearance = float(relation.get("clearance_deg", 0.0))
+    if not from_windows or not to_windows:
+        ok = True
+        min_gap = None
+    else:
+        gaps = []
+        ok = True
+        for fw in from_windows:
+            for tw in to_windows:
+                if _window_pair_disjoint(fw, tw):
+                    gaps.append(_window_gap(fw, tw))
+                else:
+                    gaps.append(0.0)
+                    ok = False
+        min_gap = min(gaps) if gaps else None
+        if ok and min_gap is not None and min_gap < clearance:
+            ok = False
     return {
-        "id": event["id"],
-        "mode": event.get("mode", "hard"),
-        "participant_phases_deg": phases,
-        "window_deg": [low, high],
-        "status": "pass" if inside else "fail",
+        "id": relation_id,
+        "type": "disjoint_windows",
+        "mode": relation.get("mode", "hard"),
+        "clearance_deg": clearance,
+        "min_gap_deg": round(min_gap, 6) if min_gap is not None else None,
+        "from_window_count": len(from_windows),
+        "to_window_count": len(to_windows),
+        "status": "pass" if ok else "fail",
     }
 
 
-def _check_relation(relation: dict, anchored: dict) -> dict:
+def _check_relation(relation: dict, anchored: dict, context: dict | None = None,
+                    chosen: dict | None = None) -> dict:
+    """Check one relation for a single candidate combination.
+
+    Target-to-target relations keep the S4 semantics. Any endpoint over a
+    derived region event switches to the G5 semantics of
+    `_check_region_relation`.
+    """
+    if "region" in relation["from"] or "region" in relation["to"]:
+        return _check_region_relation(relation, anchored, context, chosen)
     a = anchored[relation["from"]["task"]][relation["from"]["target"]]
     b = anchored[relation["to"]["task"]][relation["to"]["target"]]
     lead = _lead(a, b)
@@ -254,6 +437,20 @@ def _check_relation(relation: dict, anchored: dict) -> dict:
         "achieved_lead_deg": round(lead, 6),
         **detail,
         "status": "pass" if ok else "fail",
+    }
+
+
+def _check_event(event: dict, anchored: dict) -> dict:
+    phases = [anchored[participant["task"]][participant["target"]] for participant in event["participants"]]
+    low, high = event["window_deg"]
+    tolerance = event.get("tolerance_deg") or 0.0
+    inside = all(low - tolerance <= phase <= high + tolerance for phase in phases)
+    return {
+        "id": event["id"],
+        "mode": event.get("mode", "hard"),
+        "participant_phases_deg": phases,
+        "window_deg": [low, high],
+        "status": "pass" if inside else "fail",
     }
 
 
@@ -279,13 +476,40 @@ def _shifted(anchored: dict, task: str, offset_deg: float) -> dict:
     return shifted
 
 
-def _hard_pass(line: dict, anchored: dict) -> bool:
+def _shifted_context(context: dict | None, chosen: dict, task: str, offset_deg: float) -> dict | None:
+    """Copy of the gating context with one task's chosen windows and points rotated."""
+    if context is None or not offset_deg:
+        return context
+    shifted = {name: dict(candidates) for name, candidates in context.items()}
+    candidate = chosen.get(task)
+    entries = shifted.get(task, {}).get(candidate)
+    if entries is not None:
+        shifted[task] = {
+            **shifted[task],
+            candidate: {
+                region_id: {
+                    "windows": [
+                        {"start_deg": (window["start_deg"] + offset_deg) % 360.0,
+                         "end_deg": (window["end_deg"] + offset_deg) % 360.0}
+                        for window in data["windows"]
+                    ],
+                    "enters_deg": [(value + offset_deg) % 360.0 for value in data["enters_deg"]],
+                    "exits_deg": [(value + offset_deg) % 360.0 for value in data["exits_deg"]],
+                }
+                for region_id, data in entries.items()
+            },
+        }
+    return shifted
+
+
+def _hard_pass(line: dict, anchored: dict, context: dict | None = None,
+               chosen: dict | None = None) -> bool:
     """True when every hard event and relation passes for these composed phases."""
     for event in line["events"]:
         if event.get("mode", "hard") == "hard" and _check_event(event, anchored)["status"] != "pass":
             return False
     for relation in line["relations"]:
-        if relation.get("mode", "hard") == "hard" and _check_relation(relation, anchored)["status"] != "pass":
+        if relation.get("mode", "hard") == "hard" and _check_relation(relation, anchored, context, chosen)["status"] != "pass":
             return False
     return True
 
@@ -321,20 +545,23 @@ def _positive_intervals(offsets: list[float], counts: list[int]) -> list[dict]:
     ]
 
 
-def _probe_anchors(line: dict, achieved: dict, step_deg: float) -> dict:
+def _probe_anchors(line: dict, achieved: dict, step_deg: float, context: dict | None = None) -> dict:
     """Sweep per-task master-phase offsets and report feasible intervals (diagnostic)."""
     step_deg = float(step_deg)
     steps = int(round(360.0 / step_deg))
     offsets = [round(index * step_deg, 6) % 360.0 for index in range(steps)]
     task_ids = sorted(achieved)
     base = [
-        _anchored_map(achieved, line, dict(zip(task_ids, combination)))
+        (dict(zip(task_ids, combination)),
+         _anchored_map(achieved, line, dict(zip(task_ids, combination))))
         for combination in itertools.product(*(sorted(achieved[task]) for task in task_ids))
     ]
     tasks = []
     for task in task_ids:
         counts = [
-            sum(1 for anchored in base if _hard_pass(line, _shifted(anchored, task, offset)))
+            sum(1 for chosen, anchored in base
+                if _hard_pass(line, _shifted(anchored, task, offset),
+                              _shifted_context(context, chosen, task, offset), chosen))
             for offset in offsets
         ]
         best = max(counts, default=0)
@@ -349,15 +576,72 @@ def _probe_anchors(line: dict, achieved: dict, step_deg: float) -> dict:
         "step_deg": step_deg,
         "tasks": tasks,
         "note": (
-            "Diagnostic master-phasing sweep for S5: each task's composed phases are rotated by every offset while all other tasks stay fixed. Feasible intervals list offsets where at least one candidate combination satisfies every hard event and relation. Offsets are feasibility targets for joint search and gear/crank phasing, not verified solutions; an offset applied to an anchored task moves its reference target away from its declared phase. The baseline verdict is unchanged."
+            "Diagnostic master-phasing sweep for S5: each task's composed phases -- and, "
+            "from G5, its derived region windows and points -- are rotated by every offset while "
+            "all other tasks stay fixed. Feasible intervals list offsets where at least one "
+            "candidate combination satisfies every hard event and relation. Offsets are feasibility "
+            "targets for joint search and gear/crank phasing, not verified solutions; an offset "
+            "applied to an anchored task moves its reference target away from its declared phase. "
+            "The baseline verdict is unchanged."
         ),
     }
+
+
+def _gating_preflight(line: dict) -> None:
+    """Fail-closed checks for G5 relations over derived region events.
+
+    Mirrors the adapter's plan-time rules so a hand-edited plan is rejected
+    here too, never guessed: derived refs need declared regions, a collision
+    body model on their task, a known region id, and a relation type that
+    matches the reference kind; derived region events are never event
+    participants.
+    """
+    for event in line["events"]:
+        for participant in event["participants"]:
+            if "region" in participant:
+                raise LineVerificationError(
+                    f"Event '{event['id']}': derived region events cannot be event participants; "
+                    "state relations over them instead.")
+    derived = [
+        (relation, side)
+        for relation in line["relations"]
+        for side in ("from", "to")
+        if "region" in relation[side]
+    ]
+    if not derived:
+        return
+    if not line.get("regions"):
+        raise LineVerificationError(
+            "Relations over derived region events require declared regions; this plan records none.")
+    region_ids = {region["id"] for region in line["regions"]}
+    models = line.get("collision") or {}
+    for relation, side in derived:
+        ref = relation[side]
+        if ref["task"] not in models:
+            raise LineVerificationError(
+                f"Relation '{relation['id']}' bounds a derived region event of task '{ref['task']}', "
+                "which declares no collision body model.")
+        if ref["region"] not in region_ids:
+            raise LineVerificationError(
+                f"Relation '{relation['id']}' references unknown region '{ref['region']}'.")
+    for relation, side in derived:
+        ref = relation[side]
+        if relation["type"] in ("ordering", "fixed_offset"):
+            if ref["kind"] == "occupies_region":
+                raise LineVerificationError(
+                    f"Relation '{relation['id']}': ordering and fixed_offset bound point events; "
+                    f"{_describe_ref(ref)} is an occupancy window; use contains or disjoint_windows instead.")
+        elif ref["kind"] != "occupies_region":
+            raise LineVerificationError(
+                f"Relation '{relation['id']}': contains and disjoint_windows bound occupancy windows; "
+                f"{_describe_ref(ref)} is a point event; use ordering or fixed_offset instead.")
 
 
 def verify_line(plan_dir: str | Path, probe: bool = False, probe_step_deg: float = 1.0) -> dict:
     plan_dir = Path(plan_dir)
     plan = _load_plan(plan_dir)
     line = plan["line"]
+    _gating_preflight(line)
     participating = line["phase_reference"].keys() | {
         participant["task"]
         for event in line["events"]
@@ -383,14 +667,14 @@ def verify_line(plan_dir: str | Path, probe: bool = False, probe_step_deg: float
         _write(plan_dir, result)
         return result
 
-    collision = _collision_section(plan, plan_dir, line, achieved)
+    collision, context = _collision_data(plan, plan_dir, line, achieved)
     task_ids = sorted(achieved)
     combinations = []
     def walk(index: int, chosen: dict[str, str]) -> None:
         if index == len(task_ids):
             anchored = _anchored_map(achieved, line, chosen)
             events = [_check_event(event, anchored) for event in line["events"]]
-            relations = [_check_relation(relation, anchored) for relation in line["relations"]]
+            relations = [_check_relation(relation, anchored, context, chosen) for relation in line["relations"]]
             hard_ok = all(item["status"] == "pass" for item in events + relations if item["mode"] == "hard")
             soft_failed = [item["id"] for item in events + relations if item["mode"] == "soft" and item["status"] == "fail"]
             combinations.append({
@@ -416,7 +700,7 @@ def verify_line(plan_dir: str | Path, probe: bool = False, probe_step_deg: float
         step = float(probe_step_deg)
         if not 0.0 < step <= 360.0:
             raise LineVerificationError(f"Probe step must be in (0, 360] deg; got {step}.")
-        result["anchor_probe"] = _probe_anchors(line, achieved, step)
+        result["anchor_probe"] = _probe_anchors(line, achieved, step, context)
     _write(plan_dir, result)
     return result
 
@@ -461,12 +745,15 @@ def _ordering_feasibility(line: dict, combinations: list) -> dict | None:
     `phasing_cannot_fix` is a necessary condition, not a sufficient one, and
     never changes the verdict. Same-task ordering relations are excluded:
     their leads are phasing-invariant and their per-combination statuses
-    already report the exact outcome.
+    already report the exact outcome. Relations with a derived region
+    endpoint are excluded: their all-pairs leads do not form one rigid
+    slide-only family, so the spread argument does not apply as-is.
     """
     cross = [
         relation for relation in line["relations"]
         if relation["type"] == "ordering" and relation.get("mode", "hard") == "hard"
         and relation["from"]["task"] != relation["to"]["task"]
+        and "target" in relation["from"] and "target" in relation["to"]
     ]
     if not cross or not combinations:
         return None
@@ -604,6 +891,12 @@ def solve_offsets(plan_dir: str | Path, step_deg: float = 1.0, top: int = 5) -> 
     stray = set(line.get("applied_offsets") or {}) - participating
     if stray:
         raise LineVerificationError(f"applied_offsets name non-participating task(s): {', '.join(sorted(stray))}.")
+    for relation in line["relations"]:
+        if "region" in relation["from"] or "region" in relation["to"]:
+            raise LineVerificationError(
+                f"Relation '{relation['id']}' bounds derived region events; the joint offset search "
+                "does not compose them. Declare offsets by hand and re-verify with omts verify-line, "
+                "or remove the relation and solve again.")
     if not participating:
         raise LineVerificationError("The line has no participating tasks; there is nothing to solve.")
     if len(participating) > 2:
