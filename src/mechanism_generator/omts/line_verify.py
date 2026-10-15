@@ -59,7 +59,11 @@ verified solutions, and probing never changes the baseline verdict of the run.
 The joint offset solver (`solve_offsets`; CLI: `omts propose-offsets`) is the
 S5 search step itself: it grid-searches per-task master-phase offsets jointly
 over the existing per-task results and reports the assignments that maximize
-the number of passing candidate combinations. Recommendations are absolute:
+the number of passing candidate combinations. Relations over derived region
+events are composed too, under the same G5 semantics over the sampled
+occupancy windows and points of each chosen combination, so a passing
+assignment on such a line is a sampled-occupancy verdict, never a
+certification. Recommendations are absolute:
 they replace any declared `applied_offsets`, because the solver composes
 from raw achieved phases. The output is a proposal (`offsets_proposal.json`)
 only — it never writes a verdict, and a human must declare the chosen
@@ -313,6 +317,20 @@ def _region_points(ref: dict, relation_id: str, anchored: dict,
     return points
 
 
+def _region_windows(ref: dict, relation_id: str, context: dict | None, chosen: dict | None) -> list[dict]:
+    """Composed occupancy windows of a derived region reference for one combination."""
+    if "target" in ref:
+        raise LineVerificationError(
+            f"Relation '{relation_id}': contains and disjoint_windows bound occupancy windows; "
+            f"{_describe_ref(ref)} is a point reference; use ordering or fixed_offset instead.")
+    entry = _region_entry(ref, relation_id, context, chosen)
+    if ref["kind"] != "occupies_region":
+        raise LineVerificationError(
+            f"Relation '{relation_id}': contains and disjoint_windows bound occupancy windows; "
+            f"{_describe_ref(ref)} is a point event; use ordering or fixed_offset instead.")
+    return entry["windows"]
+
+
 def _check_region_relation(relation: dict, anchored: dict,
                            context: dict | None, chosen: dict | None) -> dict:
     """G5 semantics for relations whose endpoints include derived region events.
@@ -348,21 +366,8 @@ def _check_region_relation(relation: dict, anchored: dict,
             record["achieved_lead_deg"] = round(leads[0], 6)
         return record
 
-    def windows(side: str) -> list[dict]:
-        ref = relation[side]
-        if "target" in ref:
-            raise LineVerificationError(
-                f"Relation '{relation_id}': contains and disjoint_windows bound occupancy windows; "
-                f"{_describe_ref(ref)} is a point reference; use ordering or fixed_offset instead.")
-        entry = _region_entry(ref, relation_id, context, chosen)
-        if ref["kind"] != "occupies_region":
-            raise LineVerificationError(
-                f"Relation '{relation_id}': contains and disjoint_windows bound occupancy windows; "
-                f"{_describe_ref(ref)} is a point event; use ordering or fixed_offset instead.")
-        return entry["windows"]
-
-    from_windows = windows("from")
-    to_windows = windows("to")
+    from_windows = _region_windows(relation["from"], relation_id, context, chosen)
+    to_windows = _region_windows(relation["to"], relation_id, context, chosen)
     if relation["type"] == "contains":
         margin = float(relation.get("margin_deg", 0.0))
         if not to_windows:
@@ -407,6 +412,76 @@ def _check_region_relation(relation: dict, anchored: dict,
         "to_window_count": len(to_windows),
         "status": "pass" if ok else "fail",
     }
+
+
+def _region_relation_slack(relation: dict, anchored: dict,
+                           context: dict | None, chosen: dict | None) -> float | None:
+    """Binding slack (deg) of a hard relation with a derived region endpoint.
+
+    Mirrors `_check_region_relation` exactly: None when the relation fails
+    for this combination, math.inf for a vacuous pass (a window side with no
+    occupancy), otherwise the minimum slack over the binding pairs. Point
+    relations take the worst occurrence pair; window relations take the
+    worst qualifying pair. Used for ranking only, never for the verdict.
+    """
+    relation_id = relation["id"]
+    if relation["type"] in ("ordering", "fixed_offset"):
+        from_points = _region_points(relation["from"], relation_id, anchored, context, chosen)
+        to_points = _region_points(relation["to"], relation_id, anchored, context, chosen)
+        offset = relation["offset_deg"] % 360.0 if relation["type"] == "fixed_offset" else None
+        tolerance = relation.get("tolerance_deg", 0.0) if relation["type"] == "fixed_offset" else None
+        slack = None
+        for a in from_points:
+            for b in to_points:
+                lead = _lead(a, b)
+                if relation["type"] == "ordering":
+                    pair = min(lead - relation["min_lead_deg"], relation["max_lead_deg"] - lead)
+                else:
+                    pair = tolerance - min(_lead(offset, lead), _lead(lead, offset))
+                if pair < 0.0:
+                    return None
+                slack = pair if slack is None else min(slack, pair)
+        return math.inf if slack is None else slack
+
+    from_windows = _region_windows(relation["from"], relation_id, context, chosen)
+    to_windows = _region_windows(relation["to"], relation_id, context, chosen)
+    if relation["type"] == "contains":
+        margin = float(relation.get("margin_deg", 0.0))
+        if not to_windows:
+            return math.inf
+        if not from_windows:
+            return None
+        slack = None
+        for tw in to_windows:
+            best = None
+            for fw in from_windows:
+                span_outer = _window_span(fw)
+                o1 = _lead(fw["start_deg"], tw["start_deg"])
+                o2 = _lead(fw["start_deg"], tw["end_deg"])
+                if o2 < o1:
+                    o2 += 360.0
+                if o1 < margin or o2 > span_outer - margin:
+                    continue
+                pair = min(o1 - margin, (span_outer - margin) - o2)
+                best = pair if best is None else max(best, pair)
+            if best is None:
+                return None
+            slack = best if slack is None else min(slack, best)
+        return slack
+
+    if not from_windows or not to_windows:
+        return math.inf
+    clearance = float(relation.get("clearance_deg", 0.0))
+    slack = None
+    for fw in from_windows:
+        for tw in to_windows:
+            if not _window_pair_disjoint(fw, tw):
+                return None
+            pair = _window_gap(fw, tw) - clearance
+            if pair < 0.0:
+                return None
+            slack = pair if slack is None else min(slack, pair)
+    return slack
 
 
 def _check_relation(relation: dict, anchored: dict, context: dict | None = None,
@@ -828,12 +903,16 @@ def _lead_holds(relation: dict, lead: float) -> bool:
     return _lead(offset, lead) <= tolerance or _lead(lead, offset) <= tolerance
 
 
-def _hard_margin(line: dict, anchored: dict) -> float | None:
+def _hard_margin(line: dict, anchored: dict, context: dict | None = None,
+                 chosen: dict | None = None) -> float | None:
     """Minimum per-constraint slack over hard checks, or None if any fails.
 
     Window slack is the distance to the tolerance-extended window boundary;
     ordering slack is the distance to the nearer lead bound; fixed_offset
-    slack is the remaining tolerance to the target offset.
+    slack is the remaining tolerance to the target offset. Relations with a
+    derived region endpoint take the binding slack of `_region_relation_slack`
+    (math.inf for a vacuous pass, so an always-satisfied relation never
+    constrains the ranking).
     """
     margin = None
     for event in line["events"]:
@@ -849,6 +928,12 @@ def _hard_margin(line: dict, anchored: dict) -> float | None:
             margin = slack if margin is None else min(margin, slack)
     for relation in line["relations"]:
         if relation.get("mode", "hard") != "hard":
+            continue
+        if "region" in relation["from"] or "region" in relation["to"]:
+            slack = _region_relation_slack(relation, anchored, context, chosen)
+            if slack is None:
+                return None
+            margin = slack if margin is None else min(margin, slack)
             continue
         a = anchored[relation["from"]["task"]][relation["from"]["target"]]
         b = anchored[relation["to"]["task"]][relation["to"]["target"]]
@@ -891,12 +976,13 @@ def solve_offsets(plan_dir: str | Path, step_deg: float = 1.0, top: int = 5) -> 
     stray = set(line.get("applied_offsets") or {}) - participating
     if stray:
         raise LineVerificationError(f"applied_offsets name non-participating task(s): {', '.join(sorted(stray))}.")
-    for relation in line["relations"]:
-        if "region" in relation["from"] or "region" in relation["to"]:
-            raise LineVerificationError(
-                f"Relation '{relation['id']}' bounds derived region events; the joint offset search "
-                "does not compose them. Declare offsets by hand and re-verify with omts verify-line, "
-                "or remove the relation and solve again.")
+    # Relations over derived region events are composed under the same G5
+    # semantics as verify-line; the fail-closed preflight (declared regions,
+    # collision body models, kind/type agreement, no derived event
+    # participants) gates the search here exactly as it gates the verdict.
+    _gating_preflight(line)
+    has_derived = any("region" in relation["from"] or "region" in relation["to"]
+                     for relation in line["relations"])
     if not participating:
         raise LineVerificationError("The line has no participating tasks; there is nothing to solve.")
     if len(participating) > 2:
@@ -909,10 +995,14 @@ def solve_offsets(plan_dir: str | Path, step_deg: float = 1.0, top: int = 5) -> 
     }
     empty = [task for task, candidates in achieved.items() if not candidates]
     if empty:
+        note = (f"Zero selected candidates for: {', '.join(empty)}; "
+                "a completed search selecting nothing is recorded, not treated as an error.")
+        if line.get("regions") or line.get("collision"):
+            note += (" No occupancy windows were sampled: there are no selected candidates, "
+                     "so derived region relations cannot be composed.")
         result = _proposal(plan, line, status="no_candidates", step_deg=float(step_deg),
                            combination_count=0, best=0, maximizers=[], achieved=achieved,
-                           top=top,
-                           note=f"Zero selected candidates for: {', '.join(empty)}; a completed search selecting nothing is recorded, not treated as an error.")
+                           top=top, note=note)
         _write_proposal(plan_dir, result)
         return result
 
@@ -927,6 +1017,12 @@ def solve_offsets(plan_dir: str | Path, step_deg: float = 1.0, top: int = 5) -> 
     # Absolute semantics: compose from raw phases; recommendations replace
     # whatever the document declared.
     base_line = {key: value for key, value in line.items() if key != "applied_offsets"}
+    # Anchoring-only occupancy context for derived region relations: built
+    # from base_line, so the composed windows ignore declared offsets and the
+    # recommendations stay absolute.
+    context = None
+    if base_line.get("regions"):
+        _, context = _collision_data(plan, plan_dir, base_line, achieved)
     hard_events = [event for event in base_line["events"] if event.get("mode", "hard") == "hard"]
     hard_relations = [relation for relation in base_line["relations"]
                        if relation.get("mode", "hard") == "hard"]
@@ -959,10 +1055,12 @@ def solve_offsets(plan_dir: str | Path, step_deg: float = 1.0, top: int = 5) -> 
                 if not allowed[task]:
                     dead = True
         # Same-task relations are offset-invariant: constant per combination.
+        # This includes same-task derived region relations: a per-task offset
+        # rotates both endpoints of the relation together.
         cross = []
         for relation in hard_relations:
             if relation["from"]["task"] == relation["to"]["task"]:
-                if _check_relation(relation, anchored)["status"] != "pass":
+                if _check_relation(relation, anchored, context, chosen)["status"] != "pass":
                     dead = True
             else:
                 cross.append(relation)
@@ -972,6 +1070,22 @@ def solve_offsets(plan_dir: str | Path, step_deg: float = 1.0, top: int = 5) -> 
         # (offset_to - offset_from, in steps) satisfy the relation.
         diff_sets = []
         for relation in cross:
+            if "region" in relation["from"] or "region" in relation["to"]:
+                # Derived or mixed cross-task relation: the binding quantity is
+                # the to-task's shift relative to the from-task, so sweep that
+                # gap over the grid and keep the passing values. The relation
+                # is composed over the shifted anchored points and the shifted
+                # sampled occupancy windows of the chosen candidates.
+                to_task = relation["to"]["task"]
+                diff_sets.append((
+                    relation["from"]["task"],
+                    {gap for gap in range(-(steps - 1), steps)
+                     if _check_relation(relation,
+                                        _shifted(anchored, to_task, gap * step),
+                                        _shifted_context(context, chosen, to_task, gap * step),
+                                        chosen)["status"] == "pass"},
+                ))
+                continue
             a = anchored[relation["from"]["task"]][relation["from"]["target"]]
             b = anchored[relation["to"]["task"]][relation["to"]["target"]]
             raw_lead = (b - a) % 360.0
@@ -1019,22 +1133,31 @@ def solve_offsets(plan_dir: str | Path, step_deg: float = 1.0, top: int = 5) -> 
                 task: {target: (phase + deltas[task]) % 360.0 for target, phase in phases.items()}
                 for task, phases in anchored.items()
             }
-            slack = _hard_margin(base_line, shifted)
+            shifted_ctx = context
+            for task, delta in deltas.items():
+                shifted_ctx = _shifted_context(shifted_ctx, chosen, task, delta)
+            slack = _hard_margin(base_line, shifted, context=shifted_ctx, chosen=chosen)
             if slack is not None:
+                # A vacuous derived-relation pass reports math.inf; cap it so
+                # always-satisfied relations rank first without writing a
+                # non-finite number into the proposal.
+                slack = min(slack, 360.0)
                 margin = slack if margin is None else max(margin, slack)
         margins[pair] = margin if margin is not None else 0.0
     ranked = sorted(maximizers, key=lambda pair: (-(margins[pair] or 0.0), pair))
 
     result = _proposal(plan, line, status="solved" if best else "infeasible", step_deg=step,
                        combination_count=combination_count, best=best, maximizers=ranked,
-                       achieved=achieved, top=top, margins=margins, note=None)
+                       achieved=achieved, top=top, margins=margins, note=None,
+                       derived=has_derived)
     _write_proposal(plan_dir, result)
     return result
 
 
 def _proposal(plan: dict, line: dict, status: str, step_deg: float, combination_count: int,
               best: int, maximizers: list, achieved: dict, top: int,
-              margins: dict | None = None, note: str | None = None) -> dict:
+              margins: dict | None = None, note: str | None = None,
+              derived: bool = False) -> dict:
     task_ids = sorted(achieved)
     steps = int(round(360.0 / step_deg)) if 0.0 < step_deg <= 360.0 else 0
     offsets = [round(index * step_deg, 6) % 360.0 for index in range(steps)]
@@ -1051,6 +1174,18 @@ def _proposal(plan: dict, line: dict, status: str, step_deg: float, combination_
     if recommendations:
         example = {task: {"phase": delta} for task, delta in recommendations[0]["offsets"].items()
                    if delta != 0.0}
+    default_note = (
+        "Joint offset proposal: per-task master-phase offsets chosen by grid search over the existing per-task results; "
+        "recommendations are absolute and replace any declared synchronization.applied_offsets. "
+        "This is a proposal only — a human declares the chosen offsets in the document, then re-validates, re-adapts, and re-verifies; "
+        "this file never changes the verdict of the run."
+    )
+    if derived:
+        default_note += (
+            " Relations over derived region events were composed over the sampled occupancy "
+            "windows of the chosen candidates; a passing assignment is a sampled-occupancy "
+            "verdict, never a collision certification."
+        )
     result = {
         "offset_proposal_version": 1,
         "task_set_id": plan["task_set_id"],
@@ -1062,12 +1197,7 @@ def _proposal(plan: dict, line: dict, status: str, step_deg: float, combination_
         "assignments_with_best_count": len(maximizers),
         **({"applied_offsets_example": example if example is not None else {}} if recommendations else {}),
         **({"recommendations": recommendations} if recommendations else {}),
-        "note": note or (
-            "Joint offset proposal: per-task master-phase offsets chosen by grid search over the existing per-task results; "
-            "recommendations are absolute and replace any declared synchronization.applied_offsets. "
-            "This is a proposal only — a human declares the chosen offsets in the document, then re-validates, re-adapts, and re-verifies; "
-            "this file never changes the verdict of the run."
-        ),
+        "note": note or default_note,
         "disclaimer": "Post-hoc offset search over kinematic results; not synchronization synthesis, dynamics, collision, or machinery certification.",
     }
     if note and status == "no_candidates":
@@ -1080,3 +1210,4 @@ def _proposal(plan: dict, line: dict, status: str, step_deg: float, combination_
 
 def _write_proposal(plan_dir: Path, result: dict) -> None:
     (plan_dir / "offsets_proposal.json").write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
+

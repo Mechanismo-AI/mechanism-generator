@@ -368,14 +368,25 @@ def test_probe_rotates_region_windows(tmp_path):
     assert catcher["best_passing_combinations"] == 1
 
 
-def test_solve_offsets_rejects_derived_relations(tmp_path):
+def test_solve_offsets_composes_derived_relations(tmp_path):
+    # From the G5 follow-up, the joint search composes relations over
+    # derived region events under the same sampled-occupancy semantics
+    # instead of rejecting the line. The keepout (clearance 40, gap 25.5 at
+    # the zero-offset composition) fails the baseline; the solver re-times
+    # around it and the top recommendation verifies end to end.
     line = _line(regions=[TOP], collision={"gate": _model(), "catcher": _model()},
-                 relations=[_disjoint(clearance=10)])
+                 relations=[_disjoint(clearance=40)])
     _write_manifest(tmp_path, "gate", [_row("g1", [30, 130, 250])])
     _write_manifest(tmp_path, "catcher", [_row("c1", [120, 220, 20])])
     _write_plan(tmp_path, line)
-    with pytest.raises(LineVerificationError, match="does not compose"):
-        solve_offsets(tmp_path)
+    assert verify_line(tmp_path)["status"] == "failed"
+    proposal = solve_offsets(tmp_path, step_deg=1.0)
+    assert proposal["status"] == "solved"
+    assert proposal["best_passing_count"] == 1
+    assert "sampled-occupancy" in proposal["note"]
+    line["applied_offsets"] = proposal["recommendations"][0]["offsets"]
+    _write_plan(tmp_path, line)
+    assert verify_line(tmp_path)["status"] == "verified"
 
 
 def test_ordering_feasibility_excludes_derived_relations(tmp_path):
@@ -559,3 +570,4 @@ def test_adapter_rejects_derived_event_participants():
     }])
     with pytest.raises(DocumentError, match="cannot be event participants"):
         prepare_plan(document)
+
