@@ -177,7 +177,15 @@ above (as `zone_keepout`).
 - The v0.1 per-task `path_constraints.keep_out_box` stays rejected by the
   adapter in this round. Mapping static obstacle boxes to regions, and
   engine-side search-time screening, are future work, taken up only if
-  post-hoc evidence shows search could have avoided real failures.
+  post-hoc evidence shows search could have avoided real failures. The
+  capstone corpus is that evidence, recorded as data: the shared-zone
+  rerun flips variants whose authored constraints all pass to failed,
+  the per-combination record shows outright overlap rather than a
+  clearance miss, and the anchor-probe pass (jobs/sync-corpus-06) finds
+  no offset for either anchor that admits a passing combination in those
+  variants. Post-hoc gating rejects such lines; it cannot repair them,
+  because the conflict is structural to the candidate sets the
+  region-blind search produced.
 - Every artifact that reports occupancy records `method:
   sampled_collision_geometry_v1`, the step count, the declared thickness
   and bodies, and the disclaimer: sampled, not certified; no between-sample
@@ -215,10 +223,17 @@ above (as `zone_keepout`).
    search still excludes derived-event relations (fail-closed): offsets
    for such lines are declared by hand and re-verified. The capstone
    exercise -- the corpus rerun on the synchronized pair sharing one zone
-   -- is staged: `examples/omts/collision_pair.omts.yaml` declares the
-   pair, zone, and keep-out relation, and the sync-corpus-05 job runs the
-   corpus over it, reusing the region-blind engine searches of the
-   earlier corpus runs; its results are recorded as data when it runs.
+   -- is declared by `examples/omts/collision_pair.omts.yaml` (the pair,
+   zone, and keep-out relation) and run by the sync-corpus-05 job, reusing
+   the region-blind engine searches of the earlier corpus runs. It has run
+   as maintainer-local runs, recorded as data, with sampled occupancy and
+   never certified: the keep-out gate flips variants whose authored
+   constraints all pass, and the follow-up anchor-probe pass
+   (jobs/sync-corpus-06, run without declared offsets so the probe reports
+   absolute offsets) finds no per-anchor offset that admits a passing
+   combination in the flipped variants -- the shared-zone conflict there
+   is structural to the candidate sets, which grounds the search-time
+   future-work note in section 6.
 
 ## 8. Open questions of this draft
 
