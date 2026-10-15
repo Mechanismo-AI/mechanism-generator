@@ -1422,6 +1422,40 @@
         },
         "mode": {
           "$ref": "#/$defs/constraintMode"
+        },
+        "screen": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/zoneScreen"
+          }
+        }
+      }
+    },
+    "zoneScreen": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "region"
+      ],
+      "properties": {
+        "region": {
+          "$ref": "#/$defs/identifier"
+        },
+        "avoid": {
+          "type": "boolean"
+        },
+        "max_total_width": {
+          "$ref": "#/$defs/syncQuantity"
+        },
+        "max_windows": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "mode": {
+          "$ref": "#/$defs/constraintMode"
+        },
+        "notes": {
+          "type": "string"
         }
       }
     },

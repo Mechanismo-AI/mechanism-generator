@@ -96,6 +96,29 @@ def _duplicates(items: list[dict], path: str, errors: list[str]) -> None:
         seen.add(identifier)
 
 
+def _screen_errors(screen, path, region_ids, errors, is_v02) -> None:
+    """Semantic checks for one task's requirements.collision.screen entries."""
+    if not is_v02:
+        errors.append(f"{path}: zone screens are a v0.2 collision feature; v0.1 documents must not declare them.")
+    seen = set()
+    for i, entry in enumerate(screen):
+        ep = f"{path}[{i}]"
+        region = entry.get("region")
+        if region not in region_ids:
+            errors.append(f"{ep}.region: unknown region '{region}'; declare it under 'regions'.")
+        if region in seen:
+            errors.append(f"{ep}.region: region '{region}' is screened more than once per task.")
+        seen.add(region)
+        if not any(key in entry for key in ("avoid", "max_total_width", "max_windows")):
+            errors.append(f"{ep}: a screen entry requires at least one criterion (avoid, max_total_width, or max_windows).")
+        width = entry.get("max_total_width")
+        if isinstance(width, dict):
+            if "time" in width:
+                errors.append(f"{ep}.max_total_width: requires a phase-quantified value such as {{'phase': 2}}; time-quantified bounds depend on the task period.")
+            elif "phase" in width and not 0 <= width["phase"] <= 360:
+                errors.append(f"{ep}.max_total_width.phase: must be within [0, 360] degrees.")
+
+
 def semantic_errors(data: dict) -> list[str]:
     """Cross-field checks, called only after structural schema validation."""
     errors: list[str] = []
@@ -235,6 +258,9 @@ def semantic_errors(data: dict) -> list[str]:
                 errors.append(f"{path}.requirements.collision: collision bodies are a v0.2 collision feature; v0.1 documents must not declare them.")
             if dimension != 2:
                 errors.append(f"{path}.requirements.collision: collision bodies are planar; the document dimension must be 2.")
+            if "screen" in collision:
+                _screen_errors(collision["screen"], path + ".requirements.collision.screen",
+                               region_ids, errors, is_v02)
             collision_by_task[task["id"]] = collision
         for key in ("min_at_targets", "min_global", "selection_min_at_targets", "selection_min_global"):
             if tx.get(key, 0) > angle_limit:
