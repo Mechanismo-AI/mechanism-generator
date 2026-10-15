@@ -222,8 +222,10 @@ above (as `zone_keepout`).
    windows), and `omts verify-line` gates the composed verdict on them with
    the semantics of section 6; the anchor probe rotates a task's windows
    and points along with its phases. The `omts propose-offsets` joint
-   search still excludes derived-event relations (fail-closed): offsets
-   for such lines are declared by hand and re-verified. The capstone
+   search composes derived-event relations under those same semantics:
+   anchored boundary points and sampled occupancy windows rotate with
+   their task's offset, and a passing assignment on such a line is a
+   sampled-occupancy verdict, never a certification. The capstone
    exercise -- the corpus rerun on the synchronized pair sharing one zone
    -- is declared by `examples/omts/collision_pair.omts.yaml` (the pair,
    zone, and keep-out relation) and run by the sync-corpus-05 job, reusing

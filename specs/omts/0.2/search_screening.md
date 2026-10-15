@@ -25,7 +25,9 @@ fresh engine runs, and its outcome is recorded as data (general
 properties in this spec; the concrete readings live in the job
 file). A maintainer-local re-time probe over the screened plans and
 a hand-declared confirm of the improved variant are recorded as data
-in `jobs/sync-corpus-08`.
+in `jobs/sync-corpus-08`. The joint offset search now composes
+relations over derived region events (recorded in the synchronization
+spec), which answers open question 3 below.
 
 **Depends on:** OMTS v0.1 (`specs/omts/0.1/specification.md`), OMTS v0.2
 synchronization (`synchronization.md`), OMTS v0.2 collision geometry
@@ -218,10 +220,18 @@ and the adapter writes the screen it applied to a per-task
    shapes? Unclaimed until a corpus shows otherwise.
 3. Should `omts propose-offsets` eventually compose derived relations
    for screened lines, or does screening make the hand-declared-offset
-   rule permanent? Single-task re-time evidence now exists (probe plus
-   hand-declared confirm, recorded as data in `jobs/sync-corpus-08`),
-   so the open part narrows to the joint offset search: single-task
-   probes cannot see joint-only solutions (the authored-line evidence
-   behind the synchronization spec's answered question 5 found them),
-   so the narrowed verdict may or may not survive joint phasing. The
-   G5 fail-closed rule stands until the joint search lands.
+   rule permanent?
+
+   **Resolution (answered 2026-10-15):** the joint search composes them.
+   `omts propose-offsets` applies the same sampled-occupancy semantics
+   as `omts verify-line` to relations over derived region events --
+   anchored boundary points and occupancy windows rotate with their
+   task's offset -- so a screened line can be re-timed jointly instead
+   of only by hand. The fail-closed preflights are unchanged (declared
+   regions, collision body models, kind/type agreement, no derived
+   event participants), and a passing assignment on such a line remains
+   a sampled-occupancy verdict, never a certification. The
+   hand-declared route stays available, and the proposal still
+   replaces declared offsets wholesale. Whether joint phasing repairs
+   a particular narrowed pool is an empirical question for the corpus
+   jobs, not for this spec.

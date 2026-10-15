@@ -324,9 +324,13 @@ every combination. It is a diagnostic; it never changes the verdict.
    the assignments that maximize the number of passing candidate
    combinations, ranked by a constraint margin (the distance from the
    tightest constraint boundary) and with a document-ready
-   `applied_offsets_example`. Recommendations are absolute: they are composed
-   from raw achieved phases and replace any declared `applied_offsets`
-   wholesale. The output is a proposal only — it never writes a verdict; a
+   `applied_offsets_example`. Relations over derived region events are
+   composed too, under the collision spec's G5 semantics: anchored
+   boundary points and sampled occupancy windows rotate with their
+   task's offset, so passing on such a relation is a sampled-occupancy
+   verdict, never a certification. Recommendations are absolute: they
+   are composed from raw achieved phases and replace any declared
+   `applied_offsets` wholesale. The output is a proposal only — it never writes a verdict; a
    human declares the chosen offsets in the document, then re-validates,
    re-adapts, and re-verifies before the line is verified under them.
 
@@ -345,8 +349,9 @@ records relations over derived region events in the plan line section, and
 the S4 verifier gates the composed verdict on them with the semantics above
 (all-pairs for point relations, pairwise for window relations,
 sampled-occupancy honesty). The `omts propose-offsets` joint search
-excludes lines with derived-event relations, fail-closed; the anchor probe
-rotates a task's windows and points along with its phases. This, too,
+composes lines with derived-event relations under those same
+sampled-occupancy semantics, with the fail-closed preflights unchanged;
+the anchor probe rotates a task's windows and points along with its phases. This, too,
 requires no new solver physics; the corpus rerun on a synchronized pair
 sharing one zone is the capstone exercise.
 

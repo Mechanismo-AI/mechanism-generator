@@ -28,10 +28,8 @@ manifests, not the engine itself.
 
 import json
 
-import pytest
-
 from mechanism_generator.omts.adapter import prepare_plan, write_plan
-from mechanism_generator.omts.line_verify import LineVerificationError, solve_offsets, verify_line
+from mechanism_generator.omts.line_verify import solve_offsets, verify_line
 from mechanism_generator.omts.validation import load_document, require_valid
 
 from pathlib import Path
@@ -181,9 +179,14 @@ def test_overlapping_occupancy_alone_fails_the_line(tmp_path):
     assert keepout["min_gap_deg"] == 0.0
 
 
-def test_joint_offset_search_refuses_the_derived_line(tmp_path):
+def test_joint_offset_search_composes_the_derived_line(tmp_path):
     plan_dir = _plan_with_results(tmp_path, CATCHER_ROWS[:1])
-    # fail-closed: offsets for lines with derived relations are declared
-    # by hand and re-verified; the joint search does not compose them
-    with pytest.raises(LineVerificationError, match="does not compose"):
-        solve_offsets(plan_dir)
+    # From the G5 follow-up, the joint search composes the keepout over the
+    # sampled occupancy windows instead of refusing the line. The authored
+    # phasing (which verifies: min-gap 12.0 >= clearance 10) is among the
+    # assignments the search can recommend.
+    proposal = solve_offsets(plan_dir, step_deg=1.0)
+    assert proposal["status"] == "solved"
+    assert proposal["best_passing_count"] == 1
+    assert "sampled-occupancy" in proposal["note"]
+
