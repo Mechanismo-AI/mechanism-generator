@@ -87,9 +87,43 @@ pristine):
 - Occupancy is sampled, never certified (`sampled_collision_geometry_v1`
   in all artifacts); a verified line is verified against declared
   relations, not a collision-free claim.
-- Only single-task offsets were probed. Joint offset search over
-  derived relations is not implemented; the G5 fail-closed rule
-  (`omts propose-offsets` refuses lines with derived relations)
-  stands. 03's "no feasible offsets" is a statement about
-  single-task offsets in the screened and unscreened pools, not
-  about joint phasing.
+- Only single-task offsets were probed by this job. At the time of
+  the probe, joint offset search over derived relations was not
+  implemented and `omts propose-offsets` refused such lines (the
+  G5 fail-closed rule of that revision); the refusal was lifted when
+  the joint search learned to compose derived region relations
+  (PR #30). 03's "no feasible offsets" below is a statement about
+  single-task offsets in the screened and unscreened pools; the joint
+  question it left open is answered in the post-joint-search section.
+## Post-joint-search outcome (2026-10-15, after PR #30)
+
+The joint offset search that now composes relations over derived
+region events (`omts propose-offsets`, PR #30) was run over COPIES of
+the corpus-07 plan dirs (maintainer-local, runs/propose-07; the
+corpus-07 plans stayed pristine) at a 1 deg grid:
+
+- 01 solved 15/15 (585 assignments tie the best; top recommendation
+  catcher 113 / gate 13, margin 13.26 deg): the joint search
+  rediscovered the probe bands recorded above, with margins. No
+  re-confirm was needed -- the hand-declared gate 10 re-time above
+  already verified 15/15 inside the same band.
+- 03 INFEASIBLE: 0 passing of 25 combinations, 0 assignments across
+  the whole joint grid. Together with this job's single-task result
+  (no feasible offset for either anchor in the screened pools) and
+  corpus-06 (none in the unscreened pools), variant 03 is
+  un-repairable by phasing at all. The question this job left open is
+  answered: no.
+- 06 solved 25/25 (18 assignments; top recommendation catcher 175 /
+  gate 265, margin 7.69 deg): the negative control did NOT survive the
+  wider search. Single-task sweeps (this job) found no feasible offset
+  for either task, but clearing the fixed shared zone can require
+  moving BOTH tasks at once, which no single-task probe can see. A
+  hand-declared confirm (validate, adapt, corpus-07 results reused,
+  verify-line) returned `LINE VERIFIED combinations=25
+  passing=25` -- exactly the proposal. Variant 06 is reclassified: a
+  negative control for declared/single-task phasing (it held across
+  five corpora), but joint-repairable by two-task phasing.
+- Lesson: a "structurally failed" verdict is relative to the phasing
+  search space it was measured in; re-probe negative controls
+  whenever the search space grows. Occupancy remains sampled, never
+  certified.
