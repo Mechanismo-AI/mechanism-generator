@@ -271,7 +271,13 @@ def _collision_model(task: dict, index: int) -> dict | None:
     if collision is None:
         return None
     path = f"$.tasks[{index}].requirements.collision"
-    _only(collision, "bodies steps mode", path)
+    _only(collision, "bodies steps mode screen", path)
+    if "screen" in collision:
+        raise UnsupportedFeature(
+            f"{path}.screen: search-time zone screening is specified but not supported by the "
+            "engine runner yet (specs/omts/0.2/search_screening.md); it will be wired when the "
+            "engine screen lands."
+        )
     bodies = collision["bodies"]
     _only(bodies, "links carrier", path + ".bodies")
     links = bodies.get("links", {})

@@ -250,6 +250,29 @@ def windows_from_flags(flags) -> list[dict]:
     ]
 
 
+def window_width(window: dict, steps: int) -> float:
+    """Width in degrees of one sampled occupancy window, wrap-aware.
+
+    A window spans the sampled phases from `start_deg` to `end_deg`
+    inclusive, so its width is one sample step wider than the bare
+    `end_deg - start_deg` gap, and the gap is taken modulo 360 so windows
+    that wrap through zero measure correctly. Full occupancy (the single
+    window `0.0` to `360 - 360/steps`) returns exactly 360.0.
+    """
+    if (isinstance(steps, bool) or not isinstance(steps, int)
+            or not MIN_STEPS <= steps <= MAX_STEPS):
+        raise ValueError(f"Window width requires an integer step count between {MIN_STEPS} and {MAX_STEPS}.")
+    return ((window["end_deg"] - window["start_deg"]) % 360.0) + 360.0 / steps
+
+
+def occupancy_summary(windows: list, steps: int) -> dict:
+    """Window count and total occupied width in degrees for one candidate."""
+    return {
+        "windows": len(windows),
+        "total_width_deg": sum(window_width(window, steps) for window in windows),
+    }
+
+
 def occupancy_windows(params, branch_sign: int, region, steps: int,
                       thickness: float = 0.0, carrier=None) -> list[dict]:
     """Sampled occupancy windows of one candidate against one region."""

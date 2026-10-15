@@ -185,7 +185,9 @@ above (as `zone_keepout`).
   no offset for either anchor that admits a passing combination in those
   variants. Post-hoc gating rejects such lines; it cannot repair them,
   because the conflict is structural to the candidate sets the
-  region-blind search produced.
+  region-blind search produced. The search-time zone screening
+  vocabulary that follows from this evidence is drafted in
+  `search_screening.md`.
 - Every artifact that reports occupancy records `method:
   sampled_collision_geometry_v1`, the step count, the declared thickness
   and bodies, and the disclaimer: sampled, not certified; no between-sample
