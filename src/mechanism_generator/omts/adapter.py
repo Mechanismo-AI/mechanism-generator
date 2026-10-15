@@ -44,7 +44,7 @@ def _choice(obj: dict, key: str, default, choices, path: str):
     return value
 
 
-def _options(task: dict, index: int, outputs: dict) -> dict:
+def _options(task: dict, index: int, outputs: dict, regions: list) -> dict:
     path = f"$.tasks[{index}]"
     _only(task, "id name description motion mechanism_search requirements search", path)
     motion = task["motion"]
@@ -150,6 +150,7 @@ def _options(task: dict, index: int, outputs: dict) -> dict:
     _only(compactness, "mode", rp + ".compactness")
     _fixed(compactness, "mode", "report_only", rp + ".compactness")
     panel = requirements.get("panel")
+    collision = requirements.get("collision")
     if panel is not None:
         _only(panel, "bounds carrier_size pivot_clearance steps mode carrier_frame", rp + ".panel")
         _fixed(panel, "mode", "hard", rp + ".panel")
@@ -222,7 +223,7 @@ def _options(task: dict, index: int, outputs: dict) -> dict:
         arguments.append("--portfolio_skip_release")
     if classification.get("follower_not_longest", False):
         arguments.append("--enforce_follower_not_longest")
-    return {
+    run = {
         "task_id": task["id"],
         "target_ids": [target["id"] for target in targets],
         "positions": [target["position"] for target in targets],
@@ -231,6 +232,25 @@ def _options(task: dict, index: int, outputs: dict) -> dict:
         "output_root": f"results/task-{index + 1:03d}",
         "arguments": arguments,
     }
+    if collision is not None and collision.get("screen"):
+        model = _collision_model(task, index)
+        sidecar = {
+            "method": "sampled_collision_geometry_v1",
+            "task": task["id"],
+            "steps": model["steps"],
+            "thickness": model["thickness"],
+            "regions": [dict(region) for region in regions],
+            "screen": model["screen"],
+            "note": "Per-candidate search-time zone screening (specs/omts/0.2/search_screening.md): "
+                    "a pass is not a collision-free claim and never gates the composed line verdict.",
+            "disclaimer": "Sampled, not certified; no between-sample guarantee; not "
+                          "collision, thickness or machinery certification.",
+        }
+        if "carrier" in model:
+            sidecar["carrier"] = model["carrier"]
+        run["zone_screen_file"] = f"tasks/task-{index + 1:03d}/zone_screen.json"
+        run["zone_screen"] = sidecar
+    return run
 
 
 def _event_ref(value, task_target_ids: dict, path: str,
@@ -272,12 +292,6 @@ def _collision_model(task: dict, index: int) -> dict | None:
         return None
     path = f"$.tasks[{index}].requirements.collision"
     _only(collision, "bodies steps mode screen", path)
-    if "screen" in collision:
-        raise UnsupportedFeature(
-            f"{path}.screen: search-time zone screening is specified but not supported by the "
-            "engine runner yet (specs/omts/0.2/search_screening.md); it will be wired when the "
-            "engine screen lands."
-        )
     bodies = collision["bodies"]
     _only(bodies, "links carrier", path + ".bodies")
     links = bodies.get("links", {})
@@ -291,6 +305,22 @@ def _collision_model(task: dict, index: int) -> dict | None:
     if carrier is not None:
         _only(carrier, "width depth", path + ".bodies.carrier")
         model["carrier"] = {"width": float(carrier["width"]), "depth": float(carrier["depth"])}
+    if "screen" in collision:
+        screen = []
+        for i, entry in enumerate(collision["screen"]):
+            sp = f"{path}.screen[{i}]"
+            _only(entry, "region avoid max_total_width max_windows mode notes", sp)
+            record = {"region": entry["region"], "mode": entry.get("mode", "hard")}
+            if "avoid" in entry:
+                record["avoid"] = bool(entry["avoid"])
+            if "max_total_width" in entry:
+                record["max_total_width_deg"] = float(_sync_quantity(entry["max_total_width"], sp + ".max_total_width"))
+            if "max_windows" in entry:
+                record["max_windows"] = int(entry["max_windows"])
+            if "notes" in entry:
+                record["notes"] = str(entry["notes"])
+            screen.append(record)
+        model["screen"] = screen
     return model
 
 
@@ -464,13 +494,15 @@ def prepare_plan(data: dict) -> dict:
     line = _line(data, collision_models)
     if line is None and (data.get("regions") or collision_models):
         raise UnsupportedFeature("$.regions and $.tasks[].requirements.collision are recorded for the synchronization line; declare 'synchronization' or remove the collision features.")
-    runs = [_options(task, i, outputs) for i, task in enumerate(data["tasks"])]
+    runs = [_options(task, i, outputs, data.get("regions", [])) for i, task in enumerate(data["tasks"])]
     notes = [
         "One independent run per task; no synchronized synthesis.",
         "Preparation does not establish feasibility or meet any requested validation level.",
         "Interpret selection_eligible and qualification_level; raw candidate exports also include rejected designs.",
         "Default R2.5c objectives and scale-relative search bounds remain active; see the adapter profile.",
     ]
+    if any("zone_screen" in run for run in runs):
+        notes.append("Tasks that declare a collision screen are screened per candidate at qualification time (sampled occupancy, never certified); a hard screen excludes failing candidates from selection_eligible and never gates the composed line verdict.")
     if line is not None:
         notes.append("Synchronization metadata is recorded for post-hoc timeline verification; no joint optimization or verification is performed by this plan.")
         if line.get("collision") or line.get("regions"):
@@ -506,6 +538,10 @@ def write_plan(data: dict, output: str | Path) -> Path:
             writer = csv.writer(stream)
             writer.writerow(["label", "x1", "y1", "x2", "y2", "x3", "y3"])
             writer.writerow([run["task_id"], *(value for position in run["positions"] for value in position)])
+        if "zone_screen" in run:
+            sidecar = run.pop("zone_screen")
+            sidecar_file = output / run["zone_screen_file"]
+            sidecar_file.write_text(json.dumps(sidecar, indent=2) + "\n", encoding="utf-8")
     (output / "run_plan.json").write_text(json.dumps(plan, indent=2) + "\n", encoding="utf-8")
     runner = files(__package__).joinpath("runner_template.py.txt").read_text(encoding="utf-8")
     (output / "run_r25c.py").write_text(runner, encoding="utf-8")

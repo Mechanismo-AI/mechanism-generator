@@ -37,6 +37,8 @@ def main():
         command = [sys.executable, "-m", "mechanism_generator.engine", "--models-directory", str(models), *run["arguments"],
                    "--targets_file", str(base / run["targets_file"]),
                    "--output_root", str(base / run["output_root"])]
+        if "zone_screen_file" in run:
+            command += ["--zone_screen", str(base / run["zone_screen_file"])]
         subprocess.run(command, cwd=base, check=True)
 
 

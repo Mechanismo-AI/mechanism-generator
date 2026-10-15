@@ -5,15 +5,17 @@
 > evidence: post-hoc gating rejects structurally conflicting lines but
 > cannot repair them, clearance tuning and phasing are both dead, and
 > the remaining lever is shaping the candidate pools the search draws
-> from. It is a specification draft for public review. Z1 has landed:
-> the vocabulary is declared, validated, and fail-closed -- documents
-> that declare a screen are rejected by the adapter until the engine
-> screen lands (Z2). The engine does not screen candidates yet.
+> from. It is a specification draft for public review. Z1 and Z2 have
+> landed: the vocabulary is declared, validated, and honored by the
+> engine, which screens every candidate at qualification time when a
+> task declares a screen.
 
-**Status:** Draft; Z1 of the staged plan in section 6 has landed (spec
-text, schema vocabulary, semantic validation, fail-closed adapter
-rejection, and the kernel width metric pinned by tests). Z2 (engine
-screening) and Z3 (capstone rerun on new engine runs) are planned.
+**Status:** Draft; Z1 and Z2 of the staged plan in section 6 have landed
+(spec text, schema vocabulary, semantic validation, the kernel width
+metric pinned by tests, the engine-side NumPy screen parity-tested
+against the kernel, the adapter `zone_screen.json` sidecar with a runner
+flag, and the adapter rejection lifted). Z3 (capstone rerun on new engine
+runs) is planned.
 
 **Depends on:** OMTS v0.1 (`specs/omts/0.1/specification.md`), OMTS v0.2
 synchronization (`synchronization.md`), OMTS v0.2 collision geometry
@@ -121,6 +123,14 @@ reports zero eligible candidates (`no_candidates`) rather than relaxing
 the screen or falling back to the unscreened pool. The screen never
 widens the search; fail-closed only.
 
+One asymmetry is deliberate and recorded: the stdlib kernel raises an
+error on undefined assembly at a sampled phase, while the engine screen
+fails the candidate (`zone_screen_geometry_valid` and
+`zone_screen_acceptable` both false, no windows recorded). The verifier
+keeps erroring on undefined assembly because it inspects recorded lines;
+the engine screen cannot defer a decision per candidate, so it fails
+closed. Occupancy is never guessed on either side.
+
 ## 5. Honesty
 
 A screen pass is not a collision-free claim. The screen is sampled
@@ -130,7 +140,11 @@ composed verdict is gated only by the relations the verifier evaluates
 metrics records `method: sampled_collision_geometry_v1`, the step
 count, the declared thickness and bodies, and the disclaimer: sampled,
 not certified; no between-sample guarantee; not collision, thickness or
-machinery certification.
+machinery certification. From Z2 the engine records the per-candidate
+screen metrics (window counts, total widths, per-region acceptability,
+window boundaries) in the candidate JSON/CSV exports and npz archives,
+and the adapter writes the screen it applied to a per-task
+`zone_screen.json` sidecar next to the targets file.
 
 ## 6. Staging (no new solver physics at any stage)
 
@@ -140,11 +154,18 @@ machinery certification.
    engine honors them, so the vocabulary cannot silently pass. The
    kernel width metric (`window_width`, `occupancy_summary`) lands with
    tests pinning its semantics.
-2. **Z2 (planned):** the engine screen: occupancy computed per candidate
-   at qualification time by the existing NumPy pipeline,
+2. **Z2 (landed):** the engine screen: occupancy computed per candidate
+   at qualification time by the existing NumPy pipeline
+   (`engine/zone_screen.py`, sampled at 360*i/steps like the kernel),
    parity-tested against the stdlib kernel (the G1 pattern); the adapter
-   writes a per-task `zone_screen.json` sidecar and a runner flag; the
-   adapter rejection is lifted.
+   normalizes screen entries, writes a per-task `zone_screen.json`
+   sidecar and a runner `--zone_screen` flag; the Z1 adapter rejection
+   is lifted. Hard screens exclude failing candidates from
+   `selection_eligible` (qualification level
+   `path_acceptable_but_zone_screen_failed`); soft and report_only
+   entries record data only. Undefined assembly fails the candidate
+   (section 4). Per-candidate metrics are recorded in the candidate
+   exports.
 3. **Z3 (planned):** capstone rerun as `jobs/sync-corpus-07`: NEW engine
    runs with screening on (screening changes selection, so results are
    never reused across this boundary), prediction scorecard written

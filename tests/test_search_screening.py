@@ -1,9 +1,11 @@
-"""Z1: OMTS v0.2 search-time zone screening vocabulary and validation."""
+"""Z1+Z2: OMTS v0.2 search-time zone screening vocabulary, validation, and adapter."""
+
+import json
 
 import pytest
 
 from mechanism_generator.omts import validate_document
-from mechanism_generator.omts.adapter import UnsupportedFeature, prepare_plan
+from mechanism_generator.omts.adapter import prepare_plan, write_plan
 from mechanism_generator.omts.geometry import (
     MAX_STEPS,
     MIN_STEPS,
@@ -19,7 +21,8 @@ def _task(task_id, target_id, phase, collision=True):
             "mode": "cyclic",
             "order_policy": "unordered",
             "targets": [
-                {"id": target_id, "position": [0.5, 0.5], "occurrence": {"phase": phase}}
+                {"id": f"{target_id}-{suffix}", "position": [0.5 + 0.25 * suffix, 0.5]}
+                for suffix in range(3)
             ],
         },
         "mechanism_search": {
@@ -127,11 +130,31 @@ def test_v01_rejects_screens():
     assert any("zone screens are a v0.2 collision feature" in error for error in errors)
 
 
-def test_adapter_rejects_screen_until_engine_support():
-    with pytest.raises(UnsupportedFeature) as excinfo:
-        prepare_plan(_screen_document())
-    assert "search-time zone screening" in str(excinfo.value)
-    assert "search_screening.md" in str(excinfo.value)
+def test_adapter_accepts_screen_and_writes_sidecar(tmp_path):
+    plan = prepare_plan(_screen_document())
+    gate_run = next(run for run in plan["runs"] if run["task_id"] == "gate")
+    catcher_run = next(run for run in plan["runs"] if run["task_id"] == "catcher")
+    assert gate_run["zone_screen_file"] == "tasks/task-001/zone_screen.json"
+    sidecar = gate_run["zone_screen"]
+    assert sidecar["method"] == "sampled_collision_geometry_v1"
+    assert sidecar["task"] == "gate"
+    assert sidecar["steps"] == 720
+    assert sidecar["thickness"] == 0.5
+    assert {"id": "shared_zone", "shape": "box", "min": [0, 0], "max": [1, 1]} in sidecar["regions"]
+    assert sidecar["screen"] == [
+        {"region": "shared_zone", "mode": "hard", "max_total_width_deg": 30.0, "max_windows": 2}
+    ]
+    assert "zone_screen" not in catcher_run
+    assert "zone_screen_file" not in catcher_run
+    assert any("screened per candidate" in note for note in plan["notes"])
+    assert plan["line"]["collision"]["gate"]["screen"] == sidecar["screen"]
+    write_plan(_screen_document(), tmp_path / "plan")
+    written = json.loads((tmp_path / "plan" / gate_run["zone_screen_file"]).read_text(encoding="utf-8"))
+    assert written == sidecar
+    run_plan = json.loads((tmp_path / "plan" / "run_plan.json").read_text(encoding="utf-8"))
+    gate_json = next(run for run in run_plan["runs"] if run["task_id"] == "gate")
+    assert gate_json["zone_screen_file"] == gate_run["zone_screen_file"]
+    assert "zone_screen" not in gate_json
 
 
 def test_window_width_is_wrap_aware():
