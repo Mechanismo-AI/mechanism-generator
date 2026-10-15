@@ -18,6 +18,14 @@ reuses a prior corpus run's engine result trees: applied offsets change only
 the composed timeline, never the per-task engine search, so reused results
 are exact rather than approximate.
 
+A base document that declares zone screens (requirements.collision.screen,
+specs/omts/0.2/search_screening.md) turns the engine-side screen on: the
+driver passes the adapter's per-task zone_screen.json sidecar to the engine
+with --zone_screen, and hard screen entries exclude failing candidates from
+selection eligibility. Screens change candidate selection, so engine result
+reuse is refused for screened documents: prior (region-blind) trees were not
+produced under the screen and are never reused across that boundary.
+
 This driver never modifies the repository and never uploads anything.
 """
 
@@ -127,6 +135,15 @@ def run_variant(document: dict, out_dir: Path, models: Path, quick: bool,
     selected_counts = {}
     results_reused = False
     reuse_root = (results_from / out_dir.name / "plan" / "results") if results_from else None
+    if reuse_root is not None and any("zone_screen_file" in run for run in plan["runs"]):
+        # Fail closed: screening changes candidate selection, so prior
+        # region-blind result trees were not produced under the screen and
+        # cannot be reused across this boundary (search_screening.md).
+        raise RuntimeError(
+            "--results-from cannot reuse engine results for a document that declares "
+            "zone screens: screening changes candidate selection, so the prior "
+            "region-blind trees were not produced under the screen "
+            "(specs/omts/0.2/search_screening.md). Run the engine fresh instead.")
     if reuse_root is not None and reuse_root.is_dir():
         shutil.copytree(reuse_root, plan_dir / "results")
         results_reused = True
@@ -142,6 +159,11 @@ def run_variant(document: dict, out_dir: Path, models: Path, quick: bool,
                        "--models-directory", str(models), *run["arguments"],
                        "--targets_file", str(plan_dir / run["targets_file"]),
                        "--output_root", str(plan_dir / run["output_root"])]
+            if "zone_screen_file" in run:
+                # The adapter's per-task sidecar turns the search-time zone
+                # screen on (Z2); hard entries exclude failing candidates
+                # from selection eligibility, never gating the verdict.
+                command += ["--zone_screen", str(plan_dir / run["zone_screen_file"])]
             if quick:
                 command.append("--quick")
             check_call(command, plan_dir)
@@ -199,6 +221,17 @@ def main() -> int:
     if not args.models.is_dir():
         parser.error(f"models directory not found: {args.models}; run mechanism-models download first.")
     base = load_yaml(args.document)
+    if args.results_from and any(
+            task.get("requirements", {}).get("collision", {}).get("screen")
+            for task in base.get("tasks", [])):
+        # Fail closed, before any variant runs (the run_variant guard is the
+        # defense in depth): screening changes candidate selection, so prior
+        # region-blind trees were not produced under the screen.
+        parser.error(
+            "--results-from is not supported for documents that declare zone screens: "
+            "screens change candidate selection, so prior region-blind result trees "
+            "were not produced under the screen and are never reused across that "
+            "boundary (specs/omts/0.2/search_screening.md). Run the engine fresh.")
     args.output_dir.mkdir(parents=True, exist_ok=True)
     count = max(1, min(args.count, 9))
     offsets_by_variant = load_offsets(args.offsets) if args.offsets else {}

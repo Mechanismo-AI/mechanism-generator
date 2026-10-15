@@ -8,14 +8,18 @@
 > from. It is a specification draft for public review. Z1 and Z2 have
 > landed: the vocabulary is declared, validated, and honored by the
 > engine, which screens every candidate at qualification time when a
-> task declares a screen.
+> task declares a screen. Z3 is staged: the screened capstone example,
+> the corpus job with its frozen prediction scorecard, and the corpus
+> driver support are landed; the run itself is maintainer-local and its
+> outcome is not yet recorded.
 
 **Status:** Draft; Z1 and Z2 of the staged plan in section 6 have landed
 (spec text, schema vocabulary, semantic validation, the kernel width
 metric pinned by tests, the engine-side NumPy screen parity-tested
 against the kernel, the adapter `zone_screen.json` sidecar with a runner
-flag, and the adapter rejection lifted). Z3 (capstone rerun on new engine
-runs) is planned.
+flag, and the adapter rejection lifted). Z3 (capstone rerun on new
+engine runs) is staged: the job and its prediction scorecard exist; the
+run is maintainer-local and its outcome is not yet recorded.
 
 **Depends on:** OMTS v0.1 (`specs/omts/0.1/specification.md`), OMTS v0.2
 synchronization (`synchronization.md`), OMTS v0.2 collision geometry
@@ -166,10 +170,17 @@ and the adapter writes the screen it applied to a per-task
    entries record data only. Undefined assembly fails the candidate
    (section 4). Per-candidate metrics are recorded in the candidate
    exports.
-3. **Z3 (planned):** capstone rerun as `jobs/sync-corpus-07`: NEW engine
-   runs with screening on (screening changes selection, so results are
-   never reused across this boundary), prediction scorecard written
-   before the run, and evidence recorded as data.
+3. **Z3 (staged):** capstone rerun as `jobs/sync-corpus-07`:
+   `examples/omts/collision_pair_screened.omts.yaml` (the G5 pair with
+   a hard `max_total_width {phase: 60}` screen on the shared zone for
+   both tasks), the corpus driver passing the adapter's per-task sidecar
+   to the engine (`--zone_screen`, exactly as the generated runner
+   does), and a fail-closed driver refusal of `--results-from` for
+   screened documents (screening changes selection, so prior
+   region-blind trees were not produced under the screen and are never
+   reused across that boundary). The prediction scorecard in the job
+   file was written before the run; NEW engine runs only; evidence
+   recorded as data once the maintainer has run it.
 
 ## 7. Open questions of this draft
 

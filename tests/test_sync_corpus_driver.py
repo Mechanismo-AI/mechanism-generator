@@ -335,3 +335,98 @@ def test_main_runs_a_collision_pair_corpus_with_reused_results(
                          .read_text(encoding="utf-8"))
     assert doc["regions"][0]["center"] == [3.25, 1.25]
     assert doc["regions"][0]["radius"] == 0.6
+
+
+SCREENED_EXAMPLE = ROOT / "examples" / "omts" / "collision_pair_screened.omts.yaml"
+
+
+def _screened_document(index: int = 1) -> dict:
+    """Identity-transform variant of the screened collision pair example."""
+    base = driver.load_yaml(SCREENED_EXAMPLE)
+    return driver.variant_document(base, index, 0, 1.0)
+
+
+def test_screened_engine_commands_pass_the_zone_screen_sidecar(tmp_path, fake_cli):
+    """Z3: a screened base document turns the engine-side screen on.
+
+    The driver must pass the adapter's per-task zone_screen.json sidecar to
+    the engine with --zone_screen, exactly as the generated runner does.
+    """
+    commands, set_engine = fake_cli
+
+    def engine_handler(command, cwd):
+        assert "--zone_screen" in command, command
+        sidecar_path = Path(command[command.index("--zone_screen") + 1])
+        assert sidecar_path.is_file()
+        payload = json.loads(sidecar_path.read_text(encoding="utf-8"))
+        assert payload["method"] == "sampled_collision_geometry_v1"
+        assert payload["task"] == ("gate" if "task-001" in str(sidecar_path) else "catcher")
+        assert payload["steps"] == 720
+        entry = payload["screen"][0]
+        assert entry["region"] == "shared_zone"
+        assert entry["mode"] == "hard"
+        assert entry["max_total_width_deg"] == 60.0
+        assert "avoid" not in entry and "max_windows" not in entry
+        raise RuntimeError("engine commands asserted")
+
+    set_engine(engine_handler)
+    out_dir = tmp_path / "runs" / "corpus_pair_01"
+    out_dir.mkdir(parents=True)
+    with pytest.raises(RuntimeError, match="engine commands asserted"):
+        driver.run_variant(_screened_document(), out_dir,
+                           models=tmp_path / "models", quick=False)
+
+
+def test_unscreened_collision_pair_passes_no_zone_screen_flag(tmp_path, fake_cli):
+    """Collision bodies without a screen stay screen-free: no sidecar, no flag."""
+    commands, set_engine = fake_cli
+
+    def engine_handler(command, cwd):
+        assert "--zone_screen" not in command, command
+        raise RuntimeError("engine commands asserted")
+
+    set_engine(engine_handler)
+    base = driver.load_yaml(ROOT / "examples" / "omts" / "collision_pair.omts.yaml")
+    document = driver.variant_document(base, 1, 0, 1.0)
+    out_dir = tmp_path / "runs" / "corpus_pair_01"
+    out_dir.mkdir(parents=True)
+    with pytest.raises(RuntimeError, match="engine commands asserted"):
+        driver.run_variant(document, out_dir, models=tmp_path / "models", quick=False)
+
+
+def test_reuse_is_refused_across_the_screening_boundary(tmp_path, fake_cli):
+    """Screens change candidate selection, so prior region-blind result
+    trees were not produced under the screen: reuse fails closed, before
+    any copy or engine run (specs/omts/0.2/search_screening.md)."""
+    commands, set_engine = fake_cli
+    source = tmp_path / "prior"
+    reusable = source / "corpus_pair_01" / "plan" / "results"
+    reusable.mkdir(parents=True)
+    out_dir = tmp_path / "runs" / "corpus_pair_01"
+    out_dir.mkdir(parents=True)
+
+    with pytest.raises(RuntimeError, match="zone screens"):
+        driver.run_variant(_screened_document(), out_dir,
+                           models=tmp_path / "models", quick=False,
+                           results_from=source)
+    assert not (out_dir / "plan" / "results").exists()
+    assert all("mechanism_generator.engine" not in command
+               for command in commands)
+
+
+def test_main_refuses_reuse_for_screened_documents(tmp_path, monkeypatch, capsys):
+    """The refusal fires up front (exit 2), before any variant runs."""
+    models = tmp_path / "models"
+    models.mkdir()
+    source = tmp_path / "prior"
+    source.mkdir()
+    monkeypatch.setattr(driver.sys, "argv", [
+        "corpus_run.py", "--count", "1", "--models", str(models),
+        "--document", str(SCREENED_EXAMPLE),
+        "--results-from", str(source),
+        "--output-dir", str(tmp_path / "runs" / "sync-corpus-07"),
+    ])
+    with pytest.raises(SystemExit) as excinfo:
+        driver.main()
+    assert excinfo.value.code == 2
+    assert "zone screens" in capsys.readouterr().err

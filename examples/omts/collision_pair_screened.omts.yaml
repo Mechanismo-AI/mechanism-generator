@@ -1,0 +1,163 @@
+spec: open-mechanism-task
+version: 0.2.0
+task_set_id: collision_pair_screened
+name: Synchronized pair sharing a keep-out zone, search-time screen on
+description: >-
+  The collision pair of the G5 capstone, with a search-time zone screen
+  added to both tasks (specs/omts/0.2/search_screening.md): each arm's
+  links may pass through the shared handoff zone, but the sampled
+  occupancy windows against it must total at most 60 deg of the cycle, so
+  candidates that drag through the zone are excluded from the search
+  before line composition. The disjoint_windows relation still gates the
+  composed line post-hoc; the screen shapes the candidate pools and never
+  gates a verdict. Sampled occupancy only: never a collision, thickness,
+  or machinery certification, and nothing is proven between samples.
+capabilities_required:
+  - planar_2d
+  - cyclic_motion
+  - unordered_targets
+  - target_positions
+  - four_bar
+  - synchronized_run_preparation
+unsupported_feature_policy: error
+
+units:
+  length: normalized
+  angle: deg
+  time: s
+
+coordinate_system:
+  frame_id: world
+  dimension: 2
+  handedness: right
+
+regions:
+  - id: shared_zone
+    name: Handoff zone
+    notes: >-
+      Static circular zone spanning the gate release and catcher grab
+      targets; both arms sweep it once per cycle.
+    shape: circle
+    center: [3.25, 1.25]
+    radius: 0.6
+
+synchronization:
+  master_cycle_id: line_shaft
+  period: 1.2
+  shared_input: true
+  participants:
+    - task: gate
+    - task: catcher
+  events:
+    - id: handoff_window
+      type: co_active
+      participants: [gate.release.reached, catcher.grab.reached]
+      window: {phase_range: [100, 140]}
+      tolerance: {phase: 5}
+      mode: hard
+  relations:
+    - id: release_before_grab
+      from: gate.release.reached
+      to: catcher.grab.reached
+      type: ordering
+      min_lead: {phase: 10}
+      max_lead: {phase: 45}
+      mode: hard
+    - id: zone_keepout
+      from: gate.occupies_region.shared_zone
+      to: catcher.occupies_region.shared_zone
+      type: disjoint_windows
+      clearance: {phase: 10}
+      mode: hard
+      notes: >-
+        The arms must time-share the handoff zone: every sampled occupancy
+        window of the gate must sit at least 10 deg from every window of the
+        catcher, circularly.
+
+tasks:
+  - id: gate
+    name: Feed gate
+    motion:
+      mode: cyclic
+      order_policy: unordered
+      cycle:
+        period: 1.2
+        phase_reference: hold
+      targets:
+        - id: hold
+          position: [0.0, 0.0]
+          occurrence: {free: true}
+        - id: release
+          position: [3.0, 1.0]
+          occurrence: {free: true}
+        - id: rest
+          position: [1.0, 3.0]
+          occurrence: {free: true}
+    requirements:
+      collision:
+        bodies:
+          links: {thickness: 0.1}
+        steps: 720
+        mode: hard
+        screen:
+          - region: shared_zone
+            max_total_width: {phase: 60}
+            mode: hard
+            notes: >-
+              Search-time exclusion only: the sum of this task's sampled
+              occupancy window widths against shared_zone must stay within
+              60 deg of the cycle, so a candidate that drags its links
+              through the handoff zone fails the screen and is excluded
+              from selection_eligible. A pass is not a collision-free
+              claim and never gates the composed line verdict.
+    mechanism_search:
+      allowed_topologies: [four_bar]
+      max_dof: 1
+      max_actuators: 1
+      ground_link: {mode: portfolio, fixed_values: [6.0], release: true}
+      assembly_branches: [open, crossed]
+      profiles: [accuracy, balanced, transmission]
+      profile_matrix: cross
+
+  - id: catcher
+    name: Receiving arm
+    motion:
+      mode: cyclic
+      order_policy: unordered
+      cycle:
+        period: 1.2
+      targets:
+        - id: grab
+          position: [3.5, 1.5]
+          occurrence: {free: true}
+        - id: carry
+          position: [-1.0, 2.0]
+          occurrence: {free: true}
+        - id: park
+          position: [-2.0, 0.5]
+          occurrence: {free: true}
+    requirements:
+      collision:
+        bodies:
+          links: {thickness: 0.1}
+        steps: 720
+        mode: hard
+        screen:
+          - region: shared_zone
+            max_total_width: {phase: 60}
+            mode: hard
+            notes: >-
+              Search-time exclusion only: the sum of this task's sampled
+              occupancy window widths against shared_zone must stay within
+              60 deg of the cycle, so a candidate that drags its links
+              through the handoff zone fails the screen and is excluded
+              from selection_eligible. A pass is not a collision-free
+              claim and never gates the composed line verdict.
+    mechanism_search:
+      allowed_topologies: [four_bar]
+      max_dof: 1
+      max_actuators: 1
+      ground_link: {mode: portfolio, fixed_values: [6.0], release: true}
+      assembly_branches: [open, crossed]
+      profiles: [accuracy, balanced, transmission]
+      profile_matrix: cross
