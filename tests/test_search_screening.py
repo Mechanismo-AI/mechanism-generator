@@ -178,3 +178,41 @@ def test_window_width_rejects_out_of_range_steps():
         with pytest.raises(ValueError):
             window_width({"start_deg": 0.0, "end_deg": 1.0}, steps)
     assert MIN_STEPS == 361
+
+
+def test_screened_collision_pair_example_adapts_with_sidecars(tmp_path):
+    """The Z3 corpus base: the G5 collision pair plus a 60 deg hard
+    max_total_width screen on both tasks. Validates, adapts, and both
+    per-task sidecars carry the criterion; the engine turns the screen
+    on via the runner --zone_screen flag."""
+    from pathlib import Path
+
+    from mechanism_generator.omts import load_document
+    from mechanism_generator.omts.validation import require_valid
+
+    example = (Path(__file__).resolve().parents[1]
+               / "examples" / "omts" / "collision_pair_screened.omts.yaml")
+    document = load_document(example)
+    require_valid(document)
+    plan = prepare_plan(document)
+    assert len(plan["runs"]) == 2
+    for index, run in enumerate(plan["runs"], start=1):
+        assert run["zone_screen_file"] == f"tasks/task-{index:03d}/zone_screen.json"
+        sidecar = run["zone_screen"]
+        assert sidecar["method"] == "sampled_collision_geometry_v1"
+        assert sidecar["task"] == run["task_id"]
+        assert sidecar["steps"] == 720
+        assert sidecar["thickness"] == 0.1
+        assert len(sidecar["screen"]) == 1
+        entry = sidecar["screen"][0]
+        assert entry["region"] == "shared_zone"
+        assert entry["mode"] == "hard"
+        assert entry["max_total_width_deg"] == 60.0
+        assert "avoid" not in entry and "max_windows" not in entry
+        assert isinstance(entry.get("notes"), str) and entry["notes"]
+        assert "disclaimer" in sidecar
+    write_plan(document, tmp_path / "plan")
+    for run in plan["runs"]:
+        written = json.loads((tmp_path / "plan" / run["zone_screen_file"])
+                             .read_text(encoding="utf-8"))
+        assert written == run["zone_screen"]
