@@ -7,6 +7,11 @@ and line-verified with the S4 verifier. Variants are independent; a failure
 in one is recorded and does not stop the corpus. Completed variants are
 skipped on rerun, so the job is resumable.
 
+`--document` selects the base OMTS document for the variants (default: the
+synchronized pair example). A base with regions and collision bodies (for
+example `examples/omts/collision_pair.omts.yaml`) produces variants whose
+region and body geometry transform with the targets.
+
 `--offsets` declares per-variant synchronization applied_offsets (a
 human-reviewed timeline decision, not a search parameter). `--results-from`
 reuses a prior corpus run's engine result trees: applied offsets change only
@@ -59,6 +64,17 @@ def rotate_scale(points, angle_deg: float, scale: float):
 
 
 def variant_document(base: dict, index: int, angle: float, scale: float) -> dict:
+    """Deterministic rotate/scale variant of the whole machine geometry.
+
+    Target positions, region geometry, and declared collision body sizes all
+    transform together, so a variant is the same machine viewed in a rotated,
+    scaled world: circle regions transform exactly, box regions take the
+    axis-aligned bounding box of their rotated corners (an envelope, larger
+    than the rotated box), and collision thickness and carrier sizes scale
+    with the variant. Occupancy timing per variant is whatever the transformed
+    geometry produces; the driver never claims a variant is equivalent to its
+    base.
+    """
     document = json.loads(json.dumps(base))
     document["task_set_id"] = f"corpus_pair_{index:02d}"
     document["name"] = f"Synchronized pair corpus variant {index:02d}"
@@ -67,6 +83,24 @@ def variant_document(base: dict, index: int, angle: float, scale: float) -> dict
         moved = rotate_scale(positions, angle, scale)
         for target, position in zip(task["motion"]["targets"], moved):
             target["position"] = position
+        bodies = task.get("requirements", {}).get("collision", {}).get("bodies", {})
+        links = bodies.get("links", {})
+        if "thickness" in links:
+            links["thickness"] = round(links["thickness"] * scale, 4)
+        carrier = bodies.get("carrier")
+        if carrier is not None:
+            carrier["width"] = round(carrier["width"] * scale, 4)
+            carrier["depth"] = round(carrier["depth"] * scale, 4)
+    for region in document.get("regions", []):
+        if region["shape"] == "circle":
+            region["center"] = rotate_scale([region["center"]], angle, scale)[0]
+            region["radius"] = round(region["radius"] * scale, 4)
+        else:
+            low, high = region["min"], region["max"]
+            corners = rotate_scale([[low[0], low[1]], [high[0], low[1]],
+                                    [high[0], high[1]], [low[0], high[1]]], angle, scale)
+            region["min"] = [min(point[axis] for point in corners) for axis in (0, 1)]
+            region["max"] = [max(point[axis] for point in corners) for axis in (0, 1)]
     return document
 
 
@@ -140,6 +174,9 @@ def run_variant(document: dict, out_dir: Path, models: Path, quick: bool,
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--document", type=Path, default=BASE_DOCUMENT,
+                        help="Base OMTS document for the variants "
+                             "(default: examples/omts/synchronized_pair.omts.yaml)")
     parser.add_argument("--count", type=int, default=6, help="Number of variants (max 9)")
     parser.add_argument("--quick", action="store_true", help="Trim search budgets for a fast smoke pass")
     parser.add_argument("--models", type=Path, default=ROOT / "models")
@@ -157,10 +194,11 @@ def main() -> int:
     # the repo root (FileNotFoundError on every variant).
     args.output_dir = args.output_dir.resolve()
     args.models = args.models.resolve()
+    args.document = args.document.resolve()
     args.results_from = args.results_from.resolve() if args.results_from else None
     if not args.models.is_dir():
         parser.error(f"models directory not found: {args.models}; run mechanism-models download first.")
-    base = load_yaml(BASE_DOCUMENT)
+    base = load_yaml(args.document)
     args.output_dir.mkdir(parents=True, exist_ok=True)
     count = max(1, min(args.count, 9))
     offsets_by_variant = load_offsets(args.offsets) if args.offsets else {}

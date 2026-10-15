@@ -237,3 +237,101 @@ def test_main_records_offsets_and_reuse_per_variant(
                          .read_text(encoding="utf-8"))
     assert doc["synchronization"]["applied_offsets"] == \
         {"catcher": {"phase": 105}}
+
+
+GEOMETRY = {"l1": 4, "l2": 1.2, "l3": 4.5, "l4": 3, "S_ratio": 0.5,
+            "bar_length": 1.0, "base_angle": 0.0}
+
+
+def _write_geometry_manifest(results_dir: Path, task: str, rows):
+    run_dir = results_dir / f"task-{TASK_NUMBERS[task]:03d}" / "r25c" \
+        / "20260101_000000_000000_run"
+    run_dir.mkdir(parents=True, exist_ok=True)
+    selected = []
+    for rank, (candidate_id, phases, base_x, base_y) in enumerate(rows, start=1):
+        row = {"rank": rank, "candidate_id": candidate_id, "branch_sign": 1, **GEOMETRY,
+               "base_x": base_x, "base_y": base_y}
+        row.update({f"phase_{index + 1}_deg": phase
+                    for index, phase in enumerate(phases)})
+        selected.append(row)
+    manifest = {"run_status": "completed",
+                "targets": [{"label": task, "crank_direction": "positive",
+                             "selected": selected}]}
+    (run_dir / "run_manifest.json").write_text(json.dumps(manifest),
+                                               encoding="utf-8")
+
+
+def test_variants_transform_region_and_collision_geometry():
+    base = driver.load_yaml(ROOT / "examples" / "omts" / "collision_pair.omts.yaml")
+    document = driver.variant_document(base, 3, 70, 1.1)
+    # the circle zone rotates and scales with the targets: center
+    # [3.25, 1.25] rotated 70 deg and scaled 1.1 is [-0.0694, 3.8297]
+    zone = document["regions"][0]
+    assert zone["center"] == [-0.0694, 3.8297]
+    assert zone["radius"] == 0.66
+    for task in document["tasks"]:
+        assert task["requirements"]["collision"]["bodies"]["links"]["thickness"] == 0.11
+    # derived relations are carried through untouched
+    keepout = next(relation for relation in document["synchronization"]["relations"]
+                   if relation["id"] == "zone_keepout")
+    assert keepout["from"] == "gate.occupies_region.shared_zone"
+    assert keepout["clearance"] == {"phase": 10}
+
+
+def test_variant_box_regions_take_the_rotated_envelope():
+    base = driver.load_yaml(driver.BASE_DOCUMENT)
+    base["regions"] = [{"id": "box_zone", "shape": "box",
+                        "min": [0.0, 0.0], "max": [1.0, 1.0]}]
+    document = driver.variant_document(base, 3, 70, 1.1)
+    # an axis-aligned box cannot rotate; the variant keeps the axis-aligned
+    # envelope of the rotated corners (larger than the rotated box)
+    assert document["regions"][0]["min"] == [-1.0337, 0.0]
+    assert document["regions"][0]["max"] == [0.3762, 1.4099]
+
+
+def test_main_runs_a_collision_pair_corpus_with_reused_results(
+        tmp_path, fake_cli, monkeypatch):
+    commands, _ = fake_cli
+    models = tmp_path / "models"
+    models.mkdir()
+    source = tmp_path / "runs" / "sync-corpus-03"
+    # variant 01 is the identity transform (angle 0, scale 1.0): the example
+    # as authored. These candidates occupy the shared zone in disjoint
+    # windows (gap 12 deg against the 10 deg clearance), so the line
+    # verifies without any engine run.
+    _write_geometry_manifest(
+        source / "corpus_pair_01" / "plan" / "results", "gate",
+        [("g1", [30, 130, 250], 4.0, -0.25)])
+    _write_geometry_manifest(
+        source / "corpus_pair_01" / "plan" / "results", "catcher",
+        [("c1", [120, 220, 20], 4.5, 0.0)])
+    output = tmp_path / "runs" / "sync-corpus-05"
+    monkeypatch.setattr(driver.sys, "argv", [
+        "corpus_run.py", "--count", "1", "--models", str(models),
+        "--document", str(ROOT / "examples" / "omts" / "collision_pair.omts.yaml"),
+        "--results-from", str(source), "--output-dir", str(output),
+    ])
+
+    assert driver.main() == 0
+    rows = json.loads((output / "summary.json").read_text(encoding="utf-8"))
+    assert len(rows) == 1
+    assert rows[0]["task_set_id"] == "corpus_pair_01"
+    assert rows[0]["status"] == "verified"
+    assert rows[0]["passing_combination_count"] == 1
+    assert rows[0]["results_reused"] is True
+    assert all("mechanism_generator.engine" not in command
+               for command in commands)
+    line_result = json.loads((output / "corpus_pair_01" / "plan" / "line_result.json")
+                             .read_text(encoding="utf-8"))
+    keepout = next(item for combo in line_result["combinations"]
+                   for item in combo["relations"]
+                   if item["id"] == "zone_keepout")
+    assert keepout["status"] == "pass"
+    assert keepout["min_gap_deg"] == 12.0
+    # the variant document is the example with collision geometry carried
+    # through the identity transform
+    import yaml
+    doc = yaml.safe_load((output / "corpus_pair_01" / "document.omts.yaml")
+                         .read_text(encoding="utf-8"))
+    assert doc["regions"][0]["center"] == [3.25, 1.25]
+    assert doc["regions"][0]["radius"] == 0.6

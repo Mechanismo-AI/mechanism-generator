@@ -154,6 +154,11 @@ With multiple windows per cycle the relation must hold for every window
 pair: every window of `from` must sit at least `clearance` from every
 window of `to`, circularly.
 
+`examples/omts/collision_pair.omts.yaml` declares this configuration: the
+synchronized pair of the synchronization draft with a circular `shared_zone`
+at the handoff, a collision body model per task, and the keep-out relation
+above (as `zone_keepout`).
+
 ## 6. Verdict semantics and sampling honesty
 
 - Derived-window relations are ordinary relations: hard mode gates the
@@ -208,8 +213,12 @@ window of `to`, circularly.
    the semantics of section 6; the anchor probe rotates a task's windows
    and points along with its phases. The `omts propose-offsets` joint
    search still excludes derived-event relations (fail-closed): offsets
-   for such lines are declared by hand and re-verified. The corpus rerun on
-   the synchronized pair sharing one zone remains the capstone exercise.
+   for such lines are declared by hand and re-verified. The capstone
+   exercise -- the corpus rerun on the synchronized pair sharing one zone
+   -- is staged: `examples/omts/collision_pair.omts.yaml` declares the
+   pair, zone, and keep-out relation, and the sync-corpus-05 job runs the
+   corpus over it, reusing the region-blind engine searches of the
+   earlier corpus runs; its results are recorded as data when it runs.
 
 ## 8. Open questions of this draft
 
