@@ -148,6 +148,7 @@ including unsupported soft constraints. They are never silently discarded.
 - [Normative schema](src/mechanism_generator/omts/schema.json), bundled with the package
 - Shared schema/semantic validation, capability checks, and run preparation
 - [Qualification terminology](docs/qualification.md) and [development roadmap](docs/roadmap.md)
+- [Evidence jobs](jobs/README.md): the corpus and probe job files, each with its recorded outcome
 - Focused regression tests and continuous integration for Windows and Linux
 
 The public engine runs the research pipeline:
