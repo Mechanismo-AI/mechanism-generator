@@ -22,7 +22,10 @@ flag, and the adapter rejection lifted). Z3 (capstone rerun on new
 engine runs) is run-recorded: the job and its prediction scorecard
 were written before the run, the run was executed maintainer-local on
 fresh engine runs, and its outcome is recorded as data (general
-properties in this spec; the concrete readings live in the job file).
+properties in this spec; the concrete readings live in the job
+file). A maintainer-local re-time probe over the screened plans and
+a hand-declared confirm of the improved variant are recorded as data
+in `jobs/sync-corpus-08`.
 
 **Depends on:** OMTS v0.1 (`specs/omts/0.1/specification.md`), OMTS v0.2
 synchronization (`synchronization.md`), OMTS v0.2 collision geometry
@@ -196,8 +199,14 @@ and the adapter writes the screen it applied to a per-task
    narrowed, survived the screen, and still composed no passing
    combination (narrowing without repair); the upstream-zero variant
    and the negative control were unchanged, and the screen never gated
-   a verdict. Whether offsets can re-time the new pools is a
-   follow-up probe question, not claimed here.
+   a verdict. Whether offsets can re-time the new pools was answered by a
+   maintainer-local probe over the screened plans, recorded as data
+   in `jobs/sync-corpus-08`: feasible single-task offsets exist for
+   the improved variant (a hand-declared re-time, confirmed by the
+   verifier, carried it to a fully passing state), while the narrowed
+   variant admits no single-task offset -- re-timing the screened
+   pools can improve an already-verified line but did not repair the
+   narrowed one.
 
 ## 7. Open questions of this draft
 
@@ -209,5 +218,10 @@ and the adapter writes the screen it applied to a per-task
    shapes? Unclaimed until a corpus shows otherwise.
 3. Should `omts propose-offsets` eventually compose derived relations
    for screened lines, or does screening make the hand-declared-offset
-   rule permanent? Unclaimed; the G5 fail-closed rule stands until
-   screened-line re-time evidence exists.
+   rule permanent? Single-task re-time evidence now exists (probe plus
+   hand-declared confirm, recorded as data in `jobs/sync-corpus-08`),
+   so the open part narrows to the joint offset search: single-task
+   probes cannot see joint-only solutions (the authored-line evidence
+   behind the synchronization spec's answered question 5 found them),
+   so the narrowed verdict may or may not survive joint phasing. The
+   G5 fail-closed rule stands until the joint search lands.
