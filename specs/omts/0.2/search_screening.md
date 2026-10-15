@@ -5,21 +5,24 @@
 > evidence: post-hoc gating rejects structurally conflicting lines but
 > cannot repair them, clearance tuning and phasing are both dead, and
 > the remaining lever is shaping the candidate pools the search draws
-> from. It is a specification draft for public review. Z1 and Z2 have
-> landed: the vocabulary is declared, validated, and honored by the
-> engine, which screens every candidate at qualification time when a
-> task declares a screen. Z3 is staged: the screened capstone example,
-> the corpus job with its frozen prediction scorecard, and the corpus
-> driver support are landed; the run itself is maintainer-local and its
-> outcome is not yet recorded.
+> from. It is a specification draft for public review. Z1, Z2, and Z3
+> have landed: the vocabulary is declared, validated, and honored by
+> the engine, which screens every candidate at qualification time
+> when a task declares a screen; the screened capstone example, the
+> corpus job with its frozen prediction scorecard, and the corpus
+> driver support are on main; and the run itself has been executed
+> maintainer-local and read against the frozen scorecard, with the
+> outcome recorded as data in section 6.
 
 **Status:** Draft; Z1 and Z2 of the staged plan in section 6 have landed
 (spec text, schema vocabulary, semantic validation, the kernel width
 metric pinned by tests, the engine-side NumPy screen parity-tested
 against the kernel, the adapter `zone_screen.json` sidecar with a runner
 flag, and the adapter rejection lifted). Z3 (capstone rerun on new
-engine runs) is staged: the job and its prediction scorecard exist; the
-run is maintainer-local and its outcome is not yet recorded.
+engine runs) is run-recorded: the job and its prediction scorecard
+were written before the run, the run was executed maintainer-local on
+fresh engine runs, and its outcome is recorded as data (general
+properties in this spec; the concrete readings live in the job file).
 
 **Depends on:** OMTS v0.1 (`specs/omts/0.1/specification.md`), OMTS v0.2
 synchronization (`synchronization.md`), OMTS v0.2 collision geometry
@@ -170,7 +173,8 @@ and the adapter writes the screen it applied to a per-task
    entries record data only. Undefined assembly fails the candidate
    (section 4). Per-candidate metrics are recorded in the candidate
    exports.
-3. **Z3 (staged):** capstone rerun as `jobs/sync-corpus-07`:
+3. **Z3 (landed, run recorded):** capstone rerun as
+   `jobs/sync-corpus-07`:
    `examples/omts/collision_pair_screened.omts.yaml` (the G5 pair with
    a hard `max_total_width {phase: 60}` screen on the shared zone for
    both tasks), the corpus driver passing the adapter's per-task sidecar
@@ -179,8 +183,21 @@ and the adapter writes the screen it applied to a per-task
    screened documents (screening changes selection, so prior
    region-blind trees were not produced under the screen and are never
    reused across that boundary). The prediction scorecard in the job
-   file was written before the run; NEW engine runs only; evidence
-   recorded as data once the maintainer has run it.
+   file was written before the run; NEW engine runs only; the run has
+   been executed maintainer-local and its outcome is recorded as data
+   in the job file. Measured against the frozen scorecard: the identity
+   variant verified with more passing combinations than the
+   region-blind baseline (the screen admitted gate candidates the
+   region-blind search had out-ranked -- pool shaping improved the
+   line, not merely preserved it); among the flipped variants, some
+   tasks reported honest zero-eligible pools (every qualified
+   candidate over the cap), extending the structural reading from the
+   selected sets to the full pools, while one variant's pools
+   narrowed, survived the screen, and still composed no passing
+   combination (narrowing without repair); the upstream-zero variant
+   and the negative control were unchanged, and the screen never gated
+   a verdict. Whether offsets can re-time the new pools is a
+   follow-up probe question, not claimed here.
 
 ## 7. Open questions of this draft
 
@@ -192,5 +209,5 @@ and the adapter writes the screen it applied to a per-task
    shapes? Unclaimed until a corpus shows otherwise.
 3. Should `omts propose-offsets` eventually compose derived relations
    for screened lines, or does screening make the hand-declared-offset
-   rule permanent? Unclaimed; the G5 fail-closed rule stands until Z3
-   evidence exists.
+   rule permanent? Unclaimed; the G5 fail-closed rule stands until
+   screened-line re-time evidence exists.

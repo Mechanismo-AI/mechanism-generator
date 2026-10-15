@@ -107,3 +107,49 @@ per-candidate exports record window counts and total widths). The
 readings that matter: which of 02, 03, 04 (if any) verified; and whether
 any zero-eligible report is an honest structural finding or narrow
 candidates existed all along and were merely out-ranked.
+
+## Recorded outcome (after the run, 2026-10-15)
+
+Run executed maintainer-local at main 85d000a9: fresh engine runs,
+results_reused false everywhere, about 837 s total. Read against the
+frozen scorecard above: 5 of 6 verdict-level predictions confirmed;
+01's count prediction (at most 3) was refuted in the favorable
+direction.
+
+- **01: verified 6/15 (predicted verified, at most 3).** The screen
+  admitted gate candidates the region-blind search had out-ranked: 6
+  of 15 combinations pass authored + keep-out versus the corpus-05
+  baseline's 3/15. Pool shaping improved the line, not merely
+  preserved it. Gate pool detail: 42 candidates, 11 screen survivors,
+  all qualified, 5 selected; 7 candidates occupied the zone for the
+  full 360 deg (degenerate always-in-zone designs), 8 never entered it.
+- **02: no_candidates (predicted).** Gate zero, cap-caused: all 42
+  gate candidates were engineering-acceptable and all 42 exceeded the
+  60 deg cap (total widths about 69-108 deg). The structural reading
+  extends from the selected set to the full pool.
+- **03: failed 0/25 (the scorecard's open middle case).** Sub-60-deg
+  candidates existed all along and were merely out-ranked: the screen
+  left 24 of 42 gate candidates and 15 of 42 catcher candidates (9
+  fully eligible); 5 x 5 were selected and no combination passes
+  authored + keep-out. Pool shaping narrowed without repairing the
+  line.
+- **04: no_candidates (predicted).** Catcher zero, cap-caused: all 42
+  catcher candidates exceeded the cap; 25 were path-acceptable (17
+  failed the physical path upstream regardless).
+- **05: no_candidates, unchanged (predicted).** 17 path rejections
+  and 13 selection-floor failures upstream regardless; 12
+  path-acceptable candidates were screen-blocked whose selection-floor
+  status the qualification labels do not record, so the fresh pool's
+  zero is upstream-leaning but not fully attributable either way. The
+  verdict matches every prior corpus.
+- **06: failed, unchanged (negative control held).** All 42 gate
+  candidates passed the screen (24 never touch the zone; widest
+  survivor 46.5 deg); the catcher pool narrowed and the verdict did
+  not change.
+- **Plumbing:** 12/12 per-task zone_screen.json sidecars written with
+  the per-variant transformed zone geometry and the hard 60 deg cap;
+  per-candidate window/width metrics and qualification labels are
+  present and consistent with the selected counts.
+- **Follow-up decision:** a corpus-08 anchor-probe pass over the new
+  pools (whether offsets can re-time the screened pools), and/or
+  closing the screening arc; recorded as data either way.
