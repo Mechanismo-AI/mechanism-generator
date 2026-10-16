@@ -96,3 +96,91 @@ a long, straight, level carry at millimetre tolerance -- that a two-loop
 (four-bar plus dyad) curve family is expected to do better, and it sizes
 the gap the new topology must close. Record the outcome against the
 scorecard in this file; recorded outcomes are data and are never rewritten.
+## Recorded outcome (2026-10-16)
+
+Run on the-hub (Jean CPU-only Ubuntu workstation, standard engine venv,
+seed 101), run root
+`runs/gap-transfer-failure-01/results/task-001/either/2026-10-16_14-18-05_712881`,
+on the example merged as PR #37 (main `ce81fce6`). Both crank directions
+ran as full portfolio budgets; preflight engine and model hashes
+matched. Search wall-clock: 29.79 s positive / 29.19 s negative.
+
+**Per-direction counts (identical in both directions):** candidates 18;
+path_acceptable 0; orientation_acceptable 0; pose_acceptable 0;
+selection_eligible 0; selected 0. Both are completed zero-selection
+searches -- the expected honest outcome, not an error.
+
+**Qualification histogram** (`all_candidates.csv`, 18 rows per
+direction): `physical_only_path_rejected` 18/18 in both directions.
+Zero `path_acceptable_but_orientation_failed` rows exist.
+
+**Scorecard verdicts:**
+
+- **P1 CONFIRMED (primary).** Zero selected candidates in both
+  directions. P4 (control) held: no refutation anywhere.
+- **P2 REFUTED as stated.** No path-acceptable near-misses exist at
+  all, so levelness never bound; qualification stops at position in
+  every row. The binding failure is straightness/position, and it is
+  deep: best worst-pose position error 0.0908 normalized (9.1 mm vs
+  1.5 mm, about 6.1x) positive and 0.1045 (10.4 mm, about 7.0x)
+  negative; best mean errors 0.0492 (4.9 mm, about 3.3x) and 0.0755
+  (7.6 mm, about 5.0x). Orientation at the frontier is also over
+  tolerance (min worst orientation error 5.76 deg positive / 3.56 deg
+  negative vs 1.5 deg), but position is the binding and deeper
+  failure; the P2 mechanism (orientation binding before position) is
+  refuted.
+- **P3 REFUTED as stated.** For the top five rows by worst position
+  error in each direction, the mid-gap pose T2 is the single largest
+  per-target error in 7 of 10; the outer poses exceed mid only
+  marginally in the other 3 (fixed_003: 0.0970 vs 0.0958). The
+  near-miss coupler curves sag at mid-gap; they do not primarily bend
+  away at the ends. Over all 36 rows: T2 binds in 22, T1 in 11, T3 in
+  3.
+- **P4 (control): held.** No selected candidates; nothing to record
+  beyond P1.
+
+**Frontier rows.** The JOB reading "five path-acceptable rows with
+the lowest worst position error" is empty by construction (none
+exist), so per the honest-outcome rule the five best rows by worst
+position error are recorded instead. Position errors normalized (1
+unit = 100 mm); position tolerance 0.015 per pose; orientation
+tolerance 1.5 deg per pose.
+
+Positive direction:
+
+| candidate | e1 (T1) | e2 (T2) | e3 (T3) | mean | orient err T1/T2/T3 (deg) | max orient (deg) |
+| --- | --- | --- | --- | --- | --- | --- |
+| fixed_001 | 0.0669 | 0.0908 | 0.0047 | 0.0542 | 8.73 / 7.30 / 6.75 | 8.73 |
+| bridge_release_001 | 0.0828 | 0.0926 | 0.0140 | 0.0631 | 5.99 / 6.11 / 6.09 | 6.11 |
+| bridge_trust_001 | 0.0533 | 0.0938 | 0.0006 | 0.0492 | 6.15 / 6.40 / 6.42 | 6.42 |
+| fixed_003 | 0.0970 | 0.0958 | 0.0034 | 0.0654 | 9.72 / 8.03 / 6.37 | 9.72 |
+| bridge_release_002 * | 0.0898 | 0.0868 | 0.0983 | 0.0917 | 3.54 / 5.76 / 5.72 | 5.76 |
+
+Negative direction (the harder one, as expected):
+
+| candidate | e1 (T1) | e2 (T2) | e3 (T3) | mean | orient err T1/T2/T3 (deg) | max orient (deg) |
+| --- | --- | --- | --- | --- | --- | --- |
+| bridge_release_001 * | 0.0970 | 0.1045 | 0.0896 | 0.0970 | 3.29 / 3.56 / 1.29 | 3.56 |
+| bridge_trust_001 * | 0.0970 | 0.1045 | 0.0896 | 0.0970 | 3.29 / 3.56 / 1.29 | 3.56 |
+| bridge_trust_002 | 0.1170 | 0.1150 | 0.1265 | 0.1195 | 4.42 / 4.64 / 2.10 | 4.64 |
+| variable_003 | 0.0241 | 0.1317 | 0.0709 | 0.0755 | 3.57 / 4.27 / 5.36 | 5.36 |
+| bridge_release_003 | 0.1045 | 0.1390 | 0.0964 | 0.1133 | 4.55 / 4.40 / 2.11 | 4.55 |
+
+(*) Within each direction the starred pair (positive
+bridge_release_002 / bridge_trust_002; negative bridge_release_001 /
+bridge_trust_001) are byte-identical error rows: the same mechanism
+family reached via two portfolio lineages. One row of each pair is a
+duplicate reading, not an independent mechanism.
+
+**Machine.** the-hub, CPU-only Ubuntu workstation, standard engine
+venv, seed 101. CPU model and Python version: outstanding reading, to
+be recorded here before merge.
+
+**What this gives the six-bar brief.** The four-bar frontier on the
+260 mm level carry sits at about 9-10 mm worst-pose / 5-8 mm mean
+position error against the 1.5 mm packaging tolerance, with mid-gap
+sag the dominant structure and position, not levelness, the binding
+gate. That sizes the gap the six-bar (two-loop) curve family must
+close, and it gives the experimental six-bar motion solver a real
+measured brief: reach the 260 mm carry at packaging tolerance where
+the best four-bar recorded here misses by about 6x.
