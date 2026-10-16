@@ -2,24 +2,55 @@
 """Build a corpus-digest prompt for the local LLM queue.
 
 Reads a corpus output directory (summary.json plus each variant's
-line_result.json produced by jobs/sync-corpus-01/corpus_run.py) and writes a
-self-contained prompt into queue/pending/. The script pre-computes a compact
-failure digest with exact numbers (per-constraint pass counts, distances to
-windows, lead shortfalls, reversed-order equivalents, anchor-probe intervals);
-the LLM is asked only to write plain-language prose about that digest. No
-repository files are modified.
+line_result.json produced by jobs/sync-corpus-01/corpus_run.py) and returns
+a self-contained prompt; the script pre-computes a compact failure digest
+with exact numbers (per-constraint pass counts, distances to windows, lead
+shortfalls, reversed-order equivalents, anchor-probe intervals). The LLM is
+asked only to write plain-language prose about that digest. No repository
+files are modified.
 
     python generate_corpus_digest_prompt.py ../sync-corpus-03
+
+The CLI drops the prompt into this clone's queue/pending/, for clerk nodes
+running on the same machine. To hand a digest to a clerk running on another
+machine, use send_digest.py, which builds the same prompt and delivers it.
+
+Prompt filenames carry a deterministic 4-hex tag derived from the corpus
+directory name + summary.json bytes, so re-running for an unchanged corpus
+regenerates the same filename. (Older releases used a per-process salted
+hash() instead, which produced a new filename on every run.)
 """
 
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 PENDING = HERE / "queue" / "pending"
+
+HEADER = (
+    "You are a careful clerk summarizing a mechanism-synchronization experiment.\n"
+    "Each variant is a rotate/scaled copy of the same two-task document (a gate\n"
+    "task and a catcher task). For each variant, every combination of selected\n"
+    "candidates was checked against hard events (a phase window for the handoff)\n"
+    "and hard ordering relations (a required lead between release and grab, in\n"
+    "degrees of master-cycle phase). The digest below was computed exactly by a\n"
+    "script; all numbers in it are trustworthy.\n\n"
+    "Write the following, using ONLY numbers that appear in the digest:\n"
+    "1. For each variant: 2-3 sentences in plain language saying which\n"
+    "   constraint fails, how often, and by how much (quote the numbers).\n"
+    "2. Group the variants into failure families (e.g. window overshoot,\n"
+    "   reversed order, lead too short) and name the family of each variant.\n"
+    "3. One short paragraph on what the anchor_probe intervals mean for fixing\n"
+    "   each variant by re-phasing (shifting a task's offset), if probe data is\n"
+    "   present.\n"
+    "Do not invent numbers, do not recompute anything, and say so explicitly\n"
+    "if the digest does not contain what a section asks for.\n\n"
+    "DIGEST (computed exactly by script):\n\n"
+)
 
 
 def _combinations(result: dict) -> list:
@@ -166,16 +197,19 @@ def digest_variant(name: str, result: dict) -> str:
     return "\n".join(lines)
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("corpus_dir", type=Path, help="Directory containing summary.json")
-    parser.add_argument("--name", default="corpus-digest", help="Prompt file basename")
-    args = parser.parse_args()
-    corpus = args.corpus_dir.resolve()
+def build_prompt(corpus: Path) -> str:
+    """Return the full digest prompt for a corpus output directory.
+
+    Fail-closed: raises FileNotFoundError / ValueError with a clear
+    message on missing or malformed inputs; never returns an empty prompt.
+    """
     summary_path = corpus / "summary.json"
     if not summary_path.is_file():
-        parser.error(f"no summary.json in {corpus}")
-    summary = json.loads(summary_path.read_text(encoding="utf-8"))
+        raise FileNotFoundError(f"no summary.json in {corpus}")
+    try:
+        summary = json.loads(summary_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as e:
+        raise ValueError(f"{summary_path}: invalid JSON ({e})") from e
 
     rows = summary if isinstance(summary, list) else summary.get("variants", [])
     blocks = []
@@ -185,34 +219,41 @@ def main() -> int:
             continue
         line_result = corpus / vid / "plan" / "line_result.json"
         if line_result.is_file():
-            blocks.append(digest_variant(vid, json.loads(line_result.read_text(encoding="utf-8"))))
+            try:
+                parsed = json.loads(line_result.read_text(encoding="utf-8"))
+            except json.JSONDecodeError as e:
+                raise ValueError(f"{line_result}: invalid JSON ({e})") from e
+            blocks.append(digest_variant(vid, parsed))
         else:
             blocks.append(f"### variant {vid}: no line_result.json (status in summary: {row.get('status')})")
+    if not blocks:
+        raise ValueError(f"{summary_path}: no variants with a task_set_id found")
+    return HEADER + "\n\n".join(blocks) + "\n"
 
-    header = (
-        "You are a careful clerk summarizing a mechanism-synchronization experiment.\n"
-        "Each variant is a rotate/scaled copy of the same two-task document (a gate\n"
-        "task and a catcher task). For each variant, every combination of selected\n"
-        "candidates was checked against hard events (a phase window for the handoff)\n"
-        "and hard ordering relations (a required lead between release and grab, in\n"
-        "degrees of master-cycle phase). The digest below was computed exactly by a\n"
-        "script; all numbers in it are trustworthy.\n\n"
-        "Write the following, using ONLY numbers that appear in the digest:\n"
-        "1. For each variant: 2-3 sentences in plain language saying which\n"
-        "   constraint fails, how often, and by how much (quote the numbers).\n"
-        "2. Group the variants into failure families (e.g. window overshoot,\n"
-        "   reversed order, lead too short) and name the family of each variant.\n"
-        "3. One short paragraph on what the anchor_probe intervals mean for fixing\n"
-        "   each variant by re-phasing (shifting a task's offset), if probe data is\n"
-        "   present.\n"
-        "Do not invent numbers, do not recompute anything, and say so explicitly\n"
-        "if the digest does not contain what a section asks for.\n\n"
-        "DIGEST (computed exactly by script):\n\n"
-    )
-    prompt = header + "\n\n".join(blocks) + "\n"
+
+def prompt_tag(corpus: Path) -> str:
+    """Deterministic 4-hex tag from the corpus dir name + summary bytes."""
+    h = hashlib.sha1()
+    h.update(corpus.name.encode("utf-8"))
+    h.update(b"\0")
+    h.update((corpus / "summary.json").read_bytes())
+    return h.hexdigest()[:4]
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("corpus_dir", type=Path, help="Directory containing summary.json")
+    parser.add_argument("--name", default="corpus-digest", help="Prompt file basename")
+    args = parser.parse_args()
+    corpus = args.corpus_dir.resolve()
+    try:
+        prompt = build_prompt(corpus)
+        tag = prompt_tag(corpus)
+    except (FileNotFoundError, ValueError) as e:
+        parser.error(str(e))
 
     PENDING.mkdir(parents=True, exist_ok=True)
-    out = PENDING / f"{args.name}-{abs(hash(str(corpus))) % 10000:04d}.md"
+    out = PENDING / f"{args.name}-{tag}.md"
     out.write_text(prompt, encoding="utf-8")
     print(f"queued: {out}")
     print(f"prompt size: {len(prompt)} chars")
