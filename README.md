@@ -135,6 +135,7 @@ during either command. The generated runner uses the installed engine and downlo
 | [Synchronized pair (v0.2)](examples/omts/synchronized_pair.omts.yaml) | Passes | Prepares two independent runs with a pending line verification |
 | [Collision pair (v0.2)](examples/omts/collision_pair.omts.yaml) | Passes | Prepares two independent runs with a pending line verification over a shared keep-out zone |
 | [Screened collision pair (v0.2)](examples/omts/collision_pair_screened.omts.yaml) | Passes | Prepares two independent runs with a search-time zone screen (60 deg occupancy cap) over the shared keep-out zone |
+| [Gap transfer (case study B)](examples/omts/gap_transfer.omts.yaml) | Passes | Prepares one ordered three-pose run: a level 260 mm carry at packaging tolerance, an honest-failure case study for the next mechanism type |
 
 The adapter accepts normalized planar coordinates, exactly three target positions,
 optional orientations on all three targets, optional cyclic ordering, hybrid
