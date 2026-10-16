@@ -42,65 +42,94 @@ def die(msg: str) -> None:
 def run_remote(host: str, command: str, timeout: float = 30.0) -> subprocess.CompletedProcess:
     try:
         return subprocess.run(
-            ["ssh", host, commX]Ø\\WÛÝ]]UYK^UYK[Y[Ý]][Y[Ý]
-B^Ù\ÝXØÙ\ÜË[Y[Ý]^\YYJÜÚÈÚÜÝ\H[YYÝ]ÛØÛÛ[X[HB^Ù\[SÝÝ[\ÜYJÜÚ\ÈÝ[Ý[YÛ\ÈXXÚ[H8 %[Ý[Ü[ÜÚXÛY[\ÝBYXZ[
-HO[\Ù\H\Ü\ÙK\Ý[Y[\Ù\\ØÜ\[ÛW×ÙØ××ÊB\Ù\YØ\Ý[Y[
-ÛÜ\×Ù\\OT][H\XÝÜHÛÛZ[[ÈÝ[[X\KÛÛB\Ù\YØ\Ý[Y[
-K[[YHY][SÛK[HÛ\[H\Ù[[YH
-Y][HÛÜ\È\[YJHB\Ù\YØ\Ý[Y[
-KZÜÝY][QQUSÒÔÕ[YÜÚ[X\ÈÙHÛ\ÈÙH
-Y][ÑQUSÒÔÕJHB\Ù\YØ\Ý[Y[
-K\[[ÝK\]Y]YHY][QQUSÔUQUQK[Y]Y]YH\ÛHÛ\ÈÙH
-Y][ÑQUSÔUQUQ_JHB\ÜÈH\Ù\\ÙWØ\ÜÊ
-B[YHH\ÜË[YHÜ\ÜËÛÜ\×Ù\[YBÛÜ\ÈH\ÜËÛÜ\×Ù\\ÛÛJ
-BNÛ\HZ[ÜÛ\
-ÛÜ\ÊBYÈHÛ\ÝYÊÛÜ\ÊB^Ù\
-[SÝÝ[\Ü[YQ\ÜH\ÈNYJÝJJB[YHHÛ[Y_K^ÝYßKYÈKXXÚHÛ\ÈÙH[Ø[ÛXØ[^H]È]Y]YH]
-^[ÈK\ÈH[Ü[[ÝJ\ÜËÜÝXÚÈØ\ÜË[[ÝWÜ]Y]Y_HB[\ÈHÛÝ\
+            ["ssh", host, command],
+            capture_output=True, text=True, timeout=timeout,
+        )
+    except subprocess.TimeoutExpired:
+        die(f"ssh to {host!r} timed out on: {command}")
+    except FileNotFoundError:
+        die("ssh is not installed on this machine — install openssh-client first")
 
-HÜ[\ËÝÝ]Ü][\Ê
-HYÝ\
 
-WBY\Ë]\ÛÙHOHÜ[[\ÊHOHN]Z[H
-\ËÝ\Ü\ËÝÝ]ÜÈÝ]]KÝ\
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("corpus_dir", type=Path, help="Directory containing summary.json")
+    parser.add_argument("--name", default=None,
+                        help="Prompt file basename (default: the corpus dir name)")
+    parser.add_argument("--host", default=DEFAULT_HOST,
+                        help=f"ssh alias of the clerk node (default: {DEFAULT_HOST})")
+    parser.add_argument("--remote-queue", default=DEFAULT_QUEUE,
+                        help=f"queue dir on the clerk node (default: {DEFAULT_QUEUE})")
+    args = parser.parse_args()
 
-BYJØ[ÝXXÚÛ\ÈÙHØ\ÜËÜÝ\NÙ]Z[HB]Y]YHH[\ÖÌBØHH[Ü[[ÝJ\ÜËÜÝ\ÝYÜÚ^][ÝJ]Y]YH
-È	ËÜ[[ÉÊ_H	XÚÈÚÈBYØK]\ÛÙHOHÜØKÝÝ]Ý\
+    name = args.name or args.corpus_dir.name
+    corpus = args.corpus_dir.resolve()
+    try:
+        prompt = build_prompt(corpus)
+        tag = prompt_tag(corpus)
+    except (FileNotFoundError, ValueError) as e:
+        die(str(e))
+    fname = f"{name}-{tag}.md"
 
-HOHÚÈ]Z[H
-ØKÝ\ÜØKÝÝ]ÜÈÝ]]KÝ\
+    # 1. Reach the clerk node and canonicalize its queue path (expands ~).
+    res = run_remote(args.host, f"echo {args.remote_queue}")
+    lines = [l.strip() for l in res.stdout.splitlines() if l.strip()]
+    if res.returncode != 0 or len(lines) != 1:
+        detail = (res.stderr or res.stdout or "no output").strip()
+        die(f"cannot reach clerk node {args.host!r}: {detail}")
+    queue = lines[0]
 
-BYJÈ]Y]YH]Ü]Y]Y_HÛØ\ÜËÜÝ\H8 %\ÈHÛ\ÈÛÜÙ\Ù]\\OÈ
-Ù]Z[JHBÈY[\Ý[ÞNÚÚ\YHÛ\ÈÙH[XYHÛÝÜÈ\È[YK]\HÚ^][ÝJ[YH
-ÈJB[ØÛYH
-[
-ÈÚ[Ú^][ÝJÜ]Y]Y_KÞÜÝ]_HHÜÝ]H[ÕUTÊB
-È[X^\H[[YHÜ]\H\[\]Z]Ù]Û[
-BÙY[H[Ü[[ÝJ\ÜËÜÝ[ØÛY
-BYÙY[]\ÛÙHOH[ÙY[ÝÝ]Ý\
+    probe = run_remote(args.host, f"test -d {shlex.quote(queue + '/pending')} && echo ok")
+    if probe.returncode != 0 or probe.stdout.strip() != "ok":
+        detail = (probe.stderr or probe.stdout or "no output").strip()
+        die(f"no queue at {queue} on {args.host!r} — is the clerk worker set up there? ({detail})")
 
-N[
-[XYHÛÝÛÈHÛ\ÎÜÙY[ÝÝ]Ý\
+    # 2. Idempotency: skip if the clerk node already knows this name.
+    pattern = shlex.quote(name + "-*")
+    find_cmd = (
+        "find "
+        + " ".join(shlex.quote(f"{queue}/{state}") for state in STATES)
+        + f" -maxdepth 1 -name {pattern} -print -quit 2>/dev/null"
+    )
+    seen = run_remote(args.host, find_cmd)
+    if seen.returncode == 0 and seen.stdout.strip():
+        print(f"already known to the clerk: {seen.stdout.strip()}")
+        print("nothing sent. Delete it there if you really want a re-digest.")
+        return 0
 
-_HB[
-Ý[ÈÙ[[]H]\HY[ÝHX[HØ[HKYYÙ\ÝB]\ÈË[]\ÈHÛ\ÉÜÈ[[ËÈ[\YH\][Ú][\[K[YY[\Ü\Q[JÈÝY^HY[]OQ[ÙK[ÛÙ[ÏH]NH\ÈÜ]JÛ\
-B\Ü]H]
-[YJBNØÜHÝXØÙ\ÜË[ÈØÜ\HÝ\Ü]
-KØ\ÜËÜÝNÜ]Y]Y_KÜ[[ËÞÙ[Y_HKØ\\WÛÝ]]UYK^UYK[Y[Ý]M
-B^Ù\
-ÝXØÙ\ÜË[Y[Ý]^\Y[SÝÝ[\ÜH\ÈNØÜHÝXØÙ\ÜËÛÛ\]YØÙ\ÜÊ×KLËÝ\JJK×Û[YW×ßNÙ_HBYØÜ]\ÛÙHOH[XÚÈHTHÈ]Y]YHÈ[[È[XÚËZÙ\\[ÏUYK^\ÝÛÚÏUYJBØØ[ØÛÜHH[XÚÈÈ[YBØØ[ØÛÜKÜ]WÝ^
-Û\[ÛÙ[ÏH]NB\Ü][[ÊZ\ÜÚ[×ÛÚÏUYJBYJØÜÈØ\ÜËÜÝ\HZ[Y
-ÊØÜÝ\Ü	ÉÊKÝ\
+    # 3. Deliver to the clerk's pending/ and verify arrival.
+    with tempfile.NamedTemporaryFile("w", suffix=".md", delete=False, encoding="utf-8") as fh:
+        fh.write(prompt)
+        tmp_path = Path(fh.name)
+    try:
+        scp = subprocess.run(
+            ["scp", "-q", str(tmp_path), f"{args.host}:{queue}/pending/{fname}"],
+            capture_output=True, text=True, timeout=60,
+        )
+    except (subprocess.TimeoutExpired, FileNotFoundError) as e:
+        scp = subprocess.CompletedProcess([], 127, "",
+                                           f"{type(e).__name__}: {e}")
+    if scp.returncode != 0:
+        fallback = HERE / "queue" / "pending"
+        fallback.mkdir(parents=True, exist_ok=True)
+        local_copy = fallback / fname
+        local_copy.write_text(prompt, encoding="utf-8")
+        tmp_path.unlink(missing_ok=True)
+        die(
+            f"scp to {args.host!r} failed ({(scp.stderr or '').strip()}); "
+            f"prompt preserved locally at {local_copy} — transfer it by hand or retry."
+        )
+    tmp_path.unlink(missing_ok=True)
 
-_JNÈÛ\\Ù\YØØ[H]ÛØØ[ØÛÜ_H8 %[Ù\]H[Ü]K
-B\Ü][[ÊZ\ÜÚ[×ÛÚÏUYJBÚXÚÈH[Ü[[ÝJ\ÜËÜÝ\ÝYÜÚ^][ÝJ]Y]YH
-È	ËÜ[[ËÉÈ
-È[YJ_H	XÚÈÚÈBYÚXÚË]\ÛÙHOHÜÚXÚËÝÝ]Ý\
+    check = run_remote(args.host, f"test -f {shlex.quote(queue + '/pending/' + fname)} && echo ok")
+    if check.returncode != 0 or check.stdout.strip() != "ok":
+        die(f"scp reported success but {fname} is not in {queue}/pending/ on {args.host!r} — check by hand before rerunning")
 
-HOHÚÈYJØÜ\ÜYÝXØÙ\ÜÈ]Ù[Y_H\ÈÝ[Ü]Y]Y_KÜ[[ËÈÛØ\ÜËÜÝ\H8 %ÚXÚÈH[YÜH\[[ÈB[
-[]\YØ\ÜËÜÝNÜ]Y]Y_KÜ[[ËÞÙ[Y_HB[
-Û\Ú^NÛ[Û\
-_HÚ\ÈB[
-H[ÝÙ\Ú[\X\]Ø\ÜËÜÝNÜ]Y]Y_KÙÛKÞÙ[Y_K[ÝÙ\YB]\Y×Û[YW×ÈOH×ÛXZ[×ÈZ\ÙHÞ\Ý[Q^]
-XZ[
-JB
+    print(f"delivered: {args.host}:{queue}/pending/{fname}")
+    print(f"prompt size: {len(prompt)} chars")
+    print(f"the answer will appear at: {args.host}:{queue}/done/{fname}.answer.md")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
