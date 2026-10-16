@@ -20,6 +20,7 @@ land in `runs/` (gitignored, maintainer-local).
 | [corpus-geometry-maps](corpus-geometry-maps/JOB.md) | Menu-C class-structure maps (transform space, scale-invariant, bearing axis); menu C closed: no static quick-vs-drag boundary | Run recorded |
 | [corpus-timeline-animator](corpus-timeline-animator/JOB.md) | Menu-E exemplar occupancy timelines; screen-frame window reproduction | Run recorded |
 | [corpus-frame-sweep](corpus-frame-sweep/JOB.md) | Corpus-wide base-angle frame sweep (menu-E follow-up): screen 499/499 vs plain 1/499 | Run recorded |
+| [gap-transfer-failure-01](gap-transfer-failure-01/JOB.md) | Case study B failure analysis: the level 260 mm gap-transfer carry as three ordered poses at packaging tolerance, asked of the current four-bar engine | Run pending |
 | [local-llm-queue](local-llm-queue/README.md) | A patient-clerk queue for a local small LLM (digests, labeling, first drafts) | Active tooling |
 
 Recorded outcomes are data about the state of the tools when the run
