@@ -28,3 +28,6 @@ htmlcov/
 
 # Reviewed inference-only asset for the separate experimental package.
 !experimental/motion/src/mechanism_motion/assets/proposal.pt
+
+# Local LLM queue runtime state (prompts/answers are per-machine, never committed)
+jobs/local-llm-queue/queue/
