@@ -14,6 +14,10 @@ LM Studio CLI, ...). The default assumes ollama:
     python queue_worker.py --loop               # keep polling
     python queue_worker.py --command llama-cli -m mistral-7b-instruct-v0.3.Q4_K_M.gguf
 
+The --command value is separate shell words (argparse REMAINDER); a single
+quoted string (--command "ollama run mistral:7b-instruct") is also
+accepted and split with shlex.
+
 Answers land in queue/done/<same-name>.answer.md, so results can be read
 in the morning alongside the corpus runs. This worker never modifies the
 repository and never uploads anything.
@@ -85,6 +89,23 @@ def drain_once(command: list[str], timeout: float) -> tuple[int, int]:
             print(f"failed: {claim.name}: {exc}", flush=True)
 
 
+def normalize_command(command: list[str]) -> list[str]:
+    """Tolerate a quoted multi-word backend command.
+
+    --command uses argparse.REMAINDER, so the backend must normally be
+    passed as separate shell words (--command ollama run qwen3:4b). A
+    quoted value (--command "ollama run qwen3:4b") arrives as one argv
+    item and is split with shlex so both spellings behave the same.
+    """
+    if len(command) == 1:
+        single = command[0]
+        if not single.strip():
+            return []
+        if any(char.isspace() for char in single):
+            return shlex.split(single)
+    return command
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -98,7 +119,10 @@ def main() -> int:
     parser.add_argument("--timeout", type=float, default=3600.0, help="Per-prompt backend timeout")
     args = parser.parse_args()
     ensure_dirs()
-    command = args.command
+    try:
+        command = normalize_command(args.command)
+    except ValueError as exc:  # unbalanced quotes in a quoted --command
+        parser.error(f"--command could not be parsed: {exc}")
     if not command:
         parser.error("--command needs at least the backend program name")
     print(f"backend: {shlex.join(command)}", flush=True)
