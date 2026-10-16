@@ -1,13 +1,13 @@
 # Changelog
 
-## Unreleased — Experimental six-bar motion package
+## 0.1.0a11 — Experimental six-bar motion package
 
 Add separately installable `experimental/motion` and the `mechanism-motion` command
 for twelve fixed-phase, known-branch pose and crank-angle derivative targets.
 Include inference assets, model provenance and eight portable regression fixtures.
 The frozen synthetic paired screen was 78/80 versus 74/80 for the private six-bar
 baseline, with four gains and no losses; this is not hardware validation.
-Existing four-bar commands, OMTS support, package version and weights are unchanged.
+Existing four-bar commands, OMTS support and model weights are unchanged.
 
 
 ## 0.1.0a10 — Adaptive panel search

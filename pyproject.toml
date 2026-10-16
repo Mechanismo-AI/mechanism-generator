@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mechanism-generator"
-version = "0.1.0a10"
+version = "0.1.0a11"
 description = "Open motion-task validation and four-bar mechanism research synthesis"
 readme = "README.md"
 requires-python = ">=3.10"

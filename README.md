@@ -179,3 +179,7 @@ Version 0.1.0a9 adds `--panel_position_geometry` for unordered position-only pan
 ## Adaptive panel fallback
 
 Release v0.1.0a10 adds opt-in `--panel_position_adaptive`. It enables standard panel geometry, then spends additional local compute only on unresolved tasks: larger sampling first, bounded panel-aware refinement last. Existing qualifying designs are retained. See [usage and budgets](docs/adaptive-panel-search.md).
+
+## Experimental six-bar motion
+
+Release v0.1.0a11 adds the separately installable [experimental six-bar motion package](docs/experimental-motion.md) and its `mechanism-motion` command for twelve fixed-phase pose, velocity and acceleration targets expressed as crank-angle derivatives. On the frozen synthetic paired screen the refined pipeline qualified 78/80 tasks versus 74/80 for the private six-bar baseline, with four gains and no losses; this is synthetic research evidence, not hardware validation. Existing four-bar commands, OMTS support and published model weights are unchanged.
