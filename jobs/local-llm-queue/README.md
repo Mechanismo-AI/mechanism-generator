@@ -32,7 +32,6 @@ writes the answer to stdout:
 
     python jobs/local-llm-queue/queue_worker.py --command llama-cli -m /path/to/mistral-7b.gguf
 
-
 `--command` takes separate shell words; a single quoted string such as
 `--command "ollama run mistral:7b-instruct"` is also accepted and split
 with shlex.
