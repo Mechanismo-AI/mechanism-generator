@@ -96,6 +96,7 @@ a long, straight, level carry at millimetre tolerance -- that a two-loop
 (four-bar plus dyad) curve family is expected to do better, and it sizes
 the gap the new topology must close. Record the outcome against the
 scorecard in this file; recorded outcomes are data and are never rewritten.
+
 ## Recorded outcome (2026-10-16)
 
 Run on the-hub (Jean CPU-only Ubuntu workstation, standard engine venv,
@@ -173,8 +174,9 @@ family reached via two portfolio lineages. One row of each pair is a
 duplicate reading, not an independent mechanism.
 
 **Machine.** the-hub, CPU-only Ubuntu workstation, standard engine
-venv, seed 101. CPU model and Python version: outstanding reading, to
-be recorded here before merge.
+venv, seed 101. CPU: Intel 10th-gen Core i5 (i5-10500 class, as reported
+by Jean). Python: 3.12 or newer (as reported by Jean; exact minor not
+yet confirmed on the-hub).
 
 **What this gives the six-bar brief.** The four-bar frontier on the
 260 mm level carry sits at about 9-10 mm worst-pose / 5-8 mm mean
