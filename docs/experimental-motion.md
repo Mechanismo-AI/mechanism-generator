@@ -27,9 +27,9 @@ The supplied eight tasks are regression fixtures, not a new independent benchmar
 Run the package's portable unittest suite before modifying its frozen assets or
 inference rules. The package performs no network access, uploads or training.
 
-## Release candidate
+## Release
 
-Code, inference weights and synthetic fixtures use Apache-2.0. This addition is
-prepared for an experimental release; it does not change the main package's
-0.1.0a10 version, commands or existing model downloads. See the
-[draft release notes](../experimental/motion/RELEASE-NOTES.md).
+Code, inference weights and synthetic fixtures use Apache-2.0. This package
+ships in the main repository's v0.1.0a11 release; the existing four-bar
+commands and model downloads are unchanged. See the
+[release notes](../experimental/motion/RELEASE-NOTES.md).
