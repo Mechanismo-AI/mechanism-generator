@@ -22,6 +22,7 @@ land in `runs/` (gitignored, maintainer-local).
 | [corpus-frame-sweep](corpus-frame-sweep/JOB.md) | Corpus-wide base-angle frame sweep (menu-E follow-up): screen 499/499 vs plain 1/499 | Run recorded |
 | [gap-transfer-failure-01](gap-transfer-failure-01/JOB.md) | Case study B failure analysis: the level 260 mm gap-transfer carry as three ordered poses at packaging tolerance, asked of the current four-bar engine | Run recorded |
 | [sixbar-gap-transfer-01](sixbar-gap-transfer-01/JOB.md) | Case study B capability: the full gap-transfer carry cycle as a frozen 12-phase motion task for the experimental six-bar motion solver | Run recorded |
+| [sixbar-gap-transfer-02](sixbar-gap-transfer-02/JOB.md) | Case study B diagnostic: the no-bottom-stops variant of the gap-transfer motion task (carry and process stops unchanged, smooth bottom joins) | Run pending |
 | [local-llm-queue](local-llm-queue/README.md) | A patient-clerk queue for a local small LLM (digests, labeling, first drafts) | Active tooling |
 
 Recorded outcomes are data about the state of the tools when the run
