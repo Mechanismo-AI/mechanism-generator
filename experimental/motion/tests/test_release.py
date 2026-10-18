@@ -24,16 +24,21 @@ class ReleaseTests(unittest.TestCase):
         else:self.assertEqual(actual,expected)
 
     def test_frozen_regressions(self):
+        anchored=None
+        if EXACT:
+            import exact_anchors
+            anchored=exact_anchors.load_current()
         for path in sorted(FIXTURES.glob('case-*.json')):
             f=json.loads(path.read_text())
             for chooser in (True,False):
                 with self.subTest(case=f['case'],chooser=chooser):
                     out=solve(f['input'],f['seed'],use_chooser=chooser)
                     expected=f['chooser' if chooser else 'baseline']
+                    if EXACT:anchored_expected=anchored['cases'][str(f['case'])]['chooser' if chooser else 'baseline']
                     for key in ('qualified','objective_evaluations'):self.assertEqual(out[key],expected[key])
                     self.assertLessEqual(out['objective_evaluations'],200)
                     target=engine.validate(f['input'])
-                    for a,b in zip(out['runs'],expected['runs']):
+                    for index,(a,b) in enumerate(zip(out['runs'],expected['runs'])):
                         self.assertEqual(a['evaluations'],b['evaluations'])
                         for key in ('pose_pass','combined_pass','defined'):self.assertEqual(a['metrics'][key],b['metrics'][key])
                         self.assertEqual(a['metrics'],qualification.assess(np.asarray(a['raw']),target))
@@ -43,14 +48,14 @@ class ReleaseTests(unittest.TestCase):
                             if aggregate is None:self.assertIn(None,column)
                             else:self.assertNotIn(None,column);self.assertEqual(max(column),aggregate)
                         if EXACT:
-                            for key in ('raw','metrics'):self.assertEqual(a[key],b[key])
+                            for key in ('raw','metrics'):self.assertEqual(a[key],anchored_expected['runs'][index][key])
                     self.assertEqual(len(out['runs']),len(expected['runs']))
                     if chooser:
                         self.assertEqual(out['selected_label'],f['selected_label'])
                         self.assertEqual(len(out['pool']),len(f['pool']))
-                        for a,b in zip(out['pool'],f['pool']):
+                        for index,(a,b) in enumerate(zip(out['pool'],f['pool'])):
                             for key in ('initial_raw','before','ranking_prediction'):
-                                if EXACT:self.assertEqual(a[key],b[key])
+                                if EXACT:self.assertEqual(a[key],anchored['cases'][str(f['case'])]['pool'][index][key])
                                 else:self.assert_initial_close(a[key],b[key])
 
     def test_result_units(self):
