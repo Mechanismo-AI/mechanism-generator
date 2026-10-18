@@ -1,0 +1,379 @@
+
+# ---------------------------------------------------------------- geometry
+def loop_state(s):
+    """Position, unit tangent and curvature vector d2P/ds2 of the
+    frozen -02 loop at arc position s (mm). C1 everywhere; the
+    curvature vector jumps at the six junctions. Boundary tie: the
+    LATER segment wins (the follower laws pin the carry side at
+    the theta = 120 deg seam instead, matching the timing-run tie;
+    both one-sided readings are reported in the junction table)."""
+    if s < S_CARRY_END:
+        return (-130.0 + s, 50.0), (1.0, 0.0), (0.0, 0.0)
+    if s < S_DESC_END:
+        return (130.0, 50.0 - (s - S_CARRY_END)), (0.0, -1.0), (0.0, 0.0)
+    if s < S_RARC_END:
+        phi = -(s - S_DESC_END) / 15.0
+        c, sn = math.cos(phi), math.sin(phi)
+        return ((115.0 + 15.0 * c, -25.0 + 15.0 * sn),
+                (sn, -c), (-c / 15.0, -sn / 15.0))
+    if s < S_RET_END:
+        return (115.0 - (s - S_RARC_END), -40.0), (-1.0, 0.0), (0.0, 0.0)
+    if s < S_LARC_END:
+        phi = -PI / 2.0 - (s - S_RET_END) / 15.0
+        c, sn = math.cos(phi), math.sin(phi)
+        return ((-115.0 + 15.0 * c, -25.0 + 15.0 * sn),
+                (sn, -c), (-c / 15.0, -sn / 15.0))
+    return (-130.0, -25.0 + (s - S_LARC_END)), (0.0, 1.0), (0.0, 0.0)
+
+
+def segment_of(s):
+    """Segment index at arc position s (same tie rule as
+    loop_state): 0 carry, 1 descent, 2 right arc, 3 return,
+    4 left arc, 5 ascent."""
+    if s < S_CARRY_END:
+        return 0
+    if s < S_DESC_END:
+        return 1
+    if s < S_RARC_END:
+        return 2
+    if s < S_RET_END:
+        return 3
+    if s < S_LARC_END:
+        return 4
+    return 5
+
+
+# ---------------------------------------------------------------- timing
+class ClampedSpline(object):
+    """Clamped cubic spline through (t, y) knots with prescribed end
+    slopes, in the moment (second-derivative) form."""
+
+    def __init__(self, ts, ys, v0, vn):
+        n = len(ts) - 1
+        h = [ts[i + 1] - ts[i] for i in range(n)]
+        d = [(ys[i + 1] - ys[i]) / h[i] for i in range(n)]
+        # Tridiagonal system for the moments M[0..n].
+        lo = [0.0] * (n + 1)
+        di = [0.0] * (n + 1)
+        up = [0.0] * (n + 1)
+        rhs = [0.0] * (n + 1)
+        di[0], up[0] = 2.0, 1.0
+        rhs[0] = 6.0 * (d[0] - v0) / h[0]
+        for i in range(1, n):
+            lo[i] = h[i - 1]
+            di[i] = 2.0 * (h[i - 1] + h[i])
+            up[i] = h[i]
+            rhs[i] = 6.0 * (d[i] - d[i - 1])
+        lo[n], di[n] = 1.0, 2.0
+        rhs[n] = 6.0 * (vn - d[n - 1]) / h[n - 1]
+        # Thomas algorithm.
+        for i in range(1, n + 1):
+            w = lo[i] / di[i - 1]
+            di[i] -= w * up[i - 1]
+            rhs[i] -= w * rhs[i - 1]
+        m = [0.0] * (n + 1)
+        m[n] = rhs[n] / di[n]
+        for i in range(n - 1, -1, -1):
+            m[i] = (rhs[i] - up[i] * m[i + 1]) / di[i]
+        self.t, self.y, self.h, self.m = ts, ys, h, m
+
+    def _piece(self, t):
+        ts = self.t
+        lo, hi = 0, len(ts) - 1
+        while hi - lo > 1:
+            mid = (lo + hi) // 2
+            if ts[mid] <= t:
+                lo = mid
+            else:
+                hi = mid
+        return lo
+
+    def s(self, t):
+        i = self._piece(t)
+        h = self.h[i]
+        tl, tr = self.t[i], self.t[i + 1]
+        a, b = tr - t, t - tl
+        mi, mj = self.m[i], self.m[i + 1]
+        yi, yj = self.y[i], self.y[i + 1]
+        return (mi * a ** 3 + mj * b ** 3) / (6.0 * h) \
+            + (yi / h - mi * h / 6.0) * a \
+            + (yj / h - mj * h / 6.0) * b
+
+    def d1(self, t):
+        i = self._piece(t)
+        h = self.h[i]
+        tl, tr = self.t[i], self.t[i + 1]
+        a, b = tr - t, t - tl
+        mi, mj = self.m[i], self.m[i + 1]
+        return (-mi * a * a + mj * b * b) / (2.0 * h) \
+            + (self.y[i + 1] - self.y[i]) / h - (mj - mi) * h / 6.0
+
+    def d2(self, t):
+        i = self._piece(t)
+        h = self.h[i]
+        a, b = self.t[i + 1] - t, t - self.t[i]
+        return (self.m[i] * a + self.m[i + 1] * b) / h
+
+
+TH_KNOTS = [k * PI / 6.0 for k in range(13)]
+CARRY = ClampedSpline(TH_KNOTS[0:5], KNOT_S[0:5], 0.0, 0.0)
+BOTTOM = ClampedSpline(TH_KNOTS[4:13], KNOT_S[4:13] + [S_LOOP], 0.0, 0.0)
+TH_CARRY_END = TH_KNOTS[4]
+
+
+def timing_state(th):
+    """Arc position and derivatives of the frozen -02 timing law at
+    crank angle th (rad). Tie at the set-down stop: the carry run
+    wins (both runs give s = 260, s' = 0 there)."""
+    if th <= TH_CARRY_END:
+        return CARRY.s(th), CARRY.d1(th), CARRY.d2(th), "carry"
+    return BOTTOM.s(th), BOTTOM.d1(th), BOTTOM.d2(th), "bottom"
+
+
+def theta_of_s(s_target):
+    """Crank angle (rad) at which the timing law reaches arc
+    position s_target (s is monotone in theta)."""
+    lo, hi = 0.0, 2.0 * PI
+    for _ in range(200):
+        mid = 0.5 * (lo + hi)
+        if timing_state(mid)[0] < s_target:
+            lo = mid
+        else:
+            hi = mid
+    return 0.5 * (lo + hi)
+
+
+# ------------------------------------------------- task sample convention
+def task_sample(i):
+    """The -02 demand at phase i (12 phases, 30 deg apart), in mm
+    units: position (mm), velocity (mm/rad), acceleration
+    (mm/rad^2). Conventions per the -02 audit trail: stops are
+    vector means of the two one-sided accelerations; the two
+    junction phases are means of the line-side and arc-side
+    one-sided accelerations."""
+    th = TH_KNOTS[i]
+    s, d1, d2, _ = timing_state(th)
+    p, t, c = loop_state(s)
+    v = (t[0] * d1, t[1] * d1)
+    if i == 0 or i == 4:
+        # Process stop: mean of deceleration into and acceleration
+        # out of the stop, one-sided splines, one-sided tangents.
+        if i == 0:
+            t_in, s_in = (0.0, 1.0), BOTTOM.d2(2.0 * PI)
+            t_out, s_out = (1.0, 0.0), CARRY.d2(0.0)
+        else:
+            t_in, s_in = (1.0, 0.0), CARRY.d2(TH_CARRY_END)
+            t_out, s_out = (0.0, -1.0), BOTTOM.d2(TH_CARRY_END)
+        a = (0.5 * (t_in[0] * s_in + t_out[0] * s_out),
+             0.5 * (t_in[1] * s_in + t_out[1] * s_out))
+    elif i == 6 or i == 10:
+        # Line/arc junction: mean of the line-side and arc-side
+        # one-sided accelerations (shared tangent and s'').
+        c_line = (0.0, 0.0)
+        c_arc = (0.0, 1.0 / 15.0)
+        a = (t[0] * d2 + 0.5 * (c_line[0] + c_arc[0]) * d1 * d1,
+             t[1] * d2 + 0.5 * (c_line[1] + c_arc[1]) * d1 * d1)
+    else:
+        a = (c[0] * d1 * d1 + t[0] * d2, c[1] * d1 * d1 + t[1] * d2)
+    return p, v, a, s, d1, d2
+
+
+# ------------------------------------------------------------ validation
+def validate_task(task):
+    """Fail-closed reconstruction check against the frozen task
+    file. Returns the per-field worst absolute differences."""
+    worst = {"q": 0.0, "v": 0.0, "a": 0.0, "theta": 0.0}
+    for i in range(12):
+        p, v, a, _, _, _ = task_sample(i)
+        qn = ((p[0] - CENTROID[0]) / DIAG, (p[1] - CENTROID[1]) / DIAG)
+        vn = (v[0] / DIAG, v[1] / DIAG)
+        an = (a[0] / DIAG, a[1] / DIAG)
+        for k in (0, 1):
+            worst["q"] = max(worst["q"], abs(qn[k] - task["q"][i][k]))
+            worst["v"] = max(worst["v"], abs(vn[k] - task["v"][i][k]))
+            worst["a"] = max(worst["a"], abs(an[k] - task["a"][i][k]))
+        worst["theta"] = max(worst["theta"],
+                            abs(TH_KNOTS[i] - task["theta_rad"][i]))
+        for k in (0, 1, 2):
+            if task["q"][i][2] != 0 or task["v"][i][2] != 0 \
+                    or task["a"][i][2] != 0:
+                return None  # third component must be zero (planar task)
+    return worst
+
+
+# --------------------------------------------------------- cam synthesis
+def follower_state(cam, th):
+    """Follower displacement law h(th) with derivatives for cam 'x'
+    or 'y' at crank angle th (rad), segmentwise exact. h = tool
+    coordinate minus its travel minimum. Grid tie rules: at the
+    theta = 120 deg seam the carry side wins (matching the timing
+    run tie th <= 120 deg); at interior path boundaries the later
+    segment wins; the junction table reports both sides."""
+    s, d1, d2, _ = timing_state(th)
+    if th <= TH_CARRY_END:
+        p, t, c = loop_state_side(0, min(s, S_CARRY_END))
+    else:
+        p, t, c = loop_state(s)
+    k = 0 if cam == "x" else 1
+    off = 130.0 if cam == "x" else 40.0
+    h = p[k] + off
+    hp = t[k] * d1
+    hpp = c[k] * d1 * d1 + t[k] * d2
+    return h, hp, hpp, s
+
+
+def follower_sided(cam, seg, th):
+    """One-sided follower derivatives at a junction, evaluated on
+    path segment `seg` with the spline run that meets it there:
+    at the phase-0 seam the ascent side reads the bottom run at
+    2*pi and the carry side the carry run at 0; at the phase-4
+    seam the carry side reads the carry run and the descent side
+    the bottom run; interior junctions read the bottom run (the
+    spline is C2 across its interior knots)."""
+    if th <= 1e-9:
+        if seg == 5:
+            s, d1, d2 = S_LOOP, BOTTOM.d1(2.0 * PI), BOTTOM.d2(2.0 * PI)
+        else:
+            s, d1, d2 = 0.0, CARRY.d1(0.0), CARRY.d2(0.0)
+    elif th <= TH_CARRY_END + 1e-9:
+        s = S_CARRY_END
+        if seg == 0:
+            d1, d2 = CARRY.d1(th), CARRY.d2(th)
+        else:
+            d1, d2 = BOTTOM.d1(th), BOTTOM.d2(th)
+    else:
+        s = timing_state(th)[0]
+        d1, d2 = BOTTOM.d1(th), BOTTOM.d2(th)
+    p, t, c = loop_state_side(seg, s)
+    k = 0 if cam == "x" else 1
+    off = 130.0 if cam == "x" else 40.0
+    return p[k] + off, t[k] * d1, c[k] * d1 * d1 + t[k] * d2
+
+
+def loop_state_side(seg, s):
+    """loop_state restricted to a named segment (no tie rule)."""
+    if seg == 0:
+        return (-130.0 + s, 50.0), (1.0, 0.0), (0.0, 0.0)
+    if seg == 1:
+        return (130.0, 50.0 - (s - S_CARRY_END)), (0.0, -1.0), (0.0, 0.0)
+    if seg == 2:
+        phi = -(s - S_DESC_END) / 15.0
+        c, sn = math.cos(phi), math.sin(phi)
+        return ((115.0 + 15.0 * c, -25.0 + 15.0 * sn),
+                (sn, -c), (-c / 15.0, -sn / 15.0))
+    if seg == 3:
+        return (115.0 - (s - S_RARC_END), -40.0), (-1.0, 0.0), (0.0, 0.0)
+    if seg == 4:
+        phi = -PI / 2.0 - (s - S_RET_END) / 15.0
+        c, sn = math.cos(phi), math.sin(phi)
+        return ((-115.0 + 15.0 * c, -25.0 + 15.0 * sn),
+                (sn, -c), (-c / 15.0, -sn / 15.0))
+    return (-130.0, -25.0 + (s - S_LARC_END)), (0.0, 1.0), (0.0, 0.0)
+
+
+def polar_rho(r, hp, hpp):
+    """Signed pitch-curve curvature radius, polar form."""
+    num = (r * r + hp * hp) ** 1.5
+    den = r * r + 2.0 * hp * hp - r * hpp
+    if den == 0.0:
+        return float("inf")
+    return num / den
+
+
+# ------------------------------------------------------------- the audit
+def audit_cam(cam, r_base):
+    """Grid audit of one cam at base radius r_base (mm)."""
+    worst_alpha, worst_th = 0.0, 0.0
+    worst_seg = 0
+    rho_pos_min, rho_pos_th = float("inf"), 0.0
+    rho_neg_min, rho_neg_th = 0.0, 0.0     # most negative (signed)
+    peak_hpp, peak_hpp_th = 0.0, 0.0      # |h''| peak (junction demand)
+    for k in range(GRID_N):
+        th = 2.0 * PI * k / GRID_N
+        h, hp, hpp, s = follower_state(cam, th)
+        r = r_base + h
+        alpha = math.degrees(math.atan(abs(hp) / r))
+        if alpha > worst_alpha:
+            worst_alpha, worst_th = alpha, th
+            worst_seg = segment_of(s)
+        rho = polar_rho(r, hp, hpp)
+        if 0.0 < rho < rho_pos_min:
+            rho_pos_min, rho_pos_th = rho, th
+        if rho < rho_neg_min:
+            rho_neg_min, rho_neg_th = rho, th
+        if abs(hpp) > peak_hpp:
+            peak_hpp, peak_hpp_th = abs(hpp), th
+    return {
+        "r_base": r_base, "worst_alpha": worst_alpha,
+        "worst_alpha_theta": worst_th, "worst_alpha_seg": worst_seg,
+        "rho_pos_min": rho_pos_min, "rho_pos_theta": rho_pos_th,
+        "rho_neg_min": rho_neg_min, "rho_neg_theta": rho_neg_th,
+        "peak_hpp": peak_hpp, "peak_hpp_theta": peak_hpp_th,
+    }
+
+
+def worst_alpha_at(cam, r_base):
+    w = 0.0
+    for k in range(GRID_N):
+        th = 2.0 * PI * k / GRID_N
+        h, hp, _, _ = follower_state(cam, th)
+        w = max(w, math.degrees(math.atan(abs(hp) / (r_base + h))))
+    return w
+
+
+def required_base_for_angle(cam, target_deg):
+    """Minimal base radius with worst pressure angle <= target
+    (worst tan alpha is strictly decreasing in r_base: bisection
+    is valid). -- the -05 machinery, carried verbatim."""
+    lo, hi = 0.1, 5000.0
+    for _ in range(80):
+        mid = 0.5 * (lo + hi)
+        if worst_alpha_at(cam, mid) <= target_deg:
+            hi = mid
+        else:
+            lo = mid
+    return hi
+
+
+# ------------------------------------------------- junctions and dwells
+JUNCTIONS = [
+    ("pick stop seam (phase 0): ascent | carry", 0.0, (5, 0)),
+    ("set-down stop seam (phase 4): carry | descent", TH_CARRY_END, (0, 1)),
+    ("descent/arc junction", theta_of_s(S_DESC_END), (1, 2)),
+    ("arc/return junction (phase 6)", PI, (2, 3)),
+    ("return/left-arc junction (phase 10)", 10.0 * PI / 6.0, (3, 4)),
+    ("left-arc/ascent junction", theta_of_s(S_LARC_END), (4, 5)),
+]
+
+
+def junction_table(cam, r_base):
+    """One-sided junction readings for a translating follower
+    (the -05 machinery, carried verbatim for cam y)."""
+    rows = []
+    for name, th, sides in JUNCTIONS:
+        sa, sb = sides
+        ha, hpa, hppa = follower_sided(cam, sa, th)
+        hb, hpb, hppb = follower_sided(cam, sb, th)
+        ra, rb_ = r_base + ha, r_base + hb
+        row = {
+            "name": name, "theta_deg": th * DEG,
+            "h": ha,
+            "alpha_a": math.degrees(math.atan(abs(hpa) / ra)),
+            "alpha_b": math.degrees(math.atan(abs(hpb) / rb_)),
+            "rho_a": polar_rho(ra, hpa, hppa),
+            "rho_b": polar_rho(rb_, hpb, hppb),
+            "hpp_a": hppa, "hpp_b": hppb,
+        }
+        rows.append(row)
+    return rows
+
+
+def dwell_arcs(cam):
+    """theta ranges (deg) where the follower is stationary (its
+    coordinate constant): the true dwell arcs of the pitch curve."""
+    if cam == "x":
+        return [("descent dwell (x = +130)", 120.0, theta_of_s(S_DESC_END) * DEG),
+                ("ascent dwell (x = -130)", theta_of_s(S_LARC_END) * DEG, 360.0)]
+    return [("carry dwell (y = +50)", 0.0, 120.0),
+            ("return dwell (y = -40)", theta_of_s(S_RARC_END) * DEG,
+             theta_of_s(S_RET_END) * DEG)]
