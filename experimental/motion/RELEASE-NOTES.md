@@ -23,3 +23,14 @@ distribution. See MODEL-CARD.md for the complete scope.
 Publication proposal: use a separate experimental prerelease and attach this
 package's wheel and source archive. Keep the existing main-package release and
 weight downloads unchanged. These notes are a draft, not a publication record.
+
+Result units declarations, schema_version 2: emitted angular velocity and
+acceleration errors now read in degrees per crank-angle derivative, matching
+the 2/5 degree gates; computation stays radian-internal. Every result carries a
+units block declaring the emitted unit of each error field, and the strict
+limits are written in degrees in one place (the continuation module's LIMITS,
+imported by qualification and the chooser). Scaled demands, scores, outcomes
+and candidate choices are unchanged; the regression fixtures' stored angular
+error values were converted with the same operation the solver applies, and
+exact-parity re-anchoring on the recorded runtime is a pending machine step.
+This is a convention declaration, not a solver change.

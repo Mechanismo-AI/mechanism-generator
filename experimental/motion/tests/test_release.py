@@ -1,4 +1,4 @@
-import copy,json,os,shutil,sys,tempfile,unittest
+import copy,json,math,os,shutil,sys,tempfile,unittest
 from pathlib import Path
 from unittest.mock import patch
 import torch
@@ -6,7 +6,7 @@ import numpy as np
 
 ROOT=Path(__file__).resolve().parents[1]
 if os.environ.get('MOTION_TEST_INSTALLED')!='1':sys.path.insert(0,str(ROOT/'src'))
-from mechanism_motion import solve,engine,assets,qualification
+from mechanism_motion import solve,engine,assets,continuation,qualification
 from mechanism_motion.__main__ import main
 torch.set_num_threads(1)
 FIXTURES=ROOT/'tests/fixtures'
@@ -47,6 +47,32 @@ class ReleaseTests(unittest.TestCase):
                             for key in ('initial_raw','before','ranking_prediction'):
                                 if EXACT:self.assertEqual(a[key],b[key])
                                 else:self.assert_initial_close(a[key],b[key])
+
+    def test_result_units(self):
+        p=json.loads((FIXTURES/'case-00.json').read_text())['input']
+        out=solve(p,580000000,use_chooser=False)
+        self.assertEqual(out['schema_version'],2)
+        self.assertEqual(out['units'],engine.UNITS)
+        self.assertEqual(out['units']['angular_velocity'],'deg/crank-rad')
+        self.assertEqual(out['units']['angular_acceleration'],'deg/crank-rad^2')
+
+    def test_degree_oracle(self):
+        # The recorded -02 aggregates (job sixbar-gap-transfer-02, main a0649e2c)
+        # were emitted with radians in the angular velocity/acceleration fields.
+        # Schema version 2 emits degrees; the scaled demands, the recorded
+        # scores and the binding aggregate must reproduce.
+        recorded=[(0.1219,9.96,0.300,1.403,0.175,0.190,28.07),
+                  (0.1735,7.65,0.399,1.494,0.134,0.134,29.89),
+                  (0.1348,8.64,0.312,1.391,0.157,0.174,27.82)]
+        old=np.array([.01,1.,.02,.05,math.radians(2.),math.radians(5.)])
+        self.assertIs(qualification.LIMITS,continuation.LIMITS)
+        for position,orientation,v,a,ang_v,ang_a,score in recorded:
+            radian=np.array([position,orientation,v,a,ang_v,ang_a])
+            degree=radian.copy();degree[4:]=np.degrees(degree[4:])
+            ratios=degree/continuation.LIMITS
+            np.testing.assert_allclose(ratios,radian/old,rtol=1e-15,atol=0)
+            self.assertAlmostEqual(float(ratios.max()),score,delta=0.05)
+            self.assertEqual(int(np.argmax(ratios)),3)
 
     def test_invalid_inputs(self):
         p=json.loads((FIXTURES/'case-00.json').read_text())['input']

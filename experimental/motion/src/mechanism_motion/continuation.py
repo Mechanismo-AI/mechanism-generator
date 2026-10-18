@@ -1,7 +1,7 @@
 import math
 import numpy as np
 
-LIMITS=np.array([.01,1.,.02,.05,math.radians(2),math.radians(5)])
+LIMITS=np.array([.01,1.,.02,.05,2.,5.])
 
 FEATURE_NAMES=['log_score100',*[f'log_error100_{i}' for i in range(6)],'log_score_improvement',*[f'log_error_improvement_{i}' for i in range(6)],'defined100','defined50','pose_pass100']
 
