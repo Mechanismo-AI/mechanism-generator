@@ -184,3 +184,79 @@ result-schema PRs (units declaration first, then per-sample emission)
 per the group ranking -- so the acceleration demand can finally be
 aimed at directly, with per-sample emission already in hand. Recorded
 outcomes are data and are never rewritten.
+
+
+## Recorded outcome (2026-10-18)
+
+Run on the-hub (the -01/-02 machine) right after Jean merged PR #47
+in the browser: the same git pull that brought this job's files
+reports public main moving a0649e2 -> b3acf4e (the -02 outcome
+record of PR #46 and this job arriving together). One invocation of
+the script with defaults, from the repository root. The full printed
+report was shared and is reproduced exactly in the verdicts below; it
+is identical to the staging-side smoke test to every printed digit.
+The JSON report was written to
+runs/sixbar-gap-transfer-03/softened-timing-report.json on the
+machine.
+
+**Machine-honesty note.** The shared terminal transcript does not
+carry the Python version line ("Readings to report" asked for it);
+the environment prompt shows the motion venv active, which the script
+does not use. The verbatim-number agreement below is the machine-side
+evidence on record.
+
+**Scorecard verdicts (frozen before the run):**
+
+- **R1 (validation) HELD.** positions 2.84e-14 mm, baseline v
+  4.44e-16, baseline a 6.16e-15 -- identical to the staging-side
+  values to every printed digit, six orders inside the 1e-9 gates.
+- **R2 (primary) REFUTED, as the frozen prediction stated.** The
+  best dwell variant, delta = 5, cuts the max sample |a| by only
+  28.4% (350.17 vs 488.82 mm/rad^2, 1.2727 vs 1.7767 normalized) --
+  under the 40% bar -- while the between-sample peak rises to 1.47x
+  baseline (4.3545 vs 2.9520 normalized; the 2x clause holds, the
+  reduction clause fails). delta = 10 and 15 are WORSE than the
+  baseline at the samples themselves: 592.73 and 1034.58 mm/rad^2
+  (2.1543 and 3.7603 normalized, +21% and +112%). No dwell width on
+  the fixed 30-degree grid softens the prescription acceptably.
+- **R3 (relocation) HELD.** The worst prescribed samples relocate
+  from the stops to the carry neighbours (phase 3 at delta = 5;
+  phase 1 at delta = 10/15); the corner junctions ease slightly and
+  monotonically (351.6 -> 328.4 -> 300.7 -> 292.4 mm/rad^2); the
+  between-sample peaks grow monotonically (1.47x / 2.33x / 4.13x the
+  baseline: 1198.08, 1894.24, 3356.53 mm/rad^2 = 4.3545, 6.8847,
+  12.1995 normalized); the speed swing grows 1.56 -> 2.56 with max
+  sample speed 0.6733 / 0.8272 / 1.1075 normalized; the junction
+  floor is delta-independent (348.81 mm/rad^2 = 1.2678 normalized at
+  the junction window's mean speed 102.30 mm/rad). Dwell softening
+  relocates and amplifies demand; it does not remove it.
+- **R4 (decision) ENGAGED as written.** R2 refuted on the machine
+  establishes that the binding prescription is the phase-locked
+  30-degree grid, not the stop timing. The free-phase variant is
+  unlocked and stages after the result-schema PRs per the group
+  ranking.
+- **R5 (control) HELD.** No gate loosened, no recorded outcome
+  rewritten, the script read the merged -02 task only; the -02
+  record stays data.
+
+**Reading.** The dwell-relaxed pick and set-down is retired at fixed
+phases: any dwell on the 30-degree grid either under-delivers at the
+samples (delta = 5: -28.4%) or makes them worse (delta = 10/15), and
+every dwell trades sample relief for larger between-sample peaks. The
+binding prescription is the grid itself: the corner junctions sit
+mid-window at grid-imposed speed, with a delta-independent floor of
+1.2678 normalized at the junction window's mean speed. The machine
+run agreed with the design-time prediction to every printed digit;
+nothing in the frozen scorecard changed.
+
+**Machine.** the-hub (the -01/-02 machine), Python 3 (version line
+not captured in the shared transcript; pure-stdlib script, any
+Python 3), run against the merged task at public main b3acf4e.
+
+**What this gives the next iteration.** The queue is unchanged and
+now data-backed: PR-A (units declarations) and PR-B (per-sample
+emission), both awaiting the critic's two one-line answers in the
+debate log, then the free-phase variant -- the first standing
+candidate that can aim at the binding prescription directly -- and a
+budget sweep against a frozen scorecard. Recorded outcomes are data
+and are never rewritten.
