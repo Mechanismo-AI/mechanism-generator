@@ -1,0 +1,119 @@
+
+# --------------------------------------------------------- contacts
+def lever_contact(ch, Lhat, ehat, a):
+    """Cam-x contact simulation: roller centres and the
+    inward-offset working profile in the cam frame; the
+    local/coarse distance audit; and the independent normal
+    cross-check (every 20th grid point: the simulated foot point
+    gives the contact normal, whose angle to the analytic roller
+    velocity must agree with the formula to 0.1 deg)."""
+    n = len(ch)
+    points, profile = [], []
+    for i in range(n):
+        th, phi, phip, phipp, x, xp, xpp, s, c, dw = ch[i]
+        C = (a * (Lhat + s), a * (ehat + c))
+        w = (a * (Lhat + (1.0 + phip) * s),
+             a * (ehat + (1.0 + phip) * c))
+        nrm = math.hypot(w[0], w[1])
+        pf = (C[0] - ROLLER_R * w[0] / nrm,
+              C[1] - ROLLER_R * w[1] / nrm)
+        points.append(rot_neg(th, C))
+        profile.append(rot_neg(th, pf))
+    min_local, min_i, coarse_min = contact_sim(points, profile)
+    a_dev = 0.0
+    for i in range(0, n, 20):
+        th, phi, phip, phipp, x, xp, xpp, s, c, dw = ch[i]
+        fx, fy = contact_foot(points[i][0], points[i][1], profile)
+        dx, dy = points[i][0] - fx, points[i][1] - fy
+        dn = math.hypot(dx, dy)
+        if dn == 0.0:
+            continue
+        nfix = rot_pos(th, (dx / dn, dy / dn))
+        t = (c, -s)    # analytic roller velocity, fixed frame
+        cosim = abs(nfix[0] * t[0] + nfix[1] * t[1])
+        a_sim = math.degrees(math.acos(min(1.0, cosim)))
+        a_dev = max(a_dev,
+                    abs(a_sim - alpha_unit(Lhat, ehat, s, c, phip)))
+    return {"min_local": min_local,
+            "min_theta_deg": ch[min_i][0] * DEG,
+            "coarse_min": coarse_min, "alpha_dev": a_dev}
+
+
+def cam_y_contact():
+    """Cam-y contact simulation at the -05 cap-limited base
+    195 mm, with the FIXED profile-offset normal under the CCW
+    shaft convention: n = (-h', r)/|n| (a wrong-sense normal
+    mirrored the curve and cut into the roller -- 9.0383 mm
+    far-field vs the 15 mm roller before the fix, exactly 15
+    after). Also the parametric-vs-polar curvature
+    cross-validation over the whole grid (the -06 rho convention
+    witness)."""
+    points, profile = [], []
+    for k in range(GRID_N):
+        th = 2.0 * PI * k / GRID_N
+        h, hp, hpp, _ = follower_state("y", th)
+        r = CAM_Y_BASE + h
+        nrm = math.hypot(hp, r)
+        C = (0.0, r)
+        pf = (C[0] + ROLLER_R * hp / nrm,
+              C[1] - ROLLER_R * r / nrm)
+        points.append(rot_neg(th, C))
+        profile.append(rot_neg(th, pf))
+    min_local, min_i, coarse_min = contact_sim(points, profile)
+    xval = 0.0
+    for k in range(GRID_N):
+        th = 2.0 * PI * k / GRID_N
+        h, hp, hpp, _ = follower_state("y", th)
+        r = CAM_Y_BASE + h
+        rho_pol = polar_rho(r, hp, hpp)
+        rho_q = cam_y_rho_param(r, hp, hpp)
+        if math.isinf(rho_pol) or math.isinf(rho_q):
+            continue
+        xval = max(xval,
+                   abs(rho_q - rho_pol) / max(1.0, abs(rho_pol)))
+    return {"min_local": min_local,
+            "min_theta_deg": 2.0 * PI * min_i / GRID_N * DEG,
+            "coarse_min": coarse_min, "rho_xval_rel": xval}
+
+
+def cam_y_rho_param(r, hp, hpp):
+    """Cam-y pitch curvature radius through the SAME parametric
+    cross-product construction as the lever (vectors, not the
+    closed polar form): W1 = C' + J C and W2 = C'' + 2 J C' - C
+    for C = (0, r), J the clockwise quarter turn. Algebraically
+    identical to polar_rho; the two float paths differ only in
+    rounding, which is exactly what the cross-validation row
+    measures."""
+    w1x, w1y = r, hp
+    w2x, w2y = 2.0 * hp, hpp - r
+    cross = w1x * w2y - w1y * w2x
+    sp3 = (r * r + hp * hp) ** 1.5
+    if cross == 0.0:
+        return float("inf")
+    return sp3 / (-cross)
+
+
+def envelope_audit(lv):
+    """Combined swept-envelope audit row (the critic's addition):
+    both cam plates stack axially on the one shaft (one plan
+    view); the x-slide block sweeps
+    [L - 130 - 65, L + 130 + 65]; the lever pin drops to
+    e - b - 25 at the -swing extreme; the plates and the -05
+    y-side layout reach max(r_max + roller, 300), mirrored to the
+    left edge. EXCEEDS is recorded data for the brief owner,
+    never a gate."""
+    cam_top = max(lv["r_max"] + ROLLER_R, PLATE_CAP)
+    x_min = -cam_top
+    x_max = lv["L"] + 130.0 + BLOCK_HALF_X
+    y_min = lv["e"] - LEVER_B - BLOCK_HALF_Y
+    y_max = cam_top
+    width = x_max - x_min
+    height = y_max - y_min
+    return {"x_min": x_min, "x_max": x_max, "width": width,
+            "y_min": y_min, "y_max": y_max, "height": height,
+            "exceeds_x": width > ENVELOPE,
+            "exceeds_y": height > ENVELOPE,
+            "exceeds": (width > ENVELOPE or height > ENVELOPE)}
+
+
+fmt = "%.6g"     # the scorecard print precision throughout

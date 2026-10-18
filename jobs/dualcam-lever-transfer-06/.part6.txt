@@ -1,0 +1,300 @@
+
+# ------------------------------------------------------------ printout
+def print_report(rep):
+    """The -06 scorecard printout: data rows first, the frozen
+    scorecard reading [F] last. Verdicts are data, never error
+    exits."""
+    t = rep["task"]
+    print("[A] frozen task validation (-02 record, read-only)")
+    print("  task sha256: %s" % t["sha256"])
+    if t["worst"] is None:
+        print("  TASK VALIDATION FAILED (non-planar task)")
+    else:
+        w = t["worst"]
+        print("  reconstruction: max |dq| %.3e, |dv| %.3e, "
+              "|da| %.3e%s" % (w["q"], w["v"], w["a"],
+                               "" if t["ok"] else
+                               "  TASK VALIDATION FAILED"))
+    print("")
+    cy = rep["cam_y"]
+    print("[B] cam y carry (the -05 record, base circle 195 mm)")
+    for label, val, rc in cy["carry_rows"]:
+        print("  %-42s %s vs %s" % (label + ":",
+                                    fmt % val, fmt % rc))
+    print("  carry: %s" % ("MATCH" if cy["carry_ok"]
+                           else "MISMATCH"))
+    print("  G2 verdict (cam y): %s" % cy["verdict"])
+    print("")
+
+    lv = rep["lever"]
+    print("[C] cam x lever design (Option B)")
+    print("  swing half-angle scan (the recorded Option B "
+          "frontier):")
+    for row in reversed(lv["phi_rows"]):
+        if row["feasible"]:
+            print("    phi_max %5.1f deg: b %6.1f mm, L/a* %6.3f, "
+                  "lambda >= %5.2f (cap knee)"
+                  % (row["phi_max_deg"], row["b"], row["Lhat"],
+                     row["lam_cap"]))
+        else:
+            print("    phi_max %5.1f deg: b %6.1f mm, INFEASIBLE "
+                  "at the 30 deg target (asymptote = swing, "
+                  "approached from above)"
+                  % (row["phi_max_deg"], row["b"]))
+    print("  declared design point: phi_max = %s deg (the knee of "
+          "the tradeoff, 5 deg creep margin; a declared constant "
+          "with its derivation in the JOB, open to review)"
+          % fmt % lv["phi_max_deg"])
+    print("  depth rule: e = -a cos(phi_max) (the roller level "
+          "with the shaft at both swing extremes)")
+    for row in lv["depth_rows"]:
+        print("    e/a = %s: L/a* %s" % (fmt % row["ehat"],
+                                         fmt % row["Lhat_inf"]))
+    if not lv["feasible"]:
+        print("  no feasible pivot offset exists at the declared "
+              "design point: the design fails closed at the 30 "
+              "deg target.")
+        print("  pre-declared terminal branch: no further "
+              "gap-transfer variant is staged;")
+        print("  the recorded failure returns to the brief level "
+              "with Jean and the researcher;")
+        print("  the candidate levers there are task "
+              "renegotiation (the envelope with the brief owner)")
+        print("  or a different mechanism family. The frozen rule "
+              "stands: never a fifth linkage variant.")
+        print("")
+        print("[F] scorecard reading: INFEASIBLE (recorded data; "
+              "exit 0 unless a witness failed)")
+        return
+    print("  pivot offset (design output, quantized to the 0.1 "
+          "grid):")
+    print("    L/a = %s (45 deg gate: %s)"
+          % (fmt % lv["Lhat"], fmt % lv["Lhat_45"]))
+    print("    unquantized infimum: %s" % fmt % lv["Lhat_inf"])
+    print("    worst pressure angle: %s deg at %s deg"
+          % (fmt % lv["wa"], fmt % (lv["wa_theta"] * DEG)))
+    print("    at the infimum (bisection boundary): %s deg"
+          % fmt % lv["wa_i"])
+    print("    margin under the 30 deg target: %s deg "
+          "(boundary-tight by the minimal-offset pick; disclosed)"
+          % fmt % lv["alpha_margin"])
+    crit = ("INSIDE the swing: interior maximum"
+            if lv["interior_critical"]
+            else "outside the swing: boundary maximum")
+    print("    r/a at the +swing extreme: %s (interior critical "
+          "angle %s deg %s)"
+          % (fmt % lv["rhat_max"], fmt % lv["phic_deg"], crit))
+    print("    min positive rho (a-units): %s at %s deg; most "
+          "negative (data): %s at %s deg"
+          % (fmt % lv["rhat_pos_min"],
+             fmt % (lv["rhat_pos_theta"] * DEG),
+             fmt % lv["rhat_neg_min"],
+             fmt % (lv["rhat_neg_theta"] * DEG)))
+    print("  lambda window (DERIVED, the answer to the brief's "
+          "Q2):")
+    print("    a <= %s mm (cap)       -> lambda >= %s"
+          % (fmt % lv["a_cap"], fmt % lv["lam_cap"]))
+    print("    a >= %s mm (curvature) -> lambda <= %s"
+          % (fmt % lv["a_curv"], fmt % lv["lam_curv"]))
+    print("  LAMBDA PICK (smallest on the 0.05 grid inside the "
+          "window, the actor's knee rule):")
+    print("    lambda = %s: a = %s mm, L = %s mm, e = %s mm"
+          % (fmt % lv["pick"], fmt % lv["a"], fmt % lv["L"],
+             fmt % lv["e"]))
+    print("    pitch major radius: %s mm vs cap %s (headroom %s "
+          "mm)"
+          % (fmt % lv["r_max"], fmt % RADIUS_CAP,
+             fmt % (RADIUS_CAP - lv["r_max"])))
+    print("    band point (r_max <= 90%% of cap): lambda = %s "
+          "(r_max %s mm)"
+          % (fmt % lv["band"],
+             fmt % (lv["b"] / lv["band"] * lv["rhat_max"])))
+    print("    min positive rho: %s mm vs gate %s mm"
+          % (fmt % (lv["a"] * lv["rhat_pos_min"]),
+             fmt % (CURV_MARGIN * ROLLER_R)))
+    print("  lambda grid scan (first 8 rows, then the feasible "
+          "window):")
+    for row in lv["lam_rows"][:8]:
+        print("    lambda %5.2f: a %7.3f mm, r_max %7.3f mm%s"
+              % (row["lam"], row["a"], row["r_max"],
+                 "  ok" if row["ok"] else ""))
+    for row in lv["lam_rows"]:
+        if row["ok"]:
+            print("    lambda %5.2f: a %7.3f mm, r_max %7.3f mm%s"
+                  % (row["lam"], row["a"], row["r_max"],
+                     "  ok" if row["ok"] else ""))
+    print("  chain witnesses (exact rocker map vs the slide "
+          "demand):")
+    print("    |x_reconstructed - x| %.3e mm, "
+          "|v_reconstructed - x'| %.3e mm/rad"
+          % (lv["xc_err"], lv["vc_err"]))
+    print("  stop velocities at the slide, after the lever (G3 "
+          "placement):")
+    print("    theta 0 deg: %.3e, theta 120 deg: %.3e (mm/rad)"
+          % (lv["stop_v"][0], lv["stop_v"][1]))
+    print("  output transmission angle (long arm / slide "
+          "interface): <= %s deg at the swing boundary (disclosed "
+          "boundary, not gated)" % fmt % lv["out_angle_max"])
+    print("  reflected slide inertia at the cam: "
+          "(lambda cos(phi))^2 in [%s, %s]"
+          % (fmt % lv["refl_inertia"][0],
+             fmt % lv["refl_inertia"][1]))
+    print("  tolerance amplification (cam profile error -> slide "
+          "path error): x [%s, %s]"
+          % (fmt % lv["tol_amp"][0], fmt % lv["tol_amp"][1]))
+    print("  pin-in-slot length (the b(1 - cos phi) travel): %s mm"
+          % fmt % lv["slot_length"])
+    print("  force-closure coefficients (per unit slide load, "
+          "re-derived per the debate):")
+    print("    peak a|phi''| %s mm/rad^2 at %s deg"
+          % (fmt % lv["peak_a_phipp"],
+             fmt % (lv["peak_a_phipp_theta"] * DEG)))
+    print("    peak a phi'^2 %s mm/rad^2 at %s deg"
+          % (fmt % lv["peak_a_phip2"],
+             fmt % (lv["peak_a_phip2_theta"] * DEG)))
+    print("    combined shaft-torque |x'x'' + y'y''| %s "
+          "mm^2/rad^3 at %s deg (both cams, one shaft)"
+          % (fmt % lv["peak_torque"],
+             fmt % (lv["peak_torque_theta"] * DEG)))
+    cx = lv["contact_x"]
+    print("  contact simulation, cam x: min %s mm at %s deg "
+          "(coarse far-field %s mm; normal cross-check dev %.3e "
+          "deg)"
+          % (fmt % cx["min_local"], fmt % cx["min_theta_deg"],
+             fmt % cx["coarse_min"], cx["alpha_dev"]))
+    cy2 = rep["contact_y"]
+    print("  contact simulation, cam y: min %s mm at %s deg "
+          "(coarse far-field %s mm; parametric-vs-polar curvature "
+          "xval %.3e)"
+          % (fmt % cy2["min_local"], fmt % cy2["min_theta_deg"],
+             fmt % cy2["coarse_min"], cy2["rho_xval_rel"]))
+    env = rep["envelope"]
+    print("  combined swept envelope (audit row, not a gate):")
+    print("    x: [%s, %s] width %s mm%s"
+          % (fmt % env["x_min"], fmt % env["x_max"],
+             fmt % env["width"],
+             "  EXCEEDS 600" if env["exceeds_x"] else ""))
+    print("    y: [%s, %s] height %s mm%s"
+          % (fmt % env["y_min"], fmt % env["y_max"],
+             fmt % env["height"],
+             "  EXCEEDS 600" if env["exceeds_y"] else ""))
+    print("    plan-view union overstates the footprint: the cam "
+          "plates are")
+    print("    axially stacked (never the same z), the slide "
+          "sweep and the lever")
+    print("    arc overlap the plate disc in plan but not in "
+          "space, and the left")
+    print("    edge is the plate cap, not the swept mechanism. A "
+          "true footprint")
+    print("    needs a 3-D layout pass (brief-owner call).")
+    print("    proposals recorded: block half-sizes 65/25 mm; a "
+          "layout pass or an")
+    print("    envelope waiver belongs to the brief level.")
+    print("  junction one-sided readings (slide space and roller "
+          "space; C1 is")
+    print("  demanded in SLIDE space per the debate):")
+    for row in lv["junction_rows"]:
+        print("    %s (theta %s deg):"
+              % (row["name"], fmt % row["theta_deg"]))
+        for side in row["sides"]:
+            print("      phi %8.4f deg, alpha %7.4f deg, rho "
+                  "%8.3f mm, slide x'' %9.3f, roller a phi'' "
+                  "%9.3f"
+                  % (side["phi_deg"], side["alpha"],
+                     side["rho"], side["slide_xpp"],
+                     side["roller_a_phipp"]))
+    print("  G2 verdict (cam x): %s" % lv["verdict"])
+    print("")
+
+    print("[D] family-cost comparison (recorded data)")
+    print("  six-bar frontier, peak |a| normalized: -01 %s, -02 "
+          "%s, -04 %s"
+          % (fmt % SIXBAR_FRONTIER["-01"],
+             fmt % SIXBAR_FRONTIER["-02"],
+             fmt % SIXBAR_FRONTIER["-04"]))
+    print("  -02 recorded gates: position %s, orientation %s deg; "
+          "-04 packaging overlay %s"
+          % (fmt % SIXBAR_FRONTIER["gates_position"],
+             fmt % SIXBAR_FRONTIER["orientation_deg"],
+             fmt % SIXBAR_FRONTIER["packaging_overlay"]))
+    print("  Option A record (-05): cam x wide fail, required "
+          "major %s mm at the 30 deg target; peak |h''| %s (%s "
+          "norm)"
+          % (fmt % OPTION_A_RECORD["cam_x_req_major_30"],
+             fmt % OPTION_A_RECORD["cam_x_peak_hpp"],
+             fmt % (OPTION_A_RECORD["cam_x_peak_hpp"] / DIAG)))
+    print("  this design, slide-space peak |x''|: %s mm/rad^2 = "
+          "%s norm (the slide demand is unchanged; the lever does "
+          "not divide it)"
+          % (fmt % lv["peak_xpp"], fmt % lv["peak_xpp_norm"]))
+    print("  roller-space junction demand: peak a|phi''| %s "
+          "mm/rad^2 (the -05 cam-space peak %s over the boundary "
+          "lambda cos(phi) = %s)"
+          % (fmt % lv["peak_a_phipp"],
+             fmt % OPTION_A_RECORD["cam_x_peak_hpp"],
+             fmt % (OPTION_A_RECORD["cam_x_peak_hpp"]
+                    / lv["tol_amp"][0])))
+    print("  parts: +1 lever, +1 pivot pin, +1 pin-in-slot on the "
+          "x-axis vs Option A")
+    print("  force closure: spring re-derivation required "
+          "(contact force scales with lambda = %s; dwell-jump case "
+          "at the highest cam speed)" % fmt % lv["pick"])
+    print("")
+
+    print("[E] fail-closed witnesses")
+    print("  level-orientation witness: |e/a + cos(phi_max)| = "
+          "%.3e" % rep["level_witness"])
+    print("  contacts: cam x %s mm, cam y %s mm (roller 15 mm, "
+          "allowance 0.01 mm)"
+          % (fmt % cx["min_local"], fmt % cy2["min_local"]))
+    print("  normal cross-check: max deviation %.3e deg (gate 0.1 "
+          "deg)" % cx["alpha_dev"])
+    print("  curvature cross-validation (cam y): %.3e (gate 1e-9)"
+          % cy2["rho_xval_rel"])
+    print("  determinism: %s" % rep["determinism"])
+    print("")
+
+    print("[F] scorecard reading (frozen gates; verdicts are "
+          "data)")
+    print("  G1 frozen task: %s" % ("HELD" if t["ok"]
+                                    else "FAILED"))
+    print("  G2 cam y (carry): %s -> %s"
+          % ("MATCH" if cy["carry_ok"] else "MISMATCH",
+             cy["verdict"]))
+    print("  G2 cam x (lever): %s (worst %s deg vs the 30 deg "
+          "target, margin %s deg)"
+          % (lv["verdict"], fmt % lv["wa"],
+             fmt % lv["alpha_margin"]))
+    print("      output transmission angle: <= %s deg at the "
+          "swing boundary (disclosed)"
+          % fmt % lv["out_angle_max"])
+    g3 = "HELD" if max(lv["stop_v"]) <= 1e-12 else "FAILED"
+    print("  G3 stop velocities at the slide (after the lever): "
+          "%.3e / %.3e -> %s"
+          % (lv["stop_v"][0], lv["stop_v"][1], g3))
+    print("  G4 junction derivative demand: emitted (slide peak "
+          "|x''| %s norm; roller peak a|phi''| %s; reflected "
+          "inertia (lambda cos phi)^2 in [%s, %s])"
+          % (fmt % lv["peak_xpp_norm"], fmt % lv["peak_a_phipp"],
+             fmt % lv["refl_inertia"][0],
+             fmt % lv["refl_inertia"][1]))
+    print("  G5 determinism: %s" % rep["determinism"])
+    print("  envelope: EXCEEDS the 600x600 benchmark (%s x %s "
+          "mm) -- recorded data for the brief owner, not a gate"
+          % (fmt % env["width"], fmt % env["height"]))
+    print("")
+    print("  Pre-declared terminal branch (frozen before the "
+          "run):")
+    print("    if this Option B design had failed the G2 gate "
+          "wide (worst pressure")
+    print("    angle above the 45 deg hard branch at every "
+          "declared pivot rule),")
+    print("    no further gap-transfer variant would be staged: "
+          "the recorded failure")
+    print("    returns to the brief level with Jean and the "
+          "researcher; the candidate")
+    print("    levers there are task renegotiation (the envelope "
+          "with the brief")
+    print("    owner) or a different mechanism family. The frozen "
+          "rule stands:")
+    print("    never a fifth gap-transfer linkage variant.")
