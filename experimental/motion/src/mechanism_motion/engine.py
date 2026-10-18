@@ -3,6 +3,7 @@ import numpy as np
 import torch
 from . import assets,calibration,chooser,kinematics,model,qualification,refinement,targets
 KEYS={'theta_rad','branches','q','v','a'}
+UNITS=dict(position='normalized (bounding-box diagonal)',orientation='deg',spatial_velocity='normalized/crank-rad',spatial_acceleration='normalized/crank-rad^2',angular_velocity='deg/crank-rad',angular_acceleration='deg/crank-rad^2')
 def validate(payload):
     if not isinstance(payload,dict) or set(payload)!=KEYS:raise ValueError('Input must contain exactly theta_rad, branches, q, v and a')
     def numbers(value, shape, name):
@@ -47,5 +48,5 @@ def solve(payload,random_seed=580000000,use_chooser=True):
     selected=min(runs,key=lambda r:(not r['metrics']['combined_pass'],r['metrics']['score']));used=sum(r['evaluations'] for r in runs)
     if used>200:raise RuntimeError('Refinement budget exceeded')
     mechanism,phases=kinematics.decode(selected['raw'],'six',payload['branches'],1)
-    return dict(schema_version=1,status='experimental',qualified=selected['metrics']['combined_pass'],objective_evaluations=used,maximum_objective_evaluations=200,mechanism_normalized=mechanism,phases_rad=phases.tolist(),selected=selected,runs=runs,pool=pool,selected_label=selected_label,issues=issues,random_seed=random_seed,use_chooser=use_chooser,seconds=time.perf_counter()-start,
-      asset_sha256=manifest['files'],convention='q, v and a are pose and first/second derivatives with respect to increasing crank angle in radians; spatial values use the input normalized length unit.',capacity='unrated',operating_speed='unrated',collision_clearance='unchecked')
+    return dict(schema_version=2,units=UNITS,status='experimental',qualified=selected['metrics']['combined_pass'],objective_evaluations=used,maximum_objective_evaluations=200,mechanism_normalized=mechanism,phases_rad=phases.tolist(),selected=selected,runs=runs,pool=pool,selected_label=selected_label,issues=issues,random_seed=random_seed,use_chooser=use_chooser,seconds=time.perf_counter()-start,
+      asset_sha256=manifest['files'],convention='q, v and a are pose and first/second derivatives with respect to increasing crank angle in radians; spatial values use the input normalized length unit; emitted angular velocity and acceleration errors are in degrees per crank-angle derivative, as declared in units.',capacity='unrated',operating_speed='unrated',collision_clearance='unchecked')
