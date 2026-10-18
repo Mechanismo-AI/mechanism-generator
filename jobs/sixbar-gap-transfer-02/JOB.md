@@ -201,3 +201,139 @@ smooth bottom says the twelve-phase closed loop with derivative
 demands is beyond the family at this budget regardless of stop count,
 and motivates the free-phase and budget branch. Recorded outcomes are
 data and are never rewritten.
+
+
+## Recorded outcome (2026-10-18)
+
+Run on the-hub (the same CPU-only Ubuntu workstation and experimental
+motion environment as -01) on the task merged as PR #45 (main
+`a0649e2c`). Three seeds, one solver attempt each; every seed used
+its full budget of 200/200 objective evaluations. Solver wall-clock
+8.20 s (seed 580000050), 8.04 s (seed 580000051) and 8.15 s (seed
+580000052). No candidate qualified; `issues: []` in all three
+results. Machine honesty note: the terminal transcript shows FOUR
+solver invocations, not three -- seed 580000050 was invoked twice,
+the second time with the output path result-580000051.json (a
+mis-paste), and the correct seed 580000051 invocation then overwrote
+that file before anything read it. The solver is seed-deterministic
+and the final file set is the intended one, but the invocation count
+is recorded as it happened. The three asset hashes (proposal.pt,
+continuation.json, chooser.json) are identical across all seeds and
+to -01's.
+
+**Initializer control.** The learned "original" initializer -- which
+returned undefined metrics on -01 -- here completes defined but
+unqualified, with identical final metrics in all three seeds (score
+30.62, worst position error 0.1929, worst orientation error 8.46
+deg); the chooser selected the "random" start every time (the
+original run ends restart_selected_at100 with continue_decision
+false). The learned assets still do not transfer to this task
+family; the recorded outcome is carried by the random starts.
+
+**Scorecard verdicts.** Selected-candidate errors as reported by the
+solver, per seed, in order [worst position, worst orientation (deg),
+worst spatial v, worst spatial a, worst angular v, worst angular a];
+strict gates [0.01, 1 deg, 0.02, 0.05]:
+
+| seed | score | position | orient (deg) | v | a | ang v | ang a | worst position sample |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 580000050 | 28.07 | 0.1219 | 9.96 | 0.300 | 1.403 | 0.175 | 0.190 | phase 4 (T3 set-down, stop) |
+| 580000051 | 29.89 | 0.1735 | 7.65 | 0.399 | 1.494 | 0.134 | 0.134 | phase 4 (T3 set-down, stop) |
+| 580000052 | 27.82 | 0.1348 | 8.64 | 0.312 | 1.391 | 0.157 | 0.174 | phase 0 (T1 pick, stop) |
+
+- **D1 (primary) REFUTED.** The best worst-sample position error,
+  0.1219 (seed 580000050) = 33.6 mm, misses the 0.0742 (20.4 mm)
+  halving bar: removing the bottom stops did not halve the worst
+  error. Per seed against -01's recorded worst errors: -17.9%
+  (0.1219 vs 0.1484), +1.4% (0.1735 vs 0.1711), -39.5% (0.1348 vs
+  0.2226) -- seed-scattered, no family-level move; against the
+  0.005452 packaging overlay the best seed is still 22.4x over
+  (33.6 mm vs 1.5 mm).
+- **D2 (structure) HELD, 3/3.** Every seed's single worst position
+  sample is one of the two process stops (phases 4, 4 and 0), and the
+  worst orientation sample is the descent (phase 5) in 3/3. The worst
+  errors did NOT migrate to the smooth corners or the return: the
+  binding structure is still the stops.
+- **D3 (levelness) REFUTED as stated.** The best candidate's T2
+  orientation error is 2.51 deg, outside the 1.5 deg packaging
+  tolerance; the other two seeds sit at 0.60 and 0.50 deg, inside.
+  On the unchanged carry the -01 levelness near-pass reproduces only
+  seed-dependently.
+- **D4 (control) HELD.** All-`qualified: false` is recorded as data;
+  no gate was loosened.
+
+**Stops vs non-stop samples.** The two process stops (phases 0 and 4)
+still cost 1.89x / 1.37x / 2.13x the ten non-stop samples per seed --
+the same regime as -01's four stops (1.6-2.0x):
+
+| seed | stop samples avg (mm) | non-stop avg (mm) | stops / non-stop |
+| --- | --- | --- | --- |
+| 580000050 | 29.9 | 15.8 | 1.89x |
+| 580000051 | 44.7 | 32.7 | 1.37x |
+| 580000052 | 29.8 | 14.0 | 2.13x |
+
+Against -01's non-stop means the per-seed non-stop means move +1% /
++40% / -55%: no family-level improvement, and seed 580000051 is
+uniformly bad across the carry (37-48 mm at every carry sample).
+
+**Per-sample recomputation.** As in -01, the solver emits six
+aggregates only; the per-sample split below was computed externally
+from each returned `mechanism_normalized` geometry (independent
+forward kinematics of the documented chain, central finite
+differences for the derivatives). The recomputation reproduces all
+six reported aggregates for all three seeds to 3e-9, so the
+per-sample tables are verified against the tool's own numbers.
+
+Worst-sample position error per phase (mm; 1 unit = 275.14 mm;
+phases 0-4 carry, 5 descent, 6 right corner join, 7-9 return,
+10 left corner join, 11 ascent; full stops at 0 and 4):
+
+| phase | note | 580000050 | 580000051 | 580000052 |
+| --- | --- | --- | --- | --- |
+| 0 | T1 pick (stop) | 26.2 | 41.7 | 37.1 |
+| 1 | carry | 5.6 | 37.2 | 6.9 |
+| 2 | T2 mid-gap | 14.3 | 40.3 | 19.6 |
+| 3 | carry | 18.0 | 41.7 | 18.1 |
+| 4 | T3 set-down (stop) | 33.6 | 47.7 | 22.5 |
+| 5 | descent | 7.8 | 3.5 | 13.8 |
+| 6 | right corner join | 24.2 | 43.0 | 33.3 |
+| 7 | return | 9.3 | 40.4 | 10.6 |
+| 8 | return | 18.5 | 32.8 | 1.0 |
+| 9 | return | 8.2 | 34.6 | 2.9 |
+| 10 | left corner join | 30.3 | 44.3 | 17.4 |
+| 11 | ascent | 21.7 | 8.8 | 16.3 |
+
+**Reading: the bottom stops were NOT the main carrier of -01's
+failure.** Neither recorded branch of "What we will do with it"
+materialized cleanly: D1 missed (no halving), but the worst errors
+also did NOT spread over the smooth bottom (D2 held; the stops still
+bind at 1.4-2.1x). What the run does establish: the failure is not
+owned by the two removed bottom reversals; the process stops and the
+derivative demands dominate. The confound recorded in "Honest scope"
+stands: the process corners here are 90 deg turns, not -01's
+collinear 180 deg reversals, so this D1 miss cannot cleanly separate
+"two stops are still too many" from "90 deg corners are harder than
+collinear reversals".
+
+**The binding aggregate is the spatial acceleration error.** In
+every seed of both -01 and this job the most-violated scaled demand
+is the spatial acceleration: 27.8-29.9x its 0.05 gate here (46.0-54.8x
+in -01), ahead of position (12.2-17.3x its 0.01 gate here) and
+orientation (7.6-10.0x its 1 deg gate here). A next iteration that
+does not address the acceleration demand is aiming at the second
+binding constraint.
+
+**Machine.** the-hub, CPU-only Ubuntu workstation (the -01 machine),
+experimental motion venv: Python 3.14 (cp314), torch 2.13.0+cpu,
+numpy 2.5.1, mechanism-motion-experimental 0.1.0.dev0 built from
+`./experimental/motion` at main `a0649e2c`.
+
+**What this gives the next iteration.** (1) The result schema first:
+per-sample error emission (the units declaration, then the per-sample
+fields, as separate small PRs) removes the external recomputation
+step both -01 and this record needed. (2) The process stops: a
+dwell-relaxed pick and set-down, the free-phase variant, and a budget
+sweep against a frozen scorecard are the standing candidates. (3)
+Acceleration is the most-violated scaled demand and should be
+designed for explicitly. Keep-out screening of the return loop stays
+moot until a qualified candidate exists to screen.
