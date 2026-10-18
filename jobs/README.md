@@ -24,6 +24,7 @@ land in `runs/` (gitignored, maintainer-local).
 | [sixbar-gap-transfer-01](sixbar-gap-transfer-01/JOB.md) | Case study B capability: the full gap-transfer carry cycle as a frozen 12-phase motion task for the experimental six-bar motion solver | Run recorded |
 | [sixbar-gap-transfer-02](sixbar-gap-transfer-02/JOB.md) | Case study B diagnostic: the no-bottom-stops variant of the gap-transfer motion task (carry and process stops unchanged, smooth bottom joins) | Run recorded |
 | [sixbar-gap-transfer-03](sixbar-gap-transfer-03/JOB.md) | Case study B diagnostic: the softened-timing recompute -- is the acceleration binding carried by the timing law or by the phase-locked grid? (script, no solver run) | Run recorded |
+| [sixbar-gap-transfer-04](sixbar-gap-transfer-04/JOB.md) | Case study B: the free-phase variant -- sample placement freed (T1/T2/T3 poses, path and process stops fixed), chosen by the committed design script; the -03 R4 unlock aimed at the binding prescription, with the group's (a)/(b)/(c) requirements in the JOB | Staged; awaiting the machine run |
 | [local-llm-queue](local-llm-queue/README.md) | A patient-clerk queue for a local small LLM (digests, labeling, first drafts) | Active tooling |
 
 Recorded outcomes are data about the state of the tools when the run
