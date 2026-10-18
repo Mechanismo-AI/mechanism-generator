@@ -72,8 +72,10 @@ audit trail): the loop is arc-length-parametrized (ellipse arcs by
 numerical quadrature; the left turnaround samples sit at equal arc
 thirds); the timing is the clamped cubic spline above; v = T s' and
 a = C s'^2 + T s'' with T the travel tangent and C the curvature
-vector; positions are centred on the bounding box and scaled by its
-diagonal. Sample values were re-checked by independent finite
+vector; positions are scaled by the bounding-box diagonal and centred
+on the twelve-sample centroid -- the validator's actual rule
+(experimental/motion/src/mechanism_motion/targets.py: sample mean zero
+and unit bounding-box diagonal, each to 1e-8). Sample values were re-checked by independent finite
 differences of the composed trajectory: velocities agree to
 2.4e-6 mm/rad, accelerations to
 7.2e-2 mm/rad^2, the one-sided stop accelerations
@@ -83,6 +85,19 @@ sample magnitudes: speeds up to 0.722 units/rad and
 accelerations up to 3.121 units/rad^2 (the studied
 synthetic example runs about 0.2-0.4 and 0.1-0.5) -- this task is
 numerically demanding as well as geometrically.
+
+
+**Amendment before the first run (2026-10-17).** The version merged in
+PR #42 was bbox-centred; the solver rejected it at input validation
+("Position targets must be centered and normalized to unit bounding-box
+diagonal") because the package's actual contract check requires the
+twelve-sample CENTROID at the origin (1e-8), not a bbox-centred task.
+All position samples were translated by minus the sample centroid
+(design-frame centroid (-9.4, +3.8 mm)): the bounding-box diagonal, the tolerance
+overlay, velocities, accelerations, orientations and the frozen
+scorecard are unchanged; no run outcome had been recorded against the
+bbox-centred version. The ambiguous "centered" wording in the package
+README and docs/experimental-motion.md is clarified in the same change.
 
 **Honest scope.**
 

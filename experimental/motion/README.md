@@ -31,7 +31,7 @@ The JSON object contains exactly five fields:
 |`v`|12 × 3|First derivatives of those quantities with respect to crank angle θ|
 |`a`|12 × 3|Second derivatives with respect to θ|
 
-Positions must be centered, with bounding-box diagonal equal to one. Spatial derivative values use that same normalized length unit. All input values must be finite. Arbitrary phase grids, unknown branches, extra fields and unnormalized tasks are rejected. The input does not accept generating geometry or witness parameters.
+Positions must be centered: the mean of the twelve position samples must be zero, and the bounding-box diagonal must equal one (both checked to 1e-8 by the input validator). Spatial derivative values use that same normalized length unit. All input values must be finite. Arbitrary phase grids, unknown branches, extra fields and unnormalized tasks are rejected. The input does not accept generating geometry or witness parameters.
 
 These derivatives do not prescribe an operating speed. Given a drive law with crank angular velocity ω and acceleration α, the chain rule gives output velocity `v × ω` and output acceleration `a × ω² + v × α`. Physical spatial units also require the chosen length scale. The current interface does not accept that drive law or rate payload capacity, motor requirements or collision clearance.
 

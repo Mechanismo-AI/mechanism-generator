@@ -8,7 +8,7 @@ install this capability. It does not extend the existing three-pose OMTS adapter
 
 Try the supplied normalized JSON example with `mechanism-motion`. The contract
 requires twelve equally spaced increasing crank phases, two known branch signs,
-centered positions with unit bounding-box diagonal, and finite numeric arrays.
+centroid-centered positions (the twelve-sample mean must be zero) with unit bounding-box diagonal, and finite numeric arrays.
 The result contains inspectable geometry, strict qualification, diagnostics and
 an explicit experimental status. A completed run may report `qualified: false`.
 Capacity, speed and collision clearance remain unrated or unchecked.
