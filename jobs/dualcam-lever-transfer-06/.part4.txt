@@ -1,0 +1,215 @@
+
+# ------------------------------------------------------------- report
+def build_report(task_path):
+    """The full -06 report: [A] task validation, [B] the cam-y
+    carry against the -05 record, [C] the lever design (swing
+    scan, depth pin, pivot offset, derived lambda window, pick)
+    with its audits (chain witnesses, contacts, envelope,
+    junctions). Verdicts are data; only the fail-closed gates in
+    main() can exit 1."""
+    report = {}
+
+    # ---- [A] frozen task validation
+    with open(task_path, "rb") as fh:
+        raw = fh.read()
+    task = json.loads(raw.decode("utf-8"))
+    worst = validate_task(task)
+    task_ok = (worst is not None
+               and max(worst["q"], worst["v"], worst["a"],
+                       worst["theta"]) <= TASK_TOL)
+    report["task"] = {"sha256": hashlib.sha256(raw).hexdigest(),
+                      "worst": worst, "ok": task_ok}
+
+    # ---- [B] cam y carry (the -05 record, base circle 195 mm)
+    ay = audit_cam("y", CAM_Y_BASE)
+    req30_y = required_base_for_angle("y", ALPHA_TARGET) + 90.0
+    maj45_y = required_base_for_angle("y", ALPHA_HARD) + 90.0
+    rec = OPTION_A_RECORD
+    carry_rows = [
+        ("worst pressure angle (deg)", ay["worst_alpha"],
+         rec["cam_y_alpha"]),
+        ("worst angle at (deg)", ay["worst_alpha_theta"] * DEG,
+         rec["cam_y_alpha_theta"]),
+        ("required major radius, 30 deg target (mm)", req30_y,
+         rec["cam_y_req_major_30"]),
+        ("major radius at the 45 deg gate (mm)", maj45_y,
+         rec["cam_y_major_45"]),
+        ("min positive pitch curvature radius (mm)",
+         ay["rho_pos_min"], rec["cam_y_rho_min"]),
+        ("peak |h''| (mm/rad^2)", ay["peak_hpp"],
+         rec["cam_y_peak_hpp"]),
+    ]
+    carry_ok = ((fmt % ay["worst_alpha"]
+                 == fmt % rec["cam_y_alpha"])
+                and (fmt % (ay["worst_alpha_theta"] * DEG)
+                     == fmt % rec["cam_y_alpha_theta"])
+                and (fmt % req30_y
+                     == fmt % rec["cam_y_req_major_30"])
+                and (fmt % maj45_y
+                     == fmt % rec["cam_y_major_45"])
+                and (fmt % ay["rho_pos_min"]
+                     == fmt % rec["cam_y_rho_min"])
+                and (fmt % ay["peak_hpp"]
+                     == fmt % rec["cam_y_peak_hpp"]))
+    verdict_y = ("HELD" if ay["worst_alpha"] <= ALPHA_TARGET
+                 else ("NARROW" if ay["worst_alpha"] <= ALPHA_HARD
+                       else "WIDE"))
+    report["cam_y"] = {"audit": ay, "req_major_30": req30_y,
+                       "major_45": maj45_y, "carry_rows": carry_rows,
+                       "carry_ok": carry_ok, "verdict": verdict_y}
+
+    # ---- [C] the lever design
+    phi_rows = phi_scan()
+    ehat_star = -math.cos(PHI_MAX)
+    ch_scan = build_chain(SCAN_N)
+    depth_rows = []
+    for ehat in (-0.85, ehat_star, -0.95):
+        depth_rows.append({
+            "ehat": ehat,
+            "Lhat_inf": min_L_for_angle(ch_scan, ehat,
+                                        ALPHA_TARGET)})
+    ch = build_chain(GRID_N)
+    linf = min_L_for_angle(ch, ehat_star, ALPHA_TARGET)
+    lstar = quantized_L_pick(ch, ehat_star, ALPHA_TARGET, linf)
+    l45 = quantized_L_pick(ch, ehat_star, ALPHA_HARD,
+                           min_L_for_angle(ch, ehat_star,
+                                           ALPHA_HARD))
+    wa, wa_th = worst_alpha_L(ch, lstar, ehat_star)
+    wa_i, wa_i_th = worst_alpha_L(ch, linf, ehat_star)
+    stats = pitch_stats_unit(lstar, ehat_star, ch)
+    phic = math.atan2(lstar, -ehat_star)
+    interior = abs(phic) <= PHI_MAX   # else the +swing extreme wins
+    rhat_max = lstar + math.sin(PHI_MAX)
+    a_cap = RADIUS_CAP / rhat_max
+    if stats["rhat_pos_min"] == float("inf"):
+        a_curv = 0.0        # no positive-curvature points: gate vacuous
+    else:
+        a_curv = CURV_MARGIN * ROLLER_R / stats["rhat_pos_min"]
+    lam_rows = []
+    pick = None
+    band = None
+    lam = LAMBDA_MIN
+    while lam <= LAMBDA_MAX + 1e-9:
+        a = LEVER_B / lam
+        rmax = a * rhat_max
+        ok = (rmax <= RADIUS_CAP) and (a_curv <= 0.0 or a >= a_curv)
+        lam_rows.append({"lam": lam, "a": a, "r_max": rmax,
+                         "ok": ok})
+        if ok and pick is None:
+            pick = lam
+        if ok and band is None and rmax <= 0.9 * RADIUS_CAP:
+            band = lam
+        lam += LAMBDA_STEP
+    lever = {
+        "phi_max_deg": PHI_MAX * DEG, "b": LEVER_B,
+        "ehat": ehat_star, "Lhat_inf": linf, "Lhat": lstar,
+        "Lhat_45": l45, "wa": wa, "wa_theta": wa_th,
+        "wa_i": wa_i, "alpha_margin": ALPHA_TARGET - wa,
+        "phic_deg": phic * DEG, "interior_critical": interior,
+        "rhat_max": rhat_max,
+        "rhat_pos_min": stats["rhat_pos_min"],
+        "rhat_pos_theta": stats["rhat_pos_theta"],
+        "rhat_neg_min": stats["rhat_neg_min"],
+        "rhat_neg_theta": stats["rhat_neg_theta"],
+        "a_cap": a_cap, "a_curv": a_curv,
+        "lam_cap": LEVER_B / a_cap,
+        "lam_curv": (float("inf") if a_curv <= 0.0
+                     else LEVER_B / a_curv),
+        "phi_rows": phi_rows, "depth_rows": depth_rows,
+        "lam_rows": lam_rows, "feasible": True,
+    }
+    report["lever"] = lever
+
+    if pick is None:
+        # Infeasible at the declared design point: recorded data,
+        # never an error exit (the terminal branch fires).
+        lever["feasible"] = False
+        report["level_witness"] = abs(ehat_star
+                                      + math.cos(PHI_MAX))
+        return report
+
+    # ---- physical design at the pick
+    lever["pick"] = pick
+    lever["band"] = band
+    a_s = LEVER_B / pick
+    lever.update(lever_geometry(a_s, lstar, ehat_star))
+    xc_err, vc_err = 0.0, 0.0
+    for th, phi, phip, phipp, x, xp, xpp, s, c, dw in ch:
+        xc_err = max(xc_err, abs(-LEVER_B * s - x))
+        vc_err = max(vc_err, abs(-LEVER_B * c * phip - xp))
+    lever["xc_err"], lever["vc_err"] = xc_err, vc_err
+
+    def _slide_velocity(th):
+        return follower_state("x", th)[1]
+
+    lever["stop_v"] = [abs(_slide_velocity(0.0)),
+                       abs(_slide_velocity(TH_CARRY_END))]
+
+    peak_phipp, peak_phipp_th = 0.0, 0.0
+    peak_cen, peak_cen_th = 0.0, 0.0
+    peak_tq, peak_tq_th = 0.0, 0.0
+    peak_xpp, peak_xpp_th = 0.0, 0.0
+    for k in range(GRID_N):
+        th = 2.0 * PI * k / GRID_N
+        _, phi, phip, phipp, x, xp, xpp, s, c, dw = ch[k]
+        v = a_s * abs(phipp)
+        if v > peak_phipp:
+            peak_phipp, peak_phipp_th = v, th
+        v = a_s * phip * phip
+        if v > peak_cen:
+            peak_cen, peak_cen_th = v, th
+        _, hyp, hypp, _ = follower_state("y", th)
+        tq = abs(xp * xpp + hyp * hypp)
+        if tq > peak_tq:
+            peak_tq, peak_tq_th = tq, th
+        if abs(xpp) > peak_xpp:
+            peak_xpp, peak_xpp_th = abs(xpp), th
+    lever["peak_a_phipp"] = peak_phipp
+    lever["peak_a_phipp_theta"] = peak_phipp_th
+    lever["peak_a_phip2"] = peak_cen
+    lever["peak_a_phip2_theta"] = peak_cen_th
+    lever["peak_torque"] = peak_tq
+    lever["peak_torque_theta"] = peak_tq_th
+    lever["peak_xpp"] = peak_xpp
+    lever["peak_xpp_theta"] = peak_xpp_th
+    lever["peak_xpp_norm"] = peak_xpp / DIAG
+    lever["refl_inertia"] = ((pick * math.cos(PHI_MAX)) ** 2,
+                             pick ** 2)
+    lever["tol_amp"] = (pick * math.cos(PHI_MAX), pick)
+    lever["slot_length"] = LEVER_B * (1.0 - math.cos(PHI_MAX))
+    lever["out_angle_max"] = PHI_MAX * DEG
+
+    jrows = []
+    for name, th, sides in JUNCTIONS:
+        sa, sb = sides
+        row = {"name": name, "theta_deg": th * DEG, "sides": []}
+        for seg in (sa, sb):
+            h, hp, hpp = follower_sided("x", seg, th)
+            x = h - 130.0
+            sp = -x / LEVER_B
+            sp = math.copysign(min(abs(sp), 0.999999), sp)
+            phi = math.asin(sp)
+            s, c = math.sin(phi), math.cos(phi)
+            phip = -hp / (LEVER_B * c)
+            phipp = (-hpp / (LEVER_B * c)
+                     + hp * hp * s
+                     / (LEVER_B * LEVER_B * c * c * c))
+            alpha = alpha_unit(lstar, ehat_star, s, c, phip)
+            rho = a_s * rho_unit(lstar, ehat_star, s, c,
+                                 phip, phipp)
+            row["sides"].append({
+                "phi_deg": phi * DEG, "alpha": alpha,
+                "rho": rho, "slide_xpp": hpp,
+                "roller_a_phipp": a_s * phipp})
+        jrows.append(row)
+    lever["junction_rows"] = jrows
+
+    lever["contact_x"] = lever_contact(ch, lstar, ehat_star, a_s)
+    report["contact_y"] = cam_y_contact()
+    report["envelope"] = envelope_audit(lever)
+    lever["verdict"] = ("HELD" if wa <= ALPHA_TARGET
+                        else ("NARROW" if wa <= ALPHA_HARD
+                              else "WIDE"))
+
+    report["level_witness"] = abs(ehat_star + math.cos(PHI_MAX))
+    return report

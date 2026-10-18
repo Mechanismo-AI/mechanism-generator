@@ -1,0 +1,295 @@
+
+# ------------------------------------------------- the lever chain (x)
+CAM_Y_BASE = RADIUS_CAP - 90.0   # the -05 cap-limited base circle (195 mm)
+
+
+def build_chain(n, phimax=None, b=None):
+    """Rocker chain rows on an n-point cam grid for the x-slide
+    demand: (theta, phi, phip, phipp, x, xp, xpp, s, c, dwell).
+    x is the slide position relative to stroke centre (mm), xp
+    and xpp its theta-derivatives (mm/rad, mm/rad^2), and phi the
+    exact rocker map with its analytic derivatives:
+      phi   = asin(-x/b)
+      phip  = -xp/(b cos phi)
+      phipp = -xpp/(b cos phi) + xp^2 sin(phi)/(b^2 cos^3 phi)
+    The asin argument is clamped at 0.999999 for domain safety
+    (the stroke pin b = 130/sin(phi_max) keeps it at sin(phi_max)
+    in exact arithmetic; the chain witness measures what the
+    clamp never does). dwell flags the rows where xp is exactly
+    0 (the coordinate dwell arcs and the two process-stop
+    instants): the pressure angle is undefined at zero follower
+    velocity and reads 0 by declared convention, so the
+    worst-angle scan skips those rows."""
+    if phimax is None:
+        phimax, b = PHI_MAX, LEVER_B
+    rows = []
+    for k in range(n):
+        th = 2.0 * PI * k / n
+        h, hp, hpp, _ = follower_state("x", th)
+        x = h - 130.0
+        sp = -x / b
+        sp = math.copysign(min(abs(sp), 0.999999), sp)
+        phi = math.asin(sp)
+        s, c = math.sin(phi), math.cos(phi)
+        phip = -hp / (b * c)
+        phipp = (-hpp / (b * c)
+                 + hp * hp * s / (b * b * c * c * c))
+        rows.append((th, phi, phip, phipp, x, hp, hpp, s, c,
+                     hp == 0.0))
+    return rows
+
+
+def alpha_unit(Lhat, ehat, s, c, phip):
+    """Cam-x pressure angle (deg) in a-units at a chain state.
+    Fixed-frame contact normal N = P + a(1+phip)u(phi) with
+    u = (sin phi, cos phi); roller velocity direction
+    t = (cos phi, -sin phi); cos(alpha) = |P.t| / |N|. u.t = 0
+    makes the numerator independent of phip. Scale-free in a."""
+    w = (Lhat + (1.0 + phip) * s, ehat + (1.0 + phip) * c)
+    num = abs(Lhat * c - ehat * s)
+    nrm = math.hypot(w[0], w[1])
+    if nrm == 0.0:
+        return 90.0
+    return math.degrees(math.acos(min(1.0, num / nrm)))
+
+
+def worst_alpha_L(ch, Lhat, ehat):
+    """Worst grid pressure angle (deg) and its theta for the pivot
+    ratios (L/a, e/a) on chain ch. Dwell/stop rows (xp exactly 0)
+    are skipped: the angle is undefined at zero follower velocity
+    and reads 0 by convention there."""
+    w, wt = 0.0, 0.0
+    for th, phi, phip, phipp, x, xp, xpp, s, c, dwell in ch:
+        if xp == 0.0:
+            continue
+        a = alpha_unit(Lhat, ehat, s, c, phip)
+        if a > w:
+            w, wt = a, th
+    return w, wt
+
+
+def min_L_for_angle(ch, ehat, target_deg):
+    """Bisected infimum of L/a whose worst grid pressure angle is
+    STRICTLY below target_deg (lo 0.02, hi 200, 80 halvings).
+    Honest asymptote behaviour: at a swing half-angle equal to
+    the target the extreme-creep angle approaches the target from
+    ABOVE at every finite offset, so no midpoint ever passes and
+    the hi bound comes back unchanged -- the caller reads that
+    sentinel (200) as infeasible. The infimum is a bisection
+    boundary, not a margin: quantize before claiming one."""
+    lo, hi = 0.02, 200.0
+    for _ in range(80):
+        mid = 0.5 * (lo + hi)
+        if worst_alpha_L(ch, mid, ehat)[0] < target_deg:
+            hi = mid
+        else:
+            lo = mid
+    return hi
+
+
+def quantized_L_pick(ch, ehat, target_deg, infimum, step=0.1):
+    """Smallest L/a on the declared 0.1 grid, at or above the
+    bisection infimum, whose worst grid angle is STILL strictly
+    below the target: the printed margin is a real grid margin,
+    not a bisection boundary artifact. The guard loop steps again
+    if the grid point straddling the infimum fails (paranoia; one
+    step has always been enough)."""
+    pick = math.ceil(infimum / step - 1e-9) * step
+    while worst_alpha_L(ch, pick, ehat)[0] >= target_deg:
+        pick += step
+    return pick
+
+
+def phi_scan():
+    """The recorded Option B frontier: swing-half-angle
+    feasibility on the declared 0.5 deg grid 20.0-30.0 deg at
+    the depth-pinned e/a = -cos(phi_max), each row scanning the
+    pivot offset on the same 0.02-200 bisection. lam_cap is the
+    cap knee at the unquantized infimum: the smallest lambda the
+    285 mm pitch cap allows at that swing. The 30.0 deg row is
+    the brief's refuted first cut, kept as data."""
+    rows = []
+    for k in range(21):
+        d = PHI_SCAN_MIN + k * PHI_SCAN_STEP
+        phimax = d * PI / 180.0
+        b = 130.0 / math.sin(phimax)
+        ehat = -math.cos(phimax)
+        ch = build_chain(SCAN_N, phimax, b)
+        linf = min_L_for_angle(ch, ehat, ALPHA_TARGET)
+        if linf >= 200.0:
+            rows.append({"phi_max_deg": d, "b": b, "ehat": ehat,
+                         "Lhat": None, "feasible": False,
+                         "rhat_max": None, "lam_cap": None})
+        else:
+            rhat = linf + math.sin(phimax)
+            rows.append({"phi_max_deg": d, "b": b, "ehat": ehat,
+                         "Lhat": linf, "feasible": True,
+                         "rhat_max": rhat,
+                         "lam_cap": (130.0 * rhat
+                                     / (RADIUS_CAP
+                                        * math.sin(phimax)))})
+    return rows
+
+
+def rho_unit(Lhat, ehat, s, c, phip, phipp):
+    """Signed pitch-curve curvature radius of the cam-x contact,
+    in a-units, parametric form (the polar form does not apply to
+    an oscillating follower). With the cam-frame pitch curve
+    X = R(-theta) C, with C, C', C'' in a-units, the rotation
+    preserves cross products, so with J the clockwise quarter
+    turn:
+      W1 = C' + J C,   W2 = C'' + 2 J C' - C,
+      rho = |W1|^3 / (-(W1 x W2)),
+    the SAME shaft-side-positive sign convention as the -05 polar
+    form (cross-validated against it on cam y over the whole
+    grid)."""
+    Cx, Cy = Lhat + s, ehat + c
+    C1x, C1y = phip * c, -phip * s
+    C2x = phipp * c - phip * phip * s
+    C2y = -phipp * s - phip * phip * c
+    w1x, w1y = C1x + Cy, C1y - Cx
+    w2x = C2x + 2.0 * C1y - Cx
+    w2y = C2y - 2.0 * C1x - Cy
+    cross = w1x * w2y - w1y * w2x
+    sp3 = (w1x * w1x + w1y * w1y) ** 1.5
+    if cross == 0.0 or sp3 == 0.0:
+        return float("inf")
+    return sp3 / (-cross)
+
+
+def pitch_stats_unit(Lhat, ehat, ch):
+    """Min positive pitch curvature radius in a-units (the
+    undercut gate input) and its theta; the most negative radius
+    is recorded as manufacturing data only (the inward profile
+    offset there INCREASES the profile radius, so it is not
+    gated)."""
+    pos_min, pos_th = float("inf"), 0.0
+    neg_min, neg_th = 0.0, 0.0
+    for th, phi, phip, phipp, x, xp, xpp, s, c, dwell in ch:
+        rho = rho_unit(Lhat, ehat, s, c, phip, phipp)
+        if 0.0 < rho < pos_min:
+            pos_min, pos_th = rho, th
+        if rho < neg_min:
+            neg_min, neg_th = rho, th
+    return {"rhat_pos_min": pos_min, "rhat_pos_theta": pos_th,
+            "rhat_neg_min": neg_min, "rhat_neg_theta": neg_th}
+
+
+def lever_geometry(a, Lhat, ehat):
+    """Physical lever geometry at short arm a (mm)."""
+    return {"a": a, "L": a * Lhat, "e": a * ehat,
+            "r_max": a * (Lhat + math.sin(PHI_MAX))}
+
+
+def rot_neg(th, p):
+    """Fixed frame -> cam frame (the shaft turns counterclockwise
+    with theta; the cam-frame construction is R(-theta)
+    throughout)."""
+    c, s = math.cos(th), math.sin(th)
+    return (p[0] * c + p[1] * s, -p[0] * s + p[1] * c)
+
+
+def rot_pos(th, p):
+    """Cam frame -> fixed frame."""
+    c, s = math.cos(th), math.sin(th)
+    return (p[0] * c - p[1] * s, p[0] * s + p[1] * c)
+
+
+def seg_dist(px, py, ax, ay, bx, by):
+    """Distance from (px, py) to segment [A, B]."""
+    dx, dy = bx - ax, by - ay
+    dd = dx * dx + dy * dy
+    if dd == 0.0:
+        return math.hypot(px - ax, py - ay)
+    t = ((px - ax) * dx + (py - ay) * dy) / dd
+    t = max(0.0, min(1.0, t))
+    return math.hypot(px - (ax + t * dx), py - (ay + t * dy))
+
+
+def contact_sim(points, profile, coarse=5, window=12):
+    """Roller-centre-to-profile polyline audit. Local fine pass:
+    each point against the wrapped window of +/- window/2
+    segments around its own index -- the minimum must be attained
+    at the matching angle. Coarse far-field pass: each point
+    against every coarse-th segment -- this is the pass that
+    catches a wrong-sense profile offset (a mirrored curve cutting
+    into the roller far from the match; exactly how the cam-y
+    staging bug showed: 9.0383 mm far-field vs the 15 mm roller
+    before the fix). Returns (min_local, min_index, coarse_min)."""
+    n = len(profile)
+    prof = profile + profile
+    min_local, min_i = float("inf"), -1
+    coarse_min = float("inf")
+    for i in range(n):
+        px, py = points[i]
+        best = float("inf")
+        for j in range(i - window // 2, i + window // 2 + 2):
+            ax, ay = prof[j]
+            bx, by = prof[j + 1]
+            d = seg_dist(px, py, ax, ay, bx, by)
+            if d < best:
+                best = d
+        if best < min_local:
+            min_local, min_i = best, i
+    for i in range(n):
+        px, py = points[i]
+        for j in range(0, n, coarse):
+            ax, ay = prof[j]
+            bx, by = prof[j + 1]
+            d = seg_dist(px, py, ax, ay, bx, by)
+            if d < coarse_min:
+                coarse_min = d
+    return min_local, min_i, coarse_min
+
+
+def contact_foot(px, py, profile):
+    """Nearest point of the closed profile polyline to (px, py):
+    the foot of the simulated contact, over vertices and segment
+    projections alike."""
+    best, bd = (0.0, 0.0), float("inf")
+    n = len(profile)
+    for j in range(n):
+        ax, ay = profile[j]
+        bx, by = profile[(j + 1) % n]
+        dx, dy = bx - ax, by - ay
+        dd = dx * dx + dy * dy
+        t = 0.0 if dd == 0.0 else (
+            ((px - ax) * dx + (py - ay) * dy) / dd)
+        t = max(0.0, min(1.0, t))
+        fx, fy = ax + t * dx, ay + t * dy
+        d = math.hypot(px - fx, py - fy)
+        if d < bd:
+            best, bd = (fx, fy), d
+    return best
+
+
+# ---------------------- recorded family reference data (read-only)
+SIXBAR_FRONTIER = {
+    "-01": 0.1484,                  # peak |a| normalized, -01 record
+    "-02": 0.1219,                  # peak |a| normalized, -02 record
+    "-04": 0.12570,                # peak |a| normalized, -04 record
+    "gates_position": 0.01,        # -02 recorded position gate
+    "packaging_overlay": 0.005452,  # -04 recorded packaging overlay
+    "orientation_deg": 1.0,        # -02 recorded orientation gate
+}
+
+OPTION_A_RECORD = {
+    # The -05 recorded outcome (merged PR #55): read-only data.
+    "cam_x_alpha": 72.6645,          # deg, worst pressure angle
+    "cam_x_alpha_theta": 12.0,       # deg
+    "cam_x_req_major_30": 511.609,   # mm, vs the 285 mm cap (wide fail)
+    "cam_x_req_major_45": 389.97,    # mm
+    "cam_x_peak_hpp": 812.885,       # mm/rad^2 (= 2.95448 norm)
+    # The cam-y carry witness: the six printed -05 readings.
+    "cam_y_alpha": 25.8817,          # deg, worst pressure angle
+    "cam_y_alpha_theta": 332.0,       # deg
+    "cam_y_req_major_30": 246.098,   # mm, inside the cap
+    "cam_y_major_45": 174.262,        # mm
+    "cam_y_rho_min": 98.3361,        # mm, min positive pitch radius
+    "cam_y_peak_hpp": 695.99,        # mm/rad^2
+    # Carry-precision note: the -05 JOB.md outcome text transcribed
+    # the 45-deg-gate major radius as "174.26" (and its staging
+    # section rounds 246.098 to "246.10"); the stdout-verbatim -05
+    # reading is 174.262 (%.6g of 84.2625 + 90), and 174.262 is
+    # what this record carries -- the transcription was the error.
+}
