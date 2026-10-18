@@ -16,8 +16,8 @@ the main engine; this job changes no engine or spec code and runs
 nothing at staging time.
 
 **Task.** `gap_transfer.motion.json` in this directory, in the solver's
-input contract: exactly five fields, 12 fixed phases, two known
-branches, 12x3 position/velocity/acceleration samples. Physical frame:
+input contract: exactly five fields, 12 fixed phases, two known branches,
+12x3 position/velocity/acceleration samples. Physical frame:
 millimetres, origin at gap centre on the belt line, y up; 1 normalized
 unit = 275.14 mm (this task's bounding-box diagonal, 260 mm x 90 mm).
 All 12 phases carry orientation 0 rad (level) with zero angular velocity
@@ -109,8 +109,8 @@ README and docs/experimental-motion.md is clarified in the same change.
 - `branches: [-1, +1]` are the design's assembly choices, prescribed
   because the input contract rejects unknown branches.
 - Twelve samples encode straightness and levelness at the samples
-  only; continuous-path straightness between samples is a densification
-  follow-up.
+  only; continuous-path straightness between samples is a
+  densification follow-up.
 - No operating speed, drive law, payload capacity or motor is
   prescribed: v and a are per crank radian.
 
@@ -245,8 +245,8 @@ verdict.)
   20.6x-46x theirs.
 - **C2 (the brief's gate) REFUTED.** Best worst-sample position error
   0.1484 vs the 0.005452 packaging overlay: 27.2x (40.8 mm vs 1.5 mm).
-  The six-bar did not reach packaging tolerance, nor close most of
-  the gap: the recorded four-bar carry frontier rescaled to this task
+  The six-bar did not reach packaging tolerance, nor close most of the
+  gap: the recorded four-bar carry frontier rescaled to this task
   (0.0330) is 4.5x closer to tolerance than anything this run
   produced -- though the tasks are not equivalent (three poses with no
   derivative demands vs twelve phases with v/a and four stops).
@@ -321,3 +321,14 @@ for external recomputation in future records; (3) the mid-gap
 levelness near-pass (0.14-1.05 deg at T2 in all seeds) is the one
 demand the family demonstrably reaches. Keep-out screening of the
 return loop stays moot until a qualified candidate exists to screen.
+
+## Post-record amendment (2026-10-18): seed 580000052 wall-clock recovered
+
+The recorded outcome above left seed 580000052's exact `seconds`
+field unrecorded (its result-file tail was lost in transfer). The
+tail has since been recovered from a later terminal transcript on
+the-hub: `seconds: 8.306303122022655`, with the three asset hashes
+(proposal.pt, continuation.json, chooser.json) identical to seeds
+580000050/51 -- the same-batch, about-8 s order of magnitude the
+outcome section already assumed. Nothing in the recorded outcome
+changes.
