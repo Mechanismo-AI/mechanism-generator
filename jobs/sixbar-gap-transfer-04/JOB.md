@@ -346,3 +346,125 @@ solver either, and the next honest step is family succession
 (dwell/cam per the queued briefs), NOT a fourth task variant -- the
 critic's rule, adopted by this chat before this job was staged.
 Recorded outcomes are data and are never rewritten.
+
+
+## Recorded outcome (2026-10-18)
+
+Run on the-hub (the -01/-02/-03 machine), the design script under
+Python 3.14.4, right after Jean merged PR #52 in the browser: the
+same git pull that brought this job's files reports public main
+moving 885cab2 -> c3a7118. One invocation of the design script with
+defaults from the repository root, then the solver once per seed in
+the experimental motion environment (the package installed as in
+sixbar-gap-transfer-01). The full printed report and the three
+result JSONs were shared; the verdicts below read them.
+
+**Machine-honesty note.** The first three-seed attempt ran against
+the motion venv's stale installed package: its result files came
+back schema_version 1 with no per_sample block -- the install
+predated PR-A's units declarations and PR-B's per-sample emission,
+so pulling this job did not refresh the solver that ran.
+`python -m pip install ./experimental/motion` refreshed the
+package, the stale files were archived on the machine as
+result-<seed>.stale-schema1.json, and the three seeds were re-run.
+The stale attempt is recorded here as data, not hidden; the
+compliant run below is what the scorecard is scored against: three
+result files at schema_version 3 with native per_sample blocks --
+the first case-study record read with no external recomputation
+pipeline.
+
+**Scorecard verdicts (frozen before the run):**
+
+- **F1 (reproduction) HELD.** Validation residuals on the machine:
+  positions 2.84e-14 mm, baseline v 4.44e-16, baseline a 6.16e-15
+  -- identical to the staging-side values to every printed digit,
+  six orders inside the 1e-9 gates. The search reproduced the
+  committed placements exactly (23,298 objective evals, 5,017 peak
+  evals, 225 accepted moves; winning start: the -02 baseline), and
+  the committed-comparison line reads AGREE, max residual 0 over
+  q/v/a, byte-identical -- the hoped-for byte-identity held on
+  this machine. Python 3.14.4.
+- **F2 (design fact) HELD, scored by F1.** Max scaled sample demand
+  27.07x the gates (76.2% of -02's 35.53x), max sample acceleration
+  1.3118 normalized: the committed design reproduced on the machine.
+- **F3 (demand-side stop dissolution) HELD by construction.** The
+  machine reproduction confirms the worst prescribed samples sit on
+  the flat mid-carry speed plateau (phases 1/2/3 at 27.07x) with
+  the stops in a near-tie behind (26.24x, 25.21x): the -01/-02
+  constant (stops worst by a wide margin) did not survive free
+  placement.
+- **F4 (primary, decision item) REFUTED, as the frozen lean
+  stated.** The best of the three seeds reaches a worst-sample
+  position error of 0.12570 normalized (34.6 mm; seed 580000050,
+  sample 10) -- above the 0.1000 bar (27.5 mm). The honest
+  cross-read: -02's recorded best was 0.1219 (33.6 mm), so
+  best-vs-best the free-phase variant moved +3.1% -- no
+  family-level improvement. The 23.8% demand cut did not reach
+  the solver's position error.
+- **F5 (strong form) REFUTED, as the frozen prediction stated.**
+  0.12570 is above the 0.0742 halving bar (the -02 D1 bar).
+- **F6 (solver-side stop survival) HELD with the weakened margin,
+  as the frozen prediction stated.** The single worst position
+  sample sits at a process stop in 2 of the 3 seeds (seeds
+  580000051 and 580000052, both at sample 4, the set-down T3);
+  seed 580000050's worst migrated to sample 10 (the return line
+  before the left corner join) -- the stop-relief reading landing,
+  equally data, as the scorecard pre-stated. The stops-vs-non-stop
+  position average gap narrowed to 1.43x / 1.26x / 1.94x from
+  -01/-02's 1.4-2.1x.
+- **F7 (binding aggregate) REFUTED as stated, through the
+  pre-declared finding branch.** Spatial acceleration stayed the
+  most-violated scaled demand in seeds 580000050 (17.94x its gate
+  vs velocity's 14.54x) and 580000052 (19.35x vs 14.71x), but in
+  seed 580000051 the velocity error is the most-violated demand:
+  19.69x vs acceleration's 19.66x, a 0.034x (0.2%) margin -- the
+  first binding-aggregate migration to the velocity error in this
+  case study, declared in advance as a finding, not a scorecard
+  failure. The pre-stated narrowing also holds: the acceleration
+  demand fell to 17.94-19.66x its gate from -02's 27.8-29.9x.
+- **F8 (control) HELD.** The same three seeds 580000050/51/52, one
+  solver attempt each, the standard 200-evaluation budget, the
+  same initialization declarations as -01/-02; per-seed reporting
+  read natively from the result schema's per_sample block
+  (schema_version 3). No gate loosened; the all-`qualified:
+  false` outcome is recorded as valid data; the -01/-02/-03
+  records stay untouched.
+
+**Per-seed readings** (selected candidates; normalized, mm at
+275.1363 mm per unit; samples 0 and 4 are the process stops):
+
+| seed | selected init. | worst position (sample) | in mm | worst orientation deg (sample) | worst spatial v (sample) | worst spatial a (sample) | most-violated demand | stops vs non-stops |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 580000050 | random | 0.12570 (10) | 34.6 | 8.32 (11) | 0.29082 (5) | 0.89687 (4) | acceleration 17.94x | 1.43x |
+| 580000051 | original | 0.18509 (4) | 50.9 | 0.88 (9) | 0.39384 (5) | 0.98288 (4) | velocity 19.69x (vs a 19.66x) | 1.26x |
+| 580000052 | random | 0.13793 (4) | 38.0 | 9.63 (11) | 0.29420 (5) | 0.96757 (4) | acceleration 19.35x | 1.94x |
+
+All three seeds unqualified at the standard 200-evaluation budget;
+solver wall time about 8.1-8.5 s per seed.
+
+**Reading.** The free-phase lever did exactly what it aimed at and
+nothing more: the solver's spatial acceleration demand fell to
+17.94-19.66x its gate from -02's 27.8-29.9x -- a real ~30% cut at
+the binding aggregate, the lever this job existed to pull -- and
+the position error did not follow: best-vs-best 0.12570 vs -02's
+0.1219 (+3.1%). Two levers have now missed the position error on
+this family (bottom-stop removal in -02, demand prescription in
+-04), so the case study's position error is not carried by the
+sample-level derivative demand or by the bottom stops. Seed
+580000051 adds that the velocity demand is now within 0.2% of the
+acceleration demand at the top -- the demand headroom the design
+script bought at the samples is already being spent.
+
+**Machine.** the-hub, Python 3.14.4 (design script, pure standard
+library); the solver in the experimental motion environment, the
+package refreshed from the merged tree at public main c3a7118;
+runs from the repository root; three result files at
+runs/sixbar-gap-transfer-04/result-580000050/51/52.json plus the
+archived schema-1 first attempt.
+
+**What this gives the next iteration.** F4 missed, so the agreed
+succession rule engages: family succession (dwell/cam per the
+queued briefs), NOT a fourth task variant of this family. The
+budget sweep against a frozen scorecard remains the standing
+in-family candidate if the family question returns. Recorded
+outcomes are data and are never rewritten.
