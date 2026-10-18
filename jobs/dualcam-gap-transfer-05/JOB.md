@@ -354,3 +354,92 @@ six-bar frontier stays recorded for a future revisit, the
 succession evidence is now a table with lineage rather than an
 assertion, and recorded outcomes are data and are never
 rewritten.
+
+
+## Recorded outcome (2026-10-18)
+
+Run on the-hub by Jean, one invocation with defaults from the
+repository root, right after the PR #54 merge (public main
+a6dd0869 carries this JOB.md byte-identical at 19,317 bytes
+pre-append). Python 3.14.4; the motion venv prompt was active
+but the script is pure standard library and does not use it.
+The full stdout was shared and is the verbatim record; the
+verdicts below read it. The machine run reproduces the staging
+smoke-test reading to every printed digit -- no divergence
+exists anywhere in the shared output, which is itself the G5
+prediction held.
+
+**Scorecard verdicts (frozen before the run):**
+
+- **G1 (task synthesis) HELD, machine-verified.** [A] PASS on the
+  machine: max |dq| 5.551e-17, max |dv| 4.441e-16, max |da|
+  6.051e-15 (the staging reading 5.6e-17 / 4.4e-16 / 6.1e-15 is
+  the same values rounded), six orders inside the 1e-9 gate; the
+  knot speed cross-check reproduces the -02 record (159.61 /
+  106.406 / 115.636 / 102.176 / 112 / 108.725 mm/rad). The task
+  SHA-256 matches the staging witness exactly. [E] the composed
+  follower laws reproduce the task samples to the [A] tolerances
+  and the tool yaw is 0 at all 3600 grid points: the trivial hold
+  is machine-checked, as the scorecard required.
+- **G2 (PRIMARY engineering gate): cam x WIDE FAIL, cam y HELD --
+  identical to the staging reading, so the frozen prediction is
+  confirmed.** Cam x at the cap-limited base circle 25 mm: worst
+  pressure angle 72.6645 deg at theta 12 deg; required major
+  radius 511.609 mm (30-deg target) / 389.97 mm (45-deg gate) vs
+  the 285 mm cap; curvature passes (min positive rho 25.0 mm on
+  the ascent dwell circle, above the 18.75 mm undercut gate; most
+  negative rho -4216.84 mm reported as data). Cam y at base
+  195 mm: worst pressure angle 25.8817 deg at theta 332 deg;
+  required major radius 246.098 mm (30-deg target) and 174.26 mm
+  (45-deg gate), both inside the cap; curvature passes (min
+  positive rho 98.3361 mm). The pre-declared G2 tension fired
+  exactly as declared: the base circle is already at the cap, so
+  the narrow-fail branch cannot rescue cam x, and the recorded
+  finding is "the envelope binds, not the synthesis". The brief's
+  lean ("G2 UNCERTAIN, lean HELD") stands refuted for cam x,
+  recorded before the run and confirmed by it.
+- **G3 (stop velocity) HELD.** Follower |h'| exactly 0 at theta 0
+  and 120 deg on both cams, machine-checked ([E]); level
+  orientation identity at all grid points.
+- **G4 (family-cost table) HELD (emitted).** [D] printed the
+  extended table with the recorded -01/-02/-04 frontier and the
+  structural-attribution rows. Peak one-sided |h''| on the
+  machine: cam x 812.885 mm/rad^2 (2.95448 normalized) at
+  theta 120 deg, cam y 695.99 (2.52962) at theta 300 deg --
+  identical to staging, so the derivative-cost-at-the-junctions
+  reading (about 1.66x the smoothest reading of the demand)
+  stands.
+- **G5 (control) HELD.** The -02 task consumed read-only with the
+  same SHA-256 recorded; two independent full audits
+  byte-identical on the machine (determinism PASS). No gate
+  loosened; the frozen -02 demand untouched.
+
+**Decision rule: ENGAGED as frozen.** The confirmed cam-x wide
+fail engages Option B (the cam + linkage lever) under the same
+scorecard, pending Jean's decision -- never a fifth gap-transfer
+linkage variant. The cam-y pass is this task family's first HELD
+engineering gate and carries into Option B's design as the proof
+that the y-axis cam is sound.
+
+**Stage 2: NOT TRIGGERED, as the frozen prediction stated.** No
+genuine search problem remains: with the task timing frozen the
+profile is fully determined analytically, and the failure is the
+engineering gate (pressure angle vs the envelope), not the
+synthesis. The non-triggerment is itself the family finding
+declared in the JOB: analytic synthesis replacing search.
+
+**Reading.** Option A's failure is arithmetic, not search: the
+x stroke (260 mm) at the knot speeds the frozen task prescribes
+cannot meet the pressure-angle gate inside the 600 x 600 mm
+envelope at any base circle the cap allows. The lever ratio of
+Option B is the only thing that reconciles the gate with the
+envelope, which is exactly why Option B was declared the
+fallback. The succession evidence is now complete with lineage:
+the six-bar position plateau (0.1484 / 0.1219 / 0.12570), the
+analytic Option A wide fail, and the Option B trigger, all on
+record. Recorded outcomes are data and are never rewritten.
+
+**Machine.** the-hub, Python 3.14.4, one invocation of
+jobs/dualcam-gap-transfer-05/dualcam_design.py from the
+repository root; the full stdout shared by Jean is the verbatim
+record.
