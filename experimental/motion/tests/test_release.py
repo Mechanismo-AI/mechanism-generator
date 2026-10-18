@@ -37,6 +37,11 @@ class ReleaseTests(unittest.TestCase):
                         self.assertEqual(a['evaluations'],b['evaluations'])
                         for key in ('pose_pass','combined_pass','defined'):self.assertEqual(a['metrics'][key],b['metrics'][key])
                         self.assertEqual(a['metrics'],qualification.assess(np.asarray(a['raw']),target))
+                        samples=engine.per_sample_errors(a['raw'],target)
+                        for key,aggregate in zip(qualification.SAMPLE_KEYS,a['metrics']['errors']):
+                            column=samples[key]
+                            if aggregate is None:self.assertIn(None,column)
+                            else:self.assertNotIn(None,column);self.assertEqual(max(column),aggregate)
                         if EXACT:
                             for key in ('raw','metrics'):self.assertEqual(a[key],b[key])
                     self.assertEqual(len(out['runs']),len(expected['runs']))
@@ -51,10 +56,24 @@ class ReleaseTests(unittest.TestCase):
     def test_result_units(self):
         p=json.loads((FIXTURES/'case-00.json').read_text())['input']
         out=solve(p,580000000,use_chooser=False)
-        self.assertEqual(out['schema_version'],2)
+        self.assertEqual(out['schema_version'],3)
         self.assertEqual(out['units'],engine.UNITS)
         self.assertEqual(out['units']['angular_velocity'],'deg/crank-rad')
         self.assertEqual(out['units']['angular_acceleration'],'deg/crank-rad^2')
+
+    def test_per_sample_emission(self):
+        p=json.loads((FIXTURES/'case-00.json').read_text())['input']
+        out=solve(p,580000000,use_chooser=False)
+        self.assertEqual(out['schema_version'],3)
+        self.assertEqual(tuple(engine.UNITS),qualification.SAMPLE_KEYS)
+        self.assertEqual(list(out['per_sample']),list(engine.UNITS))
+        for index,key in enumerate(qualification.SAMPLE_KEYS):
+            column=out['per_sample'][key]
+            self.assertEqual(len(column),12)
+            self.assertTrue(all(x is None or isinstance(x,float) for x in column))
+            aggregate=out['selected']['metrics']['errors'][index]
+            if aggregate is None:self.assertIn(None,column)
+            else:self.assertNotIn(None,column);self.assertEqual(max(column),aggregate)
 
     def test_degree_oracle(self):
         # The recorded -02 aggregates (job sixbar-gap-transfer-02, main a0649e2c)

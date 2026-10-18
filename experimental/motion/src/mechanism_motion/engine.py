@@ -22,6 +22,10 @@ def proposal(target,net,stats):
     with torch.no_grad():raw=net(target['features'],stats,'derivative').numpy()[0]
     if not np.isfinite(raw).all():raise ValueError('Nonfinite proposal')
     return raw
+def per_sample_errors(raw,target):
+    columns=qualification.per_sample(np.asarray(raw,dtype=float),target)
+    return {key:[float(x) if np.isfinite(x) else None for x in columns[key]] for key in qualification.SAMPLE_KEYS}
+
 def solve(payload,random_seed=580000000,use_chooser=True):
     if isinstance(random_seed,bool) or not isinstance(random_seed,int) or random_seed<0 or random_seed>2**63-1:raise ValueError('random_seed must be an integer from 0 through 2^63-1')
     if not isinstance(use_chooser,bool):raise ValueError('use_chooser must be boolean')
@@ -48,5 +52,5 @@ def solve(payload,random_seed=580000000,use_chooser=True):
     selected=min(runs,key=lambda r:(not r['metrics']['combined_pass'],r['metrics']['score']));used=sum(r['evaluations'] for r in runs)
     if used>200:raise RuntimeError('Refinement budget exceeded')
     mechanism,phases=kinematics.decode(selected['raw'],'six',payload['branches'],1)
-    return dict(schema_version=2,units=UNITS,status='experimental',qualified=selected['metrics']['combined_pass'],objective_evaluations=used,maximum_objective_evaluations=200,mechanism_normalized=mechanism,phases_rad=phases.tolist(),selected=selected,runs=runs,pool=pool,selected_label=selected_label,issues=issues,random_seed=random_seed,use_chooser=use_chooser,seconds=time.perf_counter()-start,
-      asset_sha256=manifest['files'],convention='q, v and a are pose and first/second derivatives with respect to increasing crank angle in radians; spatial values use the input normalized length unit; emitted angular velocity and acceleration errors are in degrees per crank-angle derivative, as declared in units.',capacity='unrated',operating_speed='unrated',collision_clearance='unchecked')
+    return dict(schema_version=3,units=UNITS,status='experimental',qualified=selected['metrics']['combined_pass'],objective_evaluations=used,maximum_objective_evaluations=200,mechanism_normalized=mechanism,phases_rad=phases.tolist(),selected=selected,per_sample=per_sample_errors(selected['raw'],target),runs=runs,pool=pool,selected_label=selected_label,issues=issues,random_seed=random_seed,use_chooser=use_chooser,seconds=time.perf_counter()-start,
+      asset_sha256=manifest['files'],convention='q, v and a are pose and first/second derivatives with respect to increasing crank angle in radians; spatial values use the input normalized length unit; emitted angular velocity and acceleration errors are in degrees per crank-angle derivative, as declared in units; per_sample maps each units key to twelve selected-candidate errors, one per target sample in input order, None where non-finite.',capacity='unrated',operating_speed='unrated',collision_clearance='unchecked')
