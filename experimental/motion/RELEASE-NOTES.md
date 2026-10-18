@@ -34,3 +34,5 @@ and candidate choices are unchanged; the regression fixtures' stored angular
 error values were converted with the same operation the solver applies, and
 exact-parity re-anchoring on the recorded runtime is a pending machine step.
 This is a convention declaration, not a solver change.
+
+Per-sample error emission, schema_version 3: every result carries a per_sample block for the selected candidate, mapping each units-block key (position, orientation, spatial_velocity, spatial_acceleration, angular_velocity, angular_acceleration) to twelve per-sample errors in target sample order, with null entries where a value is non-finite. The per-sample values come from the same computation as the aggregate errors, so each aggregate is exactly the maximum of its per-sample column. This is an additive emission change: no score, gate, outcome, candidate choice or stored fixture value changes.

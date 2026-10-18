@@ -4,12 +4,17 @@ import torch
 from . import model as M
 from .continuation import LIMITS
 
-def assess(raw,target):
+SAMPLE_KEYS=('position','orientation','spatial_velocity','spatial_acceleration','angular_velocity','angular_acceleration')
+
+def per_sample(raw,target):
     q,v,a,_=M.batch_coefficients(torch.tensor(raw[None],dtype=M.F.DT),target['branches'])
     q,v,a=[x.detach().numpy()[0] for x in (q,v,a)]
     tq,tv,ta=[target[k].numpy()[0] for k in ('q','v','a')]
-    errors=[np.linalg.norm(q[:,:2]-tq[:,:2],axis=-1).max(),np.degrees(abs(M.F.wrap(q[:,2]-tq[:,2]))).max(),
-      np.linalg.norm(v[:,:2]-tv[:,:2],axis=-1).max(),np.linalg.norm(a[:,:2]-ta[:,:2],axis=-1).max(),np.degrees(abs(v[:,2]-tv[:,2])).max(),np.degrees(abs(a[:,2]-ta[:,2])).max()]
+    return dict(zip(SAMPLE_KEYS,(np.linalg.norm(q[:,:2]-tq[:,:2],axis=-1),np.degrees(abs(M.F.wrap(q[:,2]-tq[:,2]))),
+      np.linalg.norm(v[:,:2]-tv[:,:2],axis=-1),np.linalg.norm(a[:,:2]-ta[:,:2],axis=-1),np.degrees(abs(v[:,2]-tv[:,2])),np.degrees(abs(a[:,2]-ta[:,2])))))
+
+def assess(raw,target):
+    columns=per_sample(raw,target);errors=[columns[key].max() for key in SAMPLE_KEYS];tq=target['q'].numpy()[0]
     limits=LIMITS
     task=dict(positions=tq[:,:2].tolist(),orientations_rad=tq[:,2].tolist(),position_tolerance=.01,orientation_tolerance_deg=1.)
     ev=M.F.evaluate(raw,'six',target['branches'][0].numpy().astype(int),1,task)

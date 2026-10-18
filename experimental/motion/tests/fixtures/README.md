@@ -13,3 +13,5 @@ within one unit in the last place; no stored score changes. Re-anchoring
 MOTION_TEST_EXACT=1 bit parity on the recorded runtime after this convention
 change is a pending machine step; chooser ranking fields may recompute at the
 last-ulp level because their features consume the degree-convention ratios.
+
+PR-B (schema_version 3) adds the per_sample result block without touching these stored files: the portable tests recompute each run's per-sample columns live and require each column's maximum to equal the stored aggregate error exactly.
