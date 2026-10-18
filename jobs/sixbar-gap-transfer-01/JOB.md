@@ -198,3 +198,126 @@ return loop first); a C1-only pass motivates iterating the task and
 budget; an all-fail outcome feeds the free-phase and budget
 iteration. Record the outcome against the scorecard in this file;
 recorded outcomes are data and are never rewritten.
+
+
+## Recorded outcome (2026-10-17)
+
+Run on the-hub (Jean's CPU-only Ubuntu workstation, separate
+experimental motion venv) on the task merged as PR #43 (main
+`739818d`). Three seeds, one solver attempt each; every seed used
+its full budget of 200/200 objective evaluations. Solver wall-clock
+8.11 s (seed 580000050) and 8.15 s (seed 580000051); seed 580000052's
+result-file tail was lost in transfer, so its exact `seconds` field
+is not recorded -- a same-batch run of the same order (about 8 s). No
+candidate qualified; `issues: []` in all three results.
+
+**Initializer control.** The learned "original" initializer failed on
+this task in all three seeds (final metrics `defined: false`, score
+137.98, worst position error 1.380, worst orientation error 77.07 deg)
+and the chooser restarted to the "random" initializer every time. The
+chooser behaved as designed on an out-of-distribution task; its
+ranking confidence in the selected random start was low (0.315 and
+0.328 in the two seeds whose pool sections survived transfer),
+consistent with a task far from the synthetic training distribution.
+
+**Scorecard verdicts.** Selected-candidate errors as reported by the
+solver, per seed, in order [worst position, worst orientation (deg),
+worst spatial v, worst spatial a, worst angular v, worst angular a];
+strict gates [0.01, 1 deg, 0.02, 0.05]:
+
+| seed | score | position | orient (deg) | v | a | ang v | ang a | worst position sample |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 580000050 | 46.00 | 0.1484 | 5.66 | 0.413 | 2.300 | 0.113 | 0.143 | phase 0 (T1 pick, stop) |
+| 580000051 | 45.54 | 0.1711 | 10.20 | 0.483 | 2.277 | 0.191 | 0.254 | phase 4 (T3 set-down, stop) |
+| 580000052 | 54.79 | 0.2226 | 8.66 | 0.547 | 2.739 | 0.163 | 0.180 | phase 9 (return-line left end, stop) |
+
+(Recomputation note: the tool's angular-v/a error entries reproduce
+in radians on external recomputation, while the qualification gates
+in docs/experimental-motion.md are stated in degrees. No candidate
+approached any derivative gate, so the unit reading changes no
+verdict.)
+
+- **C1 (primary) REFUTED.** No seed returned `qualified: true`. The
+  miss is deep: the best worst-sample position error, 0.1484 (seed
+  580000050), is 14.8x the solver's own 0.01 gate and 40.8 mm against
+  the 1.5 mm packaging tolerance; the best worst orientation error,
+  5.66 deg, is 5.7x its gate; the spatial derivative errors are
+  20.6x-46x theirs.
+- **C2 (the brief's gate) REFUTED.** Best worst-sample position error
+  0.1484 vs the 0.005452 packaging overlay: 27.2x (40.8 mm vs 1.5 mm).
+  The six-bar did not reach packaging tolerance, nor close most of
+  the gap: the recorded four-bar carry frontier rescaled to this task
+  (0.0330) is 4.5x closer to tolerance than anything this run
+  produced -- though the tasks are not equivalent (three poses with no
+  derivative demands vs twelve phases with v/a and four stops).
+- **C3 (structure) CONFIRMED.** No mid-gap sag. For every selected
+  candidate, the mid-gap phase 2 (T2) is NOT the largest error among
+  the five carry samples -- the carry errors peak at the two stop ends
+  (T1/T3). The mid-gap orientation error is the smallest carry error
+  in every seed (0.93 / 1.05 / 0.14 deg) and sits within the 1.5 deg
+  packaging orientation tolerance at that sample: levelness at
+  mid-gap is nearly solved; position is not. The two-loop family
+  changed the error structure exactly as predicted -- the binding
+  demand moved from the four-bar's mid-gap sag to the stops.
+- **C4 (control) HELD, and the follow-up reading is: the stops bind.**
+  All-`qualified: false` is recorded as data; no gate was loosened.
+  Per the frozen follow-up: the single worst position sample is one of
+  the four full-stop phases in 3/3 seeds (phases 0, 4 and 9), and the
+  four stops average 1.6-2.0x the eight non-stop samples in every
+  seed:
+
+| seed | stop samples avg (mm) | non-stop avg (mm) |
+| --- | --- | --- |
+| 580000050 | 30.8 | 15.6 |
+| 580000051 | 36.2 | 22.9 |
+| 580000052 | 49.9 | 31.0 |
+
+  The carry demand may be within reach of the family; the stops (pick,
+  set-down and the two bottom joins) are the binding structure.
+
+**Per-sample recomputation.** The solver emits six aggregates only;
+the per-sample split below was computed externally from each returned
+`mechanism_normalized` geometry (independent forward kinematics of
+the documented chain, central finite differences for the
+derivatives). The recomputation reproduces all six reported aggregates
+for all three seeds -- position and orientation to 1e-14, spatial
+derivatives to 5e-10, angular entries to 1e-9 (the residuals are
+finite-difference truncation) -- so the per-sample tables are
+verified against the tool's own numbers.
+
+Worst-sample position error per phase (mm; 1 unit = 275.14 mm;
+phases 0-4 carry, 5-6 right turnaround, 7-9 return, 10-11 left
+turnaround; full stops at 0, 4, 6, 9):
+
+| phase | note | 580000050 | 580000051 | 580000052 |
+| --- | --- | --- | --- | --- |
+| 0 | T1 pick (stop) | 40.8 | 32.6 | 41.0 |
+| 1 | carry | 7.2 | 11.5 | 32.9 |
+| 2 | T2 mid-gap | 12.1 | 23.6 | 25.4 |
+| 3 | carry | 20.9 | 35.2 | 29.5 |
+| 4 | T3 set-down (stop) | 36.7 | 47.1 | 41.6 |
+| 5 | turnaround apex | 29.3 | 32.0 | 20.3 |
+| 6 | bottom join (stop) | 22.2 | 26.1 | 55.8 |
+| 7 | return | 11.8 | 18.3 | 48.4 |
+| 8 | return | 9.7 | 17.1 | 47.6 |
+| 9 | return end (stop) | 23.6 | 38.9 | 61.2 |
+| 10 | left arc | 23.8 | 32.3 | 11.9 |
+| 11 | left arc | 10.3 | 13.2 | 32.1 |
+
+**Machine.** the-hub, CPU-only Ubuntu workstation, Intel 10th-gen
+Core i5 (i5-10500 class), no GPU. Experimental motion venv: Python
+3.14 (cp314; the JOB's install line said 3.12 -- the run used 3.14
+and is recorded as-run), torch 2.13.0+cpu, numpy 2.5.1,
+mechanism-motion-experimental 0.1.0.dev0 built from
+`./experimental/motion` at main `739818d`.
+
+**What this gives the next iteration.** The all-fail branch of "What
+we will do with it" applies. The recorded data points the next design
+at: (1) the stops -- a free-phase variant (sample phases no longer
+locked to the uniform grid), a larger refinement budget, and task
+variants without the two bottom stops are the frozen follow-ups; (2)
+the result schema -- per-sample error emission would remove the need
+for external recomputation in future records; (3) the mid-gap
+levelness near-pass (0.14-1.05 deg at T2 in all seeds) is the one
+demand the family demonstrably reaches. Keep-out screening of the
+return loop stays moot until a qualified candidate exists to screen.
