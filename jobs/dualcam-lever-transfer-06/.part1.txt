@@ -1,0 +1,224 @@
+#!/usr/bin/env python3
+"""Stage 1 deterministic design script for job dualcam-lever-transfer-06.
+
+Option B, the declared successor after the Option A wide fail: the
+cam + linkage lever. Cam y stays EXACTLY as the -05 record: a
+plate cam with a translating roller follower, audited at its
+cap-limited base circle 195 mm, carried verbatim -- its readings
+must reproduce the -05 record to the printed digit, and the script
+fail-closes if they do not. Cam x becomes a plate cam driving an
+oscillating roller follower: the roller rides the short arm (length
+a) of a pivoted lever, the long arm (length b) drives the x slide
+through a pin-in-slot. No search, no solver, no network: pure
+standard library, deterministic.
+
+What it does, in order:
+
+  A. Validates the frozen -02 task
+     (jobs/sixbar-gap-transfer-02/gap_transfer_nostops.motion.json)
+     against an independent analytic reconstruction of the loop and
+     its two clamped-cubic-spline timing runs -- fail-closed at
+     1e-9 normalized units. The task file is read, never modified;
+     its SHA-256 is recorded as the byte-identity witness.
+  B. Carries cam y verbatim (-05 polar machinery, base 195 mm) and
+     checks every printed reading against the embedded -05 record.
+  C. Designs the cam-x lever chain analytically through the exact
+     rocker map (the actor's requirement: synthesize through the
+     lever geometry, never scale by lambda):
+       phi(theta)   = asin(-x(theta)/b)
+       phi'         = -x'/(b cos phi)
+       phi''        = -x''/(b cos phi) + x'^2 sin(phi)/(b^2 cos^3 phi)
+     with b = 130/sin(phi_max) fixed by the 260 mm stroke at the
+     swing half-angle phi_max -- itself a SCANNED design variable,
+     because the brief's first cut (30 deg) is arithmetically
+     infeasible at the 30 deg pressure-angle target: at the level
+     pin the extreme-creep asymptote EQUALS the swing half-angle
+     and the interior worst angle exceeds the target at every
+     pivot offset, converging to it only in the infinite-offset
+     limit. The scan (20.0 to 30.0 deg, 0.5 deg grid) is emitted
+     as the recorded Option B frontier; the declared design point
+     is 25.0 deg (the knee of the lambda-vs-swing tradeoff, with
+     a 5 deg creep margin against the target). Emits the
+     scale-free design (see the pressure-angle convention below),
+     the derived lambda window, and the lambda pick.
+  D. Audits the picked design: pressure angle, parametric
+     pitch-curve curvature, undercut gate, the lever's own output
+     transmission angle, the force-closure/spring coefficients,
+     the reflected-inertia and tolerance-amplification rows, the
+     combined swept-envelope row (the critic's addition), the
+     combined shaft-torque coefficient, and the one-sided junction
+     table in BOTH slide space and roller space (the critic's
+     task-space continuity requirement).
+  E. Witness-validates everything numerically: the chain
+     reproduction checks, the contact simulation on both cams
+     (roller center against the offset profile polyline), the
+     independent normal-direction pressure-angle cross-check, the
+     parametric-vs-polar curvature cross-validation on cam y, the
+     exact stop velocities at the slide (G3 audited after the
+     lever, per the debate), and two-run determinism.
+
+Conventions recorded up front (frozen in the JOB scorecard):
+
+  - Physical frame: millimetres, origin at gap centre on the belt
+    line, y up; 1 normalized unit = sqrt(75700) mm. Cam shaft at
+    the origin. Lever pivot P = (L, e); short arm a to the roller
+    center C = P + a (sin phi, cos phi); long arm b to the pin
+    T = P - b (sin phi, cos phi); the slide axis is horizontal
+    through the pin, so the pin-in-slot absorbs b(1-cos phi)
+    = 29.3 mm of vertical travel at phi_max = 25 deg.
+  - Pressure angle (oscillating roller follower, derived and
+    machine-checked two ways): the contact normal at the roller is
+    along the lever arm line, n proportional to
+    P + a(1+phi') u(phi) with u = (sin phi, cos phi), and the
+    roller velocity is along t = (cos phi, -sin phi), so
+      cos(alpha) = |P.t| / |P + a(1+phi') u|.
+    Because u.t = 0 the numerator is independent of phi'. Where
+    the follower is stationary (the coordinate dwell arcs and the
+    two process-stop instants: x' exactly 0) the pressure angle is
+    undefined; by declared convention it reads 0 there. This
+    formula reduces to tan(alpha) = |h'|/(r_base + h) for a
+    translating follower (cam y) -- the script cross-checks it.
+  - Pivot placement is a design output, not a hand choice (the
+    actor's adopted requirement), under three declared rules:
+      (i) swing half-angle: scanned on the declared 0.5 deg grid
+          20.0-30.0 deg. The brief's first cut 30 deg is REFUTED
+          by the scan's first row and recorded: at any pivot depth
+          the infinite-offset asymptote of the extreme-creep
+          pressure angle equals the swing half-angle, approached
+          from ABOVE at both creeps, so a swing of 30 deg cannot
+          meet a 30 deg target at any finite pivot offset. The
+          declared design point is phi_max = 25.0 deg, chosen at
+          the knee of the cap-lambda-vs-swing tradeoff (below 25
+          deg each further degree buys under 0.3 lambda against
+          roughly 12 mm more long arm and swept-envelope height)
+          and carrying a 5 deg creep margin against the target.
+          The scan table is recorded data; the design point is a
+          declared constant with its derivation in the JOB, open
+          to Jean's review, never a silent knob.
+     (ii) pivot depth: e = -a cos(phi_max), the unique depth at
+          which the roller centre is level with the cam shaft at
+          BOTH swing extremes. It is exactly the depth that
+          EQUALIZES the two extreme-creep pressure-angle
+          asymptotes at the swing half-angle; with phi_max below
+          the target this pins both creeps below the target. The
+          script emits a three-row sensitivity witness
+          (e/a = -0.85, -cos 25 deg, -0.95) recording what the
+          neighbouring depths do at the 30 deg target.
+     (iii) pivot offset L: bisected (scale-free, see below) and
+          then quantized UP to the 0.1 grid -- the picked L/a is
+          the smallest 0.1-grid value whose worst grid pressure
+          angle is strictly below the 30 deg target, so the
+          printed margin is real and not a bisection boundary
+          artifact; the unquantized infimum is reported alongside
+          as data.
+  - Scale-free design: cos(alpha) depends only on the ratios
+    L/a, e/a and on (phi, phi'), and the pitch curve scales with
+    a. So the design (L/a, worst alpha, curvature in units of a)
+    is computed ONCE, and lambda only sets the physical scale
+    a = b/lambda. The major radius is then exactly
+    r_max = a (L/a + sin(phi_max)) (the roller sits level with the
+    shaft at the swing extreme), the size cap gives
+    a <= 285/rhat_max, and the undercut gate gives
+    a >= 18.75/rhat_rho_min. The lambda window is that interval
+    scaled by b = 130/sin(phi_max); the pick is the smallest
+    lambda on the declared 0.05 grid inside the window (the
+    actor's pick rule: least force multiplication at the knee).
+  - Pitch-curve curvature (parametric form; the polar form does
+    not apply to an oscillating follower): with the cam-frame
+    pitch curve X(theta) = R(-theta) C(theta),
+    X' = R(-theta)(C' + J C), X'' = R(-theta)(C'' + 2 J C' - C)
+    for J the clockwise quarter turn, and the signed curvature
+    chosen so that kappa > 0 means the curvature centre is on the
+    shaft side -- the SAME convention as the -05 polar form. The
+    script cross-validates this against cam y's polar readings
+    over the whole grid. Undercut gate: min positive rho
+    >= 1.25 x roller radius = 18.75 mm; negative rho is
+    manufacturing data (the inward offset there increases the
+    profile radius).
+  - Contact simulation: the working profile is the pitch curve
+    offset inward by the roller radius along the analytic normal;
+    the witness checks that every grid roller centre keeps
+    distance >= roller radius - 0.01 mm from the offset polyline
+    (local fine pass, point-to-segment) with the minimum attained
+    at the matching angle, plus a coarse far-field pass. The
+    0.01 mm allowance is the declared polyline discretization
+    tolerance (the analytic sagitta at this grid is below
+    0.002 mm). Declared handedness convention, recorded because
+    the profile offset needs it: the cam shaft rotates
+    COUNTERCLOCKWISE with advancing theta (the cam-frame
+    construction R(-theta) throughout). The engineering gates
+    (pressure angle, curvature, radii, the cap) are
+    handedness-independent; the profile's handedness is a
+    manufacturing datum recorded with this convention. A wrong-
+    sense offset produces a mirrored curve that visibly cuts
+    into the roller circle in the far-field pass -- which is
+    exactly how the cam-y model error was caught at staging
+    (min far-field 9.04 mm vs the 15 mm roller before the fix,
+    15.0 mm after).
+  - The pressure-angle convention is additionally cross-checked
+    against the polyline itself: at sample angles the contact
+    normal is re-derived from the simulated foot point and the
+    angle to the analytic roller velocity must agree with the
+    formula to 0.1 deg.
+  - Unrated quantities: no operating speed, drive law, payload or
+    motor is prescribed; v and a are per crank radian; capacity
+    and speed remain unrated, as throughout case study B.
+  - Declared envelope proposals (audit rows, never gates): slide
+    block half-length 65 mm, half-height 25 mm; the y-slide is
+    carried by the -05 layout assumption (fits the same
+    footprint); the two cam plates are axially stacked on the
+    one shaft (share the plan view).
+
+Exit code 0: every internal fail-closed check passed. Verdicts
+are DATA: an engineering-gate fail or an envelope exceedance is a
+recorded result, never an error exit. Exit code 1: an internal
+check failed (task validation, a chain witness, the cam-y carry,
+the curvature cross-validation, or determinism).
+"""
+
+import hashlib
+import json
+import math
+import sys
+
+PI = math.pi
+DEG = 180.0 / PI
+
+# ---- frozen task constants (case study B, the -01/-02 records) ----
+DIAG = math.sqrt(75700.0)          # 260 x 90 mm bounding-box diagonal
+CENTROID = (0.0, 5.0)             # twelve-sample centroid (exact)
+TASK_TOL = 1e-9                   # fail-closed tolerance, normalized
+ARC15 = 15.0 * PI / 2.0           # 90 deg corner arc, 15 mm radius
+
+GRID_N = 3600                     # 0.1 deg grid per cam
+SCAN_N = 720                      # 0.5 deg grid for scale-free scans
+ROLLER_R = 15.0                   # first-cut roller radius (recorded)
+CURV_MARGIN = 1.25                # rho >= 1.25 x roller radius
+ENVELOPE = 600.0                  # compact-transfer benchmark envelope (mm)
+PLATE_CAP = 300.0                 # plate radius cap = ENVELOPE / 2
+RADIUS_CAP = PLATE_CAP - ROLLER_R # pitch major-radius cap (mm)
+ALPHA_TARGET = 30.0               # deg, cam pressure-angle target
+ALPHA_HARD = 45.0                 # deg, hard branch threshold
+
+# ---- lever knobs (declared, from the adopted debate round) ----
+PHI_MAX = 25.0 * PI / 180.0       # swing half-angle, declared design point
+LEVER_B = 130.0 / math.sin(PHI_MAX)   # long arm: 307.65 mm (stroke 260 at +-25 deg)
+PHI_SCAN_MIN = 20.0               # swing scan grid, deg (inclusive)
+PHI_SCAN_MAX = 30.0               # the brief's first cut: refuted, kept as data
+PHI_SCAN_STEP = 0.5
+LAMBDA_MIN, LAMBDA_MAX, LAMBDA_STEP = 1.0, 20.0, 0.05
+BLOCK_HALF_X = 65.0               # slide-block proposals (audit rows)
+BLOCK_HALF_Y = 25.0
+
+# Loop segment boundary arc positions (mm).
+S_CARRY_END = 260.0               # set-down stop T3 / descent start
+S_DESC_END = 335.0                 # descent line end, right arc start
+S_RARC_END = S_DESC_END + ARC15    # right arc end / return line start
+S_RET_END = S_RARC_END + 230.0     # return line end, left arc start
+S_LARC_END = S_RET_END + ARC15     # left arc end / ascent line start
+S_LOOP = S_LARC_END + 75.0         # closes at phase 0
+# Twelve-sample arc positions (the -02 knot table).
+KNOT_S = [0.0, 65.0, 130.0, 195.0, S_CARRY_END, 305.0,
+          S_RARC_END, S_RARC_END + 57.5, S_RARC_END + 115.0,
+          S_RARC_END + 172.5, S_RET_END, S_LARC_END + 30.0]
+assert abs(KNOT_S[11] + 45.0 - S_LOOP) < 1e-12
