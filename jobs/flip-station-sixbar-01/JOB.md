@@ -242,6 +242,109 @@ the next staging)
 - Corpus emission with hashes regardless of verdict; the honest-fail
   branch valid with the corpus intact.
 
+## The motion JSON desk derivation (staged; the frozen artifact is
+flip_sixbar.motion.json in this directory)
+
+- FORMAT (the S0 discipline, read from the actual validator at this
+  staging, experimental/motion/src/mechanism_motion/targets.py):
+  five fields exactly; twelve equally spaced increasing phases
+  0..330 deg (atol 1e-10 against the solver's own grid); two known
+  branch signs [-1, 1]; q/v/a each 12x3 finite [x, y, angle] rows;
+  the centroid and unit-bounding-box-diagonal checks read the XY
+  CHANNEL ONLY (p = q[:, :2], each to 1e-8) -- the angle channel
+  enters inference as cos/sin features, so the pinned poses carry
+  their absolute 0 / 90 / 180 deg values directly in the design
+  frame; no mounting-angle convention is needed.
+- POSITION CHANNEL (provenance, inherited verbatim, not re-derived):
+  the recorded case-B layout loop of sixbar-gap-transfer-01 -- the
+  same station layout this case study sits on -- taken from that
+  recorded task artifact unchanged (the XY components of its q, v
+  and a; the loop: the 260 mm carry at y = 50 mm over phases 0-4,
+  the two inward half-ellipse turnarounds, the return at
+  y = -40 mm, closing at phase 0). The three demand poses coincide
+  with its carry phases: phase 0 (-130, 50) = pose 1, phase 2
+  (0, 50) = pose 2, phase 4 (+130, 50) = pose 3 (mm; the brief's
+  handoffs x = +/-1.3, y = 0.5 at 1 unit = 100 mm). The inherited
+  honest-scope notes carry unchanged (the return plane and the
+  inward bulges are a proposal; keep-out screening waits for a
+  qualified candidate). Normalized scale: 1 unit = 275.1376 mm (the
+  loop's bounding-box diagonal); the packaging overlay 1.5 mm =
+  0.005452 normalized and the orientation overlay 1.5 deg (the
+  brief's tolerances, the -01 recorded rescaling).
+- ORIENTATION CHANNEL (this desk's own derivation; every value
+  computed, none transcribed): the C2 motion program. The carry
+  swing is ONE quintic smoothstep in psi over phases 0-4:
+  psi(theta) = 180 deg * S5(theta / 120 deg) with
+  S5(u) = 6u^5 - 15u^4 + 10u^3, pinning the three poses exactly
+  (0 / 90 / 180 deg at phases 0 / 2 / 4) with zero angular rate AND
+  zero angular acceleration at both handoff dwells (the declared
+  dwell/rise allocation: full dwell at the handoffs, one continuous
+  rise through the transit). The unwind is the mirrored quintic
+  over the remaining 240 deg of crank, 180 deg back to 0 with zero
+  rate and acceleration at the closing -- the cycle closes C2 from
+  both sides at theta = 0 = 360 deg. The closure is the UNWIND, not
+  a 360 deg continuation, by the minimal-demand rule: the traced
+  coupler angle is a real number, the process demands exactly the
+  180.000 deg part swing, and the unwind's net unwrapped rotation
+  per cycle is zero; a 360 deg continuation would prescribe a full
+  coupler revolution the process never asked for (the B2
+  unwrapped-swing vocabulary, applied to what WE prescribe).
+- DEMAND ARITHMETIC (computed, with derivations): the 180.000 deg
+  swing occupies 120.000 deg of crank (phases 0-4): realized mean
+  |dpsi/dtheta| = 1.500 deg/deg, 3.000x the full-cycle lower bound
+  (0.5); the peak is 2.8125 deg/deg at theta = 60 deg (phase 2 --
+  the through-vertical pose itself), 1.875x the realized mean.
+  Unwind peak 1.40625 deg/deg at theta = 240 deg (phase 8). Peak
+  angular acceleration 0.0703125 deg/deg^2 on the carry (at
+  theta = 30 deg), 0.017578125 deg/deg^2 on the unwind. At the two
+  bottom-join path stops (phases 6, 9) the angular rate is
+  deliberately NOT zero (-0.791 / -1.236 deg/deg): the traced point
+  is instantaneously stationary while the coupler rotates about it
+  -- recorded as a design fact, not an oversight. The handoff dwells
+  (phases 0, 4) have zero angular rate by construction.
+- DESK VALIDATION against the actual validator: theta matches the
+  solver's grid (max residual < 1e-10); branches [-1, 1]; q/v/a
+  each 12x3, all finite; the inherited XY channel's centroid
+  residual 3.701e-17 and bounding-box-diagonal residual exactly
+  0, both under 1e-8 (the recorded -01 artifact passed them;
+  re-verified here from the parsed samples). The angle channel was
+  re-derived by independent central finite differences of the
+  composed psi(theta) at all twelve phases (h = 1e-4 rad): max
+  rate deviation 3.420e-8 rad/rad (O(h^2) truncation); max
+  acceleration deviation 3.843e-4 rad/rad^2, localized exactly at
+  phase 4 -- the carry/unwind segment junction, where the
+  one-sided third-derivative jump makes the second central
+  difference O(h) (7.584e-7 or less at every other phase; the
+  junction is C2 by construction, so the analytic values are
+  unaffected). The analytic sample values are exact by
+  construction; the finite differences are the check, never the
+  source.
+- UNITS: the angle channel is radians (psi) per crank radian (v)
+  and per crank radian squared (a) -- the solver's native features;
+  the deg/deg and deg/deg^2 figures above are the same numbers in
+  degree units.
+
+## Machine step (the S1 run; the source commit is the merge that
+carries this motion JSON AND the S2-S4 audit script)
+
+- The S2-S4 audit script (the per-joint transmission-angle audit
+  over the cycle, the swept-envelope utilization/headroom table, the
+  Jacobian-based link-length sensitivity rows -- this job's own
+  audit, the cam script's discipline) is the NEXT STAGING on this
+  line; the machine step below follows ITS merge, per the frozen
+  spec above.
+- the-hub, the motion venv, repo root:
+
+  mechanism-motion jobs/flip-station-sixbar-01/flip_sixbar.motion.json --seed 580000050 --output runs/flip-station-sixbar-01/result-580000050.json
+  mechanism-motion jobs/flip-station-sixbar-01/flip_sixbar.motion.json --seed 580000051 --output runs/flip-station-sixbar-01/result-580000051.json
+  mechanism-motion jobs/flip-station-sixbar-01/flip_sixbar.motion.json --seed 580000052 --output runs/flip-station-sixbar-01/result-580000052.json
+
+- Two runs byte-identical per the recorded standard (external diff
+  empty; in-process check IDENTICAL); an empty second output is
+  recorded as-run and rerun cleanly (the capability-01 precedent).
+  Corpus emission with hashes regardless of verdict; the honest-fail
+  branch valid with the corpus intact.
+
 ## Status
 
-Staged; motion JSON desk derivation pending.
+Task staged: the motion JSON derived and desk-validated; the S2-S4 audit script is the next staging; the machine step follows its merge.
