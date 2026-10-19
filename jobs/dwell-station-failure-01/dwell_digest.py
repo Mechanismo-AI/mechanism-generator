@@ -6,9 +6,15 @@ Pure analysis: no repo changes, no solver, no network, no clocks, no
 randomness -- run twice and diff is the determinism control. The
 kinematics is the parity-tested four_bar_skeleton from
 src/mechanism_generator/omts/geometry.py at main 11823908, embedded
-verbatim below; its conventions match the engine's candidate recording
-exactly (theta_deg is the engine's crank parameter, the same angle
-space as the recorded matched phases, for both crank directions).
+verbatim below. One unit boundary is adapted at the input, never inside
+the kernel: the engine records base_angle in RADIANS
+(r25b.decode_refinement_variables stores torch.remainder(raw[8], 2*pi)
+and the torch kinematics applies it directly as radians), while the
+embedded omts kernel takes degrees (geometry.four_bar_skeleton applies
+math.radians(base_deg)); the digest converts base_angle radians ->
+degrees at the boundary (the recorded menu-E/frame-sweep unit
+observation). theta_deg is the engine's crank parameter, the same
+angle space as the recorded matched phases, for both crank directions.
 
 The demand (pinned in jobs/dwell-station-failure-01/JOB.md):
 
@@ -256,6 +262,13 @@ def score_candidate(row, direction, problems):
         problems.append("%s: branch_sign %r is not -1 or 1" % (label, row["branch_sign"]))
         return None
 
+    # Unit boundary (engine recording convention, recorded finding): the
+    # engine stores base_angle in RADIANS (decode_refinement_variables:
+    # torch.remainder(raw[8], 2*pi)) and applies it directly in its torch
+    # kinematics; the embedded omts kernel takes degrees. Convert at the
+    # boundary so the rebuild matches the engine's recorded world geometry.
+    values[8] = math.degrees(values[8])
+
     # Reproduction witness: the rebuilt kinematics must reproduce the
     # engine's own record at the recorded matched phases, for every row.
     for index in (1, 2, 3):
@@ -429,7 +442,8 @@ def main(argv):
     lines.append("hold radius: %s normalized = 0.3 mm" % fmt(HOLD_RADIUS))
     lines.append(
         "kinematics: four_bar_skeleton embedded verbatim from src/mechanism_generator/omts/geometry.py"
-        " (main 11823908); reproduction witness tolerance %g normalized" % REPRO_TOL)
+        " (main 11823908; engine-recorded base_angle converted radians -> degrees at the boundary);"
+        " reproduction witness tolerance %g normalized" % REPRO_TOL)
     lines.append("drift: reported as data, never scored (frozen)")
 
     pool_scored = []
