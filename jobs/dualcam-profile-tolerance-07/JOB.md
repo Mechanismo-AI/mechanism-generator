@@ -254,6 +254,109 @@ geometry).
   modified; no gate loosened anywhere. Nothing in this job
   stages a new mechanism variant.
 
-## Recorded outcome
+## Recorded outcome (2026-10-19)
 
-(to be appended after the machine run on the-hub)
+Machine run of record: the-hub, Jean, on merged public main
+96ef44ef (the PR #58 merge). Two invocations of
+jobs/dualcam-profile-tolerance-07/profile_tolerance_map.py from
+the repository root, Python 3.14.4 (the motion venv prompt active;
+the script is pure standard library). The two pasted transcripts
+agree to every printed digit (the redirect+diff discipline was
+not run this time; the in-script two-audit determinism gate
+PASSed). ZERO DIVERGENCE from the staging-side reading: every
+section [A]-[I] matches to every printed digit, including the [C]
+witness lows (2.864e-4 / 5.967e-5 relative; 1.522e-6 / 9.933e-7
+mm) -- the disclosed cross-platform libm last-ulp risk (T1) did
+not fire. The task sha256 matches the recorded -02
+byte-identity witness
+(591a562c33b7455476e20559fdd16f46bb0c1a3c4645d4a25048e4607e3a24d5).
+
+Scorecard verdicts (frozen before the run; the machine run is the
+run of record):
+
+- T1 HELD, machine-verified: [A] PASS -- the -02 task validation
+  (5.551e-17 / 4.441e-16 / 6.051e-15, tol 1e-9), the task sha256
+  witness, and the regenerated pick (mode meets-target, A = 76 mm,
+  P = (8, -260), Delta = -74.3985 deg) all match the recorded -06
+  oracle (alpha 29.7366 deg at 303.9 deg, major 284.932 mm,
+  beta_out 27.958 deg, winding 0.0623329, lambda_eff 3.42105-3.87307,
+  rho_body 176.774 mm, peak |C''| 193.927, peak |x_s''| 812.885
+  mm/rad^2, peak |x_s'| 170.25 mm/rad; cam y 25.8817 deg at 332.0
+  deg).
+- T2a HELD: S_x full-cycle max 4.97529 at 308.5 deg, inside
+  [4.4, 5.6] and above the sketched lambda_eff band 3.42-3.87 --
+  margin exhaustion recorded as the finding, not a gate failure.
+- T2b HELD: S_x carry max 4.90651 at 0.0 deg, inside [4.3, 5.2];
+  S_y = 1.000 exactly on the carry (the carry IS the cam-y dwell;
+  asserted); S_y full-cycle max 1.11148 = 1/cos(25.8817 deg) -- the
+  corrected prediction measured (the disclosed 1.1094 slip stays
+  disclosed above).
+- T2c HELD: the numerical re-contact witness PASS with margin --
+  normal agreement 2.864e-4 (cam x) / 5.967e-5 (cam y) vs the
+  1e-3 gate; tangential residues 1.522e-6 / 9.933e-7 mm vs the
+  1e-4 mm gate; the identity witness cos q = cos(alpha_x) worst
+  |diff| 4.441e-16.
+- T3 HELD, the budget's live question: WC-L at the working number
+  0.10 mm gives 0.590651 mm carry error vs the 1.5 mm packaging
+  overlay (2.54x margin, inside the predicted [0.50, 0.78] band);
+  knee break-even delta* carry 0.253957 mm (inside [0.19, 0.30]),
+  full cycle 0.247462 mm. A uniform 0.10 mm profile tolerance
+  class stays inside the task-space packaging budget.
+- T4 ENGAGED exactly as pre-declared -- the cap-under-tolerance
+  branch FIRES: cam x breaches the 285 mm cap at any uniform delta
+  > 0.0678458 mm (headroom 0.0678458 mm), cam y at ANY delta > 0
+  (the carry dwell sits exactly at the cap; nominal major 285 mm,
+  headroom 0). Read per declaration 2: a MANUFACTURING-READINESS
+  finding, never a family failure -- the -06 HELD record stands.
+  The split finding, recorded as data: the task-space budget and
+  the envelope cap demand DIFFERENT tolerance classes -- the knee
+  curve allows up to 0.253957 mm for the packaging overlay, but
+  the major arcs must hold <= 0.068 mm (cam x) and 0 (cam y)
+  before the envelope cap is breached. The terminal branches are
+  the only exits: a local/zoned tolerance class <= headroom on the
+  major arcs, or envelope renegotiation with the brief owner;
+  NEVER a new variant.
+- T5 HELD: the calibration rows as declared -- cam-x dwell S_x
+  4.66278 (descent, u = +130) / 4.90651 (ascent, u = -130); cam-y
+  dwells S_y = 1.000 (r = 285 mm carry, r = 195 mm return); the
+  systematic dwell error fully absorbed by a slide-datum
+  adjustment (residual 0); arbitrary per-point errors get NO
+  worst-case credit; the gate scores raw.
+- T6 HELD: the force-closure data rows emitted as declared,
+  nothing gated -- contact-normal force per unit slide force = S
+  by reciprocity (cam x max 4.97529, carry max 4.90651; cam y max
+  1.11148); per-unit-mass spring criteria at unit crank rate
+  (cam-y follower 0.69599, cam-x roller 0.193927, x slide
+  0.812885 N/kg per (rad/s)^2 class); the dwell-jump one-sided
+  maxima (cam x slide-space 812.885, cam y 543.146 mm/rad^2); the
+  torque proxies carried in from -06 (170.25 / 119.816 mm/rad).
+  The future gate shape (the dimensionless contact-maintenance
+  criterion with declared masses and a rated speed) is noted;
+  capacity and speed remain unrated.
+- T7 HELD: the A-floor status redeclared as data -- the 60 mm
+  floor was the scan-range prior, never a gate; the feasible
+  interval is [76, 77) on the recorded 1 mm ascension (A = 77
+  stops on the cap, not the angle); 60 mm survives as the scan
+  convention; the recorded pick at the TOP of the interval
+  MINIMIZES the exact amplification (S_x scales as 1/A at fixed
+  pivot geometry).
+
+Control rows: determinism PASS (in-script two-audit
+byte-identical; the two pasted machine transcripts agree to every
+printed digit); the -02 task consumed read-only (sha256 above);
+the -06 module imported read-only, never modified; no gate
+loosened anywhere; recorded outcomes are data and are never
+rewritten.
+
+Where this leaves the family: the Option B record closes with its
+tolerance story complete. The design meets the frozen task inside
+the envelope at the 30 deg target on both axes (-06), and a
+uniform 0.10 mm profile tolerance class stays inside the 1.5 mm
+packaging overlay at the slide (this run) -- at the price of a
+~0.07 mm class on the cam-x major arc and zero nominal headroom
+on the cam-y major arc, where the envelope cap binds (T4, the
+sharpest echo of the exactly-consumed envelope). The standing
+queue is unchanged: the budget sweep stays the standing
+in-family candidate if the family question returns; the
+force-closure gate design waits for declared masses and a rated
+speed.
