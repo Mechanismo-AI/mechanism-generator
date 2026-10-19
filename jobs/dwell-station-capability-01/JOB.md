@@ -1,6 +1,6 @@
 # dwell-station-capability-01 -- Stage 1 capability design study (case study A dwell station)
 
-Status: staged; awaiting the machine run of record.
+Status: run recorded (2026-10-19); see the Recorded outcome section.
 
 ## What this job is
 
@@ -242,3 +242,86 @@ IDENTICAL". Paste design_run1.txt back for the K1-K8 scorecard reading.
   conventions instead (units: mm and degrees at interfaces, derivatives per
   radian; no engine data enters this job, so the base_angle
   radians-vs-degrees class of bug has no surface here).
+
+## Recorded outcome (2026-10-19)
+
+**Merged and run (the run of record):** PR #64 merged by Jean in the
+browser (public main 193a112a, the merge of branch
+dwell-station-capability-01 over c960b433). The design script then ran
+twice on the-hub from the repo root after git pull: external diff EMPTY
+(DIFF-EMPTY), exit 0, last line "double-run determinism check:
+IDENTICAL". The pasted report is identical to the staging smoke-test
+reading TO EVERY PRINTED DIGIT -- zero divergence; the deterministic
+prediction held exactly. (Python version not captured this run; the
+script is pure standard library and version-independent by design. The
+self-consistency limitation stands as disclosed above: the smoke test
+ran the same arithmetic and could not have caught a wrong declaration,
+only code defects and nondeterminism.)
+
+**Scorecard verdicts (frozen above; all read on the machine run):**
+
+- **K1 HELD**, as predicted by construction: dwell witness max |slide| =
+  0.000000 mm over the 1001-sample arc (boundaries included); stroke
+  witness 260.000000 mm; cycle-wrap witness d(359.95 deg) = 0.000067 mm
+  within the analytic end value; grid arithmetic asserted (1000
+  intervals = 1001 samples = 50.00 deg); determinism IDENTICAL both
+  in-process and across the two external runs.
+- **K2 CONFIRMED:** the fixed point converged in one iteration; the
+  declared duration allowance is 0.00 deg exactly as predicted;
+  allocation 77.50 / 50.00 / 77.50 / 155.00 deg as declared; junction
+  slide acceleration peaks 350.63 / 175.32 mm/rad^2 reported as data.
+- **K3 CONFIRMED at the predicted WIDE-FAIL:** required major 464.44 mm
+  at the 30 deg target (163.0% of the 285 mm labeled placeholder; cap
+  headroom -179.44 mm) and 359.37 mm at the 45 deg hard ceiling (still
+  wide). The envelope finding for the direct instance stands.
+- **K4 CONFIRMED at the predicted HELD:** required major 135.76 mm
+  (lambda 3.42105; 47.6% utilization) and 119.92 mm (lambda 3.87307;
+  42.1%) at 30 deg, +149.24 / +165.08 mm cap headroom; also passes at
+  45 deg (105.05 / 92.79 mm). Max pressure angle exactly 30.00 deg at
+  the design point in every instance (15.00 deg margin to the hard
+  ceiling).
+- **K5 CONFIRMED HELD:** min |rho| 163.27 / 47.72 / 42.15 mm vs the
+  18.75 mm floor (margins +144.52 / +28.97 / +23.40 mm), all at the
+  dwell-entry junction sample 1549.
+- **K6 CONFIRMED:** direct knees 0.2000 mm WC / 0.2828 mm RSS, so the
+  0.10 mm working class PASSES at 2.0x WC margin; lever knees 0.0585 /
+  0.0516 mm WC (0.0827 / 0.0730 RSS), so the 0.10 mm working class
+  FAILS both conventions; the lever's required class (WC guarantee) is
+  0.052-0.058 mm -- tighter than case B's 0.068 mm. Duration: guaranteed
+  width 52.70 deg (direct) / 0.00 deg (lever, the working class outside
+  the knee) at the working class; nominal 53.80 deg; duration knee ==
+  position knee with the collapse behavior exactly as recorded; derived
+  allowance 0.00 deg. No new gate, per the frozen finding.
+- **K7 EMITTED:** the headroom/utilization table is present and
+  identical to the staging reading. **K8 EMITTED:** family-cost table
+  (stillness 61.107 mm vs 0.000 mm construction-exact; quiet-region
+  wander 27.853 mm vs 0.000 mm; window speeds 57.0-231.8 mm/rad vs
+  0.000 mm/rad during the arc; junction accelerations 350.6 / 175.3
+  mm/rad^2 declared, no recorded frontier counterpart) and the control
+  rows (pair trigger, no OMTS vocabulary -- verified in the output,
+  T4 classification, datum-bias lever).
+
+**The capability reading (the round's answer, read on the run of
+record):** the adopted family is feasible in two flavors with a declared
+trade. The DIRECT instance is tolerance-easy (the 0.10 mm working class
+sits inside a 0.200 mm knee at 2.0x margin -- the concentric-dwell-arc
+easy-geometry case) but envelope-wide (464.44 mm major needed; the
+labeled placeholder fails at both 30 and 45 deg). The LEVER instance is
+envelope-easy with real pressure margin (120-136 mm major, 42-48%
+utilization) but pays lambda in profile class (0.052-0.058 mm needed vs
+the 0.10 mm working class, and tighter than case B's 0.068 mm). Per the
+pre-declared T4 classification, both readings are manufacturing-readiness
+findings with the pre-declared terminal branches; the labeled placeholder
+gives the renegotiation branch cleaner standing than case B's cap had,
+and zoning still ranks first for the lever's tight class (the tight class
+lands on the concentric dwell arc, the easiest geometry). The datum-bias
+lever and the cross-slide pair trigger stand as pre-declared; the
+dwell-duration spec concept stays a recorded prediction for the
+capability-to-spec step.
+
+**Status:** this JOB is complete -- run recorded, scorecard read,
+nothing pending. Recorded outcomes are data and are never rewritten.
+Next per the case-study loop: the capability-to-spec/decision step (a
+debate round), carrying the K3/K4/K6 trade, the T4 terminal branches,
+the datum-bias lever, the pair trigger, and the dwell-duration
+prediction.
