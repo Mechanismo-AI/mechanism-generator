@@ -136,7 +136,7 @@ during either command. The generated runner uses the installed engine and downlo
 | [Collision pair (v0.2)](examples/omts/collision_pair.omts.yaml) | Passes | Prepares two independent runs with a pending line verification over a shared keep-out zone |
 | [Screened collision pair (v0.2)](examples/omts/collision_pair_screened.omts.yaml) | Passes | Prepares two independent runs with a search-time zone screen (60 deg occupancy cap) over the shared keep-out zone |
 | [Gap transfer (case study B)](examples/omts/gap_transfer.omts.yaml) | Passes | Prepares one ordered three-pose run: a level 260 mm carry at packaging tolerance, an honest-failure case study for the next mechanism type |
-| [Dwell station (case study A)](examples/omts/dwell_station.omts.yaml) | Passes | Prepares one ordered three-pose run: the case-B-mirrored poses at packaging tolerance; the hold-still demand (0.3 mm for 50 deg) is scored by the failure-analysis digest, not the spec (honest-failure case study for the next mechanism type) |
+| [Dwell station (case study A)](examples/omts/dwell_station.omts.yaml) | Passes | Prepares one ordered three-pose run: the case-B-mirrored poses at packaging tolerance; the hold-still demand (0.3 mm for 50 deg) is scored by the failure-analysis digest, not the spec (run recorded: zero selections, stillness miss about 204x, zero cusps); the capability follow-up -- one x-axis cam + passive y-guide -- is staged as jobs/dwell-station-capability-01 |
 
 The adapter accepts normalized planar coordinates, exactly three target positions,
 optional orientations on all three targets, optional cyclic ordering, hybrid
