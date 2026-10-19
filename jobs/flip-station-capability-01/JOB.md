@@ -1,6 +1,6 @@
 # Case study C capability: the dual-groove plate-cam flip carrier (flip-station-capability-01) -- staged
 
-Status: **Staged; awaiting run.**
+Status: **Run recorded (2026-10-19); recorded outcome below.**
 
 The capability step of case study C (the flipper), per the loop:
 preceded by its debate round, folded below. Per the fold's Q1, the
@@ -376,3 +376,122 @@ fail closed on unknown major versions.
   "when a keep-out relation or the line composition gates on part
   occupancy"; the exact-rectangle rows are recorded data against
   the day the spec step lands the vocabulary.
+
+## Recorded outcome (2026-10-19)
+
+The machine step ran on the-hub (the motion venv, Python 3.14.4),
+from the repo root, against merged main
+9c9fd6f9f1724e683ed053f621f95fe5a283425a (the PR #72 merge). Run 1
+clean (exit 0, report 156 lines). The first run-2 attempt left
+capability_run2.txt empty (the run did not complete; the redirect
+created the file and nothing wrote to it) -- recorded as-run, and
+the rerun was clean (exit 0). The recorded determinism pair is run
+1 plus the rerun: external diff EMPTY, exit 0; the in-process
+double-run determinism check reads IDENTICAL in both reports. All
+numbers below are the run's own printed digits.
+
+- C1 CONFIRMED (architecture). C1a: the fixed-pivot rigid-mount
+  class is pose-infeasible with the desk evidence executed, not
+  asserted -- best-fit pivot (0.000000, 0.175000), mount
+  (-0.975000, 0.000000), least-squares worst pose residual 1.300000
+  units (130.00 mm) over the 1.5 mm tolerance; the exact poses-1+3
+  fit (pivot (0, 0.5), mount (-1.3, 0)) misses pose 2 by exactly
+  130 mm (the colinearity argument). C1b: the dual-groove synthesis
+  closes -- both grooves closed curves (closure residuals
+  3.554e-16 / 4.475e-16 units), every 5 deg grid pose reproduced by
+  the pins-on-grooves construction (constraint residual < 1e-9).
+- C2 CONFIRMED (pose witness): the three demand poses exact by
+  construction at plate angles 0 / 90 / 180 deg, position and
+  orientation error 0.0, machine-verified < 1e-12 (the return arc
+  revisits pose 2 at 270 deg).
+- G1 WIDE-FAIL (pressure angle), the frozen desk prediction read on
+  the run: gate angles 89.070 deg (groove_1, t = 92.30) and
+  89.314 deg (groove_2, t = 89.25) against the 45 deg cam-class
+  gate over the loaded carry arc. The structural dead-point bands
+  are excluded and recorded (712 / 548 samples); the dead-point
+  alpha is exactly 90.000 deg (the toggle-position analog for
+  groove cams, passed through by the positive-drive constraint
+  set); the full-cycle max 90.000 deg at t = 90 is recorded as
+  data. The shallow-spiral argument is CONFIRMED: the sweep's a_G1
+  range is 89.192-90.000 deg -- the gate fails structurally for
+  every design in the sweep, not marginally.
+- G2 PASS (curvature), as predicted (PASS at small d, FAIL at large
+  d across the sweep table): groove min radii 0.1947 units
+  (19.47 mm, groove_1 at t = 241.40) and 0.6023 units (60.23 mm,
+  groove_2 at t = 240.20) against the 0.0500-unit floor
+  (5.00 mm = 1.25 x pin radius).
+- Groove crossings: 4 (recorded data, not a gate; the declared
+  consequence applies -- the two grooves ride separate plate
+  faces/layers, the dual-cam -05 precedent).
+- Envelope (recorded data, not gated; the -06 required-table
+  precedent honored): part sweep bbox x [-180.0, 180.0] y [-0.1,
+  100.1] mm; through-vertical transit tip height 100.06 mm at
+  x = -4.11 mm; plate radius 164.11 mm; handoff stations (-130, 50)
+  and (130, 50) mm; headroom 64.1 mm.
+- C3 PASS (WC-L tolerance at both handoff poses), channels
+  separate: clearance/backlash 0.6491 mm / 0.5179 deg; profile
+  class 0.3245 mm / 0.2589 deg; combined 0.9736 mm / 0.7768 deg
+  against 1.5 mm / 1.5 deg -- identical at both handoffs by
+  symmetry. The critic's frozen prediction is CONFIRMED: the
+  backlash channel binds over the profile class. The actor's
+  mid-swing sensitivity prediction is REFUTED, recorded as honest
+  data: the per-unit-bound worst-case position gain peaks at
+  81.6658 at t = 315 deg (the return-arc reversal approach), not
+  mid-swing; the dead points at t = 90/270 deg are recorded as
+  dead-point rows, never as finite numbers.
+- C4 CONFIRMED (controls): read-only demand; fail-closed corpus
+  emitter (schema 1.1 pinned, units block + provenance on every
+  row); utilization table present; double-run determinism
+  (in-process IDENTICAL + external diff EMPTY).
+- C5 overall reading: WIDE-FAIL -- the six-bar alternative trigger
+  FIRES, exactly per the pre-declared branch. All outcomes are
+  recorded data; nothing is rewritten.
+- Reciprocity: instrument modification count 0 -- the strategy
+  round's Q1 amendment (generator-agnostic instruments) gets its
+  first recorded data point, clean: the instruments graded an
+  oscillating-cam family they were not built around, unmodified.
+- Chosen design (frozen pick rule, recorded as data): d = 0.2,
+  C_y = 0.0 (a_G1 89.314 deg, min_rad 0.1947 units). The C_y = 0.5
+  rows failed closed in the sweep exactly as declared (the
+  structural dead point at both handoffs; the WC-L map cannot bound
+  the pose there).
+
+Corpus (the recorded outcome, referenced by hash):
+runs/flip-station-capability-01/flip_station_capability_v1.jsonl
+sha256 cdac1413f61e9262d498142f72081fc3698924ab9df461c06a21b0854039be6c
+and flip_station_capability_v1.csv
+sha256 4edb232c22d58fbab82aa83f3852eb04ec0a5e8544b8fd12ca4b5c08b7679401,
+838 rows, schema 1.1 (additive; changelog row in corpus). The
+staging rehearsal's numbers reproduced digit-for-digit on the
+merged commit; only the corpus hashes differ, exactly as disclosed
+(the provenance block embeds the source commit).
+
+The capability answer, recorded as data: the dual-groove plate-cam
+serves the flip poses exactly (C1b/C2) and the tolerance budget
+reads on the scorecard (C3 PASS), but the recorded gates fail
+structurally (G1 WIDE-FAIL: the shallow-spiral lead-angle finding
+and its dead-point companions). The family question carries to the
+decision round: a class ruling for positive-drive groove cams (a
+renegotiation question, named not assumed) or the six-bar line per
+the fired trigger.
+
+Trigger bookkeeping (recorded):
+
+- Six-bar alternative trigger: FIRES on this recorded wide-fail,
+  exactly per the pre-declared C5.
+- Strategy trigger: condition (a) SATISFIED (the flipper failure
+  record, PR #70). Condition (b)'s precondition is now MET -- the
+  B2 frozen answer schema is on main (merged with this job's
+  staging, PR #72), so B2 MAY RUN as desk analysis, read-only,
+  citing its two declared data points by hash. The strategy trigger
+  fires when B2's answer is recorded in that schema; the next staged
+  item is then B1 admission-gate work, unless Jean explicitly
+  overrides with a recorded reason.
+- Part-body vocabulary trigger: deferred, unchanged ("when a
+  keep-out relation or the line composition gates on part
+  occupancy"); this corpus's exact-rectangle rows are the recorded
+  data for that day.
+
+NEXT per the loop: case study C's decision debate round with the
+fired trigger and the class-ruling question on its card; the B2
+desk run in parallel.
