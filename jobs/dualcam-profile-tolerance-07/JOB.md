@@ -360,3 +360,56 @@ queue is unchanged: the budget sweep stays the standing
 in-family candidate if the family question returns; the
 force-closure gate design waits for declared masses and a rated
 speed.
+
+## T4 terminal-branch decision (2026-10-19, recorded post-record)
+
+This section is an addition after the recorded outcome above. The recorded
+outcome is data and is never rewritten. The decision below came through
+the standing chat-relay debate round (actor and critic, 2026-10-19, both
+concurring; Jean decides) and is a manufacturing-readiness decision under
+the frozen classification (declaration 2): **tolerance zoning**, with
+**envelope renegotiation documented as the fallback**. The -06 HELD record
+stands as recorded data.
+
+Decision content, derived from the recorded -07 numbers:
+
+- Zoned tolerance classes. The major (cap-facing) arcs of both cams carry
+  a tight class; all other profile geometry keeps the uniform 0.10 mm
+  working class, which the recorded outcome already shows inside the
+  packaging overlay at the slide (WC-L 0.590651 mm vs the 1.5 mm overlay,
+  2.54x).
+- Cam x major arc: class <= 0.05 mm. Derived from the recorded headroom:
+  cap 285 mm, recorded nominal 284.932154 mm, headroom 0.0678458 mm; a
+  0.05 mm worst-case growth leaves 0.0178458 mm of cap headroom with no
+  nominal change.
+- Cam y major arc: recorded nominal headroom is exactly zero (the
+  carry-dwell major arc sits at the cap), so zoning REQUIRES an inward
+  datum bias of the nominal dwell radius. Declared rule (frozen here; the
+  value is arithmetic, not a picked number): bias = class + 0.02 mm
+  inspection margin. At the 0.05 mm class this derives bias = 0.07 mm,
+  nominal 284.93 mm, worst case 284.93 + 0.05 = 284.98 mm <= 285 (0.02 mm
+  cap headroom at worst case). The class/bias pair is confirmed at
+  cut-spec time by this rule; a bias that exactly re-creates zero
+  worst-case headroom is forbidden.
+- Budget stack-up line: the cam-y bias is a constant dwell-radius error,
+  which the T5 rows characterize as a constant slide-datum offset --
+  systematic, calibratable by slide-datum adjustment, residual 0 after
+  adjustment. The raw-error budget line grows by the bias: 0.590651 +
+  0.07 = 0.660651 mm vs the 1.5 mm overlay (2.27x raw), restated honestly
+  as the post-bias number. The gate budget still scores the raw error
+  (declaration 3).
+- The bias is a DECLARED nominal change to the recorded -06 design (the
+  cam-y dwell-arc nominal), recorded here with its reason; it is never a
+  silent edit and never a gate change (the biased nominal sits inside the
+  cap by construction).
+
+Fallback, with lineage. The 600x600 mm envelope was debate-declared (a
+round number, not a line measurement). Because both major arcs sit at or
+within 0.07 mm of the cap, growing the envelope by 1 mm (plate diameter
+601 mm -> pitch cap 285.5 mm) buys about 0.5 mm of headroom on every arc
+-- roughly 5x the 0.10 mm working class. One-line reading: the design is
+1 mm of installation slack away from comfortable tolerances everywhere;
+the cap, not the task, owns this family's tolerance problem. Trigger for
+the fallback: a real installation or line measurement showing slack, at
+which point renegotiation is the cleaner fix. Until then the zoning
+decision is not evidence that the 600x600 figure is sacred.

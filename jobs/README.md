@@ -35,3 +35,37 @@ happened. Where a later revision changed a capability -- e.g. the
 joint offset search (PR #30) now composes relations over derived
 region events, which `omts propose-offsets` refused before -- the job
 files say so and point forward; earlier sections are never rewritten.
+
+## Case study B closure (2026-10-19)
+
+Case study B (the 260 mm gap transfer) is CLOSED with this record; the T4
+terminal-branch decision in jobs/dualcam-profile-tolerance-07/JOB.md is
+the closure event. Summary:
+
+- Capability record: four-bar three-pose failure record
+  (gap-transfer-failure-01: zero selections, position binding ~6-7x over
+  tolerance) -> six-bar capability -01/-02/-03/-04 (all-fail; the stops
+  bind, not the carry; the bottom stops were not the main carrier; the
+  phase-locked grid binds; the free-phase lever cut derivative demand
+  ~30% and the position error did not follow -- succession rule engaged)
+  -> Option A dual-cam -05 (cam x wide fail by arithmetic, 72.6645 deg vs
+  the 45 deg gate; cam y HELD, the family's first HELD engineering gate)
+  -> Option B cam+lever -06 (both axes HELD at the 30 deg target inside
+  the envelope; the envelope exactly consumed) -> tolerance map -07
+  (T1-T7; a uniform 0.10 mm class stays inside the packaging overlay at
+  2.54x; the T4 manufacturing-readiness finding) -> the T4 zoning
+  decision. The family's answer to the brief is the Option B cam+lever
+  design.
+- Manufacturing-readiness record: tolerance zoning on the major arcs
+  (cam x <= 0.05 mm class; cam y <= 0.05 mm class with the declared
+  datum-bias rule bias = class + 0.02 mm), envelope renegotiation
+  documented as the fallback with its trigger (a real installation or
+  line measurement showing slack).
+- Declared open residues, assigned to their future steps: force-closure /
+  return-spring gate design (blocked on declared masses and a rated
+  speed; the -07 T6 rows are its evidence base); payload/grasp modeling
+  (a future-pick capability, e.g. the queued flipper case study);
+  dynamics beyond the kinematic torque proxies; certification-level
+  collision checking (sampled occupancy, never certified).
+- The budget sweep stays the standing in-family candidate if the family
+  question returns.
