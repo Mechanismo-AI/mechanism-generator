@@ -1,0 +1,122 @@
+{
+  "diagnosis_id": "b2-mounting-angle-representation-consistency",
+  "schema_version": "1.1",
+  "changelog": [
+    {
+      "version": "1.1",
+      "base": "1.0 (docs/b2-answer-schema.md, frozen)",
+      "change": "adds data_points[].locator, a content pin for records that predate the corpus-emitter discipline and therefore have no recorded content hash; evidence[].source_data_point may carry the same locator form. No existing field's meaning, unit or name changed. Per the frozen succession rule: additive = 1.x with a recorded changelog row."
+    }
+  ],
+  "frozen_question": "for the recorded failure corpora, are the binding rejections attributable to the mounting-angle representation (a convention artifact of the rigid coupler mount), or to the candidate data (the pools' genuine capability limits), or both, or is the evidence inconclusive?",
+  "data_points": [
+    {
+      "case_study": "C",
+      "job_id": "flip-station-failure-01",
+      "corpus_format": "JSON Lines + flat CSV",
+      "sha256": "fbea95681d26883c9cf46eff9132ea07f31c3f5286baf0cd883671585d11e5c1 (JSON Lines); 01dd9c068155b3ba0f20b1485c3d5846079fbaf37e4d17f0e3133684d64e7638 (flat CSV)",
+      "corpus_schema_version": "1",
+      "rows": 36,
+      "units_basis": "1 normalized unit = 100 mm (task layer); angles deg; position tolerance 1.5 mm (0.015 normalized) per pose; orientation tolerance 1.5 deg per pose"
+    },
+    {
+      "case_study": "B",
+      "job_id": "gap-transfer-failure-01",
+      "corpus_format": "recorded outcome tables (markdown; pre-emitter record)",
+      "sha256": null,
+      "locator": "jobs/gap-transfer-failure-01/JOB.md @ Mechanismo-AI/mechanism-generator main 42fc20fdc0fedcef2c7f550659ad644942ce53fa, Recorded outcome (2026-10-16) section; underlying corpus all_candidates.csv at run root runs/gap-transfer-failure-01/results/task-001/either/2026-10-16_14-18-05_712881 (content hash not recorded; the record predates the corpus-emitter discipline, and this diagnosis does not invent one)",
+      "corpus_schema_version": "none (pre-emitter)",
+      "rows": 36,
+      "units_basis": "1 normalized unit = 100 mm (task layer); angles deg; position tolerance 1.5 mm (0.015 normalized) per pose; orientation tolerance 1.5 deg per pose"
+    }
+  ],
+  "representation_hypothesis": {
+    "frozen_hypothesis": "the rigid coupler mount (centroid + full-turn-wrapped orientation) is the only representation the recorded instruments could score, so representation-driven rejection cannot be excluded from the records without a re-representation test",
+    "tested": [
+      {
+        "id": "H1",
+        "hypothesis": "a constant mounting-angle offset c alone (mounting vector (0,0)) re-represents the mount and could rescue candidates the records rejected",
+        "test_method": "pair-difference bounds on the per-pose gate inequalities: |wrap(theta_i + c - o_i)| <= 1.5 deg for every pose i implies the pose-to-pose coupler-orientation differences must cover the demanded differences within 2 x 1.5 deg; c cancels in every difference, so the swing requirement is invariant under H1"
+      },
+      {
+        "id": "H2",
+        "hypothesis": "a constant mounting vector v (with offset angle c) re-represents the mount and could rescue candidates the records rejected; the part centroid rides coupler point + R(theta + c) v",
+        "test_method": "v does not enter orientation, so the H1 swing bound is invariant under the full (v, c) class; for the position gate, a reverse-triangle necessary condition on the recorded per-target error magnitudes (|r_i - r_j| >= |e_i - e_j|, and gate-passing after any common offset requires |r_i - r_j| <= 2 x 1.5 mm), with the v-class rotational play bounded by the recorded per-pose orientation deviations from level and stated as the approximation error of the common-offset form"
+      },
+      {
+        "id": "H3",
+        "hypothesis": "a non-rigid mounting (a wrist, gripper compliance, a decoupled part orientation) could serve the demands",
+        "test_method": "out of class, recorded not tested: a mounting declaration is a constant (vector, angle, frame, lineage) over one rigid mount; a time-varying or compliant mount is a new mechanism family (the capability-step question, e.g. the dual-groove carrier), not a re-representation of the four-bar niche. B2 diagnoses the convention, not the family line"
+      }
+    ]
+  },
+  "answer": "data-limited",
+  "answer_reasons": [
+    "Case study C (the recorded live blocker this diagnosis was commissioned on): the binding rejection -- orientation-dominant 36/36 -- is PROVEN invariant under the full rigid-mount re-representation class (H1 + H2). The demanded 180.000 deg swing between the handoff poses requires an unwrapped coupler swing of at least 177.000 deg after both pose tolerances; the pool's best free swing anywhere in any cycle is 156.452 deg; deficit 20.548 deg. A constant mounting angle cancels in pose differences and a mounting vector does not enter orientation, so no mounting declaration in the class rescues any candidate, pool-wide. Position fails independently (pool-best 11.65x tolerance; the D3a at-pose pairing is none for every candidate).",
+    "Case study B: the binding gate is position, and its rejection is proven no-rescue under the constant-offset class (H1 with the v-play set aside) for the pool's best candidate -- positive fixed_001, worst-pose 9.08 mm at 6.05x tolerance, pairwise magnitude spread 8.61 mm over the 3.00 mm necessary-condition threshold -- and for 6 of the 10 recorded frontier rows (spreads 4.26-10.76 mm). The recorded magnitudes cannot complete the exclusion for 4 of 10 frontier rows (spreads 1.15-1.49 mm; per-target residual directions are not recorded in the outcome tables), including the negative-direction pool-best; and under the full (v, c) class a nonzero mounting vector adds pose-dependent corrections the magnitudes cannot resolve (rotational play bounded by the recorded inter-pose orientation deviations, worst pair 17.75 deg). This caveat is recorded, scoped, and named with its follow-up; it does not touch the case C proof.",
+    "The records do contain representation artifacts -- the case B orientation gate as scored is representation-scoped (a constant mounting angle re-targets which coupler orientation counts as level), and the frontier holds candidates at a wrong-but-constant coupler angle (spreads 0.12-2.54 deg within the 3.00 deg threshold) whose orientation rejection is a pure mounting-angle artifact. The diagnosis detects them, and finds them non-binding: those candidates still fail the position gate, which binds deeper pool-wide (the recorded P2 refutation: qualification stops at position in every row).",
+    "The answer is therefore data-limited: the binding rejections in both recorded corpora are attributable to the pools' genuine capability limits -- for case C pool-wide under the full class, for case B for the pool's best candidate and 6/10 recorded frontier rows under the constant-offset class with the scoped caveat above. Per the frozen schema rule, recommended_convention is absent (present only for representation-limited or both); the rigid-mount convention as scored needs no amendment from this diagnosis."
+  ],
+  "evidence": [
+    {
+      "claim": "Swing invariance (case C): under any constant mounting-angle offset c and any mounting vector v, the flip demand requires an unwrapped coupler-orientation swing between the two handoff poses of at least 177.000 deg (180.000 deg demanded minus the two 1.500 deg pose tolerances); the pool's best free swing (recorded D3b, unwrapped full-cycle coupler-angle range) is 156.452 deg; deficit 20.548 deg.",
+      "source_data_point": "fbea95681d26883c9cf46eff9132ea07f31c3f5286baf0cd883671585d11e5c1",
+      "units": {"angle": "deg", "swing": "deg", "pose_tolerance": "1.5 deg per pose"},
+      "method": "pair-difference bound on the per-pose gate inequalities |wrap(theta_i + c - o_i)| <= 1.5 deg, differenced over handoff poses 1 and 3: c cancels, v does not enter orientation; minimum required swing = 180.000 - 1.500 - 1.500 = 177.000 deg, computed; compared against the recorded pool-max D3b 156.452 deg; deficit 177.000 - 156.452 = 20.548 deg, computed"
+    },
+    {
+      "claim": "Binding class (case C): orientation-dominant 36/36; pool-best position error 11.65x the tolerance, pool-best orientation error 47.57x; the D3a at-pose pairing is none for every candidate (no candidate reaches both handoffs within position tolerance).",
+      "source_data_point": "fbea95681d26883c9cf46eff9132ea07f31c3f5286baf0cd883671585d11e5c1",
+      "units": {"position_tolerance": "1.5 mm (0.015 normalized) per pose", "orientation_tolerance": "1.5 deg per pose", "ratios": "dimensionless (error / tolerance)"},
+      "method": "recorded digest verdicts D1-D4 of flip-station-failure-01 as recorded in that JOB.md's recorded outcome, consumed read-only; ratios as recorded"
+    },
+    {
+      "claim": "Case C conclusion: the binding rejection is attributable to candidate data under the FULL rigid-mount re-representation class -- the orientation gate fails pool-wide invariantly (the swing bound), and position fails independently, so no (v, c) rescues any candidate.",
+      "source_data_point": "fbea95681d26883c9cf46eff9132ea07f31c3f5286baf0cd883671585d11e5c1",
+      "units": {"angle": "deg"},
+      "method": "conjunction of the two evidence rows above; no further data consumed"
+    },
+    {
+      "claim": "Constant-offset position proof (case B): the recorded frontier's per-target position-error magnitudes prove no-rescue under a common offset for 6 of 10 rows -- pairwise magnitude spreads 8.61 / 7.86 / 9.32 / 9.36 / 10.76 / 4.26 mm each exceed the 3.00 mm necessary-condition threshold -- including the positive-direction pool-best fixed_001 (per-target errors 6.69 / 9.08 / 0.47 mm, worst-pose 9.08 mm at 6.05x tolerance).",
+      "source_data_point": "case-B locator (no content sha256 recorded; pre-emitter record -- see data_points[1].locator)",
+      "units": {"position": "mm (1 normalized unit = 100 mm)", "position_tolerance": "1.5 mm per pose", "threshold": "3.00 mm = 2 x 1.5 mm"},
+      "method": "reverse-triangle necessary condition: gate-passing after any common offset requires |r_i - r_j| <= 2 x 1.5 mm for every pose pair, and |r_i - r_j| >= |e_i - e_j| on the recorded magnitudes, so a pair spread above 3.00 mm proves no common offset passes all gates; spreads computed from the recorded per-target errors of the ten frontier rows"
+    },
+    {
+      "claim": "Case B caveat: the remaining 4 of 10 recorded frontier rows (positive bridge_release_002; negative bridge_release_001 / bridge_trust_001, a duplicate-lineage pair, and bridge_trust_002) have spreads 1.15-1.49 mm at or below the threshold, so no-rescue is not provable from the recorded magnitudes; the negative-direction pool-best (worst-pose 10.45 mm at 6.97x) is among them. Under the full (v, c) class a nonzero mounting vector adds pose-dependent corrections whose rotational play is bounded by the recorded inter-pose orientation deviations from level (worst pair bound 17.75 deg, fixed_003: 9.72 + 8.03 deg); magnitudes alone cannot resolve them.",
+      "source_data_point": "case-B locator (no content sha256 recorded; pre-emitter record -- see data_points[1].locator)",
+      "units": {"position": "mm", "angle": "deg", "position_tolerance": "1.5 mm per pose", "orientation_tolerance": "1.5 deg per pose"},
+      "method": "the same necessary condition read on both branches; the v-class play bound = 2|v| sin(dtheta/2) with dtheta bounded by the sum of the two largest recorded per-pose orientation deviations of the row; recorded as a scoped limitation with the follow-up named in docs/b2-answer.md"
+    },
+    {
+      "claim": "Detected representation artifact, non-binding (case B): the orientation gate as scored is representation-scoped (a constant mounting angle re-targets which coupler orientation counts as level), and the frontier holds candidates at a wrong-but-constant coupler angle -- orientation spreads 0.12-2.54 deg within the 3.00 deg threshold for 9 of 10 rows (e.g. bridge_trust_001 positive: 6.15 / 6.40 / 6.42 deg) -- whose orientation rejection is a pure mounting-angle artifact. Every such row still fails the position gate, so the artifact is non-binding; the record also shows the genuine article (fixed_003 positive: orientation spread 3.35 deg over the threshold, no constant angle rescues it).",
+      "source_data_point": "case-B locator (no content sha256 recorded; pre-emitter record -- see data_points[1].locator)",
+      "units": {"angle": "deg", "orientation_tolerance": "1.5 deg per pose", "threshold": "3.00 deg = 2 x 1.5 deg"},
+      "method": "orientation spreads computed from the recorded per-target orientation errors against the 2 x 1.5 deg threshold; the c-retargeting argument is definitional (part orientation = coupler orientation + c under the rigid mount)"
+    },
+    {
+      "claim": "Overall: the binding rejections in both recorded corpora are attributable to the candidate data. Case C is closed pool-wide under the full class; case B is closed for the pool's best candidate and 6/10 recorded frontier rows under the constant-offset class, with the scoped caveat above whose named follow-up (a direction-resolved re-representation re-score over the recorded corpora, read-only, the frame-sweep precedent) would close the remainder. The caveat does not touch the case C proof.",
+      "source_data_point": "fbea95681d26883c9cf46eff9132ea07f31c3f5286baf0cd883671585d11e5c1; case-B locator (see data_points[1].locator)",
+      "units": {"angle": "deg", "position": "mm"},
+      "method": "conjunction of the evidence rows above"
+    }
+  ],
+  "recommended_convention": null,
+  "mounting_declaration": {
+    "mounting_vector": [0.0, 0.0],
+    "mounting_vector_units": "normalized units, 1 unit = 100 mm (task layer)",
+    "mounting_angle_deg": 0.0,
+    "frame": "coupler/carrier frame -- part centroid at the coupler point, part axes = coupler axes (identity mount), orientation angles wrapped over the full turn",
+    "lineage": "the rigid-mount convention both recorded instruments scored (gap-transfer-failure-01, flip-station-failure-01); same field structure as the flip-station-capability-01 seam declaration (identity mount in the carrier frame); this diagnosis recommends no convention change (answer is data-limited), so the declaration stands unamended"
+  },
+  "provenance": {
+    "run_date": "2026-10-19",
+    "method": "desk, read-only: no engine rerun, no recorded row rewritten, no instrument modified (reciprocity count 0 trivially -- nothing executed against the instruments)",
+    "source_commits": {
+      "case_C_corpus_source_commit": "9cac9df41dd5963670f9adb520de98dc13578a29 (recorded in the corpus provenance of flip-station-failure-01)",
+      "case_C_record_read_at": "Mechanismo-AI/mechanism-generator main 42fc20fdc0fedcef2c7f550659ad644942ce53fa (jobs/flip-station-failure-01/JOB.md recorded outcome)",
+      "case_B_record_read_at": "Mechanismo-AI/mechanism-generator main 42fc20fdc0fedcef2c7f550659ad644942ce53fa (jobs/gap-transfer-failure-01/JOB.md recorded outcome, recorded 2026-10-16 at the PR #39 merge)"
+    },
+    "b2_job_reference": "docs/b2-answer-schema.md (the frozen answer schema, merged with PR #72) and docs/b2-answer.md (this diagnosis's desk reading); the strategy item is defined in docs/strategy.md (the amended ordering)"
+  }
+}

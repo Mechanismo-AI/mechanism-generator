@@ -1,6 +1,8 @@
 # B2 answer schema -- the mounting-angle representation-consistency diagnosis (frozen before the run)
 
-Status: **Frozen; B2 may not run before this schema is merged.**
+Status: **Merged (PR #72); B2 run recorded (2026-10-19) -- the answer is
+recorded at docs/b2-answer.json (answer-schema 1.1, additive changelog
+row inside) with the desk reading at docs/b2-answer.md.**
 
 B2 (docs/strategy.md, the amended ordering) is the generalization
 diagnosis: whether the four-bar niche's mounting-angle
