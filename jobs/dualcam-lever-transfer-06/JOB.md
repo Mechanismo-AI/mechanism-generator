@@ -471,3 +471,142 @@ design, not family succession. The armed triggers go to the
 debate channel before any new job stages; the recorded
 -01/-02/-04/-05 evidence stays recorded data, and recorded
 outcomes are never rewritten.
+
+## Recorded outcome (2026-10-18)
+
+Run on the-hub by Jean, one invocation with defaults from the
+repository root, right after the PR #56 merge (public main
+813e5b04 carries this JOB.md byte-identical at 26,693 bytes
+pre-append). Python 3.14.4; the motion venv prompt was active
+but the script is pure standard library and does not use it.
+The pull that delivered the job was a fast-forward
+a6dd086..813e5b0 carrying the -05 outcome JOB.md, this job's
+files and the jobs/README.md row (4 files, 2,192 insertions);
+it also fetched the staging-era remote branches
+(dualcam-lever-transfer-06, dualcam-outcome,
+option-b-lever-design-06), recorded here as data -- PR #56's
+staging branch is dualcam-lever-transfer-06. The full stdout was
+shared and is the verbatim record; the verdicts below read it.
+Beyond the script's own in-process determinism audit, Jean ran
+the script twice redirected to run1.txt and run2.txt and
+diffed them: byte-identical -- the G5 two-run determinism
+prediction machine-checked outside the script as well. The
+machine run reproduces the staged reading to every printed
+digit: no divergence exists anywhere in the shared output,
+which is itself the G5 prediction held.
+
+**Scorecard verdicts (frozen before the run):**
+
+- **G1 (task synthesis) HELD, machine-verified.** [A] PASS on
+  the machine: max |dq| 5.551e-17, max |dv| 4.441e-16, max |da|
+  6.051e-15, six orders inside the 1e-9 gate; knot speeds
+  reproduce the -02 record; the task SHA-256 matches the staging
+  witness exactly (591a562c33b7455476e20559fdd16f46bb0c1a3c4645
+  4a25048e4607e3a24d5). [E] the chain witnesses on the machine:
+  round trip (pitch curve -> rotation -> roller -> lever ray ->
+  pin line -> slide) worst |pin_x - x_s| 5.116e-13 mm over all
+  3600 grid points; task reproduction through the full chain
+  worst |dq| 3.886e-16 normalized; dwell-circle curvature
+  witness 3.990e-16; tool yaw 0 at all 3600 grid points.
+- **G2 (PRIMARY engineering gate): cam x HELD, cam y HELD
+  (carry-in) -- identical to the staged reading, so the frozen
+  prediction (lean HELD, boundary-honest band, no margin gate)
+  is confirmed.** Cam x at the pick A = 76 mm, P = (8, -260),
+  Delta = -74.3985 deg: worst pressure angle 29.7366 deg at
+  theta 303.9 deg (path segment 4); pitch major radius
+  284.932 mm, 0.068 mm inside the 285 mm cap; min body-side
+  |rho| 176.774 mm (undercut gate 18.75 mm; most negative
+  signed rho -917.493 mm reported as data); winding 0.0623329
+  (< 1); masked zero-velocity points 2672 of 3600, counted not
+  dropped; peak slide-space |x_s''| 812.885 mm/rad^2 (2.95448
+  normalized -- the -05 recorded task demand, unchanged by the
+  lever); peak cam-space |C''| 193.927 mm/rad^2 (the
+  pre-distorted profile demand). The knee on the machine: the
+  coarse picks A = 60/70/80/90 read 28.257 / 29.23 / 30.2133 /
+  31.2691 deg and the 1 mm ascension 71-76 ends at 29.7366 deg,
+  stopping at A = 77 (final 29.9208 deg) exactly as staged --
+  the staged knee note records the stop reason as the cap
+  (A = 77's major radius 285.3791 mm would breach the 285 mm
+  cap by 0.3791 mm), and the machine's ascension stops at the
+  same A with the same reading, consistent with the
+  cap-limited stop: the size cap binds before the 30 deg
+  target at the top of the knee. Cam y at base 195 mm: worst
+  pressure angle 25.8817 deg at theta 332 deg; required major
+  radius 246.098 mm, inside the cap. Slot-angle gate:
+  beta_out = 27.958 deg PASS (target <= 30 deg). The
+  pick-at-the-edge flag stands: A = 76 sits 16 mm above the
+  declared 60 mm floor -- a debate-channel question, not a
+  silent redeclaration.
+- **Combined envelope (the critic's adopted row): exactly
+  consumed.** Plan-view bbox 600 x 600 mm (x [-300, 300],
+  y [-300, 300]), all swept components simultaneously (both
+  plates, lever, slide box, pivot boss); binding component the
+  cam-y plate at its cap-limited operating radius 300 mm,
+  cam-x plate 299.932 mm. The family fits the debate-declared
+  envelope with nothing left over, under the -05 axial-stack
+  convention -- a finding sharper than the scorecard's band.
+- **G3 (stop velocity) HELD.** Slide |x_s'| exactly 0 at theta 0
+  and 120 deg, audited at the slide after the lever (the
+  placement the debate chose); cam-y follower |h_y'| exactly 0
+  at both stops; level orientation identity at all grid
+  points.
+- **G4 (family-cost table) HELD (emitted).** [D] printed the
+  extended table with the recorded -01/-02/-04 frontier
+  (position plateau 0.1484 / 0.1219 / 0.12570), the -05 Option
+  A record embedded as data, the structural-attribution rows
+  and the lever's additions: reflected inertia lambda_eff^2 =
+  11.7036-15.0007; tolerance amplification lambda_eff =
+  3.42105-3.87307 at the slide (the -05 trigger now armed);
+  per-unit-load shaft torque proxies cam x peak |x_s'|
+  170.25, cam y peak |h_y'| 119.816 mm/rad; the combined
+  swept-envelope row; the pick-at-the-edge flag; the
+  force-closure split (rise = pressure-angle problem,
+  dwell/carry = static spring problem) with the re-derivation,
+  dwell-jump case included, queued with its trigger.
+- **G5 (control) HELD.** The -02 task consumed read-only with
+  the same SHA-256 recorded; the script's two in-process audits
+  byte-identical AND the external two-run diff (run1.txt vs
+  run2.txt) byte-identical on the machine (determinism PASS
+  twice over). No gate loosened; the frozen -02 demand
+  untouched.
+
+**Decision rule: ENGAGED as frozen -- the HELD branch.** A
+confirmed cam-x HELD closes the Option chain: this is the
+family's first HELD x-axis engineering gate inside the envelope,
+and the dual-cam family with one lever meets the frozen task at
+the 30 deg target on both axes. The two armed triggers -- the
+profile-tolerance -> path-error mapping (lambda_eff 3.42-3.87
+at the slide) and the force-closure/return-spring re-derivation
+with the dwell-jump case (lambda_eff^2 11.70-15.00) -- go to
+the debate channel before any new job stages, per the frozen
+rule. The A-floor question (the flagged pick, A = 76 sixteen
+mm above the declared floor) rides with them.
+
+**Stage 2: NOT TRIGGERED, as the frozen prediction stated.** No
+genuine search problem remains: the scan is deterministic
+design-space narrowing under frozen gates, the pick is
+recorded, and the profile is fully determined analytically on
+both axes. The non-triggerment is itself the family finding:
+analytic synthesis replacing search, now on both axes.
+
+**Reading.** Option B holds boundary-honest, exactly as the
+frozen band predicted: the major radius holds the cap by
+0.068 mm, the worst pressure angle holds the target by 0.2634
+deg, the slot angle holds its target by about 2 deg, and the
+combined envelope is exactly consumed (binding: the cam-y
+plate). None of these headrooms is a margin gate -- the decision
+rule runs purely on the declared gates, all of which hold --
+but the design sits at the envelope's edge on three axes at
+once, which is the sharpest finding the audit produces and is
+exactly the question set the armed triggers carry to the
+debate channel. The succession chain is complete with lineage:
+the six-bar position plateau (0.1484 / 0.1219 / 0.12570),
+Option A's analytic wide fail (72.6645 deg), Option B HELD
+(29.7366 deg at the pick) -- recorded outcomes are data and
+are never rewritten.
+
+**Machine.** the-hub, Python 3.14.4, one invocation of
+jobs/dualcam-lever-transfer-06/dualcam_lever_design.py from the
+repository root, plus two redirected runs (run1.txt, run2.txt)
+diffed byte-identical; the full stdout shared by Jean is the
+verbatim record.
