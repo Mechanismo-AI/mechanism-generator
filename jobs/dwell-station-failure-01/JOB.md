@@ -281,3 +281,85 @@ outcomes are data and are never rewritten.
 3. Readings to report back: exit codes; the run counts; the digest's
    witness line; the pool-min line with the D2 ratio and branch; the
    classification histogram; the Python version line.
+
+## Recorded outcome (2026-10-19)
+
+**Run of record (the-hub; merged main 21f065d plus the PR #62 digest
+fix, merge f24f5646):** both crank directions completed as
+full-budget zero-selection searches -- 18 candidates each, pose
+qualification position-and-orientation 0/18, portfolio path_ok /
+selection_ok / engineering_ok all 0/18, selected 0; ~27.7 s positive
+/ ~26.4 s negative; run root
+runs/dwell-station-failure-01/results/task-001/either/2026-10-18_22-10-36_210120.
+The pool is exactly the case-B record (the same 18 candidate ids per
+direction; qualification histogram physical_only_path_rejected 18/18
+in both) -- the identical-pool expectation held. Python 3.14.4 on
+the-hub (the digest is pure standard library).
+
+**Instrument incident, recorded in full (the honest story):** the
+digest's first run against this run root failed FAIL-CLOSED on every
+row -- the reproduction guard caught a real instrument bug, not a
+run problem. Root cause: the engine records base_angle in RADIANS
+(r25b.decode_refinement_variables applies torch.remainder(raw[8],
+2*pi) directly in the torch kinematics) and the staged digest fed
+the CSV value into the embedded kernel as degrees. The fix (PR #62,
+merged as f24f5646): one boundary conversion radians -> degrees at
+the digest's CSV input; the kinematic kernel untouched. Verified
+before staging on Jean's two real negative-direction rows (all six
+recorded pose errors reproduce within 5e-10 against the 1e-6
+tolerance) and on a synthetic radians-base replica (the old digest
+fails with the same signature; the fixed digest scores all rows).
+The PR #61 pre-staging validation was self-consistent -- built with
+the same wrong assumption, it could not catch itself; disclosed
+here and in the PR #62 body. The engine record was never in
+question. The rerun of record: two digest runs, diff EMPTY
+(DIFF-EMPTY), witness PASS (every row reproduced recorded
+error_1..3 at recorded phase_1..3_deg within 1e-6), scored 36,
+excluded 0.
+
+**Scorecard verdicts (frozen above; all read on the machine run):**
+
+- **D1 CONFIRMED:** zero candidates hold 0.3 mm for 50 deg at the
+  station ("candidates holding 0.3 mm for 50 deg at the station:
+  0"). The expected honest outcome, not an error.
+- **D2 CONFIRMED, the as-predicted >= 10x branch:** pool-min
+  station radius 0.611071 normalized (61.107 mm) = 203.69x the 0.3
+  mm demand -- squarely inside the predicted one-to-two-orders
+  class. The frozen 3-10x read-before-staging branch did NOT fire:
+  the failure is unambiguous and the capability step proceeds
+  without the symmetry-or-capability re-read.
+- **D3 CONFIRMED, cusp-inclusive:** all 36 best windows classify
+  apex (histogram apex/apex 36 -- every station and free window).
+  ZERO cusps in the pool, recorded as capability evidence: the cusp
+  synthesis freedom is unrepresented in this four-bar pool.
+- **D4 HELD (control):** no candidate passed anywhere; nothing
+  refutes the failure reading.
+
+**Design-relevant readings:**
+
+- Station-vs-free gap: pool-min free radius 0.278531 (27.853 mm) vs
+  pool-min station radius 0.611071 (61.107 mm) -- free < station:
+  the pool's coupler curves DO have quiet regions (the best free
+  50-deg window wanders ~28 mm) but cannot place those apexes at
+  the station (the free anchors sit at |x| ~1.7-3.8, far from the
+  (0, 0.5) station). Two compounding failures: stillness (~93x the
+  demand even station-independent) and placement (apex-to-station,
+  +33 mm more at the pool minima). This is the dual-cam-vs-six-bar
+  question's data point: apex placement is the synthesis freedom
+  the pool lacks, while the stillness residue is a coupler-curve
+  property.
+- Widest contiguous 0.3 mm window at the station: 0.000 deg for all
+  36 rows -- no candidate holds the region for even one interval
+  (the curves pass within several mm of the station at the matched
+  poses but never dwell in the region).
+- Window-width and drift rows are in the pasted digest output
+  (digest_run1.txt on the-hub, byte-identical to run2); per the
+  frozen rule, drift is data and was never scored.
+
+**Next:** the capability step per the case-study loop, preceded by
+the debate round (the frozen rule). The recorded preview stands
+(dual-cam dwell-arc line leading; the six-bar arc-riding line
+second -- this digest's zero-cusp pool gives the latter no support),
+and the envelope will be declared WITH lineage at capability-freeze
+time, derived rather than defaulted. Recorded outcomes are data and
+are never rewritten.
