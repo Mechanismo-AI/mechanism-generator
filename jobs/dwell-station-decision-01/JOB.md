@@ -1,6 +1,6 @@
 # dwell-station-decision-01 -- case study A capability-to-spec/decision record
 
-Status: Staged; awaiting run
+Status: Run recorded
 
 This job records the dwell-station capability-to-spec/decision step of the
 case-study loop (brief -> failure analysis -> capability -> THIS STEP),
@@ -175,3 +175,78 @@ S1-S6 reading. Zero divergence from the staging reading is expected (the
 deterministic prediction pattern). After the outcome records: case study
 A's spec-side step (the OMTS dwell-duration vocabulary question), with
 this decision as its input.
+
+## Recorded outcome (2026-10-19)
+
+- The machine run of record (Jean, on the-hub, after merging PR #66:
+  public main f5506ed): git pull (fast-forward 193a112..f5506ed), two
+  runs of dwell_station_decision.py redirected (decision_run1.txt /
+  decision_run2.txt), external diff EMPTY, exit 0, in-process last line
+  "double-run determinism check: IDENTICAL". The two pasted reports
+  are byte-identical (6,590 bytes each; boss-verified against the
+  paste-back). One environment detail, disclosed: the paste-back
+  transcript did not capture a Python version line (the JOB asked for
+  one); determinism and exit-0 evidence are complete without it, and
+  it is not a scorecard item.
+- ZERO divergence from the staging smoke-test reading in every printed
+  digit: every number in the machine report matches the staging reading
+  exactly (the deterministic prediction held again). One honest,
+  disclosure-level nuance: the staging paragraph quotes the K1-class
+  witness values (dwell max |slide| 0.000000 mm over the 1065-sample
+  amended arc; stroke 260.000000 mm) as readings; the instrument checks
+  these fail-closed internally and prints the [A]/[B] PASS lines rather
+  than the raw digits. Staging and machine executed the same pinned
+  bytes, so there is no divergence between them -- the staging paragraph
+  described the internal checks the machine output summarizes the same
+  way. No scorecard item is affected: S2's witness requirement is
+  carried by the fail-closed PASS.
+- Frozen S1-S6 all CONFIRMED on the run of record:
+  - S1 ORACLE CONFIRMED: [A] PASS, every pinned value as recorded
+    (allowance 0.00 deg; allocation 77.50/50.00/77.50/155.00 deg;
+    junction peaks 350.63/175.32 mm/rad^2; direct major 464.44 mm
+    WIDE-FAIL at 163.0%; lever majors 135.76/119.92 mm PASS; knees WC
+    0.2000/0.0585/0.0516 mm; widths at the working class
+    52.70/0.00/0.00 deg).
+  - S2 AMENDMENT CONFIRMED: w_raw = 53.80 - 50.60 = 3.20 deg; w = 3.20
+    deg; amended cycle 76.70/53.20/76.70/153.40 deg (sums exactly
+    360.00 deg); amended junction peaks 357.99/178.99 mm/rad^2 (the
+    price of the wider dwell arc, faster rises); the K1-class witnesses
+    pass fail-closed; the 0.05 mm pick sits inside both knees
+    (0.05846/0.05164 mm).
+  - S3 THE RESTATED GUARANTEE CONFIRMED (the actor's blocking item
+    CLOSED): band-hi 53.80 deg / band-lo 54.60 deg at the 0.05 mm
+    zoned working class; 53.20 deg at the knee -- the construction-exact
+    arc itself, demand 50 deg + 3.20 deg of declared nominal margin;
+    the >= 50 deg demand met at every profile class inside the knee,
+    fail-closed; direct-on-amended 55.90 deg reported as data, not the
+    picked line.
+  - S4 THE RE-CHECKED TABLE CONFIRMED: band-lo major 136.53 mm
+    (+148.47 mm headroom), band-hi 120.60 mm (+164.40 mm); both PASS
+    the 30 deg target and the 45 deg hard gate; min |rho| 47.79/42.21 mm
+    vs the 18.75 mm floor (margins 29.04/23.46 mm); direct 467.09 mm
+    still WIDE-FAIL (163.9%); amended junction peaks 357.99/178.99
+    mm/rad^2 (+2.1%/+2.1% vs the recorded cycle, data).
+  - S5 CONTROL CONFIRMED: the sha256 read-only witness verified at the
+    top of the report; no OMTS vocabulary in the output; the recorded
+    K1-K8 record untouched; the pair trigger, the fallback trigger, the
+    pivot deferral and the derivation chain all on the page.
+  - S6 DETERMINISM CONFIRMED: in-process byte-identical ("double-run
+    determinism check: IDENTICAL" in both files); the machine's
+    external diff EMPTY.
+- THE DECISION READING: case study A's dwell-station
+  capability-to-spec/decision step is CLOSED. The picked instance line
+  is the lever + tolerance zoning design with the declared width
+  amendment: nominal dwell arc 53.20 deg, guaranteed width 53.80 deg
+  (band-hi) / 54.60 deg (band-lo) at the 0.05 mm zoned class and
+  53.20 deg at the knee, headroom intact at both angle gates on the
+  amended cycle. The direct + renegotiation fallback stands live with
+  its trigger; the pivot-joint class deferral stands with its trigger;
+  the duration-knee == position-knee finding and the 0.00 deg allowance
+  rule are recorded physics. The decision round's blocking item is
+  discharged: the lever line's guaranteed dwell width is a recorded
+  number in a run-of-record report.
+- NEXT per the loop: case study A's spec-side step -- the OMTS
+  dwell-duration vocabulary question, with this decision as its input
+  (claim-only-what-exists; the recorded predictions stand: duration
+  windows may be nearly free on the existing sync machinery; one
+  tolerance realization serves both channels).
