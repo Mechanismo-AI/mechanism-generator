@@ -171,6 +171,92 @@ search (the ONE freeze document before any wiring; no run claimed)
   recorded reason. "One more warm-start experiment" is exactly
   the deferral shape the tripwire was built to catch.
 
+## The transfer re-run freeze under representation 1.0 (2026-10-20, the supplier-version scoping discharge; frozen before any wiring)
+
+- WHY: PR #95 (the corpus decision) is merged at main 781a2352 -- the
+  design-conditioned representation LANDS as flip-station cam supplier
+  representation 1.0. The original freeze (PR #90) carried the
+  SUPPLIER-VERSION SCOPING clause: if the representation lands, this
+  datum re-runs under the new representation before it carries
+  forward as current. This freeze stages that re-run BEFORE any
+  wiring, per the gate-then-run-staging pattern. No new debate
+  round: the corpus-decision fold (unanimous; recorded in PR #95)
+  already froze the shape -- the re-run rides behind the landing as
+  confirmation, never gates it; the exact re-run comes first for
+  single-axis attribution; the old-vs-new comparison row is explicit.
+- THE EXACT RE-RUN: 4 warm-start runs + 12 seeded baseline trials
+  (4 demands x 3 seeds), drawn EXACTLY ONCE. The consuming context
+  is READ from the pinned corpus, never transcribed: the
+  case-study design d=0.2 / C_y=0.0 via the trainer's fail-closed
+  discover_chosen_design, 2 recorded handoff poses x 2 grooves,
+  the 1.5 mm band re-posed as an ACTIVE constraint. AX2 search
+  spec verbatim: steepest descent on the pinned capability oracle,
+  initial step 0.01 halved on failure, min 1e-12, max 100
+  iterations, early stop in band. Baseline draw rule verbatim:
+  seeded uniform draw in the per-groove TRAIN-split bbox over ALL
+  trained cells, seeds 580000050/51/52, a fresh Random per seed,
+  draw order (d, C_y, groove, t). The baseline is expected to
+  reproduce the recorded numbers exactly; any deviation is a
+  RECORDED FINDING, never a re-draw.
+- SINGLE-AXIS CHANGE: only the warm-start supplier version
+  changes, from the recorded per-cell 49-feature map to
+  representation 1.0: the frozen 49-feature Fourier basis
+  [1, cos(k t), sin(k t)] with k=1..24, plus the design channel
+  [d, C_y], plus first-order products = 147 features per groove;
+  ONE model per groove across the 6 train cells; RIDGE_LAMBDA=1e-08.
+  The builder is pinned function-plus-data per the PR #58 standard:
+  the builder spec and the training-row source hashes are pinned at
+  instrument staging. The LINE gate wiring is unchanged; the
+  learned component answers directly at the actual design.
+- COMPARISON ROW EXPLICIT: the recorded run of record (PR #91,
+  merged at 5eeaee79): WIN/TIE 4/4, in-band 4/4, oracle calls
+  warm-start mean 1.0 vs baseline mean 207.5, ratio 0.0048,
+  final-distance means 7.057537e-05 vs 5.299213e-01 units. The
+  AX2 context datum (16/16 at ~1/10 cost, mean 22.0 vs 211.5) is
+  carried as context only, never as this re-run's old side. The
+  report carries the old-vs-new comparison row explicitly so the
+  change is read, not inferred. Broader consumption is its own
+  later freeze.
+- FROZEN PREDICTION (never a gate): PRIMARY, the cost channel --
+  the representation-1.0 warm start wins or ties every actual
+  demand at a fraction of baseline calls, at least as good as
+  recorded. Honest counter-branch: any loss, degradation, or
+  out-of-band finish is recorded as CONTEXT-DEPENDENCE -- a
+  portability finding about the warm-start datum, never a gate
+  change, never an amendment of the landed coverage claim (the
+  two claims are independent per the folded Q2).
+- LABELING: INITIALIZATION-COST datum scoped to representation
+  1.0; SUPPLIER OUTPUT stands; the label-change event defined
+  and unfired; the substitution guard in force -- landing is a
+  supplier upgrade inside the framework, never a reframe that
+  the learned line won; case study C stays CLOSED.
+- PINS / ZERO-MOD: the original freeze and b1_transfer_run.py are
+  read-only protocol sources; the re-run instrument is a NEW
+  script (the next staging, frozen before any run). Trainer
+  b1_proposer_train.py sha256 1cb985ba...c5a9974 (26,268 bytes),
+  imported read-only. Capability instrument sha256
+  72989f8a...06447b (50,265 bytes), consumed read-only as the
+  distance oracle and ground-truth synthesizer. Corpus
+  cdac1413...39be6c (838 rows) through the trainer's fail-closed
+  loader as the REPRODUCTION ANCHOR. The representation-1.0
+  builder identity hash is pinned at instrument staging. The
+  mod-count row is expected 0; a nonzero count is a recorded
+  FAIL.
+- DETERMINISM / STOP: seed-free warm start via the frozen
+  exact-solve ridge; baseline recorded seeds only; no
+  wall-clock; the report IS the stop record; no artifact
+  written; double-run determinism; the budget is drawn exactly
+  once. Any change to the frozen numbers re-stages this
+  document before wiring.
+- MACHINE STEP: spec, NOT this staging. The next staging is the
+  re-run instrument: a NEW script, the original instrument as the
+  protocol source, the 147-feature builder as the pinned trainer
+  reference with lineage rows, frozen before any run. The
+  owner's run of record is at the recorded standard: the-hub,
+  motion venv, Python 3.14.4, repo root, the merged sha, two
+  redirected runs, external diff empty, exit 0. This staging is
+  docs-only: no machine step before or after this merge.
+
 ## Status
 
 Freeze staged (2026-10-20) -- the ONE warm-start transfer freeze
@@ -188,3 +274,9 @@ reverse with the mod-count row, determinism, supplier-version
 scoping, and the sequencing teeth carried. No wiring exists;
 the instrument is the next staging. No run is claimed. Docs-
 only: no machine step before or after this merge.
+
+Transfer re-run freeze under representation 1.0 staged (2026-10-20,
+post-record): the supplier-version scoping discharge, the section
+above, frozen before any wiring; the re-run instrument is the next
+staging. No run is claimed. Docs-only: no machine step before or
+after this merge.
