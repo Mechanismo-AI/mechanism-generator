@@ -276,8 +276,86 @@ machine step below.
   not to win; the expected outcome is an honest loss to
   closed-form plus the OOD degradation datum, both as data.
 
+## Recorded outcome (2026-10-20)
+
+The run of record (the-hub, the motion venv, Python 3.14.4, repo
+root, source commit cf1ad7e9d6d41e989225d0a70cc7796731c0efd9 --
+the PR #81 merge): two redirected runs, external diff EMPTY, exit
+0 both. Honest note, recorded as-run: the first attempt's run1.txt
+was a stale leftover of the dualcam-lever-transfer-06 audit (an
+earlier redirected run of a different job in the same working
+tree); the clean rerun completed the pair, and the clean pair is
+the record (the flip-station-capability-01 precedent). The report
+reproduced the staging rehearsal to every printed digit -- the
+deterministic prediction held exactly; the only per-run value is
+the artifact hash, by design (it embeds the source commit).
+
+Scorecard, read against the frozen sections above, numbers from
+the run's own printed report:
+
+- P0 PIN CHECKS: corpus sha256 cdac1413...39be6c and provenance
+  9c9fd6f9...3425a PIN MATCH; instrument sha256 72989f8a...06447b
+  PIN MATCH; schema succession accepted (additive 1.x, major 1).
+- P1 CORPUS AND SPLIT (counts computed, never transcribed): 838
+  rows; 720 groove_sample rows -- groove_1 288 train / 72 held
+  out, groove_2 288 train / 72 held out; held-out total 167 (144
+  solution rows; 23 not-scoreable kinds counted and recorded,
+  never dropped).
+- W WITNESS: 720/720 groove_sample rows re-derived exactly, worst
+  deviation 0.000e+00 (tol 1e-9): PASS; the chosen design
+  discovered from the corpus (d=0.2 / C_y=0.00), cross-checked.
+- T/A7: trained per-groove Fourier ridge (49 features, lambda
+  1e-8, exact solve, seed-free); the artifact
+  runs/b1-admission-gate-01/b1_proposer_v1.json sha256
+  ceebf162c8d11a5c97f042735b76465bf34e304039c2a74b660e8ebc41745678
+  written and hashed BEFORE any score was computed (the A7 order).
+- A2 CLOSED-FORM HEAD-TO-HEAD (both numbers per row in the
+  report): median held-out distance 8.322194e-06 units (0.0008 mm;
+  0.0006 x the 1.5 mm tolerance), worst 5.650397e-05 units
+  (0.0057 mm; 0.0038 x). An honest loss to closed-form, recorded
+  as data -- the expected first-run outcome.
+- A6 INITIALIZER HEAD-TO-HEAD: baseline seeded random-restart
+  medians 1.051126e+00 / 1.170167e+00 / 1.133789e+00 units (seeds
+  580000050/51/52); the learned median (8.322194e-06) is below
+  all three -- the learned supplier beats the random-restart
+  baseline on every seed while losing to closed-form, exactly the
+  supplier-grade picture the gate was built to surface.
+- A5 OOD PROBE (design shift, frozen provenance): groove_1 at
+  plate angle 90.0 deg under d=0.4 / C_y=0.25; closed-form
+  (0.65000000, 0.00000000); learned (0.70000776, 0.00000005) --
+  the design-invariant model answers the CHOSEN design's point.
+  Probe distance 5.000776e-02 units (5.0008 mm; 3.3339 x
+  tolerance), 885.0308 x the worst held-out distance; no fallback
+  wired; gross degradation exactly as the frozen expectation
+  predicted (the PR #44 OOD failure class, reproduced as data).
+- A1 ZERO INSTRUMENT MODIFICATION: pin matches are the evidence;
+  modification count 0. ADMISSION HOLDS.
+- A3 DETERMINISM: seed-free exact solve (declared); external pair
+  diff EMPTY, exit 0; in-process check IDENTICAL.
+- A4 SUPPLIER-OUTPUT LABELING: the label stands (no head-to-head
+  win; on the distance metric closed-form scores 0 by
+  definition). The label-change event remains defined and unfired.
+- Frozen predictions P1-P4: all HELD (P1 honest loss, metric
+  definition; P2 median 8.322194e-06 < 0.015; P3 OOD ratio 885
+  >= 10; P4 all three baseline medians exceed the learned).
+
+ADMISSION VERDICT: the run is ADMISSIBLE (every A-row reported;
+A1 holds). It is the B1 line's first admissible run: gradeable,
+not a win -- an honest loss to closed-form in-distribution, a
+clear OOD degradation datum, and a supplier that beats random
+restart on every seed while losing to closed-form. Label: SUPPLIER
+OUTPUT (LEARNED -- no head-to-head win).
+
+Machine line: the-hub, Intel i5-10400T, Python 3.14.4, the motion
+venv; the owner pasted the run report back and the numbers above
+are the run's own printed output.
+
 ## Status
 
-Gate frozen; run staged (2026-10-20); awaiting the run. Parallel
-line per the fork: the flip-station-sixbar-01 motion JSON desk
-derivation.
+Run recorded (2026-10-20) -- the first admissible B1 run: an
+honest loss to closed-form in-distribution (median 8.3e-06
+units), a clear OOD degradation datum (885x the worst held-out),
+and the learned supplier beats the random-restart baseline on
+every seed; SUPPLIER OUTPUT stands. Next on the B1 line: where
+the learned supplier goes from here per docs/strategy.md (the
+head-to-head win condition remains defined and unfired).
