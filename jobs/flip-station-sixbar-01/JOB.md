@@ -324,20 +324,112 @@ flip_sixbar.motion.json in this directory)
   the deg/deg and deg/deg^2 figures above are the same numbers in
   degree units.
 
+## The S2-S4 audit script (staged; the frozen instrument is
+flip_sixbar_audit.py in this directory)
+
+- SCOPE (this job's own audit; the cam script's discipline carried:
+  deterministic, pure stdlib, fail-closed, reads the solver's
+  emission but never re-gates it). Consumes --task the frozen
+  motion JSON, --result the schema-3 result file(s), and a 40-hex
+  --source-commit; emits the report plus the corpus
+  runs/flip-station-sixbar-01/flip_station_sixbar_v1.{jsonl,csv}
+  (schema 1.1, units block + provenance on every row, unknown-kind
+  refusal).
+- S0: the validator's own rules re-applied fail-closed (five
+  fields, uniform 12-phase grid, branches, 12x3 finite, centroid
+  and unit-diagonal) plus the staging-integrity pins (the demand
+  orientation pins at phases 0/2/4; the handoff dwells -- zero
+  angular rate AND acceleration -- at the handoff phases 0/4 only;
+  phase 2 is the through-vertical transit, deliberately NOT a
+  dwell). Frame mapping DERIVED, never transcribed: the carry
+  endpoints x = -130/+130 mm fix the scale, phase 0 the centroid,
+  with fail-closed checks against the recorded 260 x 90 mm
+  bounding box and the exact demand poses.
+- S1: native consumption of the six-channel per-sample emission
+  (read-only); the packaging overlay 1.5 mm / 1.5 deg at the
+  demand phases; and a kinematics cross-check -- position and
+  orientation errors recomputed by the script's own independent
+  assembly at all twelve phases vs the emission, abort on
+  disagreement (1e-4), None entries recorded as data.
+- S2: the per-joint folded transmission angle arccos(|cos|) at B
+  (A-B-Q) and C (D-C-R) on a 0.25 deg grid (1440 samples, a subset
+  of the solver's own sweep): hard gate >= 40 deg, target >= 50 deg
+  (the freeze correction); worst value + crank phase reported;
+  edge-length self-check and cycle closure fail-closed; an
+  undefined assembly is a loud ERROR, never a quiet pass.
+- S3: the exact 100 x 5 mm part rectangle (identity mount, the B2
+  seam declaration carried) swept at the same grid; the
+  utilization/headroom table (the -06 precedent; rows are data, no
+  size gate); linkage joint sweep and ground pivots; no keep-out
+  gate (the Q4 deferral carries).
+- S4: the analytic 4x4 constraint Jacobian over the five
+  manufactured bar lengths (the attachment triangle, tool,
+  ground pivots and mounting angle declared unpriced scope);
+  sensitivities scale-invariant (mm/mm) with the orientation gain
+  in deg/mm; worst case over the 32 sign corners (exact
+  enumeration); scored at the handoff phases (0/4) vs the 1.5 mm /
+  1.5 deg overlay, the through-vertical phase 2 recorded as data;
+  the declared 0.1 mm manufactured-length class (the cam 0.1 mm
+  clearance lineage, the -07 uniform-class precedent). A
+  finite-difference self-check re-solves the exact assembly at
+  every scored phase and aborts on disagreement; rank deficiency
+  fails closed. The 5 deg sensitivity curve is compared against
+  the frozen peak-location prediction honestly (CONFIRMED /
+  REFUTED, data either way).
+- S5: double-run determinism (compute twice, byte-identical);
+  the instrument-modification count row (expected 0; read-only
+  consumption of the solver and its emission); the changelog row.
+- DESK VALIDATION (the honest record; every number computed this
+  staging, none transcribed): the script's own finite-difference
+  discipline caught five analytic bugs before this staging --
+  (1) matrix scaling ops, (2) the missing LU pivot permutation,
+  (3) the implicit-function-theorem rhs sign (J dX = -(dG/dL)),
+  (4) the output chain's free-derivative convention, and (5) a
+  projected-vs-free mixing between the constraint Jacobian's
+  third row and its right-hand side (worst deviation 4.207e-01
+  before the fix; the two forms differ by a row operation that is
+  legal only applied to both). After the fixes: the analytic
+  sensitivities match central differences of the exact re-solved
+  assembly to 6.012e-10 over 20 configurations on three
+  mechanisms including a near-toggle, against the 1e-6 tolerance.
+  The end-to-end harness (the actual frozen task JSON plus two
+  synthetic schema-3 fixtures) then caught one more: the handoff
+  dwell pin was wrongly applied at the through-vertical phase 2
+  (whose 2.8125 deg/deg rate is the recorded demand peak) instead
+  of the handoff phases 0/4; fixed to HANDOFF_PHASES. After all
+  fixes: end-to-end exit 0, double-run determinism IDENTICAL, a
+  406-row corpus with sha256 (jsonl)
+  cc215141160ceeb0c2561377b35e7f1a9dcae8b7d8573d09ca61b5cec41b5279
+  and (csv)
+  c7ed43282103421867fcc6dffbb604580de58416026f1c50b0416e0f91a22a1d;
+  the in-run FD
+  self-check max deviation 8.075e-10; the kinematics cross-check
+  deviation exactly 0.000 against the harness emission. Six
+  fail-closed paths verified loud (missing --source-commit, a
+  39-char sha, a schema-2 result, a duplicate seed, a tampered
+  task centroid, a tampered emission value): every one exits
+  nonzero with a FAIL-CLOSED message, none a quiet pass.
+
 ## Machine step (the S1 run; the source commit is the merge that
 carries this motion JSON AND the S2-S4 audit script)
 
-- The S2-S4 audit script (the per-joint transmission-angle audit
-  over the cycle, the swept-envelope utilization/headroom table, the
-  Jacobian-based link-length sensitivity rows -- this job's own
-  audit, the cam script's discipline) is the NEXT STAGING on this
-  line; the machine step below follows ITS merge, per the frozen
+- The S2-S4 audit script is staged (the section above); the
+  machine step below follows THIS staging's merge, per the frozen
   spec above.
 - the-hub, the motion venv, repo root:
 
   mechanism-motion jobs/flip-station-sixbar-01/flip_sixbar.motion.json --seed 580000050 --output runs/flip-station-sixbar-01/result-580000050.json
   mechanism-motion jobs/flip-station-sixbar-01/flip_sixbar.motion.json --seed 580000051 --output runs/flip-station-sixbar-01/result-580000051.json
   mechanism-motion jobs/flip-station-sixbar-01/flip_sixbar.motion.json --seed 580000052 --output runs/flip-station-sixbar-01/result-580000052.json
+
+- then the audit, repo root, same venv (the merge sha of this
+  staging's merge as the source commit):
+
+  python3 jobs/flip-station-sixbar-01/flip_sixbar_audit.py --task jobs/flip-station-sixbar-01/flip_sixbar.motion.json --result runs/flip-station-sixbar-01/result-580000050.json --result runs/flip-station-sixbar-01/result-580000051.json --result runs/flip-station-sixbar-01/result-580000052.json --source-commit <40-hex merge sha>
+
+- The audit emits its report plus the corpus
+  runs/flip-station-sixbar-01/flip_station_sixbar_v1.{jsonl,csv}
+  with sha256s regardless of verdict.
 
 - Two runs byte-identical per the recorded standard (external diff
   empty; in-process check IDENTICAL); an empty second output is
@@ -347,4 +439,4 @@ carries this motion JSON AND the S2-S4 audit script)
 
 ## Status
 
-Task staged: the motion JSON derived and desk-validated; the S2-S4 audit script is the next staging; the machine step follows its merge.
+Task staged: the motion JSON derived and desk-validated; the S2-S4 audit script staged and desk-validated (six analytic/fail-closed bugs caught and fixed by its own FD and end-to-end harnesses before staging); the machine step (the three-seed run plus the audit) follows this staging's merge.
