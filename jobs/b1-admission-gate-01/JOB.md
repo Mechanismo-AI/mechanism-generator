@@ -350,12 +350,139 @@ Machine line: the-hub, Intel i5-10400T, Python 3.14.4, the motion
 venv; the owner pasted the run report back and the numbers above
 are the run's own printed output.
 
+## B1-line next-step decision (2026-10-20): the fallback
+re-probe frozen; Direction 2 committed with its disciplines;
+Direction 3 adopted as labeling, its verdict framing rejected
+
+- THE DECISION (the owner's relay of the actor/critic round; the
+  recorded single-word answer: Direction 1, with Direction 2
+  committed behind it): wire the OOD fallback and re-probe the
+  frozen design-shift case FIRST; then the synthetic budgeted
+  expansion; the recorded supplier run stays as data throughout
+  and the case-study loop advances on its own queue.
+- A BOSS CORRECTION, recorded for honesty (claim-only-what-
+  exists): the round's "partial admission" framing is NOT the
+  frozen text. The gate froze A5 as "the frozen OOD probe
+  exercised with its fallback behavior recorded AS-IT-RUNS",
+  and the run staging froze "Fallback: NONE is wired in the
+  first run (frozen)" -- both were honored by the run of
+  record. The first run is a COMPLETE admission; nothing is
+  reopened. The round's spirit is still right: A5's purpose is
+  a characterized fallback behavior, and the recorded datum is
+  a NO-FALLBACK degradation. The fallback-equipped re-probe is
+  therefore the line's NEXT STAGED ITEM -- a continuation the
+  recorded OOD datum demands, not the completion of an
+  incomplete admission.
+- THE FALLBACK RE-PROBE FREEZE (frozen before any run; the
+  instrument script is the NEXT staging after this merge, per
+  the gate-then-run-staging pattern; NO script and NO run is
+  claimed here):
+  - FALLBACK SEMANTICS (frozen): a DESIGN GATE in front of the
+    trained supplier. The demand carries its design (d, C_y) as
+    declared context. If the demand's design is the trained
+    design (d=0.2 / C_y=0.0, DISCOVERED from the corpus as at
+    the first run, never hardcoded), the learned supplier
+    answers and the output is labeled LEARNED. If the design
+    differs, the supplier answers from the closed-form supplier
+    (the instrument's own groove_point) and the output is
+    labeled FALLBACK: CLOSED-FORM (design mismatch), the
+    mismatch recorded. Both branches answer every demand;
+    nothing is silently dropped. The fallback is a declared
+    supplier behavior, never a gate value.
+  - THE RE-PROBE (frozen): the SAME OOD probe as the first run
+    (groove_1, plate angle 90.0 deg, design d=0.4 / C_y=0.25,
+    provenance unchanged), run through the fallback-equipped
+    supplier; the un-fallbacked learned answer is ALSO recorded
+    and must match the first run's recorded answer digit for
+    digit (a reproduction check on the supplier).
+  - THE B2-SIGNATURE TEST (frozen rubric): classify the
+    recorded design-shift failure against B2's diagnostic
+    vocabulary: (a) REPRESENTATION-SCOPED -- an artifact of
+    representation or convention, rescuable by a representation
+    change (B2's case-B artifact class); (b) DATA-LIMITED -- a
+    genuine coverage limit (B2's case-C answer class);
+    (c) NEW SIGNATURE -- neither; a recorded finding either
+    way. The classification records which representation the
+    supplier actually uses against B2's answer. Frozen
+    prediction (never a gate): (b) DATA-LIMITED -- the
+    architecture is design-invariant BY FREEZE (design features
+    deliberately excluded at the run staging), so no
+    representation rescue exists to test; the design channel is
+    absent from the function, a coverage limit by construction,
+    matching B2's case-C class. If confirmed: the fallback
+    wiring is a bandage and design coverage (Direction 2's
+    growth, or a design-conditioned representation as a future
+    corpus decision) is the disease. If refuted: a genuinely
+    new failure mode, recorded as a finding that redirects
+    Direction 2.
+- DIRECTION 2, COMMITTED WITH ITS DISCIPLINES (frozen as
+  requirements on the expansion freeze document; that document
+  is staged only after the re-probe's answer exists -- the
+  answer redirects the expansion):
+  - SYNTHETIC ANALYTIC EXPANSION ONLY: exact ground truth from
+    the parameter spaces (analytic synthesis), no new case
+    studies or briefs; the fired tripwire's mandate is
+    generation investment, never harvest.
+  - ONE FREEZE DOCUMENT BEFORE ANY GENERATION (the critic's
+    first delta, adopted): the expansion budget (declared
+    synthetic demand count, coverage declaration across the
+    parameter spaces, stated stop condition), the
+    train/held-out split rule, and the coverage map -- which
+    demand cells train, which are held out, and a declared
+    interpolation-vs-extrapolation split among the held-out
+    cells -- frozen as ONE document BEFORE the first synthetic
+    point is generated. Reason recorded: with one generator
+    drawing both splits, an after-the-fact split measures the
+    generator's coherence, not the supplier's generalization
+    (the retune-on-holdouts rule of the weights decision,
+    extended to holdout creation).
+  - PRE-DECLARED COMPARISON AXES (the critic's second delta,
+    adopted): on the accuracy axis the head-to-head is
+    preordained (closed-form synthesis is exact, instant, and
+    free; a distance-only comparison could not come out
+    otherwise), so the informative axes are named BEFORE the
+    expansion is designed and the budget is allocated to power
+    them. Declared axis candidates: feasibility prediction (on
+    demands where the closed form is infeasible, does the
+    supplier predict infeasibility -- the coverage question);
+    constrained-variant warm-start (where constraints break
+    the clean closed form and search reappears, does a learned
+    initialization beat random restart -- the PR #44 failure
+    mode's redemption path); cost under demand variety. The
+    critic's frozen prediction, recorded: the supplier's honest
+    value in this regime lives in the first two axes, not in
+    accuracy.
+  - BOTH-DIRECTIONS HONESTY: the expansion exists so the
+    head-to-head is POWERED, not so it passes; a supplier that
+    honestly loses to closed-form on a properly-powered
+    head-to-head is a successful B1 outcome -- the framework
+    graded a supplier; that is the product working. "Grow
+    toward the head-to-head" may never become "train until we
+    win" (the budget-with-stop-condition exists for exactly
+    this).
+- THE STANDING STATE (Direction 3's housekeeping adopted as
+  labeling; its verdict framing rejected): the recorded
+  supplier run stays as data, never rewritten; the grade stays
+  open by design (admission item 4 working as frozen, not
+  evidence of failure); one run is never a verdict in either
+  direction (the -02 lesson: near-miss is not structural, and
+  one run is not a verdict). The supplier line advances on its
+  own queue (the fallback re-probe, then the budgeted
+  expansion); the case-study loop advances on its own (the cam
+  class ruling under its frozen schema; the six-bar line under
+  its own recorded triggers) -- neither blocks nor waits on the
+  other.
+
 ## Status
 
 Run recorded (2026-10-20) -- the first admissible B1 run: an
 honest loss to closed-form in-distribution (median 8.3e-06
 units), a clear OOD degradation datum (885x the worst held-out),
 and the learned supplier beats the random-restart baseline on
-every seed; SUPPLIER OUTPUT stands. Next on the B1 line: where
-the learned supplier goes from here per docs/strategy.md (the
-head-to-head win condition remains defined and unfired).
+every seed; SUPPLIER OUTPUT stands. Next-step decision recorded
+and frozen (2026-10-20, this staging): Direction 1 -- the
+fallback re-probe (frozen above; the instrument script is the
+next staging) -- with Direction 2 (the synthetic budgeted
+expansion under its frozen disciplines) committed behind it; the
+standing state is labeling, not a verdict. No script and no run
+claimed here.
