@@ -784,3 +784,19 @@ The line's standing record is now the B1 two-candidate decision
 STAGING, and the design-conditioned representation freeze is
 committed as the next B1 staged item behind it, with the
 substitution guard and the silent-deferral tripwire.
+
+## The corpus decision pointer (2026-10-20)
+
+The corpus decision this gate's two-candidate section committed
+as item (1) -- the design-conditioned representation -- is
+DECIDED: it LANDS, as flip-station cam supplier representation
+1.0. The decision record, the declared boundaries at landing,
+the extension trigger, the reconstructible function-plus-data
+pin, the supplier-version scoping discharge (the warm-start
+transfer re-run riding behind the landing), and the
+endgame-as-prediction reading live in the post-record section
+of jobs/b1-representation-01/JOB.md; this pointer adds no new
+content and amends nothing here. Docs-only; no script, no run,
+no training, no measurement claimed. SUPPLIER OUTPUT stands; the
+label-change event remains defined and unfired; the substitution
+guard stands; case study C stays CLOSED.
