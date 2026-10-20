@@ -154,7 +154,130 @@ be gradeable.
 - This staging carries NO script and claims NO run. Docs-only: no
   machine step before or after this merge.
 
+## Run staging (frozen before any run; 2026-10-20)
+
+This section is the run staging the gate's machine-step spec named:
+it carries the instrument and freezes every first-run decision
+BEFORE any run, per the standing freeze-first discipline. No run is
+claimed here, and none is implied; the first run is the owner's
+machine step below.
+
+- THE DECLARED TASK (honest scope): the groove solution map of the
+  recorded cam space -- per groove, (groove id, plate angle) to
+  the exact closed-form groove point (gx, gy) under the RECORDED
+  chosen design (d=0.2 / C_y=0.0), 1 unit = 100 mm. The solution
+  rows are the corpus's 720 groove_sample rows (emission indices
+  27-746 of 838). This is a curve-fitting supplier on one recorded
+  design of one recorded family -- not a general mechanism
+  generator; the A4 label states exactly that.
+- THE INSTRUMENT: jobs/b1-admission-gate-01/b1_proposer_train.py
+  (pure stdlib, ASCII, Python 3.10+; its sha256 is recorded in the
+  PR that carries this staging and verified by the fetch-back
+  round trip).
+- PROPOSER ARCHITECTURE (frozen): per-groove Fourier-feature ridge
+  regression -- features [1, cos(k*x), sin(k*x)] for k=1..24 (49
+  features; x = radians of the plate angle), ridge lambda 1e-8 on
+  every diagonal (bias included), closed-form normal-equation solve
+  by Gaussian elimination with partial pivoting. No stochastic
+  component, no initialization (exact solve; seed-free by
+  construction). DESIGN-INVARIANT: the training solution rows span
+  the single chosen design, so design features are deliberately
+  excluded (ill-conditioning avoided); growth to multi-design
+  corpora is a future corpus decision, never an amendment here.
+- THE SPLIT: the gate's frozen rule unchanged -- 0-based JSONL
+  index i held out iff i mod 5 == 4; counts computed at the run,
+  never transcribed. Non-solution held-out rows are counted and
+  recorded as not scoreable for this task, never silently dropped.
+- THE EXACT DISTANCE FUNCTION (frozen): Euclidean in task-layer
+  units, per-row plus median (mean of the two central order
+  statistics when even) plus worst over the held-out solution
+  rows; presented also in mm and as a ratio to the 0.015-unit
+  (1.5 mm) handoff tolerance -- presentations of the same
+  function, never gates.
+- A1 OPERATIONALIZED: corpus sha256 pin
+  cdac1413f61e9262d498142f72081fc3698924ab9df461c06a21b0854039be6c
+  and instrument sha256 pin
+  72989f8a1183647f5cbf47c6db92b0cdc63eead355acb25f1dd42adedc06447b
+  (50,265 bytes) verified at the run; a pin match IS the
+  zero-modification evidence (mod count 0); any mismatch fails
+  closed before a byte is trained.
+- REPRODUCTION WITNESS (the PR #62 dwell-digest lesson applied
+  forward): every groove_sample row is re-derived through the
+  instrument's own groove_point before training (tolerance 1e-9,
+  fail-closed); the chosen design is DISCOVERED from the corpus
+  (the chosen=true sweep gate row, cross-checked against the
+  design_parameter rows) -- nothing is hardcoded.
+- OOD PROBE (A5, frozen with its provenance): groove_1 at plate
+  angle 90.0 deg under design (d=0.4, C_y=0.25). Provenance,
+  stated against the corpus: every training solution row carries
+  the single chosen design d=0.2 / C_y=0.0, and the model is
+  design-invariant, so the probe sits outside the training
+  corpus's solution distribution in DESIGN; the angle is
+  in-distribution, isolating the design shift. The probe design
+  lies inside the recorded SWEEP_D x SWEEP_CY envelope but exists
+  there only as a gate aggregate row (never sampled; that row is
+  itself held out at index 14). Fallback: NONE is wired in the
+  first run (frozen); behavior is recorded as-run. Frozen
+  expectation (a prediction, never a gate): gross degradation,
+  mirroring the PR #44 initializer OOD failure class.
+- BASELINE SEED SET (A6): 580000050, 580000051, 580000052 -- a
+  seeded random-restart supplier, uniform in the per-groove
+  TRAIN-split bounding box, one restart per held-out row, draws
+  in corpus order (Mersenne Twister via random.Random); the
+  learned model itself is seed-free (declared above).
+- A7 ORDER (code-enforced): the trained artifact is written to
+  runs/b1-admission-gate-01/b1_proposer_v1.json and its sha256 is
+  printed BEFORE any score is computed. The artifact embeds the
+  run's source commit, so its identity hash is per-run by design
+  (lineage), never a rehearsal constant.
+- A4 READING: on a distance-to-closed-form metric the closed-form
+  scores 0 by definition, so the learned line can at best tie --
+  the SUPPLIER OUTPUT label stands and the label-change event
+  remains defined (with its numbers) and unfired.
+- FROZEN PREDICTIONS (read at the run; never gates): P1 the
+  learned model does not beat closed-form (metric definition;
+  lean HELD); P2 median held-out distance < 0.015 units (lean
+  HELD); P3 the OOD probe distance exceeds the worst held-out by
+  at least an order of magnitude (lean HELD); P4 every baseline
+  seed's median exceeds the learned median (lean HELD).
+- MACHINE STEP (the owner's; the recorded standard): from the repo
+  root, the motion venv, Python 3.10+:
+  python jobs/b1-admission-gate-01/b1_proposer_train.py
+  --source-commit <merged-40-hex-sha> > run1.txt (twice), then
+  diff the pair -- empty and exit 0 is the record; paste the
+  report back for the A1-A7 reading. If runs/flip-station-
+  capability-01/ is absent, regenerate the corpus read-only first
+  (python jobs/flip-station-capability-01/flip_capability.py
+  --source-commit 9c9fd6f9f1724e683ed053f621f95fe5a283425a) and
+  verify the jsonl sha256 against the pin above; the script also
+  fails closed with exactly this instruction if the corpus is
+  missing.
+- STAGING REHEARSAL (disclosed; NOT the run of record): the corpus
+  of record was regenerated from the merged instrument at staging
+  and matched the pinned sha256 cdac1413 exactly (838 rows), so
+  the instrument is validated against real corpus bytes. The
+  script then ran twice on the regenerated corpus: byte-identical
+  pair, exit 0, in-process check IDENTICAL. Rehearsal numbers
+  (superseded by the run, disclosed for honesty): witness 720/720
+  exact; 144 held-out solution rows (72 per groove; 23
+  not-scoreable held-out rows counted and recorded); median
+  held-out distance 8.322194e-06 units (0.0008 mm), worst
+  5.650397e-05 units; baseline medians 1.051126e+00 / 1.170167e+00
+  / 1.133789e+00 units; OOD probe distance 5.000776e-02 units
+  (5.0008 mm; 885x the worst held-out) -- the frozen degradation
+  expectation showed up in the rehearsal. All four frozen
+  predictions' leans held in the rehearsal. The fail-closed paths
+  were exercised at staging and all failed closed with exit 2
+  (missing corpus; tampered corpus byte; tampered groove value
+  under a relaxed pin, caught by the witness; chosen-design
+  tamper, caught by the cross-check; schema 2.0, caught by the
+  succession rule; tampered instrument byte; usage errors exit 1).
+- CLAIMED: nothing. A first admissible run needs to be gradeable,
+  not to win; the expected outcome is an honest loss to
+  closed-form plus the OOD degradation datum, both as data.
+
 ## Status
 
-Gate frozen; run staging pending. Parallel line per the fork: the
-flip-station-sixbar-01 motion JSON desk derivation.
+Gate frozen; run staged (2026-10-20); awaiting the run. Parallel
+line per the fork: the flip-station-sixbar-01 motion JSON desk
+derivation.
