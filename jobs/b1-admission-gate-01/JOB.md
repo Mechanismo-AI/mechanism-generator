@@ -564,6 +564,81 @@ first-run artifact stands untouched (claim-only-what-exists).
   SUPPLIER OUTPUT label stands until a head-to-head win, and the
   label-change event remains defined and unfired.
 
+## Recorded re-probe outcome (2026-10-20)
+
+The run of record (the-hub, the motion venv, Python 3.14.4, repo
+root, source commit f647266bbd582085c6418c98f0bb8d16e0f3640b --
+the PR #84 merge): two redirected runs, external diff EMPTY, exit
+0 both, the in-process double-run check IDENTICAL. Machine line:
+Intel i5-10400T. Every frozen item below is read on the run's own
+printed report.
+
+- P0 PIN CHECKS: trainer sha256 1cb985ba...a9974 PIN MATCH
+  (imported read-only; the training code path is IDENTICAL to the
+  run of record); capability instrument 72989f8a...06447b PIN
+  MATCH; the corpus of record cdac1413...39be6c loaded through
+  the first-run instrument's own fail-closed loader, 838 rows,
+  pin matched; the chosen design DISCOVERED from the corpus
+  (d=0.2 / C_y=0.00, never hardcoded).
+- A1 ZERO INSTRUMENT MODIFICATION: both instruments imported
+  read-only under bit-for-bit pin matches -- instrument
+  modification count 0.
+- W REPRODUCTION WITNESS: 720/720 groove_sample rows re-derived
+  exactly, worst deviation 0.000e+00 (tol 1e-9): PASS.
+- R SUPPLIER REPRODUCTION CHECK: held-out solution rows 144
+  (counts computed at the run); median held-out distance
+  8.322194e-06 units and worst 5.650397e-05 units -- both match
+  the recorded run of record digit for digit; the un-fallbacked
+  learned answer on the frozen probe (0.70000776, 0.00000005),
+  probe distance 5.000776e-02 units (885.0308 x the worst
+  held-out) -- matches digit for digit. NO new artifact is
+  written; the recorded first-run artifact stands (sha256
+  ceebf162...e678).
+- G THE DESIGN GATE (exercised as frozen): demand 1, the frozen
+  OOD probe (groove_1, t=90.0 deg, design d=0.4 / C_y=0.25) ->
+  FALLBACK: CLOSED-FORM, the design mismatch recorded; fallback
+  answer (0.65000000, 0.00000000), distance 0.0 -- exact by
+  construction (the fallback IS the closed-form supplier); the
+  recorded 885x degradation datum does NOT recur through the
+  fallback. Demand 2, the same angle under the trained design
+  (d=0.2 / C_y=0.00) -> LEARNED, answer (0.70000776, 0.00000005),
+  distance 7.755352e-06 units (the in-distribution class, as at
+  the first run). Both branches exercised and labeled: PASS.
+- S THE B2-SIGNATURE TEST: CLASSIFICATION (b) DATA-LIMITED (B2's
+  case-C answer class: a genuine coverage limit -- design
+  coverage, by frozen construction); the frozen prediction
+  DATA-LIMITED -- HELD. Evidence, as printed by the run: the
+  frozen feature map [1, cos(k*x), sin(k*x)] carries NO design
+  argument, so evaluated under BOTH designs it produces the
+  identical output (0.70000776, 0.00000005) while the two
+  closed-form answers sit 0.050000 units (5.00 mm) apart -- the
+  design information is ABSENT from the function, not
+  mis-encoded; a rescue would require ADDING the design channel
+  (a feature-map change = a new architecture, a future corpus
+  decision), which is a redesign, not a representation rescue.
+  Recorded reading: the fallback wiring is a BANDAGE and design
+  coverage is the DISEASE.
+- A4 SUPPLIER-OUTPUT LABELING: the fallback branch's zero
+  distance is the CLOSED-FORM supplier's, not a learned win; no
+  head-to-head was run here and none is claimed. The label
+  stands; the label-change event remains defined exactly as
+  frozen and unfired.
+- A7 LINEAGE: the corpus of record, both instrument pins, the
+  recorded first-run artifact, and the run source commit are all
+  recorded in the run's own lineage rows as printed.
+
+THE RECORDED ANSWER, AND ITS REDIRECT: the design gate fires
+exactly as frozen and the fallback is exact on the mismatch
+branch, and the B2-signature answer (DATA-LIMITED; design
+coverage, by frozen construction) redirects Direction 2 as the
+re-probe freeze anticipated: the expansion freeze document must
+carry the DESIGN AXIS explicitly -- the coverage map's declared
+interpolation-vs-extrapolation split reads the design channel
+among its extrapolation cells, and a design-conditioned
+representation is recorded as the future corpus decision it is.
+The fallback re-probe line item is CLOSED; the Direction 2
+expansion freeze document is the next staging on this line.
+
 ## Status
 
 Run recorded (2026-10-20) -- the first admissible B1 run: an
@@ -580,4 +655,13 @@ instrument is NOW STAGED (this staging, the section above): the
 script b1_fallback_reprobe.py with the trainer imported read-only
 under its pin, the digit-for-digit reproduction check, the design
 gate as frozen, and the B2-signature rubric; staging rehearsal
-disclosed, fail-closed matrix exercised. No run claimed here.
+disclosed, fail-closed matrix exercised. The re-probe RUN IS
+RECORDED (2026-10-20, the section above): every frozen item read
+on the run of record -- pins matched, the supplier reproduced
+digit for digit, the design gate fired as frozen (FALLBACK:
+CLOSED-FORM exact on the mismatch branch; LEARNED
+in-distribution under the trained design), B2-signature
+DATA-LIMITED, frozen prediction HELD. SUPPLIER OUTPUT stands;
+the label-change event remains defined and unfired. Next on
+this line: the Direction 2 expansion freeze document (the
+design axis explicit in its coverage map).
