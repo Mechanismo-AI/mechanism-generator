@@ -192,6 +192,76 @@
 - This staging carries NO script, generates NO point, and claims
   NO run. Docs-only: no machine step before or after this merge.
 
+
+## The expansion instrument (run staging; frozen before any run; 2026-10-20)
+
+- IDENTITY: jobs/b1-expansion-01/b1_expansion_run.py, 27,317 bytes,
+  sha256 83e23ebe6b3bab0777504e7c7a8b20fd7c3037123d39b03069c94c532d7a2743;
+  pure stdlib, pure ASCII, Python 3.10+, deterministic (no wall-clock, no
+  unseeded randomness). It implements THIS document exactly and may not
+  amend it; the budget, the split rule, the coverage map, and the axes
+  above are its law.
+- P0 FAIL-CLOSED PINS, carried: the capability instrument (sha256
+  72989f8a1183647f5cbf47c6db92b0cdc63eead355acb25f1dd42adedc06447b,
+  50,265 bytes) consumed READ-ONLY as the analytic ground-truth
+  synthesizer; the trained-supplier trainer b1_proposer_train.py (sha256
+  1cb985bac4a34f6c07ed768f3b13692e7ea4c3be3bfbcfab973d1aeb0c5a9974,
+  26,268 bytes) IMPORTED read-only, the re-probe precedent; the corpus of
+  record (cdac1413...39be6c, 838 rows) loaded through the trainer's own
+  fail-closed loader and serving as the REPRODUCTION ANCHOR: the
+  regenerated d=0.2 / C_y=0.0 cell must reproduce the corpus's recorded
+  solution rows exactly (tolerance 1e-9), or the instrument fails closed.
+- DEMAND GRID, derived from the corpus of record at run time (never
+  transcribed): 360 angle samples per groove (1.0 deg), 2 grooves, per
+  the frozen coverage map.
+- DETERMINISTIC GENERATION: no stochastic draw anywhere in the coverage
+  or feasibility budgets; the budget is drawn exactly once (7,200
+  coverage + 3,600 feasibility + 16 warm-start demands with 48 seeded
+  baseline trials); the report IS the stop record; NO artifact is
+  written.
+- THE LINE: the boundary model (d=0.3, same C_y) is the measured learned
+  component for the extrapolation demands -- the nearest trained design;
+  the LINE answer is the standing design gate (the re-probe semantics,
+  FALLBACK: CLOSED-FORM on design mismatch). On the feasibility cells
+  the LINE's closed-form branch reads the design's recorded synthesis
+  gate (rank-deficient handoff pair -> INFEASIBLE with the recorded
+  reason); the axis grades whether the wiring carries infeasibility
+  through, never silently.
+- AXIS 2 SEARCH, frozen spec: steepest descent on the distance oracle,
+  initial step 0.01 halved on failure, minimum 1e-12, max 100
+  iterations, early stop inside the 1.5 mm band. Warm start = the
+  boundary model's supplier answer; random restart = seeded uniform
+  draw in the per-groove TRAIN-split bbox over ALL trained cells, seeds
+  580000050/51/52, a fresh Random per seed, draw order d, C_y, groove,
+  t frozen.
+- MACHINE STEP (owner's, after merge; NOT this staging): at the recorded
+  standard (the-hub, motion venv, Python 3.14.4, repo root, merged sha):
+  python jobs/b1-expansion-01/b1_expansion_run.py --source-commit
+  <merged-sha> > run1.txt, run twice, external diff empty, exit 0, the
+  report pasted back and read against the frozen sections and leans of
+  THIS document. NO run is claimed here.
+- DESK VALIDATION, DISCLOSED (desk Python 3.12.13; superseded by the
+  run of record): clean pair exit 0, external diff empty, in-process
+  IDENTICAL; the corpus of record regenerated from the pinned
+  capability instrument and matched cdac1413... exactly (838 rows);
+  the anchor cell reproduced 720/720; the fail-closed matrix fired as
+  specified (no-args and bad-sha exit 1; missing corpus exits 2 with
+  the regeneration instruction; tampered corpus, trainer, and
+  capability bytes all exit 2); the post-matrix clean pair
+  byte-identical. Desk findings, recorded honestly, superseded by the
+  run of record: AX1 HELD (3,600/3,600 INFEASIBLE through the wiring;
+  the learned component alone answered 3,600/3,600 -- the recorded
+  disease); the coverage disease CONFIRMED at desk (extrapolation
+  median 1.5e-01 vs interpolation 8.4e-06, ~17,930x; worst 0.2 units =
+  13.3x tolerance); the AX2 frozen lean REFUTED at desk (warm start
+  won or tied 16/16 including the far cells; warm-start mean 22.0
+  oracle calls vs baseline 211.5).
+- HONEST NOTE (pre-staging fixes): one desk report bug was fixed before
+  staging -- AX3 promised an oracle-call mean it did not print; the
+  staged script prints both the warm-start and the baseline oracle-call
+  means -- plus two long-line wrap fixes; the clean pair after the
+  fixes is the staged behavior.
+
 ## Status
 
 Freeze staged (2026-10-20) -- the ONE Direction 2 freeze document,
@@ -205,5 +275,7 @@ their precedent), the pre-declared comparison axes (accuracy
 preordained; feasibility prediction, constrained-variant
 warm-start, cost under variety), both-directions honesty, and the
 design-conditioned representation recorded as the future corpus
-decision. Nothing generated; the expansion instrument is the next
-staging on this line.
+decision. Instrument staged (2026-10-20): b1_expansion_run.py (27,317 bytes,
+sha256 83e23ebe...d7a2743), fail-closed pins carried, desk-rehearsed
+with the fail-closed matrix exercised, one report bug fixed
+pre-staging; NO run claimed -- the machine step follows the merge.
