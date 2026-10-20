@@ -251,3 +251,111 @@ reproduction anchor, determinism, and the stop condition. No
 model trained, no point generated, no run claimed. The
 instrument is the next staging. Docs-only: no machine step
 before or after this merge.
+
+## Post-record: the corpus decision (2026-10-20) -- LAND: the
+representation is the standing supplier representation, version
+1.0
+
+This section is the decision record for the corpus decision this
+document froze toward ("exactly the future corpus decision the
+expansion recorded, now taken through this gate, never silently
+around it"). It is docs-only: the decision, its boundaries, and
+its consequences are recorded here; no script, no run, no
+training, no measurement is claimed, and the recorded outcome is
+final data, never rewritten.
+
+- THE ROUND (recorded): the boss opening position (LAND) went to
+  the recorded debate line after the PR #94 outcome; the actor
+  and critic rounds returned unanimous LAND with no
+  disagreements; the boss fold folded every delta in; the owner
+  decided on the folded position. The debate record lives in the
+  continuity log, entries 42-43.
+- THE DECISION: LAND. The design-conditioned representation
+  frozen above -- the 147-feature map (the frozen 49-feature
+  Fourier basis [1, cos(k t), sin(k t)] for k = 1..24, plus
+  [d, C_y] and the first-order products; one model per groove
+  across the 6 train cells; RIDGE_LAMBDA=1e-08) -- becomes the
+  STANDING SUPPLIER REPRESENTATION for the flip-station cam
+  family, versioned at landing as FLIP-STATION CAM SUPPLIER
+  REPRESENTATION 1.0 ("current" is not a version): the transfer
+  re-run freeze cites "representation 1.0", and any future
+  re-grade under the extension trigger below produces 2.0 --
+  the corpus-schema succession rule applied to the supplier
+  itself.
+- THE BOUNDARIES AT LANDING (declared, carried from the freeze
+  and the round): family and grid scope only -- the recorded
+  dual-groove design sweep and the admissible cells; the
+  C_y=0.5 feasibility cells remain an open residue, never
+  silently scoped in. Feasibility stays carried by the
+  design-gate wiring, never the function (AX1). First-order
+  design channel only. Grade-only discipline maintained.
+- THE EXTENSION TRIGGER (recorded at landing): the coverage
+  claim is scoped to the recorded dual-groove design sweep and
+  the admissible cells and does NOT silently travel. A new
+  d/C_y cell class, a new groove family, or the feasibility
+  cells entering scope requires a DECLARED RE-GRADE of the
+  representation before it is consumed there -- the
+  supplier-version-scoping discipline applied to the
+  representation itself. The higher-order-terms open item is
+  recorded with its trigger and never staged now: it fires only
+  on a measured degradation the first-order design channel
+  provably cannot explain; any such change re-stages through
+  the full gate as 2.0.
+- THE PIN (reconstructible; function-plus-data): future
+  freezes cite the representation by a pin carrying BOTH
+  identities -- the builder spec (the 49-feature Fourier basis,
+  the [d, C_y] first-order products, RIDGE_LAMBDA=1e-08, the
+  builder's identity hash) AND the training-row source hashes
+  (file + hash + the exact cell set: the 6 train cells d in
+  {0.1, 0.2, 0.3} x C_y in {0.0, 0.25} under the frozen split
+  rule). The PR #58 standard: a future freeze can rebuild the
+  representation from the pin alone -- the representation is
+  function-plus-data, so both identities are required for a
+  byte-identical rebuild. The 147-feature builder is the pinned
+  trainer reference for future B1 runs, with lineage rows in
+  future freezes.
+- THE SUPPLIER-VERSION SCOPING DISCHARGE: the warm-start
+  transfer datum re-runs under representation 1.0 as its own
+  small freeze (the PR #90/#91 pattern; zero modification of
+  existing instruments), RIDING BEHIND this landing as
+  confirmation, never gating it -- the claims are independent
+  (coverage/accuracy is graded by the run of record above;
+  the re-run tests initialization cost under the new
+  representation). Exact re-run first for attributability:
+  same cells, same consuming context (2 handoff poses x 2
+  grooves at d=0.2/C_y=0.0), only the supplier version
+  changes; the report carries the old-vs-new comparison row
+  explicitly (the recorded 16/16 at 22.0 vs 211.5 mean calls
+  read against the new numbers, not inferred). Broader
+  consumption is its own later freeze.
+- THE ENDGAME READING (a prediction, never a verdict; both
+  options live data): with the disease treated, the accuracy
+  head-to-head may be structurally unreachable in an
+  analytic-synthesis family where the closed form is exact,
+  instant, and free. Recorded as a FALSIFIABLE PREDICTION with
+  its reopening triggers named across three axes: (1) a future
+  family without a closed form; (2) a constrained variant where
+  the closed form stops being exact or instant (the warm-start
+  transfer's consuming context); (3) scope honesty -- AX1 keeps
+  feasibility in the wiring, so the unreachability claim is
+  scoped to where the closed form exists. The endgame question
+  takes its own round after the transfer re-run's answer
+  exists; verdict framings stay rejected (the Direction 3
+  precedent).
+- SCORECARD LEDGER (the arc this closes): the measured-disease
+  arc closes end to end -- three separate measurements named
+  the disease (the B2 DATA-LIMITED answer, the 885.0308x
+  probe, the 17,930.5049x scale confirmation), ONE freeze
+  specified the treatment against all three, and ONE run of
+  record confirmed it (the bar MET both clauses; the frozen
+  PRIMARY HELD; no counter-branch fired; the recorded 885x
+  case graded once, in band).
+- LABELS UNCHANGED: SUPPLIER OUTPUT stands; the head-to-head
+  win condition remains defined and unfired; the substitution
+  guard is in force -- the landing is a supplier upgrade
+  inside the framework, NEVER a reframe that the learned line
+  "won".
+- NEXT: the transfer re-run freeze under representation 1.0 is
+  the next B1 staged item (a small freeze; the PR #90/#91
+  pattern; prediction frozen before wiring). Docs-only: no
+  machine step before or after this merge.
