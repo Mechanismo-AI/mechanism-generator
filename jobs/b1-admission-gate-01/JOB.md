@@ -639,6 +639,119 @@ representation is recorded as the future corpus decision it is.
 The fallback re-probe line item is CLOSED; the Direction 2
 expansion freeze document is the next staging on this line.
 
+## The B1 two-candidate decision (2026-10-20): the warm-start
+transfer staged next; the design-conditioned representation
+committed behind it
+
+This section records the two-candidate decision read on the
+recorded expansion outcome (the section above) and the owner's
+question ("1 then 2?" -- (1) the design-conditioned
+representation, (2) the warm-start transfer). The actor/critic
+ruling, adopted and frozen: BOTH, in this order -- (2) NOW as
+the transfer, (1) as the B1 line's next committed freeze -- and
+(1) must not be allowed to silently defer behind (2). They are
+different kinds of items and the record keeps them distinct:
+(2) is a technology transfer into the case-study loop; (1) is
+the disease treatment.
+
+- THE SUBSTITUTION GUARD (frozen): the exact failure mode to
+  guard against is (2)'s success reframing the supplier as
+  "good enough" -- the warm-start datum is an
+  INITIALIZATION-COST win, and the measured disease (17,930x
+  coverage degradation on accuracy) is untouched by it. Cheap
+  momentum is fine; substitution is not.
+- THE SEQUENCING TEETH (frozen): (1)'s freeze document is the
+  next B1 staged item after (2) lands, unless the owner
+  overrides with a recorded reason -- the same
+  never-silently-defaulted rule, because "one more warm-start
+  experiment" is exactly the deferral shape the tripwire was
+  built to catch.
+- ON (2), FROZEN REQUIREMENTS -- the transfer is a
+  supplier-output-as-tool moment and gets its own small freeze,
+  never ad-hoc wiring:
+  - LABELING (claim-only-what-exists): an INITIALIZATION-COST
+    datum. It is not an accuracy result and it is not the
+    head-to-head; the label-change event stays defined and
+    unfired exactly as frozen at the gate. Recorded as
+    head-to-head-relevant (a cost-channel win on the same
+    cells), never as the win condition.
+  - SCORECARD-LEDGER NOTE (the critic's first delta, adopted):
+    the warm-start result is the frozen prediction from the B1
+    direction round FIRING -- that round froze "the supplier's
+    honest value lives in feasibility prediction and
+    constrained-variant warm-start, not accuracy"; the run's
+    surprise (16/16 warm-start wins at ~a tenth the oracle
+    cost, including the far cells) is that prediction confirmed
+    in the stronger form. The confirmation is recorded with the
+    prediction, not just the datum; it is the strongest
+    evidence yet that the accuracy disease and the cost
+    strength are genuinely separable channels of the same
+    supplier.
+  - CONSUMING-CONTEXT BASELINE (the critic's second delta,
+    adopted): the 16/16 datum is transfer evidence, not a
+    loop-context guarantee. The transfer freeze measures in the
+    consuming context, with its own frozen baseline comparison
+    -- warm start vs random restart on an ACTUAL constrained
+    variant of the loop, the comparison protocol and a
+    prediction frozen BEFORE the wiring. If the transfer wins
+    there too, the datum is standing infrastructure in its
+    second context; if it does not, that is a recorded finding
+    about context-dependence. Either way the reciprocity test
+    and the mod-count row come along.
+  - RECIPROCITY, APPLIED IN REVERSE: the transfer is itself a
+    test of the frozen principle -- the loop's constrained-
+    variant searches consume the warm start with ZERO
+    instrument modification; if they cannot, that is a
+    recorded finding about the instruments, not a patch in the
+    dark.
+  - DETERMINISM: fixed seeds; the two-run byte-identical
+    standard wherever it is wired.
+  - SUPPLIER-VERSION SCOPING: the datum is supplier-version-
+    scoped, measured on the current representation. If (1)
+    lands, the warm-start measurement RE-RUNS on the new
+    representation before the datum carries forward as current;
+    the expansion instrument already froze the measurement
+    protocol (cells, trials, cost accounting), so the
+    re-measurement is cheap and stays comparable.
+- ON (1), FROZEN REQUIREMENTS -- the real fix; it goes through
+  the FULL GATE, one freeze document -> instrument -> run, the
+  b1-expansion-01 pattern:
+  - THE DESIGN CHANNEL SPECIFIED FROM THE MEASURED RECORD: B2's
+    DATA-LIMITED answer, the PR #44 initializer lineage, the
+    885x probe, and the 17,930x scale confirmation -- the
+    disease has now been measured three separate ways; the
+    freeze cites all three as the channel's specification and
+    names exactly which features carry it (d and C_y as
+    inputs, not just groove identity).
+  - A PRE-DECLARED SUCCESS CRITERION with the both-directions
+    discipline: success = the extrapolation/interpolation
+    coverage ratio COLLAPSES on the d >= 0.4 cells while the
+    closed-form head-to-head stays honest in both directions.
+    The NUMERIC COLLAPSE BAR is picked AT FREEZE TIME with its
+    lineage and recorded as the criterion's threshold (the
+    critic's fourth delta, adopted: an unfalsifiable "toward"
+    is the one shape this framework never freezes). If the
+    redesign does not meet the bar, that is a recorded finding
+    about the feature-map approach -- never a waiver.
+  - GRADE-ONLY ON THE RECORDED CASE (the critic's third delta,
+    adopted): the redesign iterates on synthetic interpolation
+    and extrapolation cells ONLY; the recorded design-shift
+    case (groove_1, 90.0 deg, d=0.4/C_y=0.25 -- the probe that
+    named the disease) is touched ONCE, at the final grade --
+    the OOD probe re-run on the same recorded case is the
+    fix's grade, and iterating against it would be the
+    retune-on-holdout anti-pattern wearing the redesign's
+    clothes. A second synthetic design-shift cell may be
+    declared at the freeze as the iteration-scratch case, so
+    the far-extrapolation regime has a development surface
+    that is not the grade.
+- THE NEXT STAGING (named, per the sequencing teeth): (2)'s
+  transfer freeze stages NEXT, its home/job placement declared
+  in its own staging; (1)'s freeze document is the next B1
+  staged item after it lands. This section is a decision
+  record: docs-only, no script, no run, no training claimed or
+  implied; the case-study loop advances in parallel, unchanged.
+
 ## Status
 
 Run recorded (2026-10-20) -- the first admissible B1 run: an
@@ -662,6 +775,12 @@ digit for digit, the design gate fired as frozen (FALLBACK:
 CLOSED-FORM exact on the mismatch branch; LEARNED
 in-distribution under the trained design), B2-signature
 DATA-LIMITED, frozen prediction HELD. SUPPLIER OUTPUT stands;
-the label-change event remains defined and unfired. Next on
-this line: the Direction 2 expansion freeze document (the
-design axis explicit in its coverage map).
+the label-change event remains defined and unfired. The Direction 2 expansion freeze was STAGED as PR #86 and
+MERGED; the expansion instrument STAGED as PR #87 and MERGED;
+the expansion run RECORDED as PR #88 (job b1-expansion-01
+closed end-to-end; the outcome lives in that job's own file).
+The line's standing record is now the B1 two-candidate decision
+(the section above): the warm-start transfer freeze is the NEXT
+STAGING, and the design-conditioned representation freeze is
+committed as the next B1 staged item behind it, with the
+substitution guard and the silent-deferral tripwire.
