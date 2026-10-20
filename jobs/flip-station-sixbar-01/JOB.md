@@ -437,6 +437,92 @@ carries this motion JSON AND the S2-S4 audit script)
   Corpus emission with hashes regardless of verdict; the honest-fail
   branch valid with the corpus intact.
 
+## Recorded outcome (2026-10-20, the machine step: run + audit on
+the-hub; source commit f86eb91a; the run's own digits, recorded
+as-run)
+
+- THE RUN: git pull fast-forward 9c9fd6f..f86eb91 on the-hub,
+  main verified f86eb91aedc2008e3c1654edec6991c69c3c8ca0, the
+  motion venv (Python 3.14.4 per the audit report), repo root.
+  Three seeds, each 167/200 evaluations, qualified FALSE:
+  580000050 (initializer random), 580000051 (initializer
+  offset+0), 580000052 (initializer random); issues 0 each. THE
+  FROZEN LEAN ALL-FAIL IS CONFIRMED; the plateau-breaker
+  counter-branch did not fire (no qualified candidate; the
+  family's first recorded six-bar qualification remains
+  unclaimed).
+- BINDING CHANNEL (the frozen prediction, read honestly):
+  orientation-doupled derivative demand at the through-vertical
+  transit, CONFIRMED as the binding channel -- worst orientation
+  errors 57.984 deg (seed 50, phase 3) / 177.577 deg (seed 51,
+  phase 11) / 29.270 deg (seed 52, phase 4) vs the 1 deg S1 gate;
+  the packaging overlay at the demand phases fails on orientation
+  at 52.110 / 173.266 / 29.270 deg vs the 1.5 deg overlay; the
+  angular derivative channels are wide (worst |omega| 112.914 /
+  337.741 / 44.561 deg-scaled vs gate 2; worst |alpha| 219.813 /
+  3739.175 / 104.371 vs gate 5). Position also fails every seed
+  (0.464 / 2.677 / 0.299 vs gate 0.01) but orientation is the
+  wider miss on two of three seeds and the frozen channel
+  prediction is confirmed, not refuted.
+- S2 (the audit's own rows): joint B HOLDS the target gate on
+  both defined-assembly seeds (worst mu 65.341 deg at crank
+  332.50 deg on 50; 64.749 deg at 161.50 deg on 52); joint C --
+  the extension-vs-output-rocker pair, the six-bar's added stage
+  -- HARD-FAILS both (worst mu 3.044 deg at crank 187.00 deg on
+  50; 1.451 deg at 58.50 deg on 52). Seed 580000051's returned
+  candidate does not assemble at grid sample 0: the S2-S4 audits
+  ERROR fail-closed for that seed (recorded as data, never a
+  quiet pass; its S1 emission rows stand).
+- S4: FAIL on both scored seeds. Seed 50 holds the handoff pick
+  (combined worst 0.7439 mm / 0.6407 deg) and the through-vertical
+  data row, but FAILS the handoff place (1.8332 mm vs 1.5 mm;
+  orientation 1.3214 deg holds). Seed 52 fails all scored phases
+  (pick 4.3495 mm / 2.8025 deg). The FROZEN PEAK-LOCATION
+  PREDICTION (max sensitivity not at the poses) is CONFIRMED on
+  both audited seeds: peaks 67.2282 mm/mm at crank 185 deg and
+  92.3674 mm/mm at crank 50 deg, neither at a demand pose. FD
+  self-check VERIFIED (max deviation 1.090e-08 / 4.093e-07);
+  kinematics cross-check vs the emission VERIFIED (2.220e-16 /
+  2.859e-15 position, 1.537e-13 / 6.608e-13 deg orientation) --
+  the audit's independent assembly agrees with the solver's
+  emission to float precision.
+- S3: defined assembly over the sweep for seeds 50/52; the
+  utilization/headroom tables recorded as data (no size gate);
+  no keep-out gate (the Q4 deferral carries).
+- S5 + RECIPROCITY: the audit is deterministic both in-process
+  (IDENTICAL) and externally (audit_run1.txt vs audit_run2.txt,
+  cmp empty). Instrument-modification count 0 -- the solver and
+  its emission consumed unmodified. Corpus 427 rows, schema 1.1:
+  jsonl sha256
+  f19ecaf847dd07338abb6e47870c644bbbd5c13b41d2f88bfd133253d2a7642b,
+  csv sha256
+  3266d8d173c4b1e3b23e8a321d63dd26524a37a70e758f4336f085115d028ef4.
+- DETERMINISM FINDING (recorded as-run, the run's one open item):
+  the seed 580000050 rerun (result-580000050-run2.json) DIFFERS
+  from run 1 at byte 21082, line 916 -- the motion solver's first
+  recorded byte-level nondeterminism (the prior recorded
+  incidents were empty second outputs, the capability-01
+  precedent; a differing byte is a new failure mode). The stdout
+  verdict lines are identical (qualified false, 167/200) and the
+  audit's consumption of run 1 stands; the standard's
+  byte-identical pair is NOT met for this seed, recorded honestly
+  rather than rerun-until-identical. OPEN ITEM: diagnose line 916
+  of the result JSON (the diff is inside the result body, not the
+  verdict); the diagnosis runs at the next desk round with both
+  files in hand.
+- READING against the succession rule: this is the six-bar
+  family's SECOND recorded all-fail on its own instrument (after
+  gap-transfer -01 through -04) and the first on the flip task;
+  the joint-C transmission failure (a 1.451-3.044 deg folded
+  angle) is structural-looking -- the added extension/output
+  rocker stage folds near-flat on both defined-assembly seeds at
+  different crank phases, the same shape as the cam line's
+  dead-point finding. The case study C answer so far: BOTH
+  recorded families fail the flip brief on their own
+  instruments; the B1 admission-gate line (the learned-proposal
+  question) proceeds in parallel with this record as its
+  flip-station evidence base.
+
 ## Status
 
-Task staged: the motion JSON derived and desk-validated; the S2-S4 audit script staged and desk-validated (six analytic/fail-closed bugs caught and fixed by its own FD and end-to-end harnesses before staging); the machine step (the three-seed run plus the audit) follows this staging's merge.
+Run recorded: honest all-fail on all three seeds (S1 FAIL, binding orientation/derivative channel as frozen; S2 joint-C hard-fail and one undefined-assembly candidate; S4 handoff-place fail); the S4 peak-location prediction CONFIRMED; mod-count 0; corpus 427 rows with hashes; ONE OPEN ITEM: the seed 580000050 determinism pair differs at byte 21082 (line 916) -- the motion solver's first recorded byte-level nondeterminism, diagnosis next.
