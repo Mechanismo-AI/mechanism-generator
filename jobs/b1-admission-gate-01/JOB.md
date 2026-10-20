@@ -473,6 +473,97 @@ Direction 3 adopted as labeling, its verdict framing rejected
   its own recorded triggers) -- neither blocks nor waits on the
   other.
 
+## The fallback re-probe instrument (run staging; frozen before
+any run; 2026-10-20)
+
+This section stages the instrument the next-step decision named:
+the fallback re-probe script, with its every decision frozen
+BEFORE any run, per the standing freeze-first discipline. Docs
+plus ONE new script; no run is claimed, none is implied, and no
+training occurs -- the recorded supplier is re-derived through
+the identical pinned code path, never re-trained; the recorded
+first-run artifact stands untouched (claim-only-what-exists).
+
+- THE INSTRUMENT: jobs/b1-admission-gate-01/b1_fallback_reprobe.py
+  (pure stdlib, ASCII, Python 3.10+, deterministic; 20,531
+  bytes, sha256
+  2cde6ad14df627d558b7a8bfe7025f288695c8241df40b4d915a2d79fad8cb70
+  at this staging).
+- P0 PINS, FAIL-CLOSED (the A1 discipline carried forward): the
+  first-run trainer b1_proposer_train.py is IMPORTED READ-ONLY
+  under its sha256 pin
+  1cb985bac4a34f6c07ed768f3b13692e7ea4c3be3bfbcfab973d1aeb0c5a9974
+  (26,268 bytes), so the training code path is IDENTICAL to the
+  run of record and the reproduction check is meaningful; the
+  capability instrument (72989f8a...06447b, 50,265 bytes) and the
+  corpus of record (cdac1413...39be6c, 838 rows) carry their
+  first-run pins unchanged. The corpus is loaded through the
+  first-run instrument's own fail-closed loader. Any pin mismatch
+  fails closed before any probe runs.
+- THE DESIGN GATE (the frozen fallback semantics, as implemented):
+  the demand's design (d, C_y) is declared context; the trained
+  design is DISCOVERED from the corpus, never hardcoded. Trained
+  design -> the learned supplier answers, labeled LEARNED;
+  design mismatch -> the closed-form supplier (the capability
+  instrument's own groove_point) answers, labeled
+  FALLBACK: CLOSED-FORM with the mismatch recorded. Both branches
+  answer every demand; nothing is silently dropped.
+- THE REPRODUCTION CHECK (frozen): the un-fallbacked learned
+  answer on the SAME frozen OOD probe is re-derived and checked
+  digit for digit against the recorded run of record
+  ((0.70000776, 0.00000005); probe distance 5.000776e-02 units,
+  885.0308 x the worst held-out), and the supplier's held-out
+  distances likewise (median 8.322194e-06 units, worst
+  5.650397e-05); any drift fails closed. No new artifact is
+  written.
+- THE B2-SIGNATURE TEST (the frozen rubric, as implemented): the
+  recorded design-shift failure is classified against B2's
+  vocabulary -- (a) REPRESENTATION-SCOPED, (b) DATA-LIMITED,
+  (c) NEW SIGNATURE -- recording which representation the
+  supplier actually uses against B2's answer, with the
+  structural discriminators printed as evidence. The frozen
+  prediction stands and is never a gate: (b) DATA-LIMITED.
+- THE MACHINE STEP (the owner's; the recorded standard): from
+  the repo root, the motion venv, Python 3.10+:
+  python jobs/b1-admission-gate-01/b1_fallback_reprobe.py
+  --source-commit <merged-40-hex-sha> > run1.txt (twice), then
+  diff the pair -- empty and exit 0 is the record; paste the
+  report back for the reading. If the corpus is absent, the
+  script fails closed with the read-only regeneration
+  instruction (regenerate via the merged capability instrument
+  and verify the sha256 pin).
+- STAGING REHEARSAL (disclosed; NOT the run of record): the
+  corpus of record was regenerated from the merged instrument at
+  staging and matched the pinned sha256 exactly (838 rows). The
+  script then ran twice: byte-identical pair, exit 0, in-process
+  check IDENTICAL. The recorded supplier reproduced digit for
+  digit (held-out median 8.322194e-06 units, worst 5.650397e-05;
+  the learned probe answer (0.70000776, 0.00000005), probe
+  distance 5.000776e-02 units, 885.0308 x the worst held-out).
+  The design gate fired as frozen: the frozen OOD probe (groove_1,
+  t=90.0 deg, d=0.4 / C_y=0.25) routed to
+  FALLBACK: CLOSED-FORM with exact 0.0 distance and the mismatch
+  recorded; the same angle under the trained design routed to
+  LEARNED, distance 7.755352e-06 units (in-distribution class);
+  the design shift moves the closed-form answer 0.050000 units
+  (5.00 mm). The B2-signature classified DATA-LIMITED -- the
+  frozen prediction's lean, held in the rehearsal; its recorded
+  reading: the fallback wiring is a bandage and design coverage
+  is the disease, the answer that redirects Direction 2's
+  coverage map (the design axis explicit, the design channel
+  among the extrapolation cells). Rehearsal data is superseded
+  by the run, disclosed for honesty.
+- FAIL-CLOSED MATRIX (exercised at staging, all loud): missing
+  --source-commit and a malformed sha exit 1; missing corpus,
+  tampered corpus byte, tampered trainer byte, tampered
+  capability-instrument byte, and reproduction-anchor drift all
+  fail closed with exit 2 and a FAIL-CLOSED line. The clean pair
+  after the matrix: exit 0, byte-identical, unchanged output.
+- CLAIMED: nothing. The re-probe's outcome is the owner's
+  machine step, read against the frozen rubric above; the
+  SUPPLIER OUTPUT label stands until a head-to-head win, and the
+  label-change event remains defined and unfired.
+
 ## Status
 
 Run recorded (2026-10-20) -- the first admissible B1 run: an
@@ -484,5 +575,9 @@ and frozen (2026-10-20, this staging): Direction 1 -- the
 fallback re-probe (frozen above; the instrument script is the
 next staging) -- with Direction 2 (the synthetic budgeted
 expansion under its frozen disciplines) committed behind it; the
-standing state is labeling, not a verdict. No script and no run
-claimed here.
+standing state is labeling, not a verdict. The re-probe
+instrument is NOW STAGED (this staging, the section above): the
+script b1_fallback_reprobe.py with the trainer imported read-only
+under its pin, the digit-for-digit reproduction check, the design
+gate as frozen, and the B2-signature rubric; staging rehearsal
+disclosed, fail-closed matrix exercised. No run claimed here.
