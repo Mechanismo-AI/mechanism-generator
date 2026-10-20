@@ -257,6 +257,70 @@ search (the ONE freeze document before any wiring; no run claimed)
   redirected runs, external diff empty, exit 0. This staging is
   docs-only: no machine step before or after this merge.
 
+## The transfer re-run instrument (run staging; frozen before any run; 2026-10-20)
+
+- WHAT THIS IS: the re-run instrument staged as a NEW script,
+  jobs/b1-warmstart-transfer-01/b1_transfer_rerun.py, implementing
+  the freeze section above exactly; no freeze section amended; the
+  original instrument and the original freeze stay untouched
+  read-only protocol sources. Structure mirrored from the original
+  instrument: [P0] pins, [D] the consuming context READ from the
+  pinned corpus, [ANCHOR] the 720-row reproduction anchor, [S] the
+  supplier through the LINE, [M] the frozen measurement, [MOD] the
+  mod-count row, [H] honesty, [READ] the frozen prediction read on
+  the run's own output.
+- THE SINGLE-AXIS CHANGE, WIRED: only the warm-start supplier
+  version changes -- representation 1.0 consumed through the
+  builder's own pinned functions (phi_ext / train_ridge_ext /
+  predict_ext, imported READ-ONLY from the pinned representation
+  instrument; 147 features per groove; ONE model per groove across
+  the 6 train cells; RIDGE_LAMBDA the trainer's own, seed-free).
+  The LINE gate is UNCHANGED: a demanded design among the
+  supplier's 6 trained cells answers LEARNED (the actual demands
+  are among them -- no mismatch, no fallback fired); any other
+  demanded design falls back CLOSED-FORM (the re-probe semantics,
+  carried).
+- THE NEW PINS (P0 extended, function-plus-data per the PR #58
+  standard): the representation instrument
+  jobs/b1-representation-01/b1_representation_run.py sha256
+  5193b6b7...01e6 (29,557 bytes) pinned as the builder identity,
+  imported read-only; the original transfer instrument
+  jobs/b1-warmstart-transfer-01/b1_transfer_run.py sha256
+  293a14ac...56 (25,540 bytes) pinned read-only as the protocol
+  source, never imported, never executed; the trainer, capability
+  and corpus pins carried unchanged; the mod-count row re-hashes
+  all FIVE pins after the measurement, expected 0.
+- THE BASELINE DRAW BOX, DECLARED HONESTLY AT STAGING: the
+  freeze's baseline draw rule is carried from the recorded run,
+  whose trained-cell set was the actual design alone -- so the
+  re-run's baseline draws in the recorded run's own box, the
+  anchor cell's per-groove TRAIN-split corpus rows (NOT the new
+  supplier's 6-cell training span), keeping the baseline EXPECTED
+  to reproduce the recorded numbers exactly (calls mean 207.5,
+  final-distance mean 5.299213e-01 units) and the single-axis
+  change isolated to the warm-start supplier version alone. Any
+  deviation is a RECORDED FINDING, never a re-draw.
+- THE REPORT CARRIES, EXPLICITLY: the per-demand table (4
+  warm-start runs + 12 seeded baseline trials drawn EXACTLY
+  ONCE), the cost-channel means, the old-vs-new comparison row
+  (old = the recorded run of record PR #91; new = this run's own
+  output; the AX2 16/16 at 22.0 vs 211.5 datum context only,
+  never the old side), and the baseline-exactness check read as
+  data, never a gate.
+- REHEARSAL DISCLOSED: the instrument is desk-validated against
+  the pinned sources (the original instrument's structure, AX2
+  search and draw-rule code paths; the representation builder's
+  own functions; the trainer's constants and fail-closed loader)
+  and syntax-compiled only; it has NEVER been executed -- the
+  pinned corpus and instruments exist only on the owner's
+  machine. No run is claimed by this staging.
+- THE MACHINE STEP (unchanged spec): the owner's run of record
+  at the recorded standard -- the-hub, motion venv, Python
+  3.14.4, repo root, the merged sha, two redirected runs,
+  external diff empty, exit 0. The pasted report is the re-run
+  of record; it closes the supplier-version scoping discharge.
+  The endgame round stays deferred until the re-run's answer.
+
 ## Status
 
 Freeze staged (2026-10-20) -- the ONE warm-start transfer freeze
@@ -280,3 +344,10 @@ post-record): the supplier-version scoping discharge, the section
 above, frozen before any wiring; the re-run instrument is the next
 staging. No run is claimed. Docs-only: no machine step before or
 after this merge.
+
+Transfer re-run instrument staged (2026-10-20, post-record): the NEW
+script b1_transfer_rerun.py, the section above, staged frozen before
+any run. Desk-validated against the pinned sources, syntax-compiled
+only, NEVER RUN at staging; no run claimed. The owner's run of
+record is the next machine step; its report closes the
+supplier-version scoping discharge.
