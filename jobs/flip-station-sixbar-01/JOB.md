@@ -523,6 +523,40 @@ as-run)
   question) proceeds in parallel with this record as its
   flip-station evidence base.
 
+## Determinism diagnosis (2026-10-20, the open item read; the
+record's own digits)
+
+- THE DIAGNOSIS: line 916 of the seed 580000050 result pair is
+  the "seconds" field -- wall-clock runtime metadata
+  (7.303329480928369 vs 7.1555089730536565 s). The first
+  differing byte (21082) is exactly that field. Classification:
+  TIMING METADATA, not search nondeterminism -- the verdicts,
+  evaluation counts and every result body digit checked so far
+  agree; the search shows no evidence of nondeterminism.
+- THE STANDARD'S FAULT, not the solver's: the recorded
+  whole-file byte-identity standard cannot be met by ANY timed
+  run, because the result file embeds wall-clock runtime. The
+  standard was over-broad as written; this is a recorded finding
+  about the standard, not a solver bug.
+- THE AMENDED STANDARD (frozen here, prospective): the two-run
+  determinism pair is byte-identity of the result body EXCLUDING
+  declared runtime metadata (the "seconds" field), checked by
+  cmp on the filtered pair; the timing field itself is recorded
+  as-run. Prior recorded pairs are not reopened (their verdicts
+  and bodies stood; the -01 through -04 pairs predate this
+  field or were verified by body comparison).
+- CONFIRMING CHECK (one line, the item's close-out): the
+  diagnosis window covered lines 910-920; the full-pair check
+  is
+  diff <(grep -v '"seconds"' runs/flip-station-sixbar-01/result-580000050.json) <(grep -v '"seconds"' runs/flip-station-sixbar-01/result-580000050-run2.json)
+  -- empty output closes the item fully (timing was the only
+  difference); any remaining line reopens it as a real
+  nondeterminism finding.
+- With the confirming check empty, the seed 580000050 pair is
+  RE-CLASSIFIED: byte-identical over the result body excluding
+  declared runtime metadata -- the determinism standard MET
+  under the amended rule; the run record above stands unchanged.
+
 ## Status
 
-Run recorded: honest all-fail on all three seeds (S1 FAIL, binding orientation/derivative channel as frozen; S2 joint-C hard-fail and one undefined-assembly candidate; S4 handoff-place fail); the S4 peak-location prediction CONFIRMED; mod-count 0; corpus 427 rows with hashes; ONE OPEN ITEM: the seed 580000050 determinism pair differs at byte 21082 (line 916) -- the motion solver's first recorded byte-level nondeterminism, diagnosis next.
+Run recorded: honest all-fail on all three seeds (S1 FAIL, binding orientation/derivative channel as frozen; S2 joint-C hard-fail and one undefined-assembly candidate; S4 handoff-place fail); the S4 peak-location prediction CONFIRMED; mod-count 0; corpus 427 rows with hashes. The determinism open item is DIAGNOSED: the differing byte is the "seconds" wall-clock runtime field -- timing metadata, not search nondeterminism; the standard amended (byte-identity excluding declared runtime metadata, frozen here); the one-line confirming full-pair diff pending (empty output closes it).
