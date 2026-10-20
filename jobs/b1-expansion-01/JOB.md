@@ -262,6 +262,81 @@
   means -- plus two long-line wrap fixes; the clean pair after the
   fixes is the staged behavior.
 
+
+## Recorded expansion outcome (2026-10-20; the run of record; the desk rehearsal superseded)
+
+- THE RUN: the owner's machine step at the recorded standard (the-hub,
+  motion venv, Python 3.14.4, repo root, merged source commit
+  0311587a -- the PR #87 merge): the instrument run twice with
+  redirected output, external diff EMPTY, exit 0; the report pasted
+  back by the owner and recorded HERE as data. Instrument identity
+  verified before the run: 27,317 bytes, sha256 83e23ebe...d7a2743.
+  The desk rehearsal (Python 3.12.13) is SUPERSEDED; every desk
+  finding reproduced in the run of record, digit for digit where
+  comparable (the coverage ratios, the AX1 verdicts, the AX2 table,
+  the AX3 means).
+- P0 PINS: all four PIN MATCH (capability 72989f8a... read-only,
+  50,265 bytes; trainer 1cb985ba... imported read-only, 26,268 bytes;
+  corpus cdac1413..., 838 rows; provenance commit 9c9fd6f9...). The
+  reproduction anchor PASSED: 720/720 recorded groove_sample rows
+  reproduced by the regenerated d=0.2/C_y=0.0 cell, worst deviation
+  0.000e+00 (tol 1e-9).
+- THE BUDGET: drawn exactly once, measured once, stopped (7,200
+  coverage + 3,600 feasibility + 16 warm-start demands / 48 baseline
+  trials); the report IS the stop record; NO artifact written. The
+  budget, the split rule, and the coverage map stand unamended.
+- COVERAGE (the recorded disease, measured at scale): interpolation
+  median 8.365633e-06 vs extrapolation median 1.500000e-01 -- ratio
+  of medians 17,930.5049x; extrapolation worst 0.2000693 units =
+  13.3380x the 0.015-unit tolerance; the extrapolation error is the
+  design offset itself (d=0.4 cells at 1.0e-01, d=0.5 cells at
+  2.0e-01 median) -- the learned component answers the boundary
+  model's design, not the demanded one. The design-INTERPOLATION
+  class is EMPTY by construction on the recorded grid (both
+  admissible C_y values trained; every interior d trained) --
+  interpolation is carried by the angle axis alone, recorded
+  honestly. CONFIRMED: the design channel is the disease; the
+  design-conditioned representation is the recorded candidate for
+  the FUTURE corpus decision, still not taken here.
+- AX1, FEASIBILITY PREDICTION: HELD. The supplier LINE (learned +
+  the standing design gate) reported INFEASIBLE on 3,600/3,600
+  fail-closed demands, with the recorded reason, never silently; the
+  learned component ALONE answered 3,600/3,600 with finite points
+  (infeasibility predictions 0/3,600) -- the WIRING, not the learned
+  component, carries infeasibility. The fallback is the bandage,
+  design coverage the disease, exactly as the re-probe recorded.
+- AX2, CONSTRAINED-VARIANT WARM-START: the frozen lean REFUTED
+  (honest data). Warm start won or tied the best seed on 8/8 near
+  cells (d=0.4) AND 8/8 far cells (d=0.5) -- the predicted
+  degradation on the far cells did NOT occur; the boundary model's
+  learned answer lands inside the 1.5 mm band on every demand and
+  beats the seeded random restarts at roughly a tenth of the cost
+  (mean 22.0 oracle calls, min 10, max 39, vs baseline mean 211.5,
+  min 112, max 290). Both directions recorded; the frozen lean is
+  recorded as refuted and no gate changed.
+- AX3, COST UNDER DEMAND VARIETY: learned answer 1 predict call;
+  closed form 1 groove_point call; the LINE's infeasibility report
+  is cheap and correct (1 rank check per design amortized over its
+  720 demands + 1 gate read); the learned-alone answer is cheap and
+  blind. Wall-clock excluded by freeze (the flip -02 lesson).
+- LABEL: SUPPLIER OUTPUT (LEARNED -- no head-to-head win; the A4
+  label stands per the frozen rule). The label-change event remains
+  defined exactly as frozen and unfired. Both-directions honesty:
+  the expansion existed to POWER the head-to-head, not to pass it;
+  no result amends the budget, the split, or the coverage map.
+- THE RECORDED READING: the supplier's honest value lives in AX1
+  and AX2, exactly as the critic's frozen prediction said. The
+  feasibility value is carried by the wiring, not the function; the
+  coverage disease is now measured at scale (17,930x) and names its
+  own cure -- the design channel in the feature map, which is a
+  REDESIGN and remains the future corpus decision. The warm-start
+  result (16/16 win/tie at a tenth of the baseline cost) is the
+  strongest supplier datum of the line so far: the learned
+  initialization's value SURVIVES design extrapolation even while
+  the learned answer's accuracy does not -- the redemption path
+  (PR #44) is measured, not hoped. The next staging decision is
+  Jean's; nothing further is claimed on this line.
+
 ## Status
 
 Freeze staged (2026-10-20) -- the ONE Direction 2 freeze document,
@@ -278,4 +353,10 @@ design-conditioned representation recorded as the future corpus
 decision. Instrument staged (2026-10-20): b1_expansion_run.py (27,317 bytes,
 sha256 83e23ebe...d7a2743), fail-closed pins carried, desk-rehearsed
 with the fail-closed matrix exercised, one report bug fixed
-pre-staging; NO run claimed -- the machine step follows the merge.
+pre-staging. RUN RECORDED (2026-10-20): the owner's run of record at
+the recorded standard (merged sha 0311587a) -- two redirected runs,
+external diff empty, exit 0; all pins matched, the anchor cell
+720/720; the reading in the Recorded expansion outcome section above
+(AX1 HELD; the coverage disease CONFIRMED at scale; the AX2 frozen
+lean REFUTED honestly; SUPPLIER OUTPUT stands). No further staging
+is claimed on this line; the next decision is Jean's.
