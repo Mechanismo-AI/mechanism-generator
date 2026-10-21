@@ -272,6 +272,134 @@ to this JOB (additions-only, never rewritten). On this staging's
 merge the merge records as its own continuity entry. The owner
 executes every run; nothing auto-runs.
 
+## The capability verdict (2026-10-21, recorded post-record; docs-only, additions-only)
+
+Staged per the D capability debate round (continuity entry76's
+opening card; the actor and critic positions relayed by the owner,
+recorded at entry78). This section is the T4-pattern post-record
+decision record: the folded verdict on the run of record
+(entry75; the status-cell record merged at PR #106). No recorded
+outcome is rewritten; nothing in the frozen brief moves -- no
+declared amendment (the demand stood as staged and the record
+answers it). Docs-only; no machine step before or after this
+merge.
+
+1. THE VERDICT: SCOPED. The six-bar family's answer at this
+demand class records as scoped -- covers N = 4 pinned phases with
+timing exactly (machine-verified: control A qualified 3/3 seeds
+at the engine's own 0.01 gate; the derivation check's deferred
+at-capacity claim confirmed by the recorded solver), and the
+demand's density binds beyond (7 = N + k, three points beyond
+capacity; D3: demand density exceeds synthesis capacity). The
+boundary is the DERIVED N = 4, never a picked number (the T4
+lesson); the seven-pin probe stands on the record as exactly what
+it was designed to be: the beyond-capacity datum, a frozen
+instrument that returned. The P4 refutation is recorded the way
+refuted predictions are always recorded on this line -- honest
+data, never argued away (the C3 mid-swing precedent): the binding
+channel is between-sample on both graded seeds, the whole trace
+off, not right-contour-missed-pins.
+
+2. NO AXIS MOVES (the load-bearing point): alternative (a)'s
+premise is already answered by the P4 refutation. The measured
+binding is whole-trace -- the interval channel, not the pins --
+so relaxing the pin count treats the one axis the data says is
+not binding. A relaxation under a declared rule is legitimate
+only when the rule is derived against the measured binding
+channel; here a relaxation would have to move the interval
+tolerance, which is a different demand class, not a relaxation.
+(a) stays available as the documented fallback with its natural
+trigger: a task owner who genuinely needs the continuous path at
+fewer pins declares the relaxed class, interval treatment stated.
+If a future re-scope fires, the axis-move discipline is already
+frozen in the record: pin counts from a derived rule, tolerance
+classes from a derivation with lineage, the interval treatment
+declared explicitly per the P4 constraint -- never silent.
+
+3. THE EIGHT-BAR TRIGGER: the frozen texts quoted, the reading
+argued (the critic's first delta). The freeze
+(jobs/case-d-brief-01/JOB.md, "The engine"): "The eight-bar
+trigger carried unchanged: fires at D's capability step ONLY on
+a demonstrated out-of-class finding (the brief-freeze derivation
+check or the failure digest), never a near-miss." The freeze's D3
+row: "the row that separates 'family cannot do the task' from
+'demand density exceeds synthesis capacity'; this row IS the
+eight-bar trigger's evidence input and must be readable as
+such." The derivation check
+(jobs/case-d-derivation-check-01/JOB.md): "the capacity count is
+about demand DENSITY, not path-shape reachability (whether the
+declared contour is inside the recorded parameterization's
+reachable classes); that question stays untouched for the
+failure digest." Against these words: NOT FIRED STANDS, and the
+distinction is NOT post-hoc -- the discrimination is the
+freeze's own, written before the run; the derivation check
+pre-read input (i) on it and deferred the reachability question
+to the digest. The digest's whole-trace finding is search-regime
+evidence in the density-excess band (the best traces at 200/200
+evaluations honestly failing), and the trigger's own "never a
+near-miss" clause bars a search failure from demonstrating
+out-of-class; control A's 3/3 qualification is positive in-class
+evidence (the family covers the class at capacity). THE DECLARED
+CONSEQUENCE, recorded plainly -- the narrowness on the page as a
+choice, not hidden as a reading: as frozen, a density-shaped
+capacity excess can NEVER fire this trigger (the demand side of
+D3's discrimination is by design the non-firing branch). A
+genuine reachability demonstration would need its own evidence
+class (an analytic finding or a designed reachability
+instrument), never a search failure. And the honest technical
+note (the critic's, recorded): the eight-bar's higher synthesis
+capacity would attack precisely the channel that bound -- more
+dof covers more pins exactly and shapes better intervals between
+them -- so the interval failure is not cleanly separable from
+family capacity, and the question stays OPEN, not closed. The
+critic's prediction, recorded: D's demand class is a real
+automation class and returns; when it does, the eight-bar
+question comes back with this round's scoping decision as its
+precedent.
+
+4. DURABLE CONVENTIONS (recorded as conventions, not just this
+job's finding): (i) in any future demand of the continuous-path
+class, the interval channel is a named gate, first-class, never
+a diagnostic row; demand declarations in this class pin the
+interval tolerance explicitly; the interval demand is met by
+better traces, never by scoring only the pins (the width-bias
+spirit, applied to the demand side). (ii) The per-sample
+emission machinery (PR-B, schema v3) is the native instrument
+for this channel, consumed wherever the class reappears. The
+demand class itself worked as an instrument: it discriminated,
+at a channel nobody had gated before.
+
+5. THE COST DATUM, SCOPED BY REGIME (the critic's second
+delta): the analytic at-bat's measured cost is 600 objective
+evaluations to verdict (the demand task's three runs at 200
+each; 1,650 counting all nine runs; counted twice,
+supplier-version-scoped to v0.1.0a11) -- and the matched-quality
+comparison clause is undefined on an all-fail pool, so this
+datum is recorded as COST-TO-VERDICT IN THE ALL-FAIL REGIME,
+never quoted as a matched-conditions baseline; it becomes
+reusable the moment a demand class with a surviving capability
+line appears in a (b)-context. The supplier comparison rows
+record as defined-and-unfired on this data: no surviving
+capability line exists within this demand class, and the
+(b)-context goes untested (at capacity, N = 4, the answer is
+exact/instant again).
+
+6. THE PARKED LINES AND THE SPEC-SIDE RESIDUE: the relaxed-class
+fallback (trigger: a task owner declaring the class, interval
+treatment stated); the eight-bar (only on shape-reachability
+evidence, its own round); the spec-side residue -- the
+interval-channel-first-class finding is case-A-shaped, a
+demand-class lesson with vocabulary value regardless of
+capability outcome; D's spec-side step (the
+continuous-path-plus-timing demand shape, interval channel
+first-class) is a legitimate round of its own -- flagged now,
+decided then, never smuggled into this record.
+
+7. NEXT: the decision round opens on this record (the card
+follows); the parked lines ride with their triggers. No verdict
+beyond this section is claimed; no runs, training, or
+automation are started by this section.
+
 ## Status
 
 Instrument staged (2026-10-21, branch case-d-digest-01):
@@ -283,3 +411,9 @@ of the pins; no recorded outcome amended; predictions frozen above.
 NEXT: the owner's browser merge, then the owner's run of record;
 on the run's recording the D line reads its capability step with
 the digest's corpus in hand.
+Post-record appends (2026-10-21): the run of record is RECORDED
+(continuity entry75; the jobs/README.md status-cell record merged
+at PR #106); the capability verdict is recorded in the section
+above (post-record decision, docs-only, additions-only); NEXT:
+the owner's browser merge of the capability-verdict record, then
+the decision round on the recorded data.
