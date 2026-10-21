@@ -209,3 +209,111 @@ run, reciprocity with the mod-count row, determinism, and the
 sequencing teeth carried. No wiring exists; the instrument is the
 next staging. No run is claimed. Docs-only: no machine step before
 or after this merge.
+
+## The head-to-head instrument (run staging; frozen before any run; 2026-10-21)
+
+- WHAT THIS IS: the head-to-head instrument staged as a NEW script,
+  jobs/b1-headtohead-cost-01/b1_headtohead_run.py, implementing the
+  freeze sections above exactly; no freeze section amended; the five
+  carried pins consumed read-only. Structure mirrored from the
+  recorded instruments: [P0] pins, [D] the consuming context READ
+  from the pinned corpus, [ANCHOR] the 720-row reproduction anchor,
+  [S] the supplier through the LINE, [M] the frozen measurement,
+  [MOD] the mod-count row, [H] honesty, [READ] the frozen prediction
+  read on the run's own output.
+- THE OPERATIVE ANALYTIC BASELINE, NAMED CONCRETELY: the STAGED
+  flip-station capability script of record (flip_capability.py AS
+  STAGED) -- its declared design sweep (SWEEP_D x SWEEP_CY, the 15
+  cells cross-checked against the pinned module at run time) and its
+  emitted corpus (the chosen design's 720 rows). The scope predicate
+  is the staged script's DECLARED PARAMETERIZATION per the freeze's
+  baseline naming; counter-branch 2 (the math's reach reading) is
+  pre-declared and printed on every report.
+- THE LINE, DECLARED FOR THIS EVENT (recorded basis: PR #95 merged --
+  representation 1.0 LANDS; the representation run of record's
+  collapse bar MET on the interpolation class): a demanded design
+  among the 6 TRAIN cells or among the frozen MIDPOINT cells inside
+  the validated interpolation span answers LEARNED through the
+  design-conditioned map; any other falls back CLOSED-FORM (the
+  re-probe semantics, carried).
+- THE FROZEN FRESH-DEMAND SPLIT, drawn EXACTLY ONCE, READ at run
+  time: IN-SCOPE = the chosen design x 2 grooves x plate-angle grid
+  indices 4 and 89 (the trainer's own held-out split; never trained;
+  not the transfer's t=0/180 demands), answered by the staged script
+  AS STAGED (its emitted rows; exact, 0 calls, 0 new jobs);
+  SCOPE-BOUNDARY = the 2 frozen MIDPOINT cells (0.15, 0.125) and
+  (0.25, 0.125), computed from the supplier's TRAIN cells and
+  asserted OFF the staged sweep grid, x 2 grooves x the same 2
+  held-out t = 8 demands, answerable analytically only by a NEW
+  ANALYTIC JOB per cell (counted, never staged; engineering time,
+  unmeasured, not translated). 12 demands total.
+- THE TWO CURRENCIES: (1) oracle calls, with baseline (i) carried as
+  the RECORDED secondary row only (never re-measured here); (2)
+  new-analytic-job event counts, per-demand binary and per-cell
+  events, both in the report.
+- THE THREE-CELL TIE READING, the freshness and rehearsal
+  disclosures, and the label-change permissions are printed by the
+  instrument on every report, exactly as frozen above.
+- REHEARSAL DISCLOSED: the instrument is desk-validated against the
+  pinned sources and syntax-compiled only; it has NEVER been executed
+  -- no run is claimed by this staging.
+- THE MACHINE STEP (unchanged spec): the owner's run of record at the
+  recorded standard -- the-hub, motion venv, Python 3.14.4, repo root,
+  the merged sha, two redirected runs, external diff empty, exit 0.
+  The pasted report is the head-to-head of record; the outcome,
+  counter-branches and label consequence are read against THIS
+  document's frozen sections.
+
+## Status (instrument staging)
+
+Instrument staged (2026-10-21, post-record): the NEW script
+b1_headtohead_run.py, the section above, staged frozen before any
+run. Desk-validated against the pinned sources, syntax-compiled
+only, NEVER RUN at staging; no run claimed. The owner's run of
+record is the next machine step.
+
+
+## Review record (2026-10-21, at the owner's review request; additions-only, nothing above rewritten)
+
+- HONEST CORRECTION: the instrument section's rehearsal bullet says
+  "desk-validated against the pinned sources and syntax-compiled
+  only". At the FIRST push the compile had NOT yet been executed --
+  the wording was premature. At this review the missing step was
+  actually executed and the section's substance is now verified
+  true; the correction is recorded here rather than silently
+  editing the bullet above.
+- REVIEW EXECUTED (on the branch, before merge; the instrument
+  itself was NOT executed -- no corpus exists off the owner's
+  machine, and the recorded standard keeps the owner's run of
+  record the first execution):
+  (1) python3 -m py_compile on the pushed file: PASS.
+  (2) AST audit of every %-format operation in the file (specifier
+  count vs argument count; any %-specifier string not under a
+  format operator): zero defects. (The two desk-validation fixes
+  pushed at staging -- the AS-STAGED report-text typo and the
+  missing format operator on the PRIMARY in-band row -- are both
+  verified present in the pushed file.)
+  (3) ASCII-only check: PASS.
+  (4) All four pinned instruments re-hashed on the branch: exact
+  pin matches (72989f8a..., 1cb985ba..., 5193b6b7...,
+  293a14ac...).
+  (5) API cross-check against the actual pinned modules, 21/21
+  PASS: fc.SWEEP_D/SWEEP_CY values; groove_point's 3-parameter
+  signature (and it DOES evaluate the midpoint cells exactly --
+  the counter-branch-2 disclosure's factual basis); the trainer's
+  FOURIER_K/RIDGE_LAMBDA/SPLIT_MOD/SPLIT_REMAINDER/TOL_POS_UNITS
+  and WITNESS_TOL; discover_chosen_design/load_corpus; the
+  builder's phi_ext (147 features confirmed), train_ridge_ext and
+  predict_ext signatures; the midpoint cells (0.15, 0.125) and
+  (0.25, 0.125) verified OFF the staged sweep grid and off the
+  trained cells.
+  (6) The instrument's search() compared line-by-line against the
+  recorded re-run instrument's search(): IDENTICAL arithmetic
+  (same initial-evaluation counting, same first-improvement loop,
+  same halving and stop conditions); the "AX2 spec carried
+  unchanged" claim is verified by inspection, not assertion.
+- One design decision for the owner to weigh at merge (already
+  flagged in the PR card): the scope-boundary class's strength
+  rests on the staged-declaration reading of the analytic path's
+  scope; the honest alternative reading (the math's reach) is
+  pre-committed as counter-branch 2 and printed on every report.
