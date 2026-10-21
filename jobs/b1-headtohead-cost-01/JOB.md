@@ -317,3 +317,73 @@ record is the next machine step.
   rests on the staged-declaration reading of the analytic path's
   scope; the honest alternative reading (the math's reach) is
   pre-committed as counter-branch 2 and printed on every report.
+
+
+## Scope-axis disposition (recorded 2026-10-21, post-run, additions-only; declared structure for all future supplier events)
+
+- THE OWNER'S READING, stated with the actor's reasons and the
+  critic's co-sign: MATH'S-REACH. The closed-form function's
+  mathematical reach -- not any staged job's declared
+  parameterization -- is the analytic path's true scope. The run
+  of record's scope-boundary class measured the staged script's
+  job-scoping, not a capability boundary of the analytic path:
+  groove_point evaluates the frozen midpoint cells exactly (the
+  containment digest below, EXECUTED).
+- THEREFORE the label-change event records as UNDERPOWERED on
+  the scope axis, never re-drawn. THE LABEL CHANGE DOES NOT
+  FIRE; SUPPLIER OUTPUT stands at its recorded scope. The
+  instrument's printed WIN_LABEL line was the staged-predicate
+  reading and does not stand.
+- DECLARED STRUCTURE (all future supplier events in this
+  family): the scope axis cannot fire a label change whatever
+  the numbers show. Reason: domain containment -- the learned
+  model's trained domain is a measured limit (the recorded 885x,
+  then 17,930x degradations), while the closed form's domain is
+  not a limit at all; the learned domain is contained in the
+  closed form's domain by construction (the
+  structural-unreachability prediction, extended from accuracy
+  to scope, recorded as prediction, not verdict). Pre-declared
+  in every future freeze BEFORE any run, per the D2 near-miss /
+  pre-written label-permissions precedent: the reading protocol
+  exists before the data.
+- THE LATENCY-VS-COVERAGE CLAIM RULE, frozen for all future
+  supplier claims: a coverage claim cites its domain's
+  containment relation to the alternatives; a latency claim
+  cites event counts or turnaround. "Fresh demand answered
+  without a new analytic job" is a LATENCY claim. Conflating
+  the two is the ambiguity the staged-declaration reading tried
+  to exploit; this rule closes it permanently.
+- THE RUN'S DATA STANDS UNCHANGED: 12/12 in-band, 12/12 gate
+  LEARNED, warm-start mean 1.0 oracle call; the PRIMARY
+  new-analytic-job finding (learned 0 for 12/12 where the
+  staged job-scoping would require 2) records as an ENGINEERING
+  LATENCY fact, never a coverage claim.
+
+## Containment digest (executed 2026-10-21 on the-hub; recorded verbatim)
+
+The owner executed the one-row digest (the critic's delta:
+construction claims get machine-verified; scope claims too).
+The command re-pins the three read-only sources (capability
+instrument 72989f8a..., trainer 1cb985ba..., corpus cdac1413...
+with the recorded grid read through the trainer's own loader),
+cross-checks the staged sweep constants, and evaluates
+groove_point at all 8 fresh scope-boundary demands twice.
+Output, verbatim:
+
+    pins: 3/3 MATCH
+    scope-containment digest -- the 8 fresh scope-boundary demands
+    evaluated through groove_point exactly (the closed form's domain check)
+      groove_1 (0.15,0.125) t=  4.0 -> (-1.120761276202, 0.454337101881) exact, re-deviation 0.0e+00
+      groove_2 (0.15,0.125) t=  4.0 -> (-1.420037450996, 0.475164276463) exact, re-deviation 0.0e+00
+      groove_1 (0.15,0.125) t= 89.0 -> (0.524452770049, 0.031331380513) exact, re-deviation 0.0e+00
+      groove_2 (0.15,0.125) t= 89.0 -> (0.224487740439, 0.035911883818) exact, re-deviation 0.0e+00
+      groove_1 (0.25,0.125) t=  4.0 -> (-1.021002551271, 0.447394710354) exact, re-deviation 0.0e+00
+      groove_2 (0.25,0.125) t=  4.0 -> (-1.519796175927, 0.482106667990) exact, re-deviation 0.0e+00
+      groove_1 (0.25,0.125) t= 89.0 -> (0.624441113253, 0.029804546078) exact, re-deviation 0.0e+00
+      groove_2 (0.25,0.125) t= 89.0 -> (0.124499397235, 0.037438718253) exact, re-deviation 0.0e+00
+    8/8 midpoint demands evaluated by the closed form exactly (worst re-derivation deviation 0.0e+00, tol 1e-09) -- DOMAIN CONTAINMENT EXECUTED
+    exit: 0
+
+DOMAIN CONTAINMENT EXECUTED: the closed form's domain contains
+the scope-boundary fresh demands; the scope axis is underpowered
+for any learned-side claim in this family, as declared above.
