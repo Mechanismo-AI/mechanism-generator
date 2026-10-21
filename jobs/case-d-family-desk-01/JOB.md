@@ -180,3 +180,64 @@ on the recorded debate line with this pick in hand (the brief --
 the task, the demand numbers, the scorecard skeleton -- comes to
 the debate channel before any D instrument stages, per the
 frozen rule).
+
+## Declared trigger amendment (2026-10-21, the owner's decision)
+
+Staged 2026-10-21, additions-only, on Jean's explicit declaration.
+The amendment card presented on the recorded line carried: the
+frozen trigger above verbatim, the C-line evidence in hand, and
+the amendment's exact scope and non-effects. The owner's answer,
+carried verbatim: "Declare the amendment now". This section
+records that declared decision -- the owner's own, never a
+reinterpretation, never automatic. Docs-only: no script, no run,
+nothing built; no recorded outcome amended.
+
+The amendment, as declared:
+
+- THE SCOPE EXTENSION. The frozen eight-bar trigger above is
+  D-scoped as recorded ("fires at D's capability step, never
+  mid-loop"). By the owner's declared amendment its
+  input-evidence scope extends to the C-line shape-reachability
+  demonstration now on public main: the demand's >= 177.000 deg
+  unwrapped swing (B2 Finding 1's floor arithmetic, carried
+  verbatim at the re-entry freeze's R1) against the six-bar
+  pool's measured class-invariant 156.452 deg free-swing ceiling
+  (the B2 pool datum) -- a 20.548 deg deficit, structural at the
+  pool datum and NOT a near-miss (a near-miss is in-family
+  iteration per the recorded succession pattern), together with
+  the two merged desk answers as the trigger's input-class
+  evidence (PR #110, amplitude YES by loop composition; PR #112,
+  pose precision YES at the class level; entries 86/88 and
+  90/91).
+- THE EFFECT, exactly and only: the composed-oscillation family
+  build commitment is authorized for the C-line re-entry
+  capability step (jobs/case-c-flip-reentry-freeze-01/JOB.md,
+  merged PR #113, entries 92/94). That step may make the
+  commitment when its own frozen sequencing reaches it -- the
+  instrument freezes first (each build-time derivation behind
+  its own freeze, the family-build pattern), then the capability
+  step, never before; the supplier authorization question stays
+  parked, resolving at that step's outcome, never before.
+- COST OF ENTRY unchanged: the Candidate B record above stands
+  (nothing recorded for the eight-bar; a new multi-loop position
+  analysis, audit harness and run discipline built from zero).
+  This amendment stages nothing and builds nothing.
+
+Non-effects, carried: the trigger's D-scope text stands as data,
+extended only by this declared amendment; D's own trigger
+reading stays with D's own steps (its brief-freeze derivation or
+failure digest), never re-derived here, and no D verdict is
+claimed; the recorded pool ceiling (156.452 deg) keeps its
+meaning as a pool datum and the C1a catch keeps its meaning for
+the fixed-pivot class, neither amended; case study C stays
+closed with the flip unsolved; the never-a-near-miss rule
+stands; the wide-fail branch stands (an honest all-fail at the
+capability step is the outcome, the rows never relaxed); the
+supplier authorization question stays parked; recorded outcomes
+are never rewritten. No runs, training, or automation started;
+nothing built; the owner executes every run.
+
+NEXT: Jean reviews and merges; the merge records as its own
+continuity entry. On the re-entry line the instrument freezes
+follow on Jean's go, then the capability step, where the
+authorization question resolves.
