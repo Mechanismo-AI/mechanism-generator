@@ -482,7 +482,7 @@ def run(source_commit):
     R("    trained on; not the transfer's measured demands t=0/180;")
     R("    nothing here re-grades any recorded outcome)")
     R("  IN-SCOPE class: the chosen design x 2 grooves x 2 held-out t")
-    R("    = %d demands; the staged script answers AS STADED->AS"
+    R("    = %d demands; the staged script answers AS"
       " STAGED: its emitted corpus row (exact, 0 calls, 0 new jobs)"
       % (2 * len(HELD_OUT_IDX)))
     R("  SCOPE-BOUNDARY class: 2 midpoint cells x 2 grooves x 2"
@@ -702,7 +702,8 @@ def run(source_commit):
       % (len(mid_cells),
          "FIRED" if primary else "REFUTED (honest data)",
          learned_sb, n_sb))
-    R("    %d/%d; learned new-analytic-jobs 0)")
+    R("    %d/%d; learned new-analytic-jobs 0)"
+      % (in_band_sb, n_sb))
     tie = (in_band_in == n_in)
     R("  THE IN-SCOPE CELL (the pre-declared tie reading) -- the")
     R("    learned supplier in-band %d/%d and the staged script exact"
