@@ -1,211 +1,146 @@
-# Job b1-headtohead-cost-01: the Q5 endgame head-to-head freeze -- the learned supplier against the direct analytic path at matched outcome quality on fresh demands (the ONE freeze document before any wiring; no run claimed)
+# Evidence jobs
 
-## Why this job exists (the recorded mandate, carried)
+Each directory under `jobs` is a self-contained evidence job: a
+`JOB.md` (for the queue, a `README.md`) with the purpose, the run
+commands, and -- once executed -- the recorded outcome read against a
+prediction scorecard written BEFORE the run. Failures,
+zero-selection results, and refuted predictions are recorded as data,
+not errors, and recorded outcomes are never rewritten. Corpus outputs
+land in `runs/` (gitignored, maintainer-local).
 
-- The Q5 endgame round is open on the recorded debate line (the
-  continuity ledger, STATE-VOL-2.md entry52 the opening-position card,
-  entry53 the actor and critic positions, relayed by Jean). The
-  transfer re-run of record (b1-warmstart-transfer-01, PR #98 merged
-  at main 44765e73) closed that job end to end: the cost channel
-  carried identically under representation 1.0 (LEARNED 4/4, in-band
-  4/4, WIN/TIE 4/4; oracle calls 1.0 vs 207.5, ratio 0.0048; warm
-  dist 7.181489e-05 new vs 7.057537e-05 old, both inside the
-  0.015-unit band; supplier-version scoping DISCHARGED; case study C
-  CLOSED). The round's consensus: the head-to-head win condition is
-  the next event, with the cost-channel supplier formalization FOLDED
-  IN AS ITS INSTRUMENT -- the formalization is a recording-and-wiring
-  task, not an open research question; it is never staged as a
-  separate track.
-- HOME AND PLACEMENT, DECLARED: this job lives at
-  jobs/b1-headtohead-cost-01/, on the B1 line, because B1 owns the
-  supplier and the supplier-output-as-tool discipline. It is the
-  endgame event the debate line has been sequencing toward.
+| Job | Role | Status |
+| --- | --- | --- |
+| [sync-pair-eval-01](sync-pair-eval-01/JOB.md) | First end-to-end engine runs of the synchronized pair; produced the S4 verifier fixtures | Served; superseded by the corpus runs |
+| [sync-corpus-01](sync-corpus-01/JOB.md) | The corpus driver (`corpus_run.py`) and the applied-offsets follow-up; shared by every later corpus | Driver in active use |
+| [sync-corpus-05](sync-corpus-05/JOB.md) | G5 capstone: the pair sharing one keep-out zone (sampled-occupancy gating) | Run recorded |
+| [sync-corpus-06](sync-corpus-06/JOB.md) | Anchor-probe pass: single-task offsets over the G5 pools | Run recorded |
+| [sync-corpus-07](sync-corpus-07/JOB.md) | Z3 capstone: the screened corpus on fresh engine runs, against a frozen scorecard | Run recorded |
+| [sync-corpus-08](sync-corpus-08/JOB.md) | Re-time probe over the screened pools plus the hand-declared 15/15 confirm; post-joint-search outcome appended | Run recorded |
+| [corpus-occupancy-digest](corpus-occupancy-digest/JOB.md) | Menu-B digest: pooled occupancy classes over all 499 corpus-07 candidate rows; class-geometry story (zone placement, not link ratios) | Run recorded |
+| [corpus-geometry-maps](corpus-geometry-maps/JOB.md) | Menu-C class-structure maps (transform space, scale-invariant, bearing axis); menu C closed: no static quick-vs-drag boundary | Run recorded |
+| [corpus-timeline-animator](corpus-timeline-animator/JOB.md) | Menu-E exemplar occupancy timelines; screen-frame window reproduction | Run recorded |
+| [corpus-frame-sweep](corpus-frame-sweep/JOB.md) | Corpus-wide base-angle frame sweep (menu-E follow-up): screen 499/499 vs plain 1/499 | Run recorded |
+| [gap-transfer-failure-01](gap-transfer-failure-01/JOB.md) | Case study B failure analysis: the level 260 mm gap-transfer carry as three ordered poses at packaging tolerance, asked of the current four-bar engine | Run recorded |
+| [sixbar-gap-transfer-01](sixbar-gap-transfer-01/JOB.md) | Case study B capability: the full gap-transfer carry cycle as a frozen 12-phase motion task for the experimental six-bar motion solver | Run recorded |
+| [sixbar-gap-transfer-02](sixbar-gap-transfer-02/JOB.md) | Case study B diagnostic: the no-bottom-stops variant of the gap-transfer motion task (carry and process stops unchanged, smooth bottom joins) | Run recorded |
+| [sixbar-gap-transfer-03](sixbar-gap-transfer-03/JOB.md) | Case study B diagnostic: the softened-timing recompute -- is the acceleration binding carried by the timing law or by the phase-locked grid? (script, no solver run) | Run recorded |
+| [sixbar-gap-transfer-04](sixbar-gap-transfer-04/JOB.md) | Case study B: the free-phase variant -- sample placement freed (T1/T2/T3 poses, path and process stops fixed), chosen by the committed design script; the -03 R4 unlock aimed at the binding prescription, with the group's (a)/(b)/(c) requirements in the JOB | Run recorded |
+| [dualcam-gap-transfer-05](dualcam-gap-transfer-05/JOB.md) | Case study B family succession: the dual-cam cross-slide (Option A) design study -- deterministic Stage 1 (fail-closed task validation at 1e-9, analytic profile synthesis on a 0.1 deg grid, pressure-angle/curvature audit with frozen G2 branches, cam-vs-six-bar family-cost table); script, no solver run | Run recorded |
+| [dualcam-lever-transfer-06](dualcam-lever-transfer-06/JOB.md) | Case study B family succession: the Option B cam + lever design study -- the dual-cam cross-slide with a general pivoted lever on the x axis (pivot and inter-arm angle as declared scan outputs; exact lever-map synthesis, slide-space continuity, slot-angle gate mirroring the cam branches, combined swept-envelope row), deterministic Stage 1 under the frozen G2 branches; the staging disclosure records the falsified first declaration and the re-derivation; script, no solver run | Run recorded |
+| [dualcam-profile-tolerance-07](dualcam-profile-tolerance-07/JOB.md) | Case study B: profile-tolerance -> path-error mapping for the recorded -06 Option B design (exact lever map, frozen WC-L convention; force-closure and A-floor data rows) | Run recorded |
+| [dwell-station-failure-01](dwell-station-failure-01/JOB.md) | Case study A failure analysis: the hold-still labeling station -- the case-B-mirrored three-pose instrument, with the 0.3 mm / 50 deg dwell demand scored by a fail-closed digest over the recorded traces (declared layouts, symmetry direction, pinned grid arithmetic, Geneva decision axis) | Run recorded |
+| [dwell-station-capability-01](dwell-station-capability-01/JOB.md) | Case study A capability: the debate-adopted one x-cam + passive y-guide dwell design -- deterministic Stage 1 (half-cosine synthesis on the digest grid, executed dwell witness, dual-instance pricing: direct follower vs ideal-ratio lever at the recorded -06 lambda band, required headroom/utilization table, WC/RSS tolerance knees with the duration channel, family-cost table vs the four-bar frontier); script, no solver run | Run recorded |
+| [dwell-station-decision-01](dwell-station-decision-01/JOB.md) | Case study A capability-to-spec/decision: the folded actor+critic decision record (lever + tolerance zoning; direct + renegotiation the live fallback with its trigger) and the declared width amendment (frozen rule, provenance answered); deterministic instrument consuming the recorded -01 design read-only | Run recorded |
+| [dwell-station-spec-01](dwell-station-spec-01/JOB.md) | Case study A spec side: the folded dwell-duration vocabulary draft (v0.1 section 9.6 clarification -- phase_span minimum semantics + phase_span_allowance; target-layer dwell_realization, recorded-never-gated with the required knee row; worked example from the recorded decision digits with provenance); docs-only S1 | Spec draft staged (S1) |
+| [flip-station-failure-01](flip-station-failure-01/JOB.md) | Case study C failure analysis: the flipper brief -- the 180 deg face flip as three ordered poses with directed orientations (0/90/180 deg) on the case-B layout; the fail-closed digest scores position and orientation on the recorded traces and emits the machine-readable solution corpus (units block + schema version) this case study owes the B1 admission-gate work | Run recorded |
+| [flip-station-capability-01](flip-station-capability-01/JOB.md) | Case study C capability: the debate-folded dual-groove plate-cam flip carrier (the fixed-pivot class desk-caught pose-infeasible -- three colinear centroid points) -- deterministic Stage 1 (exact dual-groove synthesis + pose witness, pressure-angle/curvature gates with dead-point rows, WC-L tolerance at both handoffs with the drive-reversal backlash channel, exact-rectangle part envelope, scored reciprocity row); wide-fail fires the pre-declared six-bar trigger; B2 answer schema committed alongside (docs/b2-answer-schema.md); script, no solver run | Run recorded |
+| [flip-station-sixbar-01](flip-station-sixbar-01/JOB.md) | Case study C family succession (the fired trigger's recorded alternative): the debate-folded six-bar flip carrier motion task -- fold record + demand-translation spec (the motion JSON desk derivation staged: the case-B layout loop inherited from the recorded -01 task plus the C2 quintic orientation program pinning 0/90/180 deg at phases 0/2/4; the S2-S4 audit script staged and desk-validated: folded transmission gates, the swept-envelope table, the analytic link-length sensitivity rows with the FD self-check), S0-S5 scorecard with the corrected transmission gates and the scored instrument-modification row, honest all-fail prior with the plateau-breaker counter-branch; the cam class ruling's frozen answer schema committed alongside (docs/cam-class-ruling-schema.md); RUN RECORDED: honest all-fail on all three seeds, orientation/derivative channel binding as frozen, joint-C transmission hard-fail, the S4 peak-location prediction CONFIRMED, mod-count 0, one open determinism item (seed 580000050 run-2 differs at line 916 -- the solver's first recorded byte-level nondeterminism) | Run recorded; determinism item DIAGNOSED (the wall-clock "seconds" field -- timing metadata, not search nondeterminism; standard amended, confirming full diff pending) |
+| [b1-admission-gate-01](b1-admission-gate-01/JOB.md) | The B1 line (the fired strategy trigger, first in order per the fork): the frozen admission gate for the first learned-proposal run -- the seven strategy.md items as graded rows A1-A7 (zero-modification, closed-form head-to-head with both numbers, determinism, supplier-output labeling, OOD control, initializer head-to-head, lineage with identity hashes) plus the frozen first-run design decisions (the flip-station cam space first on the 838-row corpus of record, the additive-only succession-rule schema pin, the frozen held-out split rule, the distance-from-closed-form headline metric). Run staged: the instrument b1_proposer_train.py (per-groove Fourier-feature ridge regression, exact closed-form solve, seed-free; corpus + instrument sha256 pins verified at run; reproduction witness; the frozen distance function, OOD probe with provenance, baseline seed set, A7 artifact order, frozen predictions P1-P4) staged before any run; rehearsal disclosed, no run claimed | Run recorded (2026-10-20) -- first admissible B1 run; honest loss to closed-form in-distribution, clear OOD degradation, beats random restart on every seed; SUPPLIER OUTPUT stands. Next-step decision frozen (2026-10-20): the fallback re-probe (Direction 1) with the synthetic budgeted expansion (Direction 2) committed behind it; re-probe instrument staged (2026-10-20): the script b1_fallback_reprobe.py (design gate, digit-for-digit reproduction check on the recorded supplier, B2-signature rubric; trainer imported read-only under its pin), rehearsal disclosed, fail-closed; re-probe RUN RECORDED (2026-10-20): design gate fired as frozen (FALLBACK: CLOSED-FORM exact on the mismatch branch; LEARNED in-distribution under the trained design), supplier reproduced digit for digit, B2-signature DATA-LIMITED (frozen prediction HELD) -- the fallback is a bandage, design coverage is the disease; SUPPLIER OUTPUT stands. Two-candidate decision (2026-10-20): BOTH, in order -- the warm-start transfer freeze is the next staging (its own small freeze: initialization-cost labeling, consuming-context baseline comparison frozen before wiring, zero-mod reciprocity with the mod-count row, determinism, supplier-version scoping), and the design-conditioned representation freeze is committed as the next B1 staged item behind it, with the substitution guard and the silent-deferral tripwire. Transfer freeze staged (2026-10-20): jobs/b1-warmstart-transfer-01 -- the ONE freeze document before any wiring (docs-only, no run claimed) |
+| [b1-expansion-01](b1-expansion-01/JOB.md) | The B1 line, Direction 2: the synthetic budgeted expansion freeze -- the ONE freeze document before any generation (budget: 7,200 coverage demands + 3,600 feasibility demands + 48 warm-start trials, drawn exactly once, stop condition stated; the gate's split rule within cells, whole design cells per the coverage map; the DESIGN AXIS EXPLICIT per the recorded re-probe redirect: the d >= 0.4 design cells are the extrapolation cells, the recorded 885x probe datum their precedent; pre-declared comparison axes with accuracy preordained; both-directions honesty; the design-conditioned representation recorded as the future corpus decision it is) | RUN RECORDED (2026-10-20) at the recorded standard (merged sha 0311587a; two redirected runs, diff empty, exit 0; pins matched, anchor 720/720): AX1 HELD (the LINE reported INFEASIBLE 3,600/3,600, never silent; learned-alone answered blind -- the wiring carries infeasibility); the coverage disease CONFIRMED at scale (extrapolation/interpolation median ratio 17,930x; worst 13.34x tolerance); the AX2 frozen lean REFUTED honestly (warm start won/tied 16/16 including the far cells, at ~a tenth the baseline oracle cost) -- the PR #44 redemption path measured; design-INTERPOLATION empty by construction; label SUPPLIER OUTPUT stands, the label-change event unfired; the design-conditioned representation remains the future corpus decision |
+| [b1-warmstart-transfer-01](b1-warmstart-transfer-01/JOB.md) | The B1 line, candidate (2) per the two-candidate decision: the warm-start transfer freeze -- the ONE freeze document before any wiring (the consuming context: the flip-station loop's actual recorded handoff demands at the recorded case-study design, the 1.5 mm band re-posed as an active constraint; the comparison protocol: the AX2 search spec and baseline draw rule carried unchanged, 4 warm-start runs + 12 seeded baseline trials drawn exactly once, stop condition stated; the frozen prediction with the honest context-dependence counter-branch; an initialization-cost datum: SUPPLIER OUTPUT stands, the label-change event unfired; reciprocity in reverse with the mod-count row, determinism, supplier-version scoping; the substitution guard and the sequencing teeth carried) | Freeze merged (2026-10-20, PR #90). Instrument staged (2026-10-20): the wiring + measurement script b1_transfer_run.py, implementing the freeze exactly -- the consuming context READ from the pinned corpus through the trainer's fail-closed loader (the recorded handoff stations from the envelope row, matched to the recorded demand poses; the program angle discovered as the unique recorded-grid angle whose pose matches the demand; the band read from the handoff_tolerance gate row and cross-checked against the frozen 1.5 mm); the AX2 search spec and baseline draw rule carried unchanged; the supplier consumed through the LINE with the design gate passing on the actual demands; 4 warm-start runs + 12 seeded baseline trials drawn exactly once, the report IS the stop record, no artifact written; fail-closed pins with the post-measurement re-hash mod-count row, the 720-row reproduction anchor, double-run determinism. Rehearsal disclosed: desk-validated against the trainer/expansion code paths and the corpus schema, syntax-compiled only, never run. RUN RECORDED (2026-10-20) at the recorded standard (merged sha 5eeaee79; two redirected runs, external diff empty, exit 0 on both; all pins matched, the 720/720 reproduction anchor PASS, the post-measurement mod-count row 0; no artifact written): the LINE answered LEARNED on all 4 actual demands (no design mismatch), in-band 4/4, WIN/TIE 4/4 vs the 12 seeded baseline trials; oracle calls warm-start mean 1.0 vs baseline mean 207.5 (ratio 0.0048); PRIMARY (the cost channel) HELD, the CONTEXT-DEPENDENCE counter-branch NOT FIRED; label SUPPLIER OUTPUT stands (the A4 label), the label-change event unfired; supplier-version scoping: if the design-conditioned representation lands, this datum re-runs on it before it carries forward. The transfer job is complete at its recorded outcome (freeze -> instrument -> run); the recorded outcome is data, never rewritten. Transfer re-run freeze under representation 1.0 staged (2026-10-20, post-record): the supplier-version scoping discharge named next by the PR #95 post-record (the corpus decision) -- the exact re-run (4 warm-start runs + 12 seeded baseline trials drawn EXACTLY ONCE; consuming context READ from the pinned corpus, never transcribed; AX2 search spec and baseline draw rule carried verbatim; baseline expected to reproduce the recorded numbers exactly, any deviation a RECORDED FINDING never a re-draw), the single-axis change (only the warm-start supplier version: representation 1.0 -- 147 features per groove, the frozen 49-feature Fourier basis + the design channel [d, C_y] + first-order products, ONE model per groove across the 6 train cells, RIDGE_LAMBDA=1e-08 -- instead of the recorded per-cell 49-feature map; builder pinned function-plus-data per the PR #58 standard, builder spec + training-row source hashes pinned at instrument staging; LINE gate unchanged), the explicit old-vs-new comparison row (recorded WIN/TIE 4/4, in-band 4/4, oracle-call means 1.0 vs 207.5, ratio 0.0048, final-distance means 7.057537e-05 vs 5.299213e-01 units; the AX2 context datum 16/16 at mean 22.0 vs 211.5 carried as context only, never this re-run's old side; broader consumption its own later freeze), the frozen prediction (never a gate; PRIMARY the cost channel: wins or ties every actual demand at a fraction of baseline calls, at least as good as recorded; honest counter-branch CONTEXT-DEPENDENCE -- a portability finding, never a gate change, never an amendment of the landed coverage claim), labeling (INITIALIZATION-COST datum scoped to representation 1.0; SUPPLIER OUTPUT stands; the label-change event defined and unfired; the substitution guard in force; case study C stays CLOSED), pins and zero-mod (original freeze + b1_transfer_run.py read-only protocol sources, the re-run instrument a NEW script; trainer b1_proposer_train.py sha256 1cb985ba...c5a9974, 26,268 bytes, imported read-only; capability instrument sha256 72989f8a...06447b, 50,265 bytes, read-only distance oracle + ground-truth synthesizer; corpus cdac1413...39be6c, 838 rows, through the trainer's fail-closed loader as REPRODUCTION ANCHOR; the representation-1.0 builder identity hash pinned at instrument staging; mod-count row expected 0, nonzero = recorded FAIL), determinism and stop (seed-free warm start via the frozen exact-solve ridge; baseline recorded seeds only; no wall-clock; the report IS the stop record; no artifact written; double-run determinism; drawn exactly once; any change to the frozen numbers re-stages before wiring), and the machine step (spec, NOT this staging: the re-run instrument -- a NEW script, the original instrument as protocol source, the 147-feature builder as the pinned trainer reference with lineage rows -- is the NEXT staging, frozen before any run; the owner's run of record at the recorded standard). No run is claimed. Docs-only, additions-only: no machine step before or after this merge. Transfer re-run instrument staged (2026-10-20, post-record): the NEW script b1_transfer_rerun.py implementing the re-run freeze exactly -- the single-axis change wired (only the warm-start supplier version: representation 1.0 consumed through the pinned builder's own functions imported read-only from the pinned representation instrument -- phi_ext / train_ridge_ext / predict_ext, 147 features per groove, ONE model per groove across the 6 train cells, RIDGE_LAMBDA the trainer's own, seed-free; LINE gate unchanged, LEARNED at the actual design, closed-form fallback carried); the P0 pins extended (the representation instrument b1_representation_run.py sha256 5193b6b7...01e6, 29,557 bytes, pinned as the builder identity and imported read-only; the original transfer instrument b1_transfer_run.py sha256 293a14ac...56, 25,540 bytes, pinned read-only as the protocol source, never imported, never executed; the mod-count row re-hashes all five pins, expected 0); the baseline draw box declared honestly at staging (the recorded run's own box -- the anchor cell's per-groove TRAIN-split corpus rows -- so the baseline is expected to reproduce the recorded numbers exactly and the single-axis change stays isolated to the warm-start supplier version alone; any deviation a RECORDED FINDING, never a re-draw); the explicit old-vs-new comparison row and the baseline-exactness check in the report (old = PR #91 recorded; the AX2 16/16 at 22.0 vs 211.5 datum context only, never the old side); frozen prediction and CONTEXT-DEPENDENCE counter-branch carried. Rehearsal disclosed: desk-validated against the pinned sources, syntax-compiled only, NEVER RUN at staging; no run claimed. The owner's run of record at the recorded standard is the next machine step; the endgame round stays deferred until the re-run's answer. TRANSFER RE-RUN OF RECORD (2026-10-20) at the recorded standard (merged sha ce63b2e5; two redirected runs, external diff empty, exit 0 on both; all five pins matched -- trainer 1cb985ba, capability 72989f8a, representation builder 5193b6b7, original instrument 293a14ac, corpus cdac1413 with provenance 9c9fd6f9; the 720/720 reproduction anchor PASS worst deviation 0.000e+00 at tol 1e-09; the post-measurement mod-count row 0; no artifact written, the report IS the stop record): the LINE answered LEARNED on all 4 actual demands (no design mismatch); warm-start in-band 4/4, WIN/TIE 4/4 vs the 12 seeded baseline trials; oracle calls warm-start mean 1.0 vs baseline mean 207.5 (ratio 0.0048); final-distance means warm 7.181489e-05 vs baseline 5.299213e-01 units; the explicit old-vs-new comparison row recorded as data, never a gate (old: WIN/TIE 4/4, in-band 4/4, calls mean 1.0, ratio 0.0048, final-dist mean 7.057537e-05; new: WIN/TIE 4/4, in-band 4/4, calls mean 1.0, ratio 0.0048, final-dist mean 7.181489e-05); the baseline-exactness check PASS (calls mean 207.5 vs recorded 207.5, dist mean 5.299213e-01 vs recorded 5.299213e-01 -- the baseline reproduced the recorded numbers exactly, confirming the single-axis change isolated to the warm-start supplier version alone); PRIMARY (the cost channel) HELD; the honest CONTEXT-DEPENDENCE counter-branch NOT FIRED; the supplier-version scoping DISCHARGED (the datum now carries the representation-1.0 scope; the landed coverage claim not amended); label SUPPLIER OUTPUT stands (the A4 label), the label-change event unfired; the substitution guard in force; case study C stays CLOSED; double-run determinism IDENTICAL. The re-run job is complete at its recorded outcome (freeze -> instrument -> re-run); the recorded outcome is data, never rewritten. The endgame round (Q5) now has its answer in hand. |
+| [b1-representation-01](b1-representation-01/JOB.md) | The B1 line, candidate (1) per the two-candidate decision: the design-conditioned representation freeze -- the ONE freeze document before any training of the new map (the disease treatment: the design channel d and C_y as inputs gated onto the frozen per-groove Fourier basis, 147 features per groove, the trainer's ridge carried, one model per groove across the trained design cells; the coverage map carried unchanged from the expansion -- the 6 train cells, the interpolation held-out samples, the 4 d >= 0.4 extrapolation cells as the disease class, the feasibility cells an open residue; the success criterion with the numeric collapse bar picked at freeze time: ratio of medians <= 10.0x AND the extrapolation median inside the 0.015-unit band, a miss a recorded finding never a waiver; the frozen prediction with both honest counter-branches; the grade-only rule on the recorded 885x case touched once at the final grade, iteration on the synthetic cells only; fail-closed pins with the 720-row reproduction anchor, determinism, the stop condition; the substitution guard and the sequencing teeth carried) | Freeze merged (2026-10-20, PR #92). Instrument staged (2026-10-20): the generation + training + measurement script b1_representation_run.py, implementing the freeze exactly -- the design-conditioned feature map (the trainer 49-feature Fourier basis extended with the design channel [d, C_y] and the first-order products onto the angle basis: 147 features per groove; the builder in the instrument; the trainer ridge RIDGE_LAMBDA=1e-08 and its own solve imported read-only; ONE model per groove across the 6 train cells, seed-free), every training and demand row synthesized at run time through the pinned oracle read-only, never stored, never transcribed; the coverage classes measured with identical definitions to the expansion recorded disease measurement (train_in_sample, interpolation, extrapolation; the per-d sub-class medians recorded as data); the numeric collapse bar read as data (ratio of medians <= 10.0x AND the extrapolation median inside the 0.015-unit band; a miss a recorded finding, never a waiver); the recorded 885x case graded ONCE at the final grade, then the run stops (iteration set synthetic only); the 720-row reproduction anchor; no wall-clock, no artifact written, the report IS the stop record, double-run determinism; fail-closed pins with the post-measurement mod-count re-hash row. Rehearsal disclosed: desk-validated against the pinned sources (the trainer ridge path and constants, the capability oracle groove_point, the expansion class definitions and measurement pattern), syntax-compiled only, NEVER RUN at staging. RUN RECORDED (2026-10-20) at the recorded standard (merged sha 3a69aeb5; two redirected runs, external diff empty, exit 0 on both; all pins matched, the 720/720 reproduction anchor PASS worst deviation 0.000e+00 at tol 1e-09, the post-measurement mod-count re-hash row 0; no artifact written): the numeric collapse bar MET on both clauses, recorded as data never a gate (clause 1: extrapolation/interpolation ratio of medians 1.0983x, down from the recorded 17930.5049x expansion disease, bar <= 10.0x; clause 2: extrapolation class median 9.188152e-06 units, 0.0006x the 0.015-unit band, worst 8.389652e-05, 0.0056x); the frozen PRIMARY HELD (the d=0.4 sub-class median 8.955306e-06 units, ratio 1.0705x); NO counter-branch fired (the d=0.5 far cells: median 9.499990e-06 units, ratio 1.1356x; the d=0.4 miss; the interpolation degradation -- new interpolation median 8.365528e-06 vs the recorded expansion 8.365633e-06, the anchor classes never sacrificed); the recorded 885x case graded ONCE at the final grade (closed-form (0.65000000, 0.00000000), learned (0.65000738, -0.00000008), distance 7.375601e-06 units, 0.0005x tolerance, IN BAND), then the run stopped (grade-only rule); label SUPPLIER OUTPUT stands (the A4 label), the label-change event unfired; double-run determinism IDENTICAL. The representation job is complete at its recorded outcome (freeze -> instrument -> run); the recorded outcome is data, never rewritten. Per the freeze's recorded supplier-version scoping, the warm-start transfer datum re-runs under this representation before it carries forward; whether the representation lands is the recorded debate line's call, never this row's |
+| [b1-headtohead-cost-01](b1-headtohead-cost-01/JOB.md) | The B1 line, the Q5 endgame event: the head-to-head freeze -- the learned supplier vs the DIRECT ANALYTIC PATH at matched outcome quality on fresh demands (the declared amendment: the restated cost-at-matched-accuracy clause operative with its recorded reason, the accuracy clause recorded as structurally unreachable in this family, the three-axis prediction carried live; baseline (ii) operative with baseline (i) the secondary row; two currencies: calls ratio + new-analytic-job event counts; the fresh-demand split with the in-scope class and the scope-boundary class drawn exactly once; the pre-declared three-cell tie reading; label-change permissions written before the run; reciprocity with the mod-count row, determinism, the substitution guard) | Freeze staged (2026-10-21); no run claimed; the instrument is the next staging |
+| [local-llm-queue](local-llm-queue/README.md) | A patient-clerk queue for a local small LLM (digests, labeling, first drafts) | Active tooling |
 
-## The declared amendment (the win condition restated by DECLARED
-CHANGE; the actor's requirement, adopted)
+Recorded outcomes are data about the state of the tools when the run
+happened. Where a later revision changed a capability -- e.g. the
+joint offset search (PR #30) now composes relations over derived
+region events, which `omts propose-offsets` refused before -- the job
+files say so and point forward; earlier sections are never rewritten.
 
-- THE FROZEN B1 WIN CONDITION was the accuracy head-to-head. The
-  record shows what it yields: honest losses at ~8e-06 units against
-  a closed form that is exact, instant, and free -- recorded as the
-  structural-unreachability PREDICTION, not verdict.
-- THE AMENDMENT, DECLARED with its recorded reason (the
-  in-distribution honest losses; the width-bias precedent's spirit:
-  the demand moves by declared change with a frozen reason, never by
-  quiet reinterpretation; Jean deciding): the OPERATIVE win condition
-  of this event is the RESTATED CLAUSE -- the learned supplier
-  answers fresh demands at MATCHED outcome quality at lower cost
-  than the strongest available closed-form alternative. The freeze
-  states BOTH clauses, and both stay in force: the accuracy clause
-  is recorded as structurally unreachable IN THIS FAMILY, and the
-  three-axis prediction (a family without a closed form; a
-  constrained variant where the closed form stops exact/instant; AX1
-  keeps feasibility in the wiring) stays LIVE for families and
-  variants where the accuracy clause is not structurally unreachable.
-- No verdict is claimed at this staging; this is the event's shape,
-  not its outcome.
+## Case study B closure (2026-10-19)
 
-## Baseline naming and the two currencies (the fairness gate,
-sharpened per the critic's deltas; frozen BEFORE any run)
+Case study B (the 260 mm gap transfer) is CLOSED with this record; the T4
+terminal-branch decision in jobs/dualcam-profile-tolerance-07/JOB.md is
+the closure event. Summary:
 
-- THE OPERATIVE BASELINE is (ii) THE DIRECT ANALYTIC PATH: the
-  capability-job pattern, where a fresh demand is answered by a
-  staged analytic job (deterministic script, ~0 oracle calls per
-  demand, one staged job each time). The endgame question names the
-  analytic path as the strongest available closed-form alternative;
-  baseline (i) -- the measured oracle/restart search, 207.5 mean
-  calls, already beaten 16/16 (expansion AX2) and 4/4 (transfer,
-  re-run) at ratio 0.0048 -- is largely answered and is reported as
-  the SECONDARY ROW only, for continuity.
-- TWO CURRENCIES, both declared here and both in the report:
-  (1) the calls-ratio row, carried for continuity with the recorded
-  0.0048; (2) NEW-ANALYTIC-JOB EVENT COUNTS: "fresh demands answered
-  without a new analytic job" -- a binary, countable,
-  machine-recordable unit. Against the analytic path, oracle-calls
-  alone is the WRONG currency (the analytic path pays zero calls and
-  one staged job); a staged analytic job's true cost is engineering
-  time, which the record cannot measure -- so count the events, do
-  NOT translate engineering time into a number, and do not translate
-  either currency into terms that flatter the learned side.
-- THE COMPARISON IS GRADED on both currencies at MATCHED outcome
-  quality (in-band at the recorded 1.5 mm band standard for the
-  in-family cells; exactness read as data for the analytic path).
+- Capability record: four-bar three-pose failure record
+  (gap-transfer-failure-01: zero selections, position binding ~6-7x over
+  tolerance) -> six-bar capability -01/-02/-03/-04 (all-fail; the stops
+  bind, not the carry; the bottom stops were not the main carrier; the
+  phase-locked grid binds; the free-phase lever cut derivative demand
+  ~30% and the position error did not follow -- succession rule engaged)
+  -> Option A dual-cam -05 (cam x wide fail by arithmetic, 72.6645 deg vs
+  the 45 deg gate; cam y HELD, the family's first HELD engineering gate)
+  -> Option B cam+lever -06 (both axes HELD at the 30 deg target inside
+  the envelope; the envelope exactly consumed) -> tolerance map -07
+  (T1-T7; a uniform 0.10 mm class stays inside the packaging overlay at
+  2.54x; the T4 manufacturing-readiness finding) -> the T4 zoning
+  decision. The family's answer to the brief is the Option B cam+lever
+  design.
+- Manufacturing-readiness record: tolerance zoning on the major arcs
+  (cam x <= 0.05 mm class; cam y <= 0.05 mm class with the declared
+  datum-bias rule bias = class + 0.02 mm), envelope renegotiation
+  documented as the fallback with its trigger (a real installation or
+  line measurement showing slack).
+- Declared open residues, assigned to their future steps: force-closure /
+  return-spring gate design (blocked on declared masses and a rated
+  speed; the -07 T6 rows are its evidence base); payload/grasp modeling
+  (a future-pick capability, e.g. the queued flipper case study);
+  dynamics beyond the kinematic torque proxies; certification-level
+  collision checking (sampled occupancy, never certified).
+- The budget sweep stays the standing in-family candidate if the family
+  question returns.
 
-## The fresh-demand split (frozen BEFORE any run; nothing re-graded
-on any cell that trained, tuned, or rehearsed anything)
 
-- Fresh demands get their OWN frozen split, declared here before the
-  run, drawn EXACTLY ONCE, READ from the pinned corpus and
-  instruments at run time, never transcribed.
-- (a) THE IN-SCOPE CLASS: fresh demands inside the staged analytic
-  script's parameterized scope. A learned tie or loss here is
-  EXPECTED and recorded as fine; the analytic path is effectively
-  free in-scope.
-- (b) THE SCOPE-BOUNDARY CLASS: at least one declared class of
-  fresh demands where the analytic answer REQUIRES RE-STAGING -- a
-  new constraint pattern, a demand outside the staged script's
-  parameterization, the kind of change that historically meant a new
-  -05/-06-pattern analytic job. WITHOUT this class the comparison is
-  preordained (the rigged-comparison catch, one level up: if every
-  fresh demand sits inside the analytic script's scope, the
-  head-to-head ties at effectively-free and the event is
-  underpowered by design). The scope-boundary class is where the
-  restated win condition can genuinely FIRE or genuinely FAIL.
-- STOP CONDITION: the split is drawn once; no extension, no
-  regeneration, no re-draw after any result exists; an underpowered
-  or failed measurement is a recorded finding, never a budget
-  re-open. Any change to any frozen declaration above re-stages this
-  document before any wiring.
+## The head-to-head instrument (run staging; frozen before any run; 2026-10-21)
 
-## The tie-reading, pre-declared (three honest cells, frozen before
-the run like the D2 near-miss branch)
+- WHAT THIS IS: the head-to-head instrument staged as a NEW script,
+  jobs/b1-headtohead-cost-01/b1_headtohead_run.py, implementing the
+  freeze sections above exactly; no freeze section amended; the five
+  carried pins consumed read-only. Structure mirrored from the
+  recorded instruments: [P0] pins, [D] the consuming context READ
+  from the pinned corpus, [ANCHOR] the 720-row reproduction anchor,
+  [S] the supplier through the LINE, [M] the frozen measurement,
+  [MOD] the mod-count row, [H] honesty, [READ] the frozen prediction
+  read on the run's own output.
+- THE OPERATIVE ANALYTIC BASELINE, NAMED CONCRETELY: the STAGED
+  flip-station capability script of record (flip_capability.py AS
+  STAGED) -- its declared design sweep (SWEEP_D x SWEEP_CY, the 15
+  cells cross-checked against the pinned module at run time) and its
+  emitted corpus (the chosen design's 720 rows). The scope predicate
+  is the staged script's DECLARED PARAMETERIZATION per the freeze's
+  baseline naming; counter-branch 2 (the math's reach reading) is
+  pre-declared and printed on every report.
+- THE LINE, DECLARED FOR THIS EVENT (recorded basis: PR #95 merged --
+  representation 1.0 LANDS; the representation run of record's
+  collapse bar MET on the interpolation class): a demanded design
+  among the 6 TRAIN cells or among the frozen MIDPOINT cells inside
+  the validated interpolation span answers LEARNED through the
+  design-conditioned map; any other falls back CLOSED-FORM (the
+  re-probe semantics, carried).
+- THE FROZEN FRESH-DEMAND SPLIT, drawn EXACTLY ONCE, READ at run
+  time: IN-SCOPE = the chosen design x 2 grooves x plate-angle grid
+  indices 4 and 89 (the trainer's own held-out split; never trained;
+  not the transfer's t=0/180 demands), answered by the staged script
+  AS STAGED (its emitted rows; exact, 0 calls, 0 new jobs);
+  SCOPE-BOUNDARY = the 2 frozen MIDPOINT cells (0.15, 0.125) and
+  (0.25, 0.125), computed from the supplier's TRAIN cells and
+  asserted OFF the staged sweep grid, x 2 grooves x the same 2
+  held-out t = 8 demands, answerable analytically only by a NEW
+  ANALYTIC JOB per cell (counted, never staged; engineering time,
+  unmeasured, not translated). 12 demands total.
+- THE TWO CURRENCIES: (1) oracle calls, with baseline (i) carried as
+  the RECORDED secondary row only (never re-measured here); (2)
+  new-analytic-job event counts, per-demand binary and per-cell
+  events, both in the report.
+- THE THREE-CELL TIE READING, the freshness and rehearsal
+  disclosures, and the label-change permissions are printed by the
+  instrument on every report, exactly as frozen above.
+- REHEARSAL DISCLOSED: the instrument is desk-validated against the
+  pinned sources and syntax-compiled only; it has NEVER been executed
+  -- no run is claimed by this staging.
+- THE MACHINE STEP (unchanged spec): the owner's run of record at the
+  recorded standard -- the-hub, motion venv, Python 3.14.4, repo root,
+  the merged sha, two redirected runs, external diff empty, exit 0.
+  The pasted report is the head-to-head of record; the outcome,
+  counter-branches and label consequence are read against THIS
+  document's frozen sections.
 
-- The outcome table has THREE honest cells, not two. A TIE on
-  in-scope demands records: analytic synthesis remains the winning
-  supplier in-scope (the strategy sentence's current reading), and
-  the learned supplier wins the SCOPE-BOUNDARY channel -- the
-  division of labor, measured. A tie is NOT a null result.
-- An honest LOSS is a PASS-grade outcome (both-directions honesty):
-  both numbers in the table, the loss recorded as data, the
-  prediction read honestly against it.
+## Status (instrument staging)
 
-## The frozen prediction (never a gate)
-
-- PRIMARY (the restated clause): on the scope-boundary class, the
-  learned supplier answers fresh demands in-band at matched outcome
-  quality, with ZERO new analytic jobs, where the analytic path
-  requires one -- the cost channel carrying where the closed form's
-  price reappears.
-- HONEST COUNTER-BRANCHES: (1) the learned supplier misses the band
-  or degrades on scope-boundary demands -- a portability finding,
-  recorded, never a gate change; (2) the scope-boundary class proves
-  answerable by the staged analytic script without re-staging -- a
-  scope finding about the analytic path's reach, and the event is
-  recorded as underpowered on that axis, never re-drawn; (3) the
-  wiring cannot consume the supplier without modifying a pinned
-  artifact -- a recorded finding about the instruments, never a
-  patch in the dark.
-- The three-axis falsifiable-prediction-without-verdict (entry52,
-  carried) stands as recorded and is not graded by this event.
-
-## Label-change permissions, written BEFORE the run (nobody knows
-yet whether the run wins them)
-
-- IF the restated win condition FIRES on the scope-boundary class,
-  SUPPLIER OUTPUT changes to: SUPPLIER OUTPUT (SCOPE-BOUNDARY COST
-  CHANNEL) -- authorizing exactly: the claim that the learned
-  warm-start supplier answers fresh scope-boundary demands at
-  matched outcome quality without a new analytic job, at the
-  recorded cost ratio, scoped to representation 1.0 and the measured
-  classes; recorded as its own label-change event with its own
-  record. Authorizing NOTHING ELSE: no accuracy claim in any class,
-  no substitution reframe (the substitution guard in force: the
-  measured disease history stays recorded; the analytic path remains
-  the winning supplier in-scope), no case-study C reopening, no
-  broader-consumption claim beyond the frozen split.
-- IF it does not fire, SUPPLIER OUTPUT stands unchanged, the
-  label-change event stays defined and unfired, and the honest
-  outcome is recorded as data.
-
-## Reciprocity, pins, mod-count, determinism (frozen)
-
-- ZERO INSTRUMENT MODIFICATION: the head-to-head instrument consumes
-  the pinned artifacts READ-ONLY. PINS, carried fail-closed: the
-  trainer b1_proposer_train.py (sha256 1cb985ba...c5a9974, 26,268
-  bytes) imported read-only; the capability instrument (sha256
-  72989f8a...06447b, 50,265 bytes) consumed read-only; the
-  representation-1.0 builder jobs/b1-representation-01/b1_representation_run.py
-  (sha256 5193b6b7...01e6, 29,557 bytes) imported read-only as the
-  supplier reference; the original transfer instrument (sha256
-  293a14ac...56, 25,540 bytes) read-only as a protocol source; the
-  corpus of record (cdac1413...39be6c, 838 rows, provenance
-  9c9fd6f9) loaded through the trainer's fail-closed loader as the
-  REPRODUCTION ANCHOR. New pins for any newly-staged analytic
-  baseline script are declared at instrument staging
-  (function-plus-data per the PR #58 standard).
-- MOD-COUNT ROW: the instrument counts and reports modifications to
-  any pinned artifact; the expected count is 0; a nonzero count is a
-  recorded FAIL of this row.
-- DETERMINISM: the learned supplier is seed-free (the frozen
-  exact-solve ridge under representation 1.0); any seeded comparison
-  row uses the recorded seed set only; no wall-clock in the record;
-  the report IS the stop record; no artifact written; the run of
-  record is the owner's machine step at the recorded standard
-  (the-hub, motion venv, Python 3.14.4, repo root, the merged sha):
-  run twice with redirected output, external diff empty, exit 0,
-  the report pasted back and read against THIS document's frozen
-  sections and prediction.
-
-## Machine step (spec; NOT this staging)
-
-- THE NEXT STAGING is the head-to-head instrument: the wiring +
-  measurement script implementing THIS document exactly (the
-  supplier through the LINE; the operative analytic baseline named
-  and pinned; the fresh-demand split with the in-scope and
-  scope-boundary classes; both currencies; the three-cell tie
-  reading), frozen before any run with its own fail-closed pins,
-  rehearsal disclosure, and mod-count row -- the
-  gate-then-run-staging pattern.
-- SEQUENCING, carried: freeze document (this staging; docs-only)
-  -> instrument -> run of record -> outcome -> the label-change
-  event ONLY on a win, as its own record. No runs, training, or
-  automation before the freeze merges; Jean reviews and merges
-  throughout. This staging carries NO script and claims NO run.
-
-## Status
-
-Freeze staged (2026-10-21) -- the ONE Q5 endgame head-to-head freeze
-document, frozen before any wiring: the declared amendment (the
-restated cost-at-matched-accuracy clause operative, with the recorded
-reason; the accuracy clause recorded as structurally unreachable in
-this family; the three-axis prediction carried live), the baseline
-naming (the direct analytic path operative, the restart search the
-secondary row), the two currencies (calls ratio + new-analytic-job
-event counts), the fresh-demand split (the in-scope class and the
-scope-boundary class, drawn exactly once, stop condition stated), the
-pre-declared tie reading (three honest cells; a tie records the
-division of labor measured), the frozen prediction with honest
-counter-branches, the label-change permissions written before the
-run, reciprocity with the mod-count row, determinism, and the
-sequencing teeth carried. No wiring exists; the instrument is the
-next staging. No run is claimed. Docs-only: no machine step before
-or after this merge.
+Instrument staged (2026-10-21, post-record): the NEW script
+b1_headtohead_run.py, the section above, staged frozen before any
+run. Desk-validated against the pinned sources, syntax-compiled
+only, NEVER RUN at staging; no run claimed. The owner's run of
+record is the next machine step.
