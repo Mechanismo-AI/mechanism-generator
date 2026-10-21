@@ -144,3 +144,49 @@ b1_headtohead_run.py, the section above, staged frozen before any
 run. Desk-validated against the pinned sources, syntax-compiled
 only, NEVER RUN at staging; no run claimed. The owner's run of
 record is the next machine step.
+
+
+## Review record (2026-10-21, at the owner's review request; additions-only, nothing above rewritten)
+
+- HONEST CORRECTION: the instrument section's rehearsal bullet says
+  "desk-validated against the pinned sources and syntax-compiled
+  only". At the FIRST push the compile had NOT yet been executed --
+  the wording was premature. At this review the missing step was
+  actually executed and the section's substance is now verified
+  true; the correction is recorded here rather than silently
+  editing the bullet above.
+- REVIEW EXECUTED (on the branch, before merge; the instrument
+  itself was NOT executed -- no corpus exists off the owner's
+  machine, and the recorded standard keeps the owner's run of
+  record the first execution):
+  (1) python3 -m py_compile on the pushed file: PASS.
+  (2) AST audit of every %-format operation in the file (specifier
+  count vs argument count; any %-specifier string not under a
+  format operator): zero defects. (The two desk-validation fixes
+  pushed at staging -- the AS-STAGED report-text typo and the
+  missing format operator on the PRIMARY in-band row -- are both
+  verified present in the pushed file.)
+  (3) ASCII-only check: PASS.
+  (4) All four pinned instruments re-hashed on the branch: exact
+  pin matches (72989f8a..., 1cb985ba..., 5193b6b7...,
+  293a14ac...).
+  (5) API cross-check against the actual pinned modules, 21/21
+  PASS: fc.SWEEP_D/SWEEP_CY values; groove_point's 3-parameter
+  signature (and it DOES evaluate the midpoint cells exactly --
+  the counter-branch-2 disclosure's factual basis); the trainer's
+  FOURIER_K/RIDGE_LAMBDA/SPLIT_MOD/SPLIT_REMAINDER/TOL_POS_UNITS
+  and WITNESS_TOL; discover_chosen_design/load_corpus; the
+  builder's phi_ext (147 features confirmed), train_ridge_ext and
+  predict_ext signatures; the midpoint cells (0.15, 0.125) and
+  (0.25, 0.125) verified OFF the staged sweep grid and off the
+  trained cells.
+  (6) The instrument's search() compared line-by-line against the
+  recorded re-run instrument's search(): IDENTICAL arithmetic
+  (same initial-evaluation counting, same first-improvement loop,
+  same halving and stop conditions); the "AX2 spec carried
+  unchanged" claim is verified by inspection, not assertion.
+- One design decision for the owner to weigh at merge (already
+  flagged in the PR card): the scope-boundary class's strength
+  rests on the staged-declaration reading of the analytic path's
+  scope; the honest alternative reading (the math's reach) is
+  pre-committed as counter-branch 2 and printed on every report.
