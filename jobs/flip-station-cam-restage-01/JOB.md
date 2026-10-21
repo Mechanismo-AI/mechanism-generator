@@ -273,3 +273,35 @@ Staging disclosure (honesty note): this script has never been
 executed -- syntax-compiled only (the entry55 precedent). Any
 falsification at the run of record records as data, per the -06
 staging-disclosure precedent.
+
+## The instrument bug-fix (staged 2026-10-21; the owner's run
+of record crashed fail-closed before any grading)
+
+The owner's run of record at merged main 0c286766 (the PR
+#116 merge) crashed honestly: the instrument aborts with a
+TypeError inside fd_check (the FD self-check) before any
+grading -- the probe passes a bare float where pin_path
+requires a 2-vector pin offset (rot(phi, q) subscripts q[0],
+q[1]). Exit 1 on both runs, the diff EMPTY (the crash
+itself deterministic); the instrument reached NO graded row,
+wrote NO corpus, recorded NO verdict; no recorded outcome is
+amended. The crash is data -- the honest cost of the
+never-run-at-staging discipline (the entry55 precedent:
+syntax-compiled only at staging) -- recorded here, never
+rewritten.
+
+The fix (this staging; exactly one line of the instrument,
+nothing else): the fd_check probe entries become pin offsets
+-- ((0.2, 0.0), 30.0), ((0.2, 0.0), 100.0), (-0.3, 0.0),
+250.0) -- preserving the probe's intent exactly (an x-offset
+pin at zero y, the G1 pin convention). The fixed instrument
+is syntax-compiled only at this staging, NEVER RUN (the
+entry55 precedent stands); every graded row S1-S6, every
+gate value, the declared search classes, the audit structure
+and the corpus schema are unchanged; the S6 reciprocity
+question is answered by this disclosure -- the fix touches
+no carried audit structure, only the probe's value
+representation. The run of record re-executes at THIS
+fix's merged sha (--source-commit pinned there, never
+0c286766); the outcome staging then records against the
+frozen rows exactly as first frozen above.
