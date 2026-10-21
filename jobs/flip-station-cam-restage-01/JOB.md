@@ -158,3 +158,118 @@ row carried verbatim; the C1a class boundary carried as the
 recorded catch the declared search classes must exit or fail
 against. NEXT: Jean reviews and merges; the Stage-1 instrument
 staging follows on his go.
+
+## The Stage-1 instrument (staged 2026-10-21, on Jean's go; never run at staging)
+
+`flip_cam_restage_instrument.py` (this directory): the
+deterministic design script per the -05/-06 pattern, staged on
+the owner's go per this freeze's sequencing. Pure stdlib, ASCII
+only, deterministic (no clocks, no randomness, sorted keys; run
+twice and diff -- byte-identical is the control); fail-closed
+throughout. Syntax-compiled only at staging, NEVER RUN: no run,
+training, or automation is started by the staging; the owner
+executes every run; the machine step below is the run of record.
+
+The declared search classes (frozen here, declared BEFORE any
+synthesis runs, never re-drawn after a run -- the
+staged-declaration discipline):
+
+- CLASS F0, the fixed-pivot rigid-mount class (the recorded
+  boundary): graded by the C1a arithmetic carried from the
+  recorded study -- any F0 candidate FAILS S1 by the recorded
+  arithmetic, never re-litigated. This row IS the class boundary
+  the declared classes must exit or fail against.
+- CLASS G1, the dual-groove plate-cam carrier (the recorded
+  study's own class, jobs/flip-station-capability-01, the case-B
+  -05/-06 pattern): the recorded exact construction carried; the
+  frozen sweep d x C_y re-graded under the re-derived gate; the
+  recorded chosen design (d = 0.2, C_y = 0.0) re-graded as its
+  own reference row, its recorded outcome keeping its meaning,
+  never re-litigated. EXITS C1a by the recorded construction.
+- CLASS C1, the cam+lever pivoted-cradle composition (the case-B
+  cam+lever class, jobs/dualcam-lever-transfer-06: a general
+  pivoted lever): the carriage translates on the carry plane (a
+  groove-cam channel, the -05 in-line translating pin follower
+  pattern); the part rides a cradle pivoted ON the carriage (a
+  MOVING pivot -- the identity mount forced by the demand, the
+  centroid at the pivot on the y = 0.5 line); the cradle is
+  driven through a frame-pivoted lever whose radial slot engages
+  a cradle pin (the -06 lever parametrization: pivot P, short
+  arm A, inter-arm angle Delta; the -06 rocker inversion for
+  the cam profile). EXITS C1a: the pivot translates, so the
+  centroid path is not a circle -- the three colinear poses are
+  met by construction. Declared scan (frozen before synthesis):
+  Px in {-0.5, 0, 0.5}, Py in {0.9, 1.1, 1.3}, A in {0.15,
+  0.25, 0.35}, Delta in {-8, 0, 8} deg, r_p in {0.15, 0.25,
+  0.35}, beta_p in {0, 90, 180} deg (729 candidates); coarse
+  1 deg scan, finalists audited on the 0.05 deg grid; the frozen
+  pick rule: among all-rows-passing candidates the smallest
+  worst pressure angle at the binding gate; tie-break larger
+  r_p, then smaller |Delta|, then lower Py, then grid order; if
+  none passes, the best is recorded with the wide-fail verdict
+  -- the gate is never relaxed.
+
+The graded rows, frozen above, implemented per class:
+
+- S1 pose feasibility: the three ordered poses exact by
+  construction, machine-verified (witness < 1e-12 at the program
+  points); tolerances 1.5 mm / 1.5 deg carried.
+- S2 the re-derived gate: pressure angle <= 73.300756 deg at the
+  committed inputs (mu 0.10-0.15, SF 2), evaluated over the
+  loaded arcs at EVERY transmitting pair (groove-pin,
+  groove-roller, slot-pin); the gate arithmetic re-computed and
+  checked fail-closed against the frozen six-digit values (the
+  gate consumed, never re-derived); the self-lock boundary
+  (81.469234 deg at mu 0.15 / 84.289407 deg at mu 0.10) reported
+  alongside every gate reading; efficiency as data (loss =
+  mu*tan(alpha); the gate IS the 50 percent loss boundary,
+  checked: mu*tan(gate) = 1/SF = 0.500).
+- S3 curvature and dead-point rows: groove min radius >= 1.25 x
+  pin/roller radius (the recorded precedent; pins the 4 mm
+  commercial cam-pin class, the roller 15 mm, the -06 first-cut
+  radius lineage); dead-point bands excluded from the gates and
+  recorded as data; the FD self-check discipline carried (the
+  analytic derivative machinery cross-checked against finite
+  differences, fail-closed).
+- S4 WC-L at both handoffs, channels separate (the drive-reversal
+  backlash channel kept separate): groove clearance 0.1 mm per
+  side + profile 0.05 mm centerline class per channel; the slot
+  wall priced at the same 0.1 mm clearance class; combined =
+  their sum; the linear error maps declared per channel (carriage
+  groove, lever groove, slot wall), worst case over the
+  clearance-sign corners; rank deficiency fails closed with the
+  reason recorded; dead points as rows, never finite numbers.
+- S5 the exact-rectangle part envelope at 0.25 deg pose samples
+  (sampled, never certified) with the carriage, lever,
+  cradle-pin and plate extents in one utilization table; the
+  handoff stations carried; recorded data, not gated (no size
+  demand is frozen by the brief); packaging per the -05
+  axial-stack convention.
+- S6 the scored reciprocity row: the instrument modification
+  count (modifications to the carried audit structure; 0
+  expected, any delta named per modification).
+
+The wide-fail branch is pre-stated above and implemented: an
+honest all-fail IS the outcome; every verdict prints as data;
+nothing is rewritten; the supplier question is not reached; the
+gate is never relaxed.
+
+Machine step (the run of record, maintainer-local, after the
+merge; the corpus lands under runs/flip-station-cam-restage-01/,
+gitignored):
+
+1. `python jobs/flip-station-cam-restage-01/flip_cam_restage_instrument.py --source-commit <merged-40-hex-sha> > cam_restage_run1.txt`
+2. A second run with the same sha, redirected to
+   `cam_restage_run2.txt`.
+3. `diff cam_restage_run1.txt cam_restage_run2.txt` -- expect
+   EMPTY; exit 0; each report ends with the in-process
+   "double-run determinism check: IDENTICAL" line. Pure stdlib;
+   any Python 3.8+.
+4. Record the outcome in this JOB.md against the frozen rows,
+   referencing the corpus files by the sha256 hashes the script
+   prints.
+
+Staging disclosure (honesty note): this script has never been
+executed -- syntax-compiled only (the entry55 precedent). Any
+falsification at the run of record records as data, per the -06
+staging-disclosure precedent.
