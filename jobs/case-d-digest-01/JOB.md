@@ -417,3 +417,77 @@ at PR #106); the capability verdict is recorded in the section
 above (post-record decision, docs-only, additions-only); NEXT:
 the owner's browser merge of the capability-verdict record, then
 the decision round on the recorded data.
+
+## Case study D closure (2026-10-21, the close-out decision)
+
+Case study D (the continuous-path-plus-timing demand class) is CLOSED
+with this record. The closure event is the close-out decision recorded
+here, reading the MERGED interval-channel vocabulary
+(specs/omts/0.2/interval-channel.md, PR #108, merged at public main
+f6e3a06d): D closes behind its spec-side step per the folded lean (the
+case-A precedent; the PR #60 pattern -- the close-out decision is the
+closure event). This section is additions-only; every recorded outcome
+above stands as data, never rewritten.
+
+- The loop's full lineage, closed end to end: the family desk
+  comparison (case-d-family-desk-01: SIX-BAR-NOW picked; the eight-bar
+  trigger frozen) -> the brief (case-d-brief-01: N + k derived, never
+  picked; the interval channel at a declared 8x refinement, sampled
+  never certified) -> the derivation check
+  (case-d-derivation-check-01: N = 4; the count rule fires at 7) -> the
+  failure-digest instrument and run of record (this job: P1/P2/P3
+  CONFIRMED, P4 REFUTED -- between-sample binding, not
+  position-at-pins; control A the machine-verified N = 4 at-capacity
+  witness; control B the N + 1 elevated-residual probe) -> the status
+  cell (PR #106) -> the scoped capability verdict (PR #107: the family
+  covers N = 4 exactly; the demand's density binds beyond) -> the
+  decision round (folded, continuity entry81) -> the spec side
+  (case-d-spec-01, PR #108 MERGED: the interval-channel vocabulary
+  live on public main).
+- The spec-side deliverable, reading MERGED vocabulary, never drafts:
+  specs/omts/0.2/interval-channel.md (14,519 bytes, live at public
+  main f6e3a06d) -- the interval channel first-class (whole-trace
+  binding; the pin-count-vs-whole-trace distinction;
+  expressible-not-implied tolerance pinning; SAMPLED NEVER CERTIFIED
+  normative), the gate-home declaration with the adapter boundary
+  recorded (decision-round delta 1: validation checks structure,
+  units, and pinned-sample consistency per v0.1 section 23; the
+  interval verdict at run/verify against per-sample emission; the
+  R2.5c adapter's section 20 rejection the recorded boundary). S2
+  document validation and S3 interval evaluation remain future per the
+  draft's implementation staging.
+- The parked capability lines, unfired, with their triggers: the
+  relaxed-class fallback (a) stays the documented fallback with its
+  owner-declaration trigger; the eight-bar family extension fires only
+  on shape-reachability data (a demonstrated out-of-class finding),
+  still not fired.
+- The eight-bar consequence line (decision-round delta 2, adopted in
+  full): under the shape-reachability reading, a capacity-driven
+  demand can never fire the family-extension trigger; an extension on
+  density evidence requires the trigger's own declared amendment,
+  never a reinterpretation. D's seven-pin demand is density beyond
+  capacity; the trigger reads it as data, never as a near-miss. (The
+  line also rides the strategy card's trigger-state row so the next
+  pick reads it at decision time, not archivally.)
+- The supplier disposition (Q3), parked with this record: recorded
+  honestly as NOT REACHED in this context -- the axes defined and
+  unfired; the (b)-context untested because no capability line
+  survived to compare within. No supplier question inside the
+  vocabulary (the draft's one scope line: the demand class is
+  gradeable by existing recorded instruments, nothing more).
+- The near-reach lesson in the disposition rows (decision-round
+  delta 3, with the task-merits-first guard): (b)-context testability
+  is a freeze-time demand-difficulty choice; where the task need
+  permits, a path-class brief sits the demand in the family's
+  near-reach band and states the testability consequence at freeze.
+  The guard: the task stands on task merits first; the pin count is
+  derived from the task's actual need; never a difficulty tuned to
+  keep the supplier question alive -- if a real task needs N + 3, the
+  honest wide-fail is the correct outcome, data, not a defect.
+- The honest note, recorded as data and never as a family verdict:
+  D's task demand stands unsolved at seven pins by the recorded family
+  (the case-C shape); the family covers N = 4 pinned phases exactly
+  (machine-verified by control A); the demand's density binds beyond;
+  the shape-reachability question stays open.
+
+The strategy round opens on the actor's card after this merge.
