@@ -738,9 +738,9 @@ def c1_slot_metrics(q_pin, Pl, t_deg):
     speed = math.hypot(wp[0], wp[1])
     transverse = abs(n[0] * wp[0] + n[1] * wp[1])
     if speed < EPS_GEOM or transverse < GATE_WINDOW_FRACTION * speed:
-        return {"t": t, "beta_deg": None, "r": r, "dead": True}
+        return {"t": t_deg, "beta_deg": None, "r": r, "dead": True}
     cos_b = min(1.0, transverse / speed)
-    return {"t": t, "beta_deg": math.degrees(math.acos(cos_b)),
+    return {"t": t_deg, "beta_deg": math.degrees(math.acos(cos_b)),
             "r": r, "dead": False}
 
 
@@ -801,22 +801,22 @@ def c1_handoff_map(q_pin, Pl, A, delta_deg, t_deg):
     _, _, phi, _, _, _, _ = pose_derivs(t_deg)
     v_phi = rot(phi + math.pi / 2.0, q_pin)
     # carriage groove normal (world) at t
-    wc, wcp, wcpp = c1_carriage_pin(t)
-    gc, gcp, _ = groove_from_path(wc, wcp, wcpp, t, PLATE_CENTER)
+    wc, wcp, wcpp = c1_carriage_pin(t_deg)
+    gc, gcp, _ = groove_from_path(wc, wcp, wcpp, t_deg, PLATE_CENTER)
     gl = math.hypot(gcp[0], gcp[1])
     if gl < EPS_GEOM:
-        raise ValueError("zero carriage-groove tangent at t=%r" % t)
+        raise ValueError("zero carriage-groove tangent at t=%r" % t_deg)
     nx, ny = -gcp[1] / gl, gcp[0] / gl
-    n_car = rot(math.radians(t), (nx, ny))
+    n_car = rot(math.radians(t_deg), (nx, ny))
     # lever groove normal (world) at t
     gl2 = groove_from_path(k["roller_w"], k["roller_wp"],
-                           k["roller_wpp"], t, PLATE_CENTER)
+                           k["roller_wpp"], t_deg, PLATE_CENTER)
     gl2p = gl2[1]
     gl2l = math.hypot(gl2p[0], gl2p[1])
     if gl2l < EPS_GEOM:
-        raise ValueError("zero lever-groove tangent at t=%r" % t)
+        raise ValueError("zero lever-groove tangent at t=%r" % t_deg)
     nx2, ny2 = -gl2p[1] / gl2l, gl2p[0] / gl2l
-    n_lev = rot(math.radians(t), (nx2, ny2))
+    n_lev = rot(math.radians(t_deg), (nx2, ny2))
     # per-unit-dpsi roller velocity direction (magnitude A)
     ang = k["psi"] + math.radians(delta_deg)
     perp = (-math.sin(ang), math.cos(ang))

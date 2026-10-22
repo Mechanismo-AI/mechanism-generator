@@ -305,3 +305,57 @@ representation. The run of record re-executes at THIS
 fix's merged sha (--source-commit pinned there, never
 0c286766); the outcome staging then records against the
 frozen rows exactly as first frozen above.
+
+## The second instrument bug-fix (staged 2026-10-22; the owner's re-executed run of record crashed fail-closed before any grading)
+
+The owner's re-executed run of record at merged main b922db9c
+(the PR #118 merge) crashed honestly: the instrument aborts with
+a NameError inside c1_slot_metrics (the slot-pair pressure-angle
+sampler) before any grading -- the dead-branch return echoes the
+sample angle as bare `t` where the parameter is `t_deg`. Exit 1
+on both runs, the diff EMPTY (the crash itself deterministic);
+the instrument reached NO graded row, wrote NO corpus, recorded
+NO verdict; no recorded outcome is amended. The crash is data --
+the honest cost of the never-run-at-staging discipline (the
+entry55 precedent: syntax-compiled only at staging) -- recorded
+here, never rewritten.
+
+One datum first: the #118 FD-probe fix WORKED at this run. The
+traceback shows execution past the FD self-check (fd_check at
+compute's head) and into the C1 candidate evaluation -- the
+crash moved one call deeper; a distinct latent slip, never a
+regression of the merged fix.
+
+The diagnosis, read against the merged source: the sampler's two
+return dicts (the dead branch and the live branch) reference `t`;
+the signature reads `t_deg`. A full static undefined-name audit
+of the whole instrument (AST parse, scope-chain analysis; parse
+only, never an execution) then found the SAME slip in
+c1_handoff_map (the S4 handoff map): seven further bare-`t`
+references where the parameter is `t_deg` -- the next crash the
+run of record would have reached had only the first site been
+fixed.
+
+The fix (this staging; exactly nine lines of the instrument,
+nothing else): the two c1_slot_metrics returns and the seven
+c1_handoff_map references become `t_deg`, preserving each
+site's intent exactly (the sample angle's value representation;
+the error messages keep the (t=%r) convention). 71,700 -> 71,736
+bytes; pure ASCII; single trailing newline; syntax-compiled at
+staging, NEVER RUN (the entry55 precedent stands). The same
+undefined-name audit on the fixed instrument reports no further
+undefined names (four known false positives of the method --
+nested-def names and except-clause targets, each verified as
+valid Python at its site); the audit over-approximates (any
+store in a scope counts as defined; no flow analysis), so it
+cannot catch use-before-assignment within a function or
+type-class errors -- the #118 call-site type-trace stands for
+the type class. Every graded row S1-S6, every gate value, the
+declared search classes, the audit structure and the corpus
+schema are unchanged; the S6 reciprocity question is answered
+by this disclosure -- the fix touches no carried audit
+structure, only the sample-angle references' value
+representation. The run of record re-executes at THIS fix's
+merged sha (--source-commit pinned there, never b922db9c); the
+outcome staging then records against the frozen rows exactly as
+first frozen above.
