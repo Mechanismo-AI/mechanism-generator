@@ -357,7 +357,7 @@ def groove_from_path(w, wp, wpp, t_deg, C):
 
 def fd_check():
     """Cross-check analytic derivatives against central differences."""
-    probe = [(0.2, 30.0), (0.2, 100.0), (-0.3, 250.0)]
+    probe = [((0.2, 0.0), 30.0), ((0.2, 0.0), 100.0), ((-0.3, 0.0), 250.0)]
     h = FD_STEP_DEG
     for q, t in probe:
         w0, wp0, wpp0 = pin_path(q, t)
