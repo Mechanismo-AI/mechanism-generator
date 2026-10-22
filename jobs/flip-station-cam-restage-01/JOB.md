@@ -359,3 +359,76 @@ representation. The run of record re-executes at THIS fix's
 merged sha (--source-commit pinned there, never b922db9c); the
 outcome staging then records against the frozen rows exactly as
 first frozen above.
+
+## The run of record (2026-10-22: COMPLETED at the PR #119 merge -- the honest WIDE-FAIL at the declared classes, recorded against the frozen rows, never relaxed)
+The owner re-executed the run of record at the #119 merge
+8f5357bd2f314ab860a00648943349bea68a5238 (the nine-line
+sample-angle reference fix; the crash at b922db9c recorded above
+as data) on the-hub, motion venv, Python 3.14.4, repo root,
+--source-commit pinned to 8f5357bd: exit 0 on BOTH runs, the
+external diff EMPTY, the in-process "double-run determinism
+check: IDENTICAL" line printed -- the instrument's first
+completed run of record. Every graded row below is read against
+the frozen scorecard above: the gate consumed, never re-derived,
+never relaxed.
+
+The corpus (under runs/flip-station-cam-restage-01/, gitignored):
+68 rows, schema 1.2 (additive; changelog row in corpus); sha256
+e93d28369173c92a429a4b17a55b280c36f38307a26d4fc74ff00ffa49b7bbe1
+  (flip_cam_restage_v1.jsonl)
+f2ecc642939c62cfe6638c41aea94d62003d4eb085245b5d95336a3519257996
+  (flip_cam_restage_v1.csv)
+
+The outcome, row by row (the report's own values, verbatim):
+- S2 gate: the gate constant check PASS (re-computed against the
+  frozen six-digit values, fail-closed); the re-derived class gate
+  consumed: pressure angle <= 73.300756 deg (mu 0.15, binding) /
+  <= 78.690068 deg (mu 0.10); self-lock 81.469234 / 84.289407 deg
+  reported alongside; efficiency as data.
+- S1 pose witness (the shared program, G1 and C1): exact by
+  construction at 0 / 90 / 180 deg; witness max error 0.000e+00
+  (< 1e-12 demanded) -- PASS. F0 FAILS S1 by the recorded C1a
+  arithmetic, never re-litigated: best-fit worst pose residual
+  1.300000 units (130.00 mm over the 1.500 mm tolerance); the
+  three demand centroid points colinear and distinct, no
+  fixed-pivot circle.
+- G1: WIDE-FAIL. All 15 frozen sweep cells FAIL the gate (a_gate
+  89.192 to 90.000 deg). Chosen per the frozen pick rule (none
+  passes, smallest anyway): d=0.1 C_y=0.00, a_gate 89.192 deg.
+  The recorded design reference (d=0.2, C_y=0.0) re-graded:
+  a_gate 89.314 deg vs the re-derived gate 73.300756 deg -- FAIL,
+  its recorded outcome keeping its meaning, recorded as data,
+  never re-litigated. WC-L at the handoffs (combined): pos
+  1.9714 mm / ori 1.5732 deg vs 1.5 mm / 1.5 deg -- FAIL.
+- C1: WIDE-FAIL. The declared scan frozen before synthesis: 729
+  candidates, 720 graded, 9 failed closed (the cradle pin at the
+  lever pivot, t=85.0); 10 finalists audited on the 0.05 deg
+  grid, every one FAIL. Chosen per the frozen pick rule: Px=-0.5
+  Py=0.9 A=0.15 Delta=+0 r_p=0.35 beta=90, a_worst 88.957 deg.
+  WC-L at handoff_1_pick (combined): pos 0.2041 mm / ori
+  24.4423 deg -- FAIL; handoff_2_place: pos 0.2041 mm / ori
+  10.4044 deg -- FAIL (channels separate in the tolerance rows).
+- S5 envelope: recorded as data, never gated (sampled, never
+  certified; no size demand frozen by the brief): part sweep
+  bbox x [-1.8000, 1.8000] y [-0.0006, 1.0006] units (mm: x
+  [-180.0, 180.0], y [-0.1, 100.1]); handoff stations (-130, 50)
+  and (130, 50) mm; the G1 plate radius 1.53 units, center
+  x = 0; the C1 lever sweep centered (-0.5, 0.9) radius 2.01
+  units, carriage box x [-1.45, 1.45] y [0.44, 0.56], plate radii
+  1.81 / 2.04 units, centers (0, -1.0), grooves annular.
+- S6 reciprocity: instrument modification count 0.
+
+Overall: WIDE-FAIL at the declared classes. The pre-stated
+wide-fail branch FIRED, exactly as frozen: the honest all-fail IS
+the outcome -- recorded as data, never an error; the supplier
+question is NOT reached; the supplier triggers stay unfired; the
+gate is never relaxed. One cosmetic artifact recorded honestly:
+the G1 WC-L block prints twice in the report (deterministic,
+identical in both runs; no graded row or corpus row affected;
+the instrument unmodified -- S6 count 0).
+
+The cam line's re-stage question is answered: NO declared class
+exits the re-derived gate. Case study C stays CLOSED with the
+flip unsolved; the recorded study's outcome keeps its meaning.
+The re-entry line (the engine staging, then the capability step)
+is unaffected by this outcome and stays parked on the owner's go.
