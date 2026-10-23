@@ -295,6 +295,16 @@ def cmd_summarize(a):
             "median_best_mean_error": errs[len(errs) // 2] if errs else None,
             "median_wall_seconds": times[len(times) // 2] if times else None,
         }
+    summary["head_to_head"] = {}
+    for a_arm, b_arm in (("geometric", "random_pool"), ("geometric", "learned"), ("random_pool", "learned")):
+        key = f"{a_arm}_vs_{b_arm}"
+        summary["head_to_head"][key] = {}
+        for m in metrics:
+            wa = [t for t in complete if (by[t][a_arm].get(m) or 0) > 0 and not (by[t][b_arm].get(m) or 0) > 0]
+            wb = [t for t in complete if (by[t][b_arm].get(m) or 0) > 0 and not (by[t][a_arm].get(m) or 0) > 0]
+            summary["head_to_head"][key][m] = {
+                f"{a_arm}_wins": len(wa), f"{b_arm}_wins": len(wb),
+                "exact_p_two_sided": round(_binom_two_sided(len(wa), len(wa) + len(wb)), 4)}
     for arm in ARMS[1:]:
         summary["paired_vs_learned"][arm] = {}
         for m in metrics:
