@@ -5,6 +5,8 @@ Runs the unmodified public engine (r25c/r25b) three ways on the same tasks:
   learned      published proposal models, untouched
   random       one random proposal per start, same design space and projection
   random_pool  best of 128 random proposals, ranked by distance to the targets
+  geometric    published models plus the engine's existing analytic position
+               starter (--position_geometry: circumcentre construction, no model)
 
 Only r25b.predict_initial_params is replaced. Start counts, phase seeding,
 refinement, physical checks and qualification are identical across arms.
@@ -30,7 +32,7 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-ARMS = ("learned", "random", "random_pool")
+ARMS = ("learned", "random", "random_pool", "geometric")
 CORPUS_SEED = 20261023
 POOL_SIZE = 128
 
@@ -177,6 +179,8 @@ def cmd_one(a):
             "--headless", "--output_root", a.out, "--seed", "101"]
     if a.quick:
         argv.append("--quick")
+    if a.arm == "geometric":
+        argv.append("--position_geometry")
     for role, path in paths.items():
         argv += [f"--{role}_model", str(path)]
     sys.argv = ["mechanism-generate", *argv]
