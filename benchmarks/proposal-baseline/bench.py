@@ -7,6 +7,8 @@ Runs the unmodified public engine (r25c/r25b) three ways on the same tasks:
   random_pool  best of 128 random proposals, ranked by distance to the targets
   geometric    published models plus the engine's existing analytic position
                starter (--position_geometry: circumcentre construction, no model)
+  analytic_pool  no learned proposals at all: random_pool starts plus the
+               analytic position starter
 
 Only r25b.predict_initial_params is replaced. Start counts, phase seeding,
 refinement, physical checks and qualification are identical across arms.
@@ -32,7 +34,7 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-ARMS = ("learned", "random", "random_pool", "geometric")
+ARMS = ("learned", "random", "random_pool", "geometric", "analytic_pool")
 CORPUS_SEED = 20261023
 POOL_SIZE = 128
 
@@ -172,14 +174,14 @@ def cmd_one(a):
     _, r25c = _engine()
     if a.arm == "random":
         _install_random_proposals(1)
-    elif a.arm == "random_pool":
+    elif a.arm in ("random_pool", "analytic_pool"):
         _install_random_proposals(POOL_SIZE)
     paths = verify(Path(a.models))
     argv = ["--targets", *[repr(v) for v in a.targets], "--branches", "both", "--device", "cpu",
             "--headless", "--output_root", a.out, "--seed", "101"]
     if a.quick:
         argv.append("--quick")
-    if a.arm == "geometric":
+    if a.arm in ("geometric", "analytic_pool"):
         argv.append("--position_geometry")
     for role, path in paths.items():
         argv += [f"--{role}_model", str(path)]
@@ -296,7 +298,8 @@ def cmd_summarize(a):
             "median_wall_seconds": times[len(times) // 2] if times else None,
         }
     summary["head_to_head"] = {}
-    for a_arm, b_arm in (("geometric", "random_pool"), ("geometric", "learned"), ("random_pool", "learned")):
+    for a_arm, b_arm in (("analytic_pool", "geometric"), ("analytic_pool", "random_pool"), ("analytic_pool", "learned"),
+                         ("geometric", "random_pool"), ("geometric", "learned"), ("random_pool", "learned")):
         key = f"{a_arm}_vs_{b_arm}"
         summary["head_to_head"][key] = {}
         for m in metrics:
