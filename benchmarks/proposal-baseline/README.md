@@ -32,6 +32,23 @@ change), with one thread per worker. Results go to `runs/pb/`, with one small
 JSON file per task and arm, plus logs and the full engine output.
 `summarize` writes `runs/pb/summary.json`.
 
+### Pose and ordered tasks
+
+The same witness four-bars can produce pose tasks (three positions plus the
+directed coupler orientation) and ordered tasks (three positions reached in crank
+order). The analytic position starter does not support these task types, so compare
+`learned`, `random`, and `random_pool`. Pose tasks already include the engine's
+deterministic pose-geometry seeds in every arm. For pose tasks, the summary
+also reports `pose_acceptable`, meaning position and orientation are both met.
+
+```sh
+python benchmarks/proposal-baseline/bench.py corpus --type pose
+python benchmarks/proposal-baseline/bench.py run --models models --corpus benchmarks/proposal-baseline/corpus-pose.json --results runs/pb-pose --arms learned random random_pool
+python benchmarks/proposal-baseline/bench.py summarize --results runs/pb-pose
+```
+
+Use `--type ordered`, `corpus-ordered.json`, and `runs/pb-ordered` for ordered tasks.
+
 ## Reading the result
 
 A task counts as a success for an arm when the engine finds at least one
@@ -89,3 +106,49 @@ briefs. It does not test the model weights on the data they were trained on.
 default for position tasks. It also removes the weights download from the
 critical path. Making it the default is a separate change, and it should be
 checked on the pose and ordered task types first.
+
+## Ordered tasks (2026-10-23)
+
+Corpus: 60 ordered three-point tasks, `corpus-ordered.json` sha256
+`dba65f22a8f07b18406ff2b7302389f523c8c7484b94fe7e255409268523a41d`. Same settings as
+the position run, with `--phase_mode ordered`. No arm crashed.
+
+| Arm | Selection-eligible | Engineering-acceptable | Median best mean error |
+|---|---|---|---|
+| `learned` | 30 / 60 | 13 / 60 | 0.00637 |
+| `random` | 30 / 60 | 20 / 60 | 0.00931 |
+| `random_pool` | 54 / 60 | 42 / 60 | 0.00350 |
+
+Against `learned`: `random` 14–14 on selection-eligible (p = 1.0), 14–7 on
+engineering-acceptable (p = 0.19). `random_pool` 27–3 (p < 0.001) and 31–2 (p < 0.001).
+
+**Finding.** On ordered tasks the published models match one random guess per start,
+and a 128-sample random screen clearly beats them. This agrees with the position result.
+The ordered run does not include `analytic_pool`, because the analytic starter supports
+unordered positions only.
+
+**Limits.** Same as the position result: one synthetic corpus, one seed, and tasks
+drawn from the same design space the random arms sample.
+
+## Pose tasks (2026-10-24)
+
+Three-pose synthesis has an exact closed-form solution for any three poses (the
+circumcentre construction in `pose_seeds.py`), and every arm includes those seeds.
+So pose tasks test whether proposals add anything beyond the analytic construction.
+
+Two corpora were run, both with `learned`, `random`, and `random_pool`, with no crashes:
+
+- `corpus-pose.json` (sha256 `a9a72b2d…31d99af`), poses taken from witness four-bars: every
+  arm solved 60/60, with identical median error (3.6e-12).
+- `corpus-pose-free.json` (sha256 `b0b63e48…1c58dc7`), random positions and orientations
+  with no witness: every arm solved the same 11/60 tasks (5/60 engineering-acceptable),
+  with identical median error (2.6e-12). `solvable_by_any_arm` = 11. Most random pose
+  triples admit no valid four-bar within the engine's limits.
+
+Selected designs on the witness-free corpus, by start origin: 151 of 152 came from
+`pose_geometry`. The other came from a `random_pool` start, which reuses a model slot
+label. The learned models produced none.
+
+**Finding.** On pose tasks the analytic construction does all the work. Proposals,
+learned or random, never solved a task the construction missed. The models are not worse
+here; they are redundant.

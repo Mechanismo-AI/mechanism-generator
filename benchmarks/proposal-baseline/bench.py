@@ -55,7 +55,10 @@ def _sha256(path: Path) -> str:
 
 
 # ---------------------------------------------------------------- corpus
-def make_corpus(count: int, seed: int) -> list:
+TASK_TYPES = ("position", "pose", "ordered", "pose-free")
+
+
+def make_corpus(count: int, seed: int, task_type: str = "position") -> list:
     """Random valid crank-rockers inside the engine's design space; targets are
     three coupler points. The witness is recorded but never given to the solver."""
     import torch
@@ -102,8 +105,13 @@ def make_corpus(count: int, seed: int) -> list:
               and s["scale"] >= 1.0)
         if not ok:
             continue
+        task = {"id": f"t{len(tasks):03d}", "type": task_type}
+        if task_type == "pose":
+            from mechanism_generator.engine.orientation import orientation_angles
+            ang = orientation_angles(sim)[0]
+            task["orientations_deg"] = [round(math.degrees(float(ang[i])) % 360.0, 9) for i in idx]
         tasks.append({
-            "id": f"t{len(tasks):03d}",
+            **task,
             "targets": [round(c, 9) for c in target.tolist()],
             "witness": {"params": params, "branch": branch,
                         "phase_deg": [i * 0.5 for i in idx]},
@@ -111,11 +119,33 @@ def make_corpus(count: int, seed: int) -> list:
     return tasks
 
 
+def make_pose_free(count: int, seed: int) -> list:
+    """Pose tasks with no witness: three random positions and three random
+    orientations. Nothing here comes from a mechanism, so no method can
+    reconstruct a known answer. Tasks that no arm can solve are kept and
+    reported separately rather than filtered by any one method."""
+    import random
+    rng = random.Random(seed)
+    tasks = []
+    while len(tasks) < count:
+        pts = [(rng.uniform(-1.0, 1.0), rng.uniform(-1.0, 1.0)) for _ in range(3)]
+        d = [math.dist(pts[i], pts[j]) for i, j in ((0, 1), (1, 2), (0, 2))]
+        if min(d) < 0.3 or max(d) > 3.0:
+            continue
+        tasks.append({
+            "id": f"t{len(tasks):03d}", "type": "pose-free",
+            "targets": [round(c, 9) for p in pts for c in p],
+            "orientations_deg": [round(rng.uniform(0.0, 360.0), 9) for _ in range(3)],
+        })
+    return tasks
+
+
 def cmd_corpus(a):
-    path = Path(a.corpus)
+    path = Path(a.corpus or HERE / ("corpus.json" if a.type == "position" else f"corpus-{a.type}.json"))
     if path.exists():
         sys.exit(f"{path} exists; corpora are frozen. Delete it deliberately to regenerate.")
-    tasks = make_corpus(a.count, CORPUS_SEED)
+    seed = CORPUS_SEED + TASK_TYPES.index(a.type) * 1000
+    tasks = make_pose_free(a.count, seed) if a.type == "pose-free" else make_corpus(a.count, seed, a.type)
     path.write_text(json.dumps({"seed": CORPUS_SEED, "count": len(tasks), "tasks": tasks}, indent=1))
     print(f"wrote {path} ({len(tasks)} tasks) sha256={_sha256(path)}")
 
@@ -183,6 +213,10 @@ def cmd_one(a):
         argv.append("--quick")
     if a.arm in ("geometric", "analytic_pool"):
         argv.append("--position_geometry")
+    if a.orientations:
+        argv += ["--target_orientations_deg", *[repr(v) for v in a.orientations]]
+    if a.ordered:
+        argv += ["--phase_mode", "ordered"]
     for role, path in paths.items():
         argv += [f"--{role}_model", str(path)]
     sys.argv = ["mechanism-generate", *argv]
@@ -208,6 +242,7 @@ def _extract(out_dir: Path) -> dict:
         "path_acceptable": t.get("path_acceptable_count"),
         "selection_eligible": t.get("selection_eligible_count"),
         "engineering_acceptable": t.get("engineering_acceptable_count"),
+        "pose_acceptable": t.get("pose_acceptable_count"),
         "selected": t.get("selected_count"),
         "best_selected_mean_error": best.get("mean_error"),
         "best_selected_max_error": best.get("max_error"),
@@ -225,6 +260,10 @@ def _run_job(task, arm, a, root: Path):
     log.parent.mkdir(parents=True, exist_ok=True)
     cmd = [sys.executable, str(Path(__file__).resolve()), "_one", "--arm", arm, "--models", a.models,
            "--out", str(out), "--targets", *[repr(v) for v in task["targets"]]]
+    if task.get("orientations_deg"):
+        cmd += ["--orientations", *[repr(v) for v in task["orientations_deg"]]]
+    if task.get("type") == "ordered":
+        cmd.append("--ordered")
     if a.quick:
         cmd.append("--quick")
     env = {**os.environ, "OMP_NUM_THREADS": "1", "MKL_NUM_THREADS": "1", "OPENBLAS_NUM_THREADS": "1"}
@@ -282,12 +321,15 @@ def cmd_summarize(a):
     by = {}
     for r in rows:
         by.setdefault(r["task"], {})[r["arm"]] = r
-    complete = sorted(t for t, d in by.items() if all(arm in d for arm in ARMS))
+    arms = [arm for arm in ARMS if any(arm in d for d in by.values())]
+    complete = sorted(t for t, d in by.items() if all(arm in d for arm in arms))
     summary = {"results_dir": str(root), "complete_tasks": len(complete),
                "corpus_sha256": (root / "corpus_sha256.txt").read_text().strip()
                if (root / "corpus_sha256.txt").exists() else None, "arms": {}, "paired_vs_learned": {}}
     metrics = ("selection_eligible", "engineering_acceptable")
-    for arm in ARMS:
+    if any(r.get("pose_acceptable") is not None for r in rows):
+        metrics += ("pose_acceptable",)
+    for arm in arms:
         recs = [by[t][arm] for t in complete]
         errs = sorted(r["best_selected_mean_error"] for r in recs if r.get("best_selected_mean_error") is not None)
         times = sorted(r["wall_seconds"] for r in recs)
@@ -299,7 +341,10 @@ def cmd_summarize(a):
         }
     summary["head_to_head"] = {}
     for a_arm, b_arm in (("analytic_pool", "geometric"), ("analytic_pool", "random_pool"), ("analytic_pool", "learned"),
-                         ("geometric", "random_pool"), ("geometric", "learned"), ("random_pool", "learned")):
+                         ("geometric", "random_pool"), ("geometric", "learned"), ("random_pool", "learned"),
+                         ("random", "learned")):
+        if a_arm not in arms or b_arm not in arms:
+            continue
         key = f"{a_arm}_vs_{b_arm}"
         summary["head_to_head"][key] = {}
         for m in metrics:
@@ -308,7 +353,7 @@ def cmd_summarize(a):
             summary["head_to_head"][key][m] = {
                 f"{a_arm}_wins": len(wa), f"{b_arm}_wins": len(wb),
                 "exact_p_two_sided": round(_binom_two_sided(len(wa), len(wa) + len(wb)), 4)}
-    for arm in ARMS[1:]:
+    for arm in [x for x in arms if x != "learned"] if "learned" in arms else []:
         summary["paired_vs_learned"][arm] = {}
         for m in metrics:
             gains = [t for t in complete if (by[t][arm].get(m) or 0) > 0 and not (by[t]["learned"].get(m) or 0) > 0]
@@ -317,6 +362,11 @@ def cmd_summarize(a):
                 "baseline_wins": len(gains), "learned_wins": len(losses),
                 "exact_p_two_sided": round(_binom_two_sided(len(gains), len(gains) + len(losses)), 4),
                 "baseline_win_tasks": gains, "learned_win_tasks": losses}
+    if "pose_acceptable" in metrics:
+        any_ok = [t for t in complete if any((by[t][arm].get("pose_acceptable") or 0) > 0 for arm in arms)]
+        summary["solvable_by_any_arm"] = len(any_ok)
+        summary["note"] = ("pose tasks: 'solvable_by_any_arm' counts tasks where at least one arm "
+                           "met position and orientation; it treats all arms the same way")
     (root / "summary.json").write_text(json.dumps(summary, indent=1))
     print(json.dumps(summary, indent=1))
 
@@ -330,12 +380,13 @@ def main():
     common.add_argument("--workers", type=int, default=max(1, (os.cpu_count() or 2) - 1))
     common.add_argument("--quick", action="store_true")
     common.add_argument("--arms", nargs="+", choices=ARMS, default=list(ARMS))
-    s = sub.add_parser("corpus"); s.add_argument("--corpus", default=str(HERE / "corpus.json")); s.add_argument("--count", type=int, default=60)
+    s = sub.add_parser("corpus"); s.add_argument("--corpus", default=None); s.add_argument("--type", choices=TASK_TYPES, default="position"); s.add_argument("--count", type=int, default=60)
     s = sub.add_parser("run", parents=[common]); s.add_argument("--corpus", default=str(HERE / "corpus.json")); s.add_argument("--results", default="runs/pb"); s.add_argument("--limit", type=int, default=0)
     s = sub.add_parser("smoke", parents=[common]); s.add_argument("--results", default="runs/pb-smoke")
     s = sub.add_parser("summarize"); s.add_argument("--results", default="runs/pb")
     s = sub.add_parser("_one"); s.add_argument("--arm", choices=ARMS, required=True); s.add_argument("--models", required=True)
     s.add_argument("--out", required=True); s.add_argument("--targets", type=float, nargs=6, required=True); s.add_argument("--quick", action="store_true")
+    s.add_argument("--orientations", type=float, nargs=3); s.add_argument("--ordered", action="store_true")
     a = p.parse_args()
     return {"corpus": cmd_corpus, "run": cmd_run, "smoke": cmd_smoke, "summarize": cmd_summarize, "_one": cmd_one}[a.cmd](a)
 
