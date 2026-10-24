@@ -32,6 +32,23 @@ change), with one thread per worker. Results go to `runs/pb/`, with one small
 JSON file per task and arm, plus logs and the full engine output.
 `summarize` writes `runs/pb/summary.json`.
 
+### Pose and ordered tasks
+
+The same witness four-bars can produce pose tasks (three positions plus the
+directed coupler orientation) and ordered tasks (three positions reached in crank
+order). The analytic position starter does not support these task types, so compare
+`learned`, `random`, and `random_pool`. Pose tasks already include the engine's
+deterministic pose-geometry seeds in every arm. For pose tasks, the summary
+also reports `pose_acceptable`, meaning position and orientation are both met.
+
+```sh
+python benchmarks/proposal-baseline/bench.py corpus --type pose
+python benchmarks/proposal-baseline/bench.py run --models models --corpus benchmarks/proposal-baseline/corpus-pose.json --results runs/pb-pose --arms learned random random_pool
+python benchmarks/proposal-baseline/bench.py summarize --results runs/pb-pose
+```
+
+Use `--type ordered`, `corpus-ordered.json`, and `runs/pb-ordered` for ordered tasks.
+
 ## Reading the result
 
 A task counts as a success for an arm when the engine finds at least one
