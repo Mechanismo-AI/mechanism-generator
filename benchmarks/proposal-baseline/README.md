@@ -106,3 +106,26 @@ briefs. It does not test the model weights on the data they were trained on.
 default for position tasks. It also removes the weights download from the
 critical path. Making it the default is a separate change, and it should be
 checked on the pose and ordered task types first.
+
+## Ordered tasks (2026-10-23)
+
+Corpus: 60 ordered three-point tasks, `corpus-ordered.json` sha256
+`dba65f22a8f07b18406ff2b7302389f523c8c7484b94fe7e255409268523a41d`. Same settings as
+the position run, with `--phase_mode ordered`. No arm crashed.
+
+| Arm | Selection-eligible | Engineering-acceptable | Median best mean error |
+|---|---|---|---|
+| `learned` | 30 / 60 | 13 / 60 | 0.00637 |
+| `random` | 30 / 60 | 20 / 60 | 0.00931 |
+| `random_pool` | 54 / 60 | 42 / 60 | 0.00350 |
+
+Against `learned`: `random` 14–14 on selection-eligible (p = 1.0), 14–7 on
+engineering-acceptable (p = 0.19). `random_pool` 27–3 (p < 0.001) and 31–2 (p < 0.001).
+
+**Finding.** On ordered tasks the published models match one random guess per start,
+and a 128-sample random screen clearly beats them. This agrees with the position result.
+The ordered run does not include `analytic_pool`, because the analytic starter supports
+unordered positions only.
+
+**Limits.** Same as the position result: one synthetic corpus, one seed, and tasks
+drawn from the same design space the random arms sample.
