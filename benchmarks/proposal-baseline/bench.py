@@ -55,7 +55,7 @@ def _sha256(path: Path) -> str:
 
 
 # ---------------------------------------------------------------- corpus
-TASK_TYPES = ("position", "pose", "ordered")
+TASK_TYPES = ("position", "pose", "ordered", "pose-free")
 
 
 def make_corpus(count: int, seed: int, task_type: str = "position") -> list:
@@ -119,11 +119,33 @@ def make_corpus(count: int, seed: int, task_type: str = "position") -> list:
     return tasks
 
 
+def make_pose_free(count: int, seed: int) -> list:
+    """Pose tasks with no witness: three random positions and three random
+    orientations. Nothing here comes from a mechanism, so no method can
+    reconstruct a known answer. Tasks that no arm can solve are kept and
+    reported separately rather than filtered by any one method."""
+    import random
+    rng = random.Random(seed)
+    tasks = []
+    while len(tasks) < count:
+        pts = [(rng.uniform(-1.0, 1.0), rng.uniform(-1.0, 1.0)) for _ in range(3)]
+        d = [math.dist(pts[i], pts[j]) for i, j in ((0, 1), (1, 2), (0, 2))]
+        if min(d) < 0.3 or max(d) > 3.0:
+            continue
+        tasks.append({
+            "id": f"t{len(tasks):03d}", "type": "pose-free",
+            "targets": [round(c, 9) for p in pts for c in p],
+            "orientations_deg": [round(rng.uniform(0.0, 360.0), 9) for _ in range(3)],
+        })
+    return tasks
+
+
 def cmd_corpus(a):
     path = Path(a.corpus or HERE / ("corpus.json" if a.type == "position" else f"corpus-{a.type}.json"))
     if path.exists():
         sys.exit(f"{path} exists; corpora are frozen. Delete it deliberately to regenerate.")
-    tasks = make_corpus(a.count, CORPUS_SEED + TASK_TYPES.index(a.type) * 1000, a.type)
+    seed = CORPUS_SEED + TASK_TYPES.index(a.type) * 1000
+    tasks = make_pose_free(a.count, seed) if a.type == "pose-free" else make_corpus(a.count, seed, a.type)
     path.write_text(json.dumps({"seed": CORPUS_SEED, "count": len(tasks), "tasks": tasks}, indent=1))
     print(f"wrote {path} ({len(tasks)} tasks) sha256={_sha256(path)}")
 
@@ -340,6 +362,11 @@ def cmd_summarize(a):
                 "baseline_wins": len(gains), "learned_wins": len(losses),
                 "exact_p_two_sided": round(_binom_two_sided(len(gains), len(gains) + len(losses)), 4),
                 "baseline_win_tasks": gains, "learned_win_tasks": losses}
+    if "pose_acceptable" in metrics:
+        any_ok = [t for t in complete if any((by[t][arm].get("pose_acceptable") or 0) > 0 for arm in arms)]
+        summary["solvable_by_any_arm"] = len(any_ok)
+        summary["note"] = ("pose tasks: 'solvable_by_any_arm' counts tasks where at least one arm "
+                           "met position and orientation; it treats all arms the same way")
     (root / "summary.json").write_text(json.dumps(summary, indent=1))
     print(json.dumps(summary, indent=1))
 
