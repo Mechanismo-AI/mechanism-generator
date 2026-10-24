@@ -129,3 +129,26 @@ unordered positions only.
 
 **Limits.** Same as the position result: one synthetic corpus, one seed, and tasks
 drawn from the same design space the random arms sample.
+
+## Pose tasks (2026-10-24)
+
+Three-pose synthesis has an exact closed-form solution for any three poses (the
+circumcentre construction in `pose_seeds.py`), and every arm includes those seeds.
+So pose tasks test whether proposals add anything beyond the analytic construction.
+
+Two corpora were run, both with `learned`, `random`, and `random_pool`, with no crashes:
+
+- `corpus-pose.json` (sha256 `a9a72b2d…31d99af`), poses taken from witness four-bars: every
+  arm solved 60/60, with identical median error (3.6e-12).
+- `corpus-pose-free.json` (sha256 `b0b63e48…1c58dc7`), random positions and orientations
+  with no witness: every arm solved the same 11/60 tasks (5/60 engineering-acceptable),
+  with identical median error (2.6e-12). `solvable_by_any_arm` = 11. Most random pose
+  triples admit no valid four-bar within the engine's limits.
+
+Selected designs on the witness-free corpus, by start origin: 151 of 152 came from
+`pose_geometry`. The other came from a `random_pool` start, which reuses a model slot
+label. The learned models produced none.
+
+**Finding.** On pose tasks the analytic construction does all the work. Proposals,
+learned or random, never solved a task the construction missed. The models are not worse
+here; they are redundant.
