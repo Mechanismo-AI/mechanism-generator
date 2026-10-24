@@ -75,9 +75,10 @@ Paired wins on tasks where two arms disagree (exact two-sided sign test):
 
 **Finding.** On their own home task (unordered three-point position synthesis),
 the published proposal models perform worse than one random guess per start.
-They never beat the engine without them: `analytic_pool` loses no task to any
-arm on either measure. The analytic starter also does better without the
-learned starts than with them.
+The engine without them is stronger: `analytic_pool` loses no task to
+`learned` or `geometric`, and one task to `random_pool` (engineering-acceptable,
+10–1). It was not compared head-to-head with `random`. The analytic starter also
+does better without the learned starts than with them.
 
 **Limits.** This is one synthetic corpus with one seed. The tasks are generated from
 the same kind of design space that the random arms sample, which may favour
